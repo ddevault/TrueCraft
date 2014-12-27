@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FA4BE9A3-DBF0-4380-BA2B-FFAA71C4706D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>TrueCraft.Core</RootNamespace>
+    <AssemblyName>TrueCraft.Core</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Networking\MinecraftStream.cs" />
+    <Compile Include="Networking\PacketReader.cs" />
+    <Compile Include="Networking\Packets\HandshakePacket.cs" />
+    <Compile Include="Networking\Packets\HandshakeResponsePacket.cs" />
+    <Compile Include="Networking\Packets\KeepAlivePacket.cs" />
+    <Compile Include="Networking\Packets\LoginRequestPacket.cs" />
+    <Compile Include="Networking\Packets\LoginResponsePacket.cs" />
+    <Compile Include="Networking\Packets\ChatMessagePacket.cs" />
+    <Compile Include="Networking\Packets\TimeUpdatePacket.cs" />
+    <Compile Include="Networking\Packets\EntityEquipmentPacket.cs" />
+    <Compile Include="Networking\Packets\SpawnPositionPacket.cs" />
+    <Compile Include="Networking\Packets\UseEntityPacket.cs" />
+    <Compile Include="Networking\Packets\UpdateHealthPacket.cs" />
+    <Compile Include="Networking\Packets\RespawnPacket.cs" />
+    <Compile Include="Networking\Packets\PlayerGroundedPacket.cs" />
+    <Compile Include="Networking\Packets\PlayerPositionPacket.cs" />
+    <Compile Include="Networking\Packets\PlayerLookPacket.cs" />
+    <Compile Include="Networking\Packets\PlayerPositionAndLookPacket.cs" />
+    <Compile Include="Networking\Packets\SetPlayerPositionPacket.cs" />
+    <Compile Include="Networking\Packets\PlayerDiggingPacket.cs" />
+    <Compile Include="Networking\Packets\PlayerBlockPlacementPacket.cs" />
+    <Compile Include="Networking\NetworkBlockFace.cs" />
+    <Compile Include="Networking\Packets\ChangeHeldItemPacket.cs" />
+    <Compile Include="Networking\Packets\UseBedPacket.cs" />
+    <Compile Include="Networking\Packets\AnimationPacket.cs" />
+    <Compile Include="Networking\Packets\PlayerActionPacket.cs" />
+    <Compile Include="Networking\Packets\SpawnPlayerPacket.cs" />
+    <Compile Include="Networking\Packets\SpawnItemPacket.cs" />
+    <Compile Include="Networking\Packets\CollectItemPacket.cs" />
+    <Compile Include="Networking\Packets\SpawnGenericEntityPacket.cs" />
+    <Compile Include="Networking\Packets\SpawnMobPacket.cs" />
+    <Compile Include="Networking\Packets\SpawnPaintingPacket.cs" />
+    <Compile Include="Networking\Packets\EntityVelocityPacket.cs" />
+    <Compile Include="Networking\Packets\UselessEntityPacket.cs" />
+    <Compile Include="Networking\Packets\EntityRelativeMovePacket.cs" />
+    <Compile Include="Networking\Packets\EntityLookPacket.cs" />
+    <Compile Include="Networking\Packets\EntityLookAndRelativeMovePacket.cs" />
+    <Compile Include="Networking\Packets\EntityTeleportPacket.cs" />
+    <Compile Include="Networking\Packets\EntityStatusPacket.cs" />
+    <Compile Include="Networking\Packets\AttachEntityPacket.cs" />
+    <Compile Include="Networking\Packets\EntityMetadataPacket.cs" />
+    <Compile Include="Networking\Packets\ChunkPreamblePacket.cs" />
+    <Compile Include="Networking\Packets\ChunkDataPacket.cs" />
+    <Compile Include="Networking\Packets\BulkBlockChangePacket.cs" />
+    <Compile Include="Networking\Packets\BlockChangePacket.cs" />
+    <Compile Include="Networking\Packets\BlockActionPacket.cs" />
+    <Compile Include="Networking\Packets\SoundEffectPacket.cs" />
+    <Compile Include="Networking\Packets\EnvironmentStatePacket.cs" />
+    <Compile Include="Networking\Packets\LightningPacket.cs" />
+    <Compile Include="Networking\Packets\OpenWindowPacket.cs" />
+    <Compile Include="Networking\Packets\CloseWindow.cs" />
+    <Compile Include="Networking\Packets\ClickWindowPacket.cs" />
+    <Compile Include="Networking\Packets\SetSlotPacket.cs" />
+    <Compile Include="Networking\Packets\WindowItemsPacket.cs" />
+    <Compile Include="Networking\Packets\UpdateProgressPacket.cs" />
+    <Compile Include="Networking\Packets\TransactionStatusPacket.cs" />
+    <Compile Include="Networking\Packets\UpdateSignPacket.cs" />
+    <Compile Include="Networking\Packets\MapDataPacket.cs" />
+    <Compile Include="Networking\Packets\UpdateStatisticPacket.cs" />
+    <Compile Include="Networking\Packets\DisconnectPacket.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\TrueCraft.API\TrueCraft.API.csproj">
+      <Project>{FEE55B54-91B0-4325-A2C3-D576C0B7A81F}</Project>
+      <Name>TrueCraft.API</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Networking\Packets\" />
+  </ItemGroup>
+</Project>

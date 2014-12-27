@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FEE55B54-91B0-4325-A2C3-D576C0B7A81F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>TrueCraft.API</RootNamespace>
+    <AssemblyName>TrueCraft.API</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Networking\IPacket.cs" />
+    <Compile Include="Networking\IPacketReader.cs" />
+    <Compile Include="Networking\IMinecraftStream.cs" />
+    <Compile Include="GameMode.cs" />
+    <Compile Include="Difficulty.cs" />
+    <Compile Include="Dimension.cs" />
+    <Compile Include="BoundingBox.cs" />
+    <Compile Include="Coordinates.cs" />
+    <Compile Include="ItemStack.cs" />
+    <Compile Include="MetadataByte.cs" />
+    <Compile Include="MetadataDictionary.cs" />
+    <Compile Include="MetadataEntry.cs" />
+    <Compile Include="MetadataFloat.cs" />
+    <Compile Include="MetadataInt.cs" />
+    <Compile Include="MetadataShort.cs" />
+    <Compile Include="MetadataSlot.cs" />
+    <Compile Include="MetadataString.cs" />
+    <Compile Include="Ray.cs" />
+    <Compile Include="Size.cs" />
+    <Compile Include="Vector3.cs" />
+    <Compile Include="Server\IMultiplayerServer.cs" />
+    <Compile Include="Networking\IRemoteClient.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Networking\" />
+    <Folder Include="Server\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\externals\fNbt\fNbt\fNbt.csproj">
+      <Project>{4488498D-976D-4DA3-BF72-109531AF0488}</Project>
+      <Name>fNbt</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
