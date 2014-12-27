@@ -44,6 +44,12 @@ There isn't much of one yet, but this is a sort of spiritual successor to
 Craft.Net. The folks in #craft.net on Freenode will probably talk to you about
 this project if you ask nicely.
 
+## Resources
+
+[1.7.3 protocol docs](http://wiki.vg/index.php?title=Protocol&oldid=615)
+
+[1.7.3 inventory docs](http://wiki.vg/index.php?title=Inventory&oldid=2356)
+
 ## Blah blah blah
 
 TrueCraft is not associated with Mojang or Minecraft in any sort of official
