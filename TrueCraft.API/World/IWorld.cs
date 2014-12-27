@@ -11,10 +11,10 @@ namespace TrueCraft.API.World
         string Name { get; set; }
 
         IChunk GetChunk(Coordinates2D coordinates);
-        short GetBlockID(Coordinates3D coordinates);
+        byte GetBlockID(Coordinates3D coordinates);
         byte GetMetadata(Coordinates3D coordinates);
         byte GetSkyLight(Coordinates3D coordinates);
-        void SetBlockID(Coordinates3D coordinates, short value);
+        void SetBlockID(Coordinates3D coordinates, byte value);
         void SetMetadata(Coordinates3D coordinates, byte value);
         void SetSkyLight(Coordinates3D coordinates, byte value);
         void SetBlockLight(Coordinates3D coordinates, byte value);

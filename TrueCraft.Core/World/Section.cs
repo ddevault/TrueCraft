@@ -13,8 +13,6 @@ namespace TrueCraft.Core.World
         public NibbleArray Metadata { get; set; }
         public NibbleArray BlockLight { get; set; }
         public NibbleArray SkyLight { get; set; }
-        [IgnoreOnNull]
-        public NibbleArray Add { get; set; }
         public byte Y { get; set; }
 
         private int nonAirCount;
@@ -33,7 +31,6 @@ namespace TrueCraft.Core.World
             SkyLight = new NibbleArray(size);
             for (int i = 0; i < size; i++)
                 SkyLight[i] = 0xFF;
-            Add = null; // Only used when needed
             nonAirCount = 0;
         }
 
@@ -43,13 +40,10 @@ namespace TrueCraft.Core.World
             get { return nonAirCount == 0; }
         }
 
-        public short GetBlockID(Coordinates3D coordinates)
+        public byte GetBlockID(Coordinates3D coordinates)
         {
             int index = coordinates.X + (coordinates.Z * Width) + (coordinates.Y * Height * Width);
-            short value = Blocks[index];
-            if (Add != null)
-                value |= (short)(Add[index] << 8);
-            return value;
+            return Blocks[index];
         }
 
         public byte GetMetadata(Coordinates3D coordinates)
@@ -70,7 +64,7 @@ namespace TrueCraft.Core.World
             return BlockLight[index];
         }
 
-        public void SetBlockID(Coordinates3D coordinates, short value)
+        public void SetBlockID(Coordinates3D coordinates, byte value)
         {
             int index = coordinates.X + (coordinates.Z * Width) + (coordinates.Y * Height * Width);
             if (value == 0)
@@ -83,12 +77,7 @@ namespace TrueCraft.Core.World
                 if (Blocks[index] == 0)
                     nonAirCount++;
             }
-            Blocks[index] = (byte)value;
-            if ((value & ~0xFF) != 0)
-            {
-                if (Add == null) Add = new NibbleArray(Width * Height * Depth);
-                Add[index] = (byte)((ushort)value >> 8);
-            }
+            Blocks[index] = value;
         }
 
         public void SetMetadata(Coordinates3D coordinates, byte value)

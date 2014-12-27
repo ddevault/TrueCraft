@@ -109,7 +109,7 @@ namespace TrueCraft.Core.World
             Regions[regionPosition].UnloadChunk(new Coordinates2D(coordinates.X - regionX * 32, coordinates.Z - regionZ * 32));
         }
 
-        public short GetBlockID(Coordinates3D coordinates)
+        public byte GetBlockID(Coordinates3D coordinates)
         {
             IChunk chunk;
             coordinates = FindBlockPosition(coordinates, out chunk);
@@ -137,7 +137,7 @@ namespace TrueCraft.Core.World
             return chunk.GetBlockLight(coordinates);
         }
 
-        public void SetBlockID(Coordinates3D coordinates, short value)
+        public void SetBlockID(Coordinates3D coordinates, byte value)
         {
             IChunk chunk;
             var adjustedCoordinates = FindBlockPosition(coordinates, out chunk);

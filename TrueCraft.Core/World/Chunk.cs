@@ -71,7 +71,7 @@ namespace TrueCraft.Core.World
             Z = coordinates.Z;
         }
 
-        public short GetBlockID(Coordinates3D coordinates)
+        public byte GetBlockID(Coordinates3D coordinates)
         {
             LastAccessed = DateTime.Now;
             int section = GetSectionNumber(coordinates.Y);
@@ -103,7 +103,7 @@ namespace TrueCraft.Core.World
             return Sections[section].GetBlockLight(coordinates);
         }
 
-        public void SetBlockID(Coordinates3D coordinates, short value)
+        public void SetBlockID(Coordinates3D coordinates, byte value)
         {
             LastAccessed = DateTime.Now;
             IsModified = true;

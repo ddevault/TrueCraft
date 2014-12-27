@@ -14,9 +14,9 @@ namespace TrueCraft
         public IPacketReader PacketReader { get; private set; }
         public IList<IRemoteClient> Clients { get; private set; }
 
-        private Timer NetworkWorker;
+        private Timer NetworkWorker, EnvironmentWorker;
         private TcpListener Listener;
-        private PacketHandler[] PacketHandlers;
+        private readonly PacketHandler[] PacketHandlers;
 
         public MultiplayerServer()
         {
@@ -24,6 +24,7 @@ namespace TrueCraft
             PacketReader = reader;
             Clients = new List<IRemoteClient>();
             NetworkWorker = new Timer(DoNetwork);
+            EnvironmentWorker = new Timer(DoEnvironment);
             PacketHandlers = new PacketHandler[0x100];
 
             reader.RegisterCorePackets();
@@ -41,6 +42,7 @@ namespace TrueCraft
             Listener.Start();
             Listener.BeginAcceptTcpClient(AcceptClient, null);
             NetworkWorker.Change(100, 1000 / 20);
+            EnvironmentWorker.Change(100, 1000 / 20);
         }
 
         private void AcceptClient(IAsyncResult result)
@@ -48,6 +50,13 @@ namespace TrueCraft
             var tcpClient = Listener.EndAcceptTcpClient(result);
             var client = new RemoteClient(tcpClient.GetStream());
             Clients.Add(client);
+        }
+
+        private void DoEnvironment(object discarded)
+        {
+            for (int i = 0, ClientsCount = Clients.Count; i < ClientsCount; i++)
+            {
+            }
         }
 
         private void DoNetwork(object discarded)
