@@ -30,6 +30,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="Ionic.Zip.Reduced">
+      <HintPath>..\lib\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -93,6 +96,10 @@
     <Compile Include="Networking\Packets\MapDataPacket.cs" />
     <Compile Include="Networking\Packets\UpdateStatisticPacket.cs" />
     <Compile Include="Networking\Packets\DisconnectPacket.cs" />
+    <Compile Include="World\Chunk.cs" />
+    <Compile Include="World\Region.cs" />
+    <Compile Include="World\Section.cs" />
+    <Compile Include="World\World.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -100,8 +107,13 @@
       <Project>{FEE55B54-91B0-4325-A2C3-D576C0B7A81F}</Project>
       <Name>TrueCraft.API</Name>
     </ProjectReference>
+    <ProjectReference Include="..\externals\fNbt\fNbt\fNbt.csproj">
+      <Project>{4488498D-976D-4DA3-BF72-109531AF0488}</Project>
+      <Name>fNbt</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Networking\Packets\" />
+    <Folder Include="World\" />
   </ItemGroup>
 </Project>

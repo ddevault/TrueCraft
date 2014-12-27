@@ -19,6 +19,7 @@ namespace TrueCraft
         public IMinecraftStream MinecraftStream { get; internal set; }
         public ConcurrentQueue<IPacket> PacketQueue { get; private set; }
         public string Username { get; internal set; }
+        public bool LoggedIn { get; internal set; }
 
         public bool DataAvailable
         {

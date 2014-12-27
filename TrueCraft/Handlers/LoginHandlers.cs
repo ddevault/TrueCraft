@@ -19,7 +19,15 @@ namespace TrueCraft.Handlers
         {
             var packet = (LoginRequestPacket)_packet;
             var client = (RemoteClient)_client;
-            client.QueuePacket(new DisconnectPacket("It works!"));
+            Console.WriteLine(packet.ProtocolVersion);
+            if (packet.ProtocolVersion < server.PacketReader.ProtocolVersion)
+                client.QueuePacket(new DisconnectPacket("Client outdated! Use beta 1.7.3!"));
+            else if (packet.ProtocolVersion > server.PacketReader.ProtocolVersion)
+                client.QueuePacket(new DisconnectPacket("Server outdated! Use beta 1.7.3!"));
+            else
+            {
+                client.LoggedIn = true;
+            }
         }
     }
 }

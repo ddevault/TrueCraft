@@ -46,9 +46,11 @@ this project if you ask nicely.
 
 ## Resources
 
-[1.7.3 protocol docs](http://wiki.vg/index.php?title=Protocol&oldid=615)
+[1.7.3 protocol docs](http://wiki.vg/index.php?title=Protocol&oldid=517)
 
 [1.7.3 inventory docs](http://wiki.vg/index.php?title=Inventory&oldid=2356)
+
+[1.7.3 protocol faq](http://wiki.vg/index.php?title=Protocol_FAQ&oldid=74)
 
 ## Blah blah blah
 

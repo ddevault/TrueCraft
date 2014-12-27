@@ -6,7 +6,8 @@ namespace TrueCraft.Core.Networking
 {
     public class PacketReader : IPacketReader
     {
-        public static readonly int ProtocolVersion = 18;
+        public static readonly int Version = 14;
+        public int ProtocolVersion { get { return Version; } }
 
         private Type[] ClientboundPackets = new Type[0x100];
         private Type[] ServerboundPackets = new Type[0x100];

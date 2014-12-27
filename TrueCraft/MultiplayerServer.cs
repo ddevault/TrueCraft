@@ -72,7 +72,7 @@ namespace TrueCraft
                         {
                             PacketHandlers[packet.ID](packet, client, this);
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             // TODO: Something else
                             Clients.Remove(client);

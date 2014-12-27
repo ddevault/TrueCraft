@@ -1,0 +1,10 @@
+C->S: Handshake
+C<-S: Handshake response
+[authenticate if needed]
+C->S: Login request
+C<-S: Login response or kick
+C<-S: Chunks and entities
+C<-S: Spawn position
+C<-S: Inventory
+C<-S: Position+Look
+S<-C: Position+Look, player is now logged in

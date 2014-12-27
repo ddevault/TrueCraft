@@ -53,11 +53,18 @@
     <Compile Include="Vector3.cs" />
     <Compile Include="Server\IMultiplayerServer.cs" />
     <Compile Include="Networking\IRemoteClient.cs" />
+    <Compile Include="World\IWorld.cs" />
+    <Compile Include="World\IChunk.cs" />
+    <Compile Include="World\IChunkProvider.cs" />
+    <Compile Include="World\ISection.cs" />
+    <Compile Include="NibbleArray.cs" />
+    <Compile Include="World\IRegion.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Networking\" />
     <Folder Include="Server\" />
+    <Folder Include="World\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\externals\fNbt\fNbt\fNbt.csproj">
