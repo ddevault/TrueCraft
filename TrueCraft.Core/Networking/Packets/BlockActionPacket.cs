@@ -34,7 +34,11 @@ namespace TrueCraft.Core.Networking.Packets
 
         public void WritePacket(IMinecraftStream stream)
         {
-            throw new NotImplementedException();
+            stream.WriteInt32(X);
+            stream.WriteInt32(Y);
+            stream.WriteInt32(Z);
+            stream.WriteInt8(State);
+            stream.WriteInt8(Data);
         }
     }
 }

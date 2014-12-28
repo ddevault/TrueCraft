@@ -45,7 +45,7 @@ namespace TrueCraft.Core.Networking.Packets
         public void WritePacket(IMinecraftStream stream)
         {
             stream.WriteInt32(X);
-            stream.WriteInt32(Y);
+            stream.WriteInt8(Y);
             stream.WriteInt32(Z);
             stream.WriteInt8((sbyte)Direction);
             stream.WriteInt16(ItemID);

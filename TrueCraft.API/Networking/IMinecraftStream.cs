@@ -35,6 +35,8 @@ namespace TrueCraft.API.Networking
 
         string ReadString();
         void WriteString(string value);
+        string ReadString8();
+        void WriteString8(string value);
 
         bool ReadBoolean();
         void WriteBoolean(bool value);

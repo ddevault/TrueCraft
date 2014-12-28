@@ -18,7 +18,7 @@ namespace TrueCraft.Core.Networking.Packets
             EatingAccepted = 9 // what
         }
 
-        public byte ID { get { return 0x22; } }
+        public byte ID { get { return 0x26; } }
 
         public int EntityID;
         public EntityStatus Status;

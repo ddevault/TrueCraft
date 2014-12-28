@@ -48,7 +48,7 @@ namespace TrueCraft.Core.Networking
             RegisterPacketType<SpawnPaintingPacket>(serverbound: false, clientbound: true);             // 0x19
 
             RegisterPacketType<EntityVelocityPacket>(serverbound: false, clientbound: true);            // 0x1C
-
+            RegisterPacketType<DestroyEntityPacket>(serverbound: false, clientbound: true);             // 0x1D
             RegisterPacketType<UselessEntityPacket>(serverbound: false, clientbound: true);             // 0x1E
             RegisterPacketType<EntityRelativeMovePacket>(serverbound: false, clientbound: true);        // 0x1F
             RegisterPacketType<EntityLookPacket>(serverbound: false, clientbound: true);                // 0x20
@@ -65,6 +65,7 @@ namespace TrueCraft.Core.Networking
             RegisterPacketType<BlockChangePacket>(serverbound: false, clientbound: true);               // 0x35
             RegisterPacketType<BlockActionPacket>(serverbound: false, clientbound: true);               // 0x36
 
+            RegisterPacketType<ExplosionPacket>(serverbound: false, clientbound: true);                 // 0x3C
             RegisterPacketType<SoundEffectPacket>(serverbound: false, clientbound: true);               // 0x3D
 
             RegisterPacketType<EnvironmentStatePacket>(serverbound: false, clientbound: true);          // 0x46

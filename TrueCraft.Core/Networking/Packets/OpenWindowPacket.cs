@@ -27,7 +27,7 @@ namespace TrueCraft.Core.Networking.Packets
         {
             WindowID = stream.ReadInt8();
             Type = (WindowType)stream.ReadInt8();
-            Title = stream.ReadString();
+            Title = stream.ReadString8();
             TotalSlots = stream.ReadInt8();
         }
 
@@ -35,7 +35,7 @@ namespace TrueCraft.Core.Networking.Packets
         {
             stream.WriteInt8(WindowID);
             stream.WriteInt8((sbyte)Type);
-            stream.WriteString(Title);
+            stream.WriteString8(Title);
             stream.WriteInt8(TotalSlots);
         }
     }

@@ -26,7 +26,7 @@ namespace TrueCraft.Core.Networking.Packets
         /// <summary>
         /// You should probably ignore this.
         /// </summary>
-        public sbyte Metadata;
+        public short Metadata;
 
         public void ReadPacket(IMinecraftStream stream)
         {
@@ -37,7 +37,7 @@ namespace TrueCraft.Core.Networking.Packets
             Shift = stream.ReadBoolean();
             ItemID = stream.ReadInt16();
             Count = stream.ReadInt8();
-            Metadata = stream.ReadInt8();
+            Metadata = stream.ReadInt16();
         }
 
         public void WritePacket(IMinecraftStream stream)
@@ -49,7 +49,7 @@ namespace TrueCraft.Core.Networking.Packets
             stream.WriteBoolean(Shift);
             stream.WriteInt16(ItemID);
             stream.WriteInt8(Count);
-            stream.WriteInt8(Metadata);
+            stream.WriteInt16(Metadata);
         }
     }
 }

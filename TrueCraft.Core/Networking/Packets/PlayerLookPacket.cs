@@ -22,8 +22,8 @@ namespace TrueCraft.Core.Networking.Packets
 
         public void WritePacket(IMinecraftStream stream)
         {
-            stream.WriteDouble(Yaw);
-            stream.WriteDouble(Pitch);
+            stream.WriteSingle(Yaw);
+            stream.WriteSingle(Pitch);
             stream.WriteBoolean(OnGround);
         }
     }

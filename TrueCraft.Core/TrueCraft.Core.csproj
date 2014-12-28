@@ -102,6 +102,8 @@
     <Compile Include="TerrainGen\FlatlandGenerator.cs" />
     <Compile Include="Logging\ConsoleLogProvider.cs" />
     <Compile Include="Networking\BufferedStream.cs" />
+    <Compile Include="Networking\Packets\DestroyEntityPacket.cs" />
+    <Compile Include="Networking\Packets\ExplosionPacket.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
