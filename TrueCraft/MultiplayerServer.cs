@@ -6,6 +6,9 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Net;
 using System.Collections.Generic;
+using TrueCraft.API.World;
+using TrueCraft.API.Logging;
+using TrueCraft.Core.Networking.Packets;
 
 namespace TrueCraft
 {
@@ -13,10 +16,12 @@ namespace TrueCraft
     {
         public IPacketReader PacketReader { get; private set; }
         public IList<IRemoteClient> Clients { get; private set; }
+        public IList<IWorld> Worlds { get; private set; }
 
         private Timer NetworkWorker, EnvironmentWorker;
         private TcpListener Listener;
         private readonly PacketHandler[] PacketHandlers;
+        private IList<ILogProvider> LogProviders;
 
         public MultiplayerServer()
         {
@@ -26,6 +31,8 @@ namespace TrueCraft
             NetworkWorker = new Timer(DoNetwork);
             EnvironmentWorker = new Timer(DoEnvironment);
             PacketHandlers = new PacketHandler[0x100];
+            Worlds = new List<IWorld>();
+            LogProviders = new List<ILogProvider>();
 
             reader.RegisterCorePackets();
             Handlers.PacketHandlers.RegisterHandlers(this);
@@ -41,8 +48,36 @@ namespace TrueCraft
             Listener = new TcpListener(endPoint);
             Listener.Start();
             Listener.BeginAcceptTcpClient(AcceptClient, null);
+            Log(LogCategory.Notice, "Running TrueCraft server on {0}", endPoint);
             NetworkWorker.Change(100, 1000 / 20);
             EnvironmentWorker.Change(100, 1000 / 20);
+        }
+
+        public void AddWorld(IWorld world)
+        {
+            Worlds.Add(world);
+        }
+
+        public void AddLogProvider(ILogProvider provider)
+        {
+            LogProviders.Add(provider);
+        }
+
+        public void Log(LogCategory category, string text, params object[] parameters)
+        {
+            for (int i = 0, LogProvidersCount = LogProviders.Count; i < LogProvidersCount; i++)
+            {
+                var provider = LogProviders[i];
+                provider.Log(category, text, parameters);
+            }
+        }
+
+        private void DisconnectClient(IRemoteClient _client)
+        {
+            var client = (RemoteClient)_client;
+            if (client.LoggedIn)
+                Log(LogCategory.Notice, "{0} has left the server.");
+            Clients.Remove(client);
         }
 
         private void AcceptClient(IAsyncResult result)
@@ -68,29 +103,33 @@ namespace TrueCraft
                 {
                     IPacket packet;
                     while (!client.PacketQueue.TryDequeue(out packet)) { }
-                    Console.WriteLine("Sending packet 0x{0:X2}: {1}", packet.ID, packet.GetType().Name);
                     PacketReader.WritePacket(client.MinecraftStream, packet);
+                    if (packet is DisconnectPacket)
+                    {
+                        DisconnectClient(client);
+                        i--;
+                    }
                 }
                 if (client.DataAvailable)
                 {
                     var packet = PacketReader.ReadPacket(client.MinecraftStream);
                     if (PacketHandlers[packet.ID] != null)
                     {
-                        Console.WriteLine("Got packet 0x{0:X2}: {1}", packet.ID, packet.GetType().Name);
                         try
                         {
                             PacketHandlers[packet.ID](packet, client, this);
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
-                            // TODO: Something else
-                            Clients.Remove(client);
+                            Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
+                            Log(LogCategory.Debug, e.ToString());
+                            DisconnectClient(client);
                             i--;
                         }
                     }
                     else
                     {
-                        Console.WriteLine("WARNING: Got unhandled packet 0x{0:X2}: {1}", packet.ID, packet.GetType().Name);
+                        // TODO: Something productive
                     }
                 }
             }

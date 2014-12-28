@@ -2,6 +2,8 @@
 using TrueCraft.API.Networking;
 using System.Net;
 using System.Collections.Generic;
+using TrueCraft.API.World;
+using TrueCraft.API.Logging;
 
 namespace TrueCraft.API.Server
 {
@@ -15,8 +17,12 @@ namespace TrueCraft.API.Server
     {
         IPacketReader PacketReader { get; }
         IList<IRemoteClient> Clients { get; }
+        IList<IWorld> Worlds { get; }
 
         void Start(IPEndPoint endPoint);
         void RegisterPacketHandler(byte packetId, PacketHandler handler);
+        void AddWorld(IWorld world);
+        void AddLogProvider(ILogProvider provider);
+        void Log(LogCategory category, string text, params object[] parameters);
     }
 }

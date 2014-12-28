@@ -100,6 +100,8 @@
     <Compile Include="World\Region.cs" />
     <Compile Include="World\Section.cs" />
     <Compile Include="World\World.cs" />
+    <Compile Include="TerrainGen\FlatlandGenerator.cs" />
+    <Compile Include="Logging\ConsoleLogProvider.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -115,5 +117,6 @@
   <ItemGroup>
     <Folder Include="Networking\Packets\" />
     <Folder Include="World\" />
+    <Folder Include="Logging\" />
   </ItemGroup>
 </Project>

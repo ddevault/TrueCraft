@@ -59,12 +59,16 @@
     <Compile Include="World\ISection.cs" />
     <Compile Include="NibbleArray.cs" />
     <Compile Include="World\IRegion.cs" />
+    <Compile Include="Biome.cs" />
+    <Compile Include="Logging\LogCategory.cs" />
+    <Compile Include="Logging\ILogProvider.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Networking\" />
     <Folder Include="Server\" />
     <Folder Include="World\" />
+    <Folder Include="Logging\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\externals\fNbt\fNbt\fNbt.csproj">
