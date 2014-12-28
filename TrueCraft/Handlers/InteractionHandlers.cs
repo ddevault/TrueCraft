@@ -28,5 +28,15 @@ namespace TrueCraft.Handlers
                     break;
             }
         }
+
+        public static void HandlePlayerBlockPlacementPacket(IPacket _packet, IRemoteClient _client, IMultiplayerServer server)
+        {
+            var packet = (PlayerBlockPlacementPacket)_packet;
+            var client = (RemoteClient)_client;
+            // TODO: Handle this (even somewhat) properly
+            // I should just import large chunks of code from Craft.Net for this sort of thing
+            client.World.SetBlockID(new Coordinates3D(packet.X, packet.Y, packet.Z), (byte)packet.ItemID);
+            client.World.SetMetadata(new Coordinates3D(packet.X, packet.Y, packet.Z), (byte)packet.Metadata);
+        }
     }
 }
