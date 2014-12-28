@@ -109,6 +109,7 @@
     <Compile Include="Windows\CraftingWindowArea.cs" />
     <Compile Include="Windows\InventoryWindow.cs" />
     <Compile Include="Windows\WindowArea.cs" />
+    <Compile Include="Logic\BlockProvider.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -126,5 +127,7 @@
     <Folder Include="World\" />
     <Folder Include="Logging\" />
     <Folder Include="Windows\" />
+    <Folder Include="Logic\" />
+    <Folder Include="Logic\Blocks\" />
   </ItemGroup>
 </Project>

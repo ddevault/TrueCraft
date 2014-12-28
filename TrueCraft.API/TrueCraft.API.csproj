@@ -69,6 +69,8 @@
     <Compile Include="Windows\IWindow.cs" />
     <Compile Include="Windows\IWindowArea.cs" />
     <Compile Include="Windows\WindowChangeEventArgs.cs" />
+    <Compile Include="Logic\IBlockProvider.cs" />
+    <Compile Include="Logic\IItemProvider.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -78,6 +80,7 @@
     <Folder Include="Logging\" />
     <Folder Include="Entities\" />
     <Folder Include="Windows\" />
+    <Folder Include="Logic\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\externals\fNbt\fNbt\fNbt.csproj">
