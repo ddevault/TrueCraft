@@ -12,6 +12,8 @@ using System.Linq;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.Core.World;
 using Ionic.Zlib;
+using TrueCraft.API.Windows;
+using TrueCraft.Core.Windows;
 
 namespace TrueCraft
 {
@@ -24,6 +26,8 @@ namespace TrueCraft
             PacketQueue = new ConcurrentQueue<IPacket>();
             LoadedChunks = new List<Coordinates2D>();
             Server = server;
+            Inventory = new InventoryWindow();
+            InventoryWindow.Hotbar[0] = new ItemStack(1, 64);
         }
         
         public NetworkStream NetworkStream { get; set; }
@@ -34,6 +38,15 @@ namespace TrueCraft
         public IMultiplayerServer Server { get; set; }
         public IWorld World { get; internal set; }
         public IEntity Entity { get; internal set; }
+        public IWindow Inventory { get; private set; }
+
+        public InventoryWindow InventoryWindow
+        {
+            get
+            {
+                return Inventory as InventoryWindow;
+            }
+        }
 
         internal int ChunkRadius { get; set; }
         internal IList<Coordinates2D> LoadedChunks { get; set; }

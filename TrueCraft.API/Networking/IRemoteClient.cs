@@ -1,6 +1,7 @@
 ﻿using System;
 using TrueCraft.API.World;
 using TrueCraft.API.Entities;
+using TrueCraft.API.Windows;
 
 namespace TrueCraft.API.Networking
 {
@@ -10,6 +11,7 @@ namespace TrueCraft.API.Networking
         bool DataAvailable { get; }
         IWorld World { get; }
         IEntity Entity { get; }
+        IWindow Inventory { get; }
 
         void QueuePacket(IPacket packet);
     }

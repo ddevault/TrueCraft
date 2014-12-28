@@ -38,6 +38,7 @@ namespace TrueCraft.Handlers
                 client.QueuePacket(new LoginResponsePacket(0, 0, Dimension.Overworld));
                 client.ChunkRadius = 2;
                 client.UpdateChunks();
+                client.QueuePacket(new WindowItemsPacket(0, client.Inventory.GetSlots()));
                 client.QueuePacket(new SpawnPositionPacket(0, 16, 0));
                 client.QueuePacket(new SetPlayerPositionPacket(0, 16, 17, 0, 0, 0, true));
                 server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(10), client.SendKeepAlive);

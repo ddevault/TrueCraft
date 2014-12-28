@@ -11,6 +11,12 @@ namespace TrueCraft.Core.Networking.Packets
     {
         public byte ID { get { return 0x68; } }
 
+        public WindowItemsPacket(sbyte windowID, ItemStack[] items)
+        {
+            WindowID = windowID;
+            Items = items;
+        }
+
         public sbyte WindowID;
         public ItemStack[] Items;
 
