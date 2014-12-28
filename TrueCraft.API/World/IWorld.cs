@@ -10,6 +10,8 @@ namespace TrueCraft.API.World
     {
         string Name { get; set; }
 
+        event EventHandler<BlockChangeEventArgs> BlockChanged;
+
         IChunk GetChunk(Coordinates2D coordinates);
         byte GetBlockID(Coordinates3D coordinates);
         byte GetMetadata(Coordinates3D coordinates);

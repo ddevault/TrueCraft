@@ -60,8 +60,23 @@ namespace TrueCraft
         public void AddWorld(IWorld world)
         {
             Worlds.Add(world);
+            world.BlockChanged += HandleBlockChanged;
             var manager = new EntityManager(this, world);
             EntityManagers.Add(manager);
+        }
+
+        void HandleBlockChanged (object sender, BlockChangeEventArgs e)
+        {
+            for (int i = 0, ClientsCount = Clients.Count; i < ClientsCount; i++)
+            {
+                var client = (RemoteClient)Clients[i];
+                // TODO: Confirm that the client knows of this block
+                if (client.LoggedIn && client.World == sender)
+                {
+                    client.QueuePacket(new BlockChangePacket(e.Position.X, (sbyte)e.Position.Y, e.Position.Z,
+                        (sbyte)e.NewBlock.ID, (sbyte)e.NewBlock.Metadata));
+                }
+            }
         }
 
         public void AddLogProvider(ILogProvider provider)

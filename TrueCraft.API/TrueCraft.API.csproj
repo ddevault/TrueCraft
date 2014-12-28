@@ -64,6 +64,8 @@
     <Compile Include="Server\IEventScheduler.cs" />
     <Compile Include="Server\IEntityManager.cs" />
     <Compile Include="Entities\IEntity.cs" />
+    <Compile Include="World\BlockData.cs" />
+    <Compile Include="World\BlockChangeEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -17,6 +17,8 @@ namespace TrueCraft.Core.World
         public IDictionary<Coordinates2D, IRegion> Regions { get; set; }
         public IChunkProvider ChunkProvider { get; set; }
 
+        public event EventHandler<BlockChangeEventArgs> BlockChanged;
+
         public World(string name)
         {
             Name = name;
@@ -137,18 +139,39 @@ namespace TrueCraft.Core.World
             return chunk.GetBlockLight(coordinates);
         }
 
+        private BlockData GetBlockData(Coordinates3D adjustedCoordinates, IChunk chunk)
+        {
+            return new BlockData
+            {
+                ID = chunk.GetBlockID(adjustedCoordinates),
+                Metadata = chunk.GetMetadata(adjustedCoordinates),
+                BlockLight = chunk.GetBlockLight(adjustedCoordinates),
+                SkyLight = chunk.GetSkyLight(adjustedCoordinates)
+            };
+        }
+
         public void SetBlockID(Coordinates3D coordinates, byte value)
         {
             IChunk chunk;
             var adjustedCoordinates = FindBlockPosition(coordinates, out chunk);
+            BlockData old = new BlockData();
+            if (BlockChanged != null)
+                old = GetBlockData(adjustedCoordinates, chunk);
             chunk.SetBlockID(adjustedCoordinates, value);
+            if (BlockChanged != null)
+                BlockChanged(this, new BlockChangeEventArgs(coordinates, old, GetBlockData(adjustedCoordinates, chunk)));
         }
 
         public void SetMetadata(Coordinates3D coordinates, byte value)
         {
             IChunk chunk;
             var adjustedCoordinates = FindBlockPosition(coordinates, out chunk);
+            BlockData old = new BlockData();
+            if (BlockChanged != null)
+                old = GetBlockData(adjustedCoordinates, chunk);
             chunk.SetMetadata(adjustedCoordinates, value);
+            if (BlockChanged != null)
+                BlockChanged(this, new BlockChangeEventArgs(coordinates, old, GetBlockData(adjustedCoordinates, chunk)));
         }
 
         public void SetSkyLight(Coordinates3D coordinates, byte value)

@@ -104,6 +104,10 @@ namespace TrueCraft.Core.World
             return BlockLight[index];
         }
 
+        /// <summary>
+        /// Sets the block ID at specific coordinates relative to this chunk.
+        /// Warning: The parent world's BlockChanged event handler does not get called.
+        /// </summary>
         public void SetBlockID(Coordinates3D coordinates, byte value)
         {
             LastAccessed = DateTime.Now;
@@ -131,6 +135,10 @@ namespace TrueCraft.Core.World
             }
         }
 
+        /// <summary>
+        /// Sets the metadata at specific coordinates relative to this chunk.
+        /// Warning: The parent world's BlockChanged event handler does not get called.
+        /// </summary>
         public void SetMetadata(Coordinates3D coordinates, byte value)
         {
             LastAccessed = DateTime.Now;
@@ -139,6 +147,10 @@ namespace TrueCraft.Core.World
             Metadata[index] = value;
         }
 
+        /// <summary>
+        /// Sets the sky light at specific coordinates relative to this chunk.
+        /// Warning: The parent world's BlockChanged event handler does not get called.
+        /// </summary>
         public void SetSkyLight(Coordinates3D coordinates, byte value)
         {
             LastAccessed = DateTime.Now;
@@ -147,6 +159,10 @@ namespace TrueCraft.Core.World
             SkyLight[index] = value;
         }
 
+        /// <summary>
+        /// Sets the block light at specific coordinates relative to this chunk.
+        /// Warning: The parent world's BlockChanged event handler does not get called.
+        /// </summary>
         public void SetBlockLight(Coordinates3D coordinates, byte value)
         {
             LastAccessed = DateTime.Now;

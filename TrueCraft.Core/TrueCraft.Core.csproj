@@ -98,7 +98,6 @@
     <Compile Include="Networking\Packets\DisconnectPacket.cs" />
     <Compile Include="World\Chunk.cs" />
     <Compile Include="World\Region.cs" />
-    <Compile Include="World\Section.cs" />
     <Compile Include="World\World.cs" />
     <Compile Include="TerrainGen\FlatlandGenerator.cs" />
     <Compile Include="Logging\ConsoleLogProvider.cs" />
