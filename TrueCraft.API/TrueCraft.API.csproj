@@ -66,6 +66,12 @@
     <Compile Include="Entities\IEntity.cs" />
     <Compile Include="World\BlockData.cs" />
     <Compile Include="World\BlockChangeEventArgs.cs" />
+    <Compile Include="Windows\ArmorWindowArea.cs" />
+    <Compile Include="Windows\CraftingWindowArea.cs" />
+    <Compile Include="Windows\InventoryWindow.cs" />
+    <Compile Include="Windows\Window.cs" />
+    <Compile Include="Windows\WindowArea.cs" />
+    <Compile Include="Windows\WindowChangeEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -74,6 +80,7 @@
     <Folder Include="World\" />
     <Folder Include="Logging\" />
     <Folder Include="Entities\" />
+    <Folder Include="Windows\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\externals\fNbt\fNbt\fNbt.csproj">
