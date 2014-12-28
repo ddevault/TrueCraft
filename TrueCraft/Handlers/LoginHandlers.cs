@@ -32,7 +32,7 @@ namespace TrueCraft.Handlers
             {
                 server.Log(LogCategory.Notice, "{0} joined the server.", client.Username); // TODO: Mention the same thing in chat
                 client.LoggedIn = true;
-                client.Entity = new PlayerEntity();
+                client.Entity = new PlayerEntity(client.Username);
                 client.World = server.Worlds[0];
                 server.GetEntityManagerForWorld(client.World).SpawnEntity(client.Entity);
                 client.QueuePacket(new LoginResponsePacket(0, 0, Dimension.Overworld));

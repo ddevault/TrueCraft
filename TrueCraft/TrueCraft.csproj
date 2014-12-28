@@ -43,6 +43,12 @@
     <Compile Include="Handlers\LoginHandlers.cs" />
     <Compile Include="EventScheduler.cs" />
     <Compile Include="EntityManager.cs" />
+    <Compile Include="Handlers\EntityHandlers.cs" />
+    <Compile Include="Entities\Entity.cs" />
+    <Compile Include="Entities\EntityEventArgs.cs" />
+    <Compile Include="Entities\ItemEntity.cs" />
+    <Compile Include="Entities\LivingEntity.cs" />
+    <Compile Include="Entities\ObjectEntity.cs" />
     <Compile Include="Entities\PlayerEntity.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

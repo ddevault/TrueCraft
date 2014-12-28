@@ -11,6 +11,7 @@ namespace TrueCraft.Handlers
         {
             server.RegisterPacketHandler(new HandshakePacket().ID, LoginHandlers.HandleHandshakePacket);
             server.RegisterPacketHandler(new LoginRequestPacket().ID, LoginHandlers.HandleLoginRequestPacket);
+            server.RegisterPacketHandler(new PlayerPositionPacket().ID, EntityHandlers.HandlePlayerPositionPacket);
         }
 
         internal static void HandleKeepAlive(IPacket _packet, IRemoteClient _client, IMultiplayerServer server)
