@@ -1,56 +1,63 @@
 # TrueCraft
 
-An open-source implementation of Minecraft Beta 1.7.3 (July 2011).
-
-## What is TrueCraft
-
-This is a completely
+A completely
 [clean-room](https://en.wikipedia.org/wiki/Clean_room_design) implementation of
-Minecraft as it appeared in July of 2011. Contributors must verify that they
-have never read any decompiled Minecraft code before submitting their changes
-upstream.
+Minecraft beta 1.7.3 (circa September 2011). No decompiled code has been used in
+the development of this software.
 
-## Why make it?
+I miss the old days of Minecraft, when it was a simple game. It was nearly
+perfect. Most of what Mojang has added since beta 1.7.3 is fluff, life support
+for a game that was "done" years ago. This is my attempt to get back to the
+original spirit of Minecraft, before there were things like the End, or
+all-in-one redstone devices, or village gift shops. A simple sandbox where you
+can build and explore and fight with your friends. I miss that.
 
-(begin opinionated section)
+The goal of this project is effectively to fork Minecraft. Your contribution is
+welcome, but keep in mind that I will mercilessly reject changes that aren't in
+line with the vision. If you like the new Minecraft, please feel free to keep
+playing it. If you miss the old Minecraft, join me.
 
-Minecraft Beta 1.7.3 was the perfect version of Minecraft. Most of what Mojang
-added afterwards was fluff and, collectively, ruined the game. The goal of this
-project is to take that perfect version and bring it back to life by effectively
-forking Minecraft. We want the old spirit of Minecraft back, but actively
-maintained and with a community that once again may thrive.
+### "What about Craft.Net?"
 
-(end opinionated section)
-
-I got tired of maintaining Craft.Net. I never had time to add features, I was
-just keeping up the latest updates from Mojang to a game I liked less and less.
-This project sets the goal in stone - implement Minecraft Beta 1.7.3. It's not a
-moving target and I don't dislike that version of the game.
+Craft.Net aims to support the latest version of Minecraft. That means I'm aiming
+for a moving target every time Mojang updates the game, adding more features
+that I don't like. I'm tired of Craft.Net. Let's do this instead.
 
 ## Status
 
-This project is very early in development, so don't expect to gain much from it.
-The server will come first, and then the client. After then, some of the good
-features from future versions of Minecraft will be implemented (like creative
-mode, sprinting, etc).
+This project is very young, so don't expect much. Currently the server works and
+you can log into it and walk around the world.
 
-Note that large-scale refactorings are probably going to be common for a while.
-Minecraft is not very well designed and it's TrueCraft's responsibility to hide
-this behind nicer abstractions.
+## Roadmap
 
-## Community
+1. Implement server (in progress)
+1. Implement client
+1. New authentication
+1. Backport the good
+1. Modding support
 
-There isn't much of one yet, but this is a sort of spiritual successor to
-Craft.Net. The folks in #craft.net on Freenode will probably talk to you about
-this project if you ask nicely.
+First order of business is building a server, which I've started on. Then we'll
+have to build a client, and for that I want community help because I have next
+to no experience writing actual games.
 
-## Resources
+Mojang has shut off the old authentication servers, which means that it's no
+longer possible to use beta 1.7.3 in online mode. We'll have to build our own.
+After that, we'll have effectively reimplemented Minecraft from scratch and can
+start (conservatively) adding things.
 
-[1.7.3 protocol docs](http://wiki.vg/index.php?title=Protocol&oldid=517)
+"Backporting the good" refers to implementing features from newer versions of
+Minecraft that aren't bad. This also includes refactoring the internal details
+of beta 1.7.3 to not suck so much (like the protocol). Some examples of features
+I want to bring backwards are sprinting, more food types (but not hunger), and
+smaller changes like lighting improvements and bow usage mechanics.
 
-[1.7.3 inventory docs](http://wiki.vg/index.php?title=Inventory&oldid=2356)
+Finally, if we've got a nice mature project and a good community going, modding
+support would be great.
 
-[1.7.3 protocol faq](http://wiki.vg/index.php?title=Protocol_FAQ&oldid=74)
+## Get Involved
+
+If you want to keep up with development or contribute, join #truecraft on
+irc.esper.net.
 
 ## Blah blah blah
 
