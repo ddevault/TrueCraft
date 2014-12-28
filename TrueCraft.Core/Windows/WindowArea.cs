@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TrueCraft.API.Windows;
+using TrueCraft.API;
 
-namespace TrueCraft.API.Windows
+namespace TrueCraft.Core.Windows
 {
-    public class WindowArea
+    public class WindowArea : IWindowArea
     {
         public WindowArea(int startIndex, int length)
         {
@@ -32,7 +34,7 @@ namespace TrueCraft.API.Windows
             }
         }
 
-        protected internal virtual int MoveOrMergeItem(int index, ItemStack item, WindowArea from)
+        public virtual int MoveOrMergeItem(int index, ItemStack item, IWindowArea from)
         {
             int emptyIndex = -1;
             //var maximumStackSize = Item.GetMaximumStackSize(new ItemDescriptor(item.Id, item.Metadata));
@@ -79,7 +81,7 @@ namespace TrueCraft.API.Windows
             return true;
         }
 
-        public void CopyTo(WindowArea area)
+        public void CopyTo(IWindowArea area)
         {
             for (int i = 0; i < area.Length && i < Length; i++)
                 area[i] = this[i];

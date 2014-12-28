@@ -104,6 +104,11 @@
     <Compile Include="Networking\BufferedStream.cs" />
     <Compile Include="Networking\Packets\DestroyEntityPacket.cs" />
     <Compile Include="Networking\Packets\ExplosionPacket.cs" />
+    <Compile Include="Windows\Window.cs" />
+    <Compile Include="Windows\ArmorWindowArea.cs" />
+    <Compile Include="Windows\CraftingWindowArea.cs" />
+    <Compile Include="Windows\InventoryWindow.cs" />
+    <Compile Include="Windows\WindowArea.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -120,5 +125,6 @@
     <Folder Include="Networking\Packets\" />
     <Folder Include="World\" />
     <Folder Include="Logging\" />
+    <Folder Include="Windows\" />
   </ItemGroup>
 </Project>

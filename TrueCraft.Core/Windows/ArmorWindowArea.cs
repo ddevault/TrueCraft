@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TrueCraft.API;
+using TrueCraft.API.Windows;
 
-namespace TrueCraft.API.Windows
+namespace TrueCraft.Core.Windows
 {
     public class ArmorWindowArea : WindowArea
     {
@@ -35,7 +37,7 @@ namespace TrueCraft.API.Windows
             return base.IsValid(slot, index);
         }
 
-        protected internal override int MoveOrMergeItem(int index, ItemStack slot, WindowArea from)
+        public override int MoveOrMergeItem(int index, ItemStack slot, IWindowArea from)
         {
             for (int i = 0; i < Length; i++)
             {

@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TrueCraft.API.Windows;
+using TrueCraft.API;
 
-namespace TrueCraft.API.Windows
+namespace TrueCraft.Core.Windows
 {
     public class InventoryWindow : Window
     {
@@ -29,26 +31,26 @@ namespace TrueCraft.API.Windows
         public const int ArmorIndex = 5;
         public const int MainIndex = 9;
 
-        public override WindowArea[] WindowAreas { get; protected set; }
+        public override IWindowArea[] WindowAreas { get; protected set; }
 
         #region Properties
 
-        public WindowArea CraftingGrid 
+        public IWindowArea CraftingGrid 
         {
             get { return WindowAreas[0]; }
         }
 
-        public WindowArea Armor
+        public IWindowArea Armor
         {
             get { return WindowAreas[1]; }
         }
 
-        public WindowArea MainInventory
+        public IWindowArea MainInventory
         {
             get { return WindowAreas[2]; }
         }
 
-        public WindowArea Hotbar
+        public IWindowArea Hotbar
         {
             get { return WindowAreas[3]; }
         }
@@ -57,7 +59,7 @@ namespace TrueCraft.API.Windows
 
         #endregion
 
-        protected override WindowArea GetLinkedArea(int index, ItemStack slot)
+        protected override IWindowArea GetLinkedArea(int index, ItemStack slot)
         {
             // TODO: Link armor
             //if (!slot.Empty && slot.AsItem() is IArmorItem && (index == 2 || index == 3))

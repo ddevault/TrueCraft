@@ -2,19 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TrueCraft.API.Windows;
+using TrueCraft.API;
 
-namespace TrueCraft.API.Windows
+namespace TrueCraft.Core.Windows
 {
-    public abstract class Window
+    public abstract class Window : IWindow
     {
-        public abstract WindowArea[] WindowAreas { get; protected set; }
+        public abstract IWindowArea[] WindowAreas { get; protected set; }
 
         public event EventHandler<WindowChangeEventArgs> WindowChange;
 
-        /// <summary>
-        /// Called when an item is "shift+clicked" to move it from
-        /// one area to another.
-        /// </summary>
         public virtual void MoveToAlternateArea(int index)
         {
             int fromIndex = GetAreaIndex(index);
@@ -35,12 +33,12 @@ namespace TrueCraft.API.Windows
         /// <param name="index">The index of the area the item is coming from</param>
         /// <param name="slot">The item being moved</param>
         /// <returns>The area to place the item into</returns>
-        protected abstract WindowArea GetLinkedArea(int index, ItemStack slot);
+        protected abstract IWindowArea GetLinkedArea(int index, ItemStack slot);
 
         /// <summary>
         /// Gets the window area to handle this index and adjust index accordingly
         /// </summary>
-        protected WindowArea GetArea(ref int index)
+        protected IWindowArea GetArea(ref int index)
         {
             foreach (var area in WindowAreas)
             {

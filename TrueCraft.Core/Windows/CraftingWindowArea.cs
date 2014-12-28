@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TrueCraft.API;
 
-namespace TrueCraft.API.Windows
+namespace TrueCraft.Core.Windows
 {
     public class CraftingWindowArea : WindowArea
     {
