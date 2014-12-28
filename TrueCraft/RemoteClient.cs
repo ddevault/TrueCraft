@@ -51,6 +51,15 @@ namespace TrueCraft
             PacketQueue.Enqueue(packet);
         }
 
+        internal void ExpandChunkRadius(IMultiplayerServer server)
+        {
+            if (ChunkRadius < 5)
+            {
+                ChunkRadius++;
+                server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(1), ExpandChunkRadius);
+            }
+        }
+
         internal void SendKeepAlive(IMultiplayerServer server)
         {
             QueuePacket(new KeepAlivePacket());

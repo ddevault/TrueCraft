@@ -36,12 +36,13 @@ namespace TrueCraft.Handlers
                 client.World = server.Worlds[0];
                 server.GetEntityManagerForWorld(client.World).SpawnEntity(client.Entity);
                 client.QueuePacket(new LoginResponsePacket(0, 0, Dimension.Overworld));
-                client.ChunkRadius = 4;
+                client.ChunkRadius = 2;
                 client.UpdateChunks();
                 client.QueuePacket(new SpawnPositionPacket(0, 16, 0));
                 client.QueuePacket(new SetPlayerPositionPacket(0, 16, 17, 0, 0, 0, true));
                 client.QueuePacket(new ChatMessagePacket(string.Format("Welcome to the server, {0}!", client.Username)));
                 server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(10), client.SendKeepAlive);
+                server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(1), client.ExpandChunkRadius);
             }
         }
     }

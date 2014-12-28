@@ -81,13 +81,6 @@ namespace TrueCraft.Entities
         {
         }
 
-        public event EventHandler Despawn;
-
-        protected internal virtual void OnDespawn()
-        {
-            if (Despawn != null) Despawn(this, new EventArgs());
-        }
-
         protected bool EnablePropertyChange { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
         protected internal virtual void OnPropertyChanged(string property)

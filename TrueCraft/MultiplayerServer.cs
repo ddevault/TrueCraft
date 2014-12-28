@@ -120,7 +120,6 @@ namespace TrueCraft
                     IPacket packet;
                     while (!client.PacketQueue.TryDequeue(out packet)) { }
                     PacketReader.WritePacket(client.MinecraftStream, packet);
-                    Console.WriteLine("Sent {0}", packet.GetType().Name);
                     if (packet is DisconnectPacket)
                     {
                         DisconnectClient(client);
@@ -130,7 +129,6 @@ namespace TrueCraft
                 if (client.DataAvailable)
                 {
                     var packet = PacketReader.ReadPacket(client.MinecraftStream);
-                    Console.WriteLine("Got {0}", packet.GetType().Name);
                     if (PacketHandlers[packet.ID] != null)
                     {
                         try
