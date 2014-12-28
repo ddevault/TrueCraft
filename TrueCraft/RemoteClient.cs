@@ -51,6 +51,12 @@ namespace TrueCraft
             PacketQueue.Enqueue(packet);
         }
 
+        internal void SendKeepAlive(IMultiplayerServer server)
+        {
+            QueuePacket(new KeepAlivePacket());
+            server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(10), SendKeepAlive);
+        }
+
         internal void UpdateChunks()
         {
             var newChunks = new List<Coordinates2D>();
@@ -106,7 +112,7 @@ namespace TrueCraft
             LoadedChunks.Remove(position);
         }
 
-        public static ChunkDataPacket CreatePacket(IChunk chunk)
+        private static ChunkDataPacket CreatePacket(IChunk chunk)
         {
             // TODO: Be smarter about this
             var X = chunk.Coordinates.X;

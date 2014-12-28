@@ -41,6 +41,7 @@ namespace TrueCraft.Handlers
                 client.QueuePacket(new SpawnPositionPacket(0, 16, 0));
                 client.QueuePacket(new SetPlayerPositionPacket(0, 16, 17, 0, 0, 0, true));
                 client.QueuePacket(new ChatMessagePacket(string.Format("Welcome to the server, {0}!", client.Username)));
+                server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(10), client.SendKeepAlive);
             }
         }
     }
