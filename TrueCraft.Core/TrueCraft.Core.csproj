@@ -102,6 +102,7 @@
     <Compile Include="World\World.cs" />
     <Compile Include="TerrainGen\FlatlandGenerator.cs" />
     <Compile Include="Logging\ConsoleLogProvider.cs" />
+    <Compile Include="Networking\BufferedStream.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

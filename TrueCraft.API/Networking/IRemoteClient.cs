@@ -1,4 +1,6 @@
 ﻿using System;
+using TrueCraft.API.World;
+using TrueCraft.API.Entities;
 
 namespace TrueCraft.API.Networking
 {
@@ -6,6 +8,8 @@ namespace TrueCraft.API.Networking
     {
         IMinecraftStream MinecraftStream { get; }
         bool DataAvailable { get; }
+        IWorld World { get; }
+        IEntity Entity { get; }
 
         void QueuePacket(IPacket packet);
     }

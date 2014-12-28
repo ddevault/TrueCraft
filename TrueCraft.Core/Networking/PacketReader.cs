@@ -32,13 +32,13 @@ namespace TrueCraft.Core.Networking
             RegisterPacketType<PlayerGroundedPacket>(serverbound: true, clientbound: false);            // 0x0A
             RegisterPacketType<PlayerPositionPacket>(serverbound: true, clientbound: false);            // 0x0B
             RegisterPacketType<PlayerLookPacket>(serverbound: true, clientbound: false);                // 0x0C
-            RegisterPacketType<PlayerPositionPacket>(serverbound: true, clientbound: false);            // 0x0D
+            RegisterPacketType<PlayerPositionAndLookPacket>(serverbound: true, clientbound: false);     // 0x0D
             RegisterPacketType<SetPlayerPositionPacket>(serverbound: false, clientbound: true);         // 0x0D
             RegisterPacketType<PlayerDiggingPacket>(serverbound: true, clientbound: false);             // 0x0E
             RegisterPacketType<PlayerBlockPlacementPacket>(serverbound: true, clientbound: false);      // 0x0F
             RegisterPacketType<ChangeHeldItemPacket>(serverbound: true, clientbound: false);            // 0x10
             RegisterPacketType<UseBedPacket>(serverbound: false, clientbound: true);                    // 0x11
-            RegisterPacketType<AnimationPacket>(serverbound: false, clientbound: true);                 // 0x12
+            RegisterPacketType<AnimationPacket>();                                                      // 0x12
             RegisterPacketType<PlayerActionPacket>(serverbound: true, clientbound: false);              // 0x13
             RegisterPacketType<SpawnPlayerPacket>(serverbound: false, clientbound: true);               // 0x14
             RegisterPacketType<SpawnItemPacket>(serverbound: false, clientbound: true);                 // 0x15
@@ -114,6 +114,7 @@ namespace TrueCraft.Core.Networking
         {
             stream.WriteUInt8(packet.ID);
             packet.WritePacket(stream);
+            stream.BaseStream.Flush();
         }
     }
 }

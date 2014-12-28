@@ -4,7 +4,7 @@ using TrueCraft.API.World;
 
 namespace TrueCraft.Core.World
 {
-    public class Section : ISection
+    public class Section
     {
         public const byte Width = 16, Height = 16, Depth = 16;
 
@@ -42,31 +42,31 @@ namespace TrueCraft.Core.World
 
         public byte GetBlockID(Coordinates3D coordinates)
         {
-            int index = coordinates.X + (coordinates.Z * Width) + (coordinates.Y * Height * Width);
+            int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Depth * Width);
             return Blocks[index];
         }
 
         public byte GetMetadata(Coordinates3D coordinates)
         {
-            int index = coordinates.X + (coordinates.Z * Width) + (coordinates.Y * Height * Width);
+            int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Depth * Width);
             return Metadata[index];
         }
 
         public byte GetSkyLight(Coordinates3D coordinates)
         {
-            int index = coordinates.X + (coordinates.Z * Width) + (coordinates.Y * Height * Width);
+            int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Depth * Width);
             return SkyLight[index];
         }
 
         public byte GetBlockLight(Coordinates3D coordinates)
         {
-            int index = coordinates.X + (coordinates.Z * Width) + (coordinates.Y * Height * Width);
+            int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Depth * Width);
             return BlockLight[index];
         }
 
         public void SetBlockID(Coordinates3D coordinates, byte value)
         {
-            int index = coordinates.X + (coordinates.Z * Width) + (coordinates.Y * Height * Width);
+            int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Depth * Width);
             if (value == 0)
             {
                 if (Blocks[index] != 0)
@@ -82,19 +82,19 @@ namespace TrueCraft.Core.World
 
         public void SetMetadata(Coordinates3D coordinates, byte value)
         {
-            int index = coordinates.X + (coordinates.Z * Width) + (coordinates.Y * Height * Width);
+            int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Depth * Width);
             Metadata[index] = value;
         }
 
         public void SetSkyLight(Coordinates3D coordinates, byte value)
         {
-            int index = coordinates.X + (coordinates.Z * Width) + (coordinates.Y * Height * Width);
+            int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Depth * Width);
             SkyLight[index] = value;
         }
 
         public void SetBlockLight(Coordinates3D coordinates, byte value)
         {
-            int index = coordinates.X + (coordinates.Z * Width) + (coordinates.Y * Height * Width);
+            int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Depth * Width);
             BlockLight[index] = value;
         }
 

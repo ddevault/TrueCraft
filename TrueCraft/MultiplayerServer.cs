@@ -17,6 +17,7 @@ namespace TrueCraft
         public IPacketReader PacketReader { get; private set; }
         public IList<IRemoteClient> Clients { get; private set; }
         public IList<IWorld> Worlds { get; private set; }
+        public IList<IEntityManager> EntityManagers { get; private set; }
         public IEventScheduler Scheduler { get; private set; }
 
         private Timer NetworkWorker, EnvironmentWorker;
@@ -33,6 +34,7 @@ namespace TrueCraft
             EnvironmentWorker = new Timer(DoEnvironment);
             PacketHandlers = new PacketHandler[0x100];
             Worlds = new List<IWorld>();
+            EntityManagers = new List<IEntityManager>();
             LogProviders = new List<ILogProvider>();
             Scheduler = new EventScheduler(this);
 
@@ -58,6 +60,8 @@ namespace TrueCraft
         public void AddWorld(IWorld world)
         {
             Worlds.Add(world);
+            var manager = new EntityManager(this, world);
+            EntityManagers.Add(manager);
         }
 
         public void AddLogProvider(ILogProvider provider)
@@ -74,6 +78,17 @@ namespace TrueCraft
             }
         }
 
+        public IEntityManager GetEntityManagerForWorld(IWorld world)
+        {
+            for (int i = 0; i < EntityManagers.Count; i++)
+            {
+                var manager = EntityManagers[i] as EntityManager;
+                if (manager.World == world)
+                    return manager;
+            }
+            return null;
+        }
+
         private void DisconnectClient(IRemoteClient _client)
         {
             var client = (RemoteClient)_client;
@@ -85,7 +100,7 @@ namespace TrueCraft
         private void AcceptClient(IAsyncResult result)
         {
             var tcpClient = Listener.EndAcceptTcpClient(result);
-            var client = new RemoteClient(tcpClient.GetStream());
+            var client = new RemoteClient(this, tcpClient.GetStream());
             Clients.Add(client);
             Listener.BeginAcceptTcpClient(AcceptClient, null);
         }
@@ -105,6 +120,7 @@ namespace TrueCraft
                     IPacket packet;
                     while (!client.PacketQueue.TryDequeue(out packet)) { }
                     PacketReader.WritePacket(client.MinecraftStream, packet);
+                    Console.WriteLine("Sent {0}", packet.GetType().Name);
                     if (packet is DisconnectPacket)
                     {
                         DisconnectClient(client);
@@ -114,6 +130,7 @@ namespace TrueCraft
                 if (client.DataAvailable)
                 {
                     var packet = PacketReader.ReadPacket(client.MinecraftStream);
+                    Console.WriteLine("Got {0}", packet.GetType().Name);
                     if (PacketHandlers[packet.ID] != null)
                     {
                         try

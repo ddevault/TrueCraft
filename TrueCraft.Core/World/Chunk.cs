@@ -12,25 +12,26 @@ namespace TrueCraft.Core.World
 {
     public class Chunk : INbtSerializable, IChunk
     {
-        public const int Width = 16, Height = 256, Depth = 16;
+        public const int Width = 16, Height = 128, Depth = 16;
 
         private static readonly NbtSerializer Serializer = new NbtSerializer(typeof(Chunk));
 
         [NbtIgnore]
         public DateTime LastAccessed { get; set; }
-
-        public bool IsModified { get; set; }
-
-        public byte[] Biomes { get; set; }
-
-        public int[] HeightMap { get; set; }
-
         [NbtIgnore]
-        public ISection[] Sections { get; set; }
-
+        public bool IsModified { get; set; }
+        [NbtIgnore]
+        public byte[] Blocks { get; set; }
+        [NbtIgnore]
+        public NibbleArray Metadata { get; set; }
+        [NbtIgnore]
+        public NibbleArray BlockLight { get; set; }
+        [NbtIgnore]
+        public NibbleArray SkyLight { get; set; }
+        public byte[] Biomes { get; set; }
+        public int[] HeightMap { get; set; }
         [TagName("xPos")]
         public int X { get; set; }
-
         [TagName("zPos")]
         public int Z { get; set; }
 
@@ -57,9 +58,6 @@ namespace TrueCraft.Core.World
         public Chunk()
         {
             TerrainPopulated = true;
-            Sections = new Section[16];
-            for (int i = 0; i < Sections.Length; i++)
-                Sections[i] = new Section((byte)i);
             Biomes = new byte[Width * Depth];
             HeightMap = new int[Width * Depth];
             LastAccessed = DateTime.Now;
@@ -69,47 +67,49 @@ namespace TrueCraft.Core.World
         {
             X = coordinates.X;
             Z = coordinates.Z;
+            const int size = Width * Height * Depth;
+            Blocks = new byte[size];
+            Metadata = new NibbleArray(size);
+            BlockLight = new NibbleArray(size);
+            SkyLight = new NibbleArray(size);
+            for (int i = 0; i < size; i++)
+                SkyLight[i] = 0xFF;
         }
 
         public byte GetBlockID(Coordinates3D coordinates)
         {
             LastAccessed = DateTime.Now;
-            int section = GetSectionNumber(coordinates.Y);
-            coordinates.Y = GetPositionInSection(coordinates.Y);
-            return Sections[section].GetBlockID(coordinates);
+            int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
+            return Blocks[index];
         }
 
         public byte GetMetadata(Coordinates3D coordinates)
         {
             LastAccessed = DateTime.Now;
-            int section = GetSectionNumber(coordinates.Y);
-            coordinates.Y = GetPositionInSection(coordinates.Y);
-            return Sections[section].GetMetadata(coordinates);
+            int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
+            return Metadata[index];
         }
 
         public byte GetSkyLight(Coordinates3D coordinates)
         {
             LastAccessed = DateTime.Now;
-            int section = GetSectionNumber(coordinates.Y);
-            coordinates.Y = GetPositionInSection(coordinates.Y);
-            return Sections[section].GetSkyLight(coordinates);
+            int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
+            return SkyLight[index];
         }
 
         public byte GetBlockLight(Coordinates3D coordinates)
         {
             LastAccessed = DateTime.Now;
-            int section = GetSectionNumber(coordinates.Y);
-            coordinates.Y = GetPositionInSection(coordinates.Y);
-            return Sections[section].GetBlockLight(coordinates);
+            int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
+            return BlockLight[index];
         }
 
         public void SetBlockID(Coordinates3D coordinates, byte value)
         {
             LastAccessed = DateTime.Now;
             IsModified = true;
-            int section = GetSectionNumber(coordinates.Y);
-            coordinates.Y = GetPositionInSection(coordinates.Y);
-            Sections[section].SetBlockID(coordinates, value);
+            int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
+            Blocks[index] = value;
             var oldHeight = GetHeight((byte)coordinates.X, (byte)coordinates.Z);
             if (value == 0) // Air
             {
@@ -135,37 +135,24 @@ namespace TrueCraft.Core.World
         {
             LastAccessed = DateTime.Now;
             IsModified = true;
-            int section = GetSectionNumber(coordinates.Y);
-            coordinates.Y = GetPositionInSection(coordinates.Y);
-            Sections[section].SetMetadata(coordinates, value);
+            int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
+            Metadata[index] = value;
         }
 
         public void SetSkyLight(Coordinates3D coordinates, byte value)
         {
             LastAccessed = DateTime.Now;
             IsModified = true;
-            int section = GetSectionNumber(coordinates.Y);
-            coordinates.Y = GetPositionInSection(coordinates.Y);
-            Sections[section].SetSkyLight(coordinates, value);
+            int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
+            SkyLight[index] = value;
         }
 
         public void SetBlockLight(Coordinates3D coordinates, byte value)
         {
             LastAccessed = DateTime.Now;
             IsModified = true;
-            int section = GetSectionNumber(coordinates.Y);
-            coordinates.Y = GetPositionInSection(coordinates.Y);
-            Sections[section].SetBlockLight(coordinates, value);
-        }
-
-        private static int GetSectionNumber(int yPos)
-        {
-             return yPos / 16;
-        }
-
-        private static int GetPositionInSection(int yPos)
-        {
-            return yPos % 16;
+            int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
+            BlockLight[index] = value;
         }
 
         /// <summary>
@@ -206,19 +193,7 @@ namespace TrueCraft.Core.World
             var chunk = (NbtCompound)Serializer.Serialize(this, tagName, true);
             var entities = new NbtList("Entities", NbtTagType.Compound);
             chunk.Add(entities);
-            var sections = new NbtList("Sections", NbtTagType.Compound);
-            var serializer = new NbtSerializer(typeof(Section));
-            for (int i = 0; i < Sections.Length; i++)
-            {
-                if (Sections[i] is Section)
-                {
-                    if (!(Sections[i] as Section).IsAir)
-                        sections.Add(serializer.Serialize(Sections[i]));
-                }
-                else
-                    sections.Add(serializer.Serialize(Sections[i]));
-            }
-            chunk.Add(sections);
+            // TODO: Save block data
             return chunk;
         }
 
@@ -231,18 +206,11 @@ namespace TrueCraft.Core.World
             this.Biomes = chunk.Biomes;
             this.HeightMap = chunk.HeightMap;
             this.LastUpdate = chunk.LastUpdate;
-            this.Sections = chunk.Sections;
             this.TerrainPopulated = chunk.TerrainPopulated;
             this.X = chunk.X;
             this.Z = chunk.Z;
 
-            var serializer = new NbtSerializer(typeof(Section));
-            foreach (var section in compound["Sections"] as NbtList)
-            {
-                int index = section["Y"].IntValue;
-                Sections[index] = (Section)serializer.Deserialize(section);
-                Sections[index].ProcessSection();
-            }
+            // TODO: Load block data
         }
     }
 }

@@ -7,9 +7,12 @@ namespace TrueCraft.API.World
         Coordinates2D Coordinates { get; set; }
         bool IsModified { get; set; }
         int[] HeightMap { get; }
-        ISection[] Sections { get; }
         byte[] Biomes { get; }
         DateTime LastAccessed { get; set; }
+        byte[] Blocks { get; }
+        NibbleArray Metadata { get; }
+        NibbleArray BlockLight { get; }
+        NibbleArray SkyLight { get; }
         byte GetBlockID(Coordinates3D coordinates);
         byte GetMetadata(Coordinates3D coordinates);
         byte GetSkyLight(Coordinates3D coordinates);

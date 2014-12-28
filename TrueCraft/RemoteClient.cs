@@ -3,16 +3,27 @@ using TrueCraft.API.Networking;
 using System.Net.Sockets;
 using TrueCraft.Core.Networking;
 using System.Collections.Concurrent;
+using TrueCraft.API.Server;
+using TrueCraft.API.World;
+using TrueCraft.API.Entities;
+using TrueCraft.API;
+using System.Collections.Generic;
+using System.Linq;
+using TrueCraft.Core.Networking.Packets;
+using TrueCraft.Core.World;
+using Ionic.Zlib;
 
 namespace TrueCraft
 {
     public class RemoteClient : IRemoteClient
     {
-        public RemoteClient(NetworkStream stream)
+        public RemoteClient(IMultiplayerServer server, NetworkStream stream)
         {
             NetworkStream = stream;
-            MinecraftStream = new MinecraftStream(NetworkStream);
+            MinecraftStream = new MinecraftStream(new BufferedStream(NetworkStream));
             PacketQueue = new ConcurrentQueue<IPacket>();
+            LoadedChunks = new List<Coordinates2D>();
+            Server = server;
         }
         
         public NetworkStream NetworkStream { get; set; }
@@ -20,6 +31,12 @@ namespace TrueCraft
         public ConcurrentQueue<IPacket> PacketQueue { get; private set; }
         public string Username { get; internal set; }
         public bool LoggedIn { get; internal set; }
+        public IMultiplayerServer Server { get; set; }
+        public IWorld World { get; internal set; }
+        public IEntity Entity { get; internal set; }
+
+        internal int ChunkRadius { get; set; }
+        internal IList<Coordinates2D> LoadedChunks { get; set; }
 
         public bool DataAvailable
         {
@@ -32,6 +49,82 @@ namespace TrueCraft
         public void QueuePacket(IPacket packet)
         {
             PacketQueue.Enqueue(packet);
+        }
+
+        internal void UpdateChunks()
+        {
+            var newChunks = new List<Coordinates2D>();
+            for (int x = -ChunkRadius; x < ChunkRadius; x++)
+            {
+                for (int z = -ChunkRadius; z < ChunkRadius; z++)
+                {
+                    newChunks.Add(new Coordinates2D(
+                        ((int)Entity.Position.X >> 4) + x,
+                        ((int)Entity.Position.Z >> 4) + z));
+                }
+            }
+            // Unload extraneous columns
+            lock (LoadedChunks)
+            {
+                var currentChunks = new List<Coordinates2D>(LoadedChunks);
+                foreach (Coordinates2D chunk in currentChunks)
+                {
+                    if (!newChunks.Contains(chunk))
+                        UnloadChunk(chunk);
+                }
+                // Load new columns
+                foreach (Coordinates2D chunk in newChunks)
+                {
+                    if (!LoadedChunks.Contains(chunk))
+                        LoadChunk(chunk);
+                }
+            }
+        }
+
+        internal void UnloadAllChunks()
+        {
+            lock (LoadedChunks)
+            {
+                while (LoadedChunks.Any())
+                {
+                    UnloadChunk(LoadedChunks[0]);
+                }
+            }
+        }
+            
+        internal void LoadChunk(Coordinates2D position)
+        {
+            var chunk = World.GetChunk(position);
+            QueuePacket(new ChunkPreamblePacket(chunk.Coordinates.X, chunk.Coordinates.Z));
+            QueuePacket(CreatePacket(chunk));
+            LoadedChunks.Add(position);
+        }
+
+        internal void UnloadChunk(Coordinates2D position)
+        {
+            QueuePacket(new ChunkPreamblePacket(position.X, position.Z, false));
+            LoadedChunks.Remove(position);
+        }
+
+        public static ChunkDataPacket CreatePacket(IChunk chunk)
+        {
+            // TODO: Be smarter about this
+            var X = chunk.Coordinates.X;
+            var Z = chunk.Coordinates.Z;
+
+            const int blocksPerChunk = Chunk.Width * Chunk.Height * Chunk.Depth;
+            const int bytesPerChunk = (int)(blocksPerChunk * 2.5);
+
+            byte[] data = new byte[bytesPerChunk];
+
+            Array.Copy(chunk.Blocks, 0, data, 0, chunk.Blocks.Length);
+            Array.Copy(chunk.Metadata.Data, 0, data, chunk.Blocks.Length, chunk.Metadata.Data.Length);
+            Array.Copy(chunk.BlockLight.Data, 0, data, chunk.Blocks.Length + chunk.Metadata.Data.Length, chunk.BlockLight.Data.Length);
+            Array.Copy(chunk.SkyLight.Data, 0, data, chunk.Blocks.Length + chunk.Metadata.Data.Length 
+                + chunk.BlockLight.Data.Length, chunk.SkyLight.Data.Length);
+
+            var result = ZlibStream.CompressBuffer(data);
+            return new ChunkDataPacket(X * Chunk.Width, 0, Z * Chunk.Depth, Chunk.Width, Chunk.Height, Chunk.Depth, result);
         }
     }
 }

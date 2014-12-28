@@ -30,6 +30,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="Ionic.Zip.Reduced">
+      <HintPath>..\lib\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -39,6 +42,8 @@
     <Compile Include="Handlers\PacketHandlers.cs" />
     <Compile Include="Handlers\LoginHandlers.cs" />
     <Compile Include="EventScheduler.cs" />
+    <Compile Include="EntityManager.cs" />
+    <Compile Include="Entities\PlayerEntity.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -50,8 +55,13 @@
       <Project>{FA4BE9A3-DBF0-4380-BA2B-FFAA71C4706D}</Project>
       <Name>TrueCraft.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\externals\fNbt\fNbt\fNbt.csproj">
+      <Project>{4488498D-976D-4DA3-BF72-109531AF0488}</Project>
+      <Name>fNbt</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Handlers\" />
+    <Folder Include="Entities\" />
   </ItemGroup>
 </Project>

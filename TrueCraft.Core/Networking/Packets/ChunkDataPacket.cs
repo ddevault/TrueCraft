@@ -10,6 +10,17 @@ namespace TrueCraft.Core.Networking.Packets
     {
         public byte ID { get { return 0x33; } }
 
+        public ChunkDataPacket(int x, short y, int z, short width, short height, short depth, byte[] compressedData)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+            Width = width;
+            Height = height;
+            Depth = depth;
+            CompressedData = compressedData;
+        }
+
         public int X;
         public short Y;
         public int Z;

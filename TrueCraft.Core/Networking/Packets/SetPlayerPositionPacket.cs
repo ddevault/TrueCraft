@@ -10,6 +10,17 @@ namespace TrueCraft.Core.Networking.Packets
     {
         public byte ID { get { return 0x0D; } }
 
+        public SetPlayerPositionPacket(double x, double y, double stance, double z, float yaw, float pitch, bool onGround)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+            Stance = stance;
+            Yaw = yaw;
+            Pitch = pitch;
+            OnGround = onGround;
+        }
+
         public double X, Y, Z;
         public double Stance;
         public float Yaw, Pitch;
@@ -32,8 +43,8 @@ namespace TrueCraft.Core.Networking.Packets
             stream.WriteDouble(Stance);
             stream.WriteDouble(Y);
             stream.WriteDouble(Z);
-            stream.WriteDouble(Yaw);
-            stream.WriteDouble(Pitch);
+            stream.WriteSingle(Yaw);
+            stream.WriteSingle(Pitch);
             stream.WriteBoolean(OnGround);
         }
     }

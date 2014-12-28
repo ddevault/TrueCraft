@@ -4,6 +4,7 @@ using System.Threading;
 using TrueCraft.Core.World;
 using TrueCraft.Core.TerrainGen;
 using TrueCraft.Core.Logging;
+using TrueCraft.API.Logging;
 
 namespace TrueCraft
 {
@@ -14,7 +15,7 @@ namespace TrueCraft
             // TODO: Make this more flexible
             var server = new MultiplayerServer();
             server.AddWorld(new World("default", new FlatlandGenerator()));
-            server.AddLogProvider(new ConsoleLogProvider());
+            server.AddLogProvider(new ConsoleLogProvider(LogCategory.All));
             server.Start(new IPEndPoint(IPAddress.Any, 25565));
             while (true)
                 Thread.Sleep(1000);

@@ -10,6 +10,13 @@ namespace TrueCraft.Core.Networking.Packets
     {
         public byte ID { get { return 0x32; } }
 
+        public ChunkPreamblePacket(int x, int z, bool load = true)
+        {
+            X = x;
+            Z = z;
+            Load = load;
+        }
+
         public int X, Z;
         /// <summary>
         /// If false, free the chunk. If true, allocate it.

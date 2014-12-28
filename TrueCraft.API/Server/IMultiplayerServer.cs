@@ -25,5 +25,6 @@ namespace TrueCraft.API.Server
         void AddWorld(IWorld world);
         void AddLogProvider(ILogProvider provider);
         void Log(LogCategory category, string text, params object[] parameters);
+        IEntityManager GetEntityManagerForWorld(IWorld world);
     }
 }

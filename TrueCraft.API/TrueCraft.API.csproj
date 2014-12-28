@@ -56,13 +56,14 @@
     <Compile Include="World\IWorld.cs" />
     <Compile Include="World\IChunk.cs" />
     <Compile Include="World\IChunkProvider.cs" />
-    <Compile Include="World\ISection.cs" />
     <Compile Include="NibbleArray.cs" />
     <Compile Include="World\IRegion.cs" />
     <Compile Include="Biome.cs" />
     <Compile Include="Logging\LogCategory.cs" />
     <Compile Include="Logging\ILogProvider.cs" />
     <Compile Include="Server\IEventScheduler.cs" />
+    <Compile Include="Server\IEntityManager.cs" />
+    <Compile Include="Entities\IEntity.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -70,6 +71,7 @@
     <Folder Include="Server\" />
     <Folder Include="World\" />
     <Folder Include="Logging\" />
+    <Folder Include="Entities\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\externals\fNbt\fNbt\fNbt.csproj">

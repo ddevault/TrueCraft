@@ -25,5 +25,6 @@ namespace TrueCraft.API.Logging
         /// Generally useful information.
         /// </summary>
         Notice = 16,
+        All = Packets | Debug | Warning | Error | Notice
     }
 }

@@ -12,6 +12,11 @@ namespace TrueCraft.Core.Networking.Packets
     {
         public byte ID { get { return 0x03; } }
 
+        public ChatMessagePacket(string message)
+        {
+            Message = message;
+        }
+
         public string Message;
 
         public void ReadPacket(IMinecraftStream stream)
