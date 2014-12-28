@@ -18,6 +18,7 @@ namespace TrueCraft.API.Server
         IPacketReader PacketReader { get; }
         IList<IRemoteClient> Clients { get; }
         IList<IWorld> Worlds { get; }
+        IEventScheduler Scheduler { get; }
 
         void Start(IPEndPoint endPoint);
         void RegisterPacketHandler(byte packetId, PacketHandler handler);

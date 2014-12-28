@@ -17,6 +17,7 @@ namespace TrueCraft
         public IPacketReader PacketReader { get; private set; }
         public IList<IRemoteClient> Clients { get; private set; }
         public IList<IWorld> Worlds { get; private set; }
+        public IEventScheduler Scheduler { get; private set; }
 
         private Timer NetworkWorker, EnvironmentWorker;
         private TcpListener Listener;
@@ -33,6 +34,7 @@ namespace TrueCraft
             PacketHandlers = new PacketHandler[0x100];
             Worlds = new List<IWorld>();
             LogProviders = new List<ILogProvider>();
+            Scheduler = new EventScheduler(this);
 
             reader.RegisterCorePackets();
             Handlers.PacketHandlers.RegisterHandlers(this);
@@ -76,7 +78,7 @@ namespace TrueCraft
         {
             var client = (RemoteClient)_client;
             if (client.LoggedIn)
-                Log(LogCategory.Notice, "{0} has left the server.");
+                Log(LogCategory.Notice, "{0} has left the server.", client.Username);
             Clients.Remove(client);
         }
 
@@ -85,18 +87,17 @@ namespace TrueCraft
             var tcpClient = Listener.EndAcceptTcpClient(result);
             var client = new RemoteClient(tcpClient.GetStream());
             Clients.Add(client);
+            Listener.BeginAcceptTcpClient(AcceptClient, null);
         }
 
         private void DoEnvironment(object discarded)
         {
-            for (int i = 0, ClientsCount = Clients.Count; i < ClientsCount; i++)
-            {
-            }
+            Scheduler.Update();
         }
 
         private void DoNetwork(object discarded)
         {
-            for (int i = 0, ClientsCount = Clients.Count; i < ClientsCount; i++)
+            for (int i = 0; i < Clients.Count; i++)
             {
                 var client = Clients[i] as RemoteClient;
                 if (client.PacketQueue.Count != 0)

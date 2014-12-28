@@ -62,6 +62,7 @@
     <Compile Include="Biome.cs" />
     <Compile Include="Logging\LogCategory.cs" />
     <Compile Include="Logging\ILogProvider.cs" />
+    <Compile Include="Server\IEventScheduler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

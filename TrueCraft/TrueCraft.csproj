@@ -38,6 +38,7 @@
     <Compile Include="RemoteClient.cs" />
     <Compile Include="Handlers\PacketHandlers.cs" />
     <Compile Include="Handlers\LoginHandlers.cs" />
+    <Compile Include="EventScheduler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

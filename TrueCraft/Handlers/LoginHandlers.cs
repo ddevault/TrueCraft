@@ -30,6 +30,7 @@ namespace TrueCraft.Handlers
             {
                 server.Log(LogCategory.Notice, "{0} joined the server.", client.Username);
                 client.LoggedIn = true;
+                server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(3), (s) => client.QueuePacket(new DisconnectPacket("Bye!")));
             }
         }
     }
