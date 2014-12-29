@@ -27,7 +27,7 @@ namespace TrueCraft
             LoadedChunks = new List<Coordinates2D>();
             Server = server;
             Inventory = new InventoryWindow();
-            InventoryWindow.Hotbar[0] = new ItemStack(1, 64);
+            InventoryWindow.WindowChange += HandleWindowChange;
         }
         
         public NetworkStream NetworkStream { get; set; }
@@ -139,9 +139,13 @@ namespace TrueCraft
             LoadedChunks.Remove(position);
         }
 
+        void HandleWindowChange(object sender, WindowChangeEventArgs e)
+        {
+            QueuePacket(new SetSlotPacket(0, (short)e.SlotIndex, e.Value.Id, e.Value.Count, e.Value.Metadata));
+        }
+
         private static ChunkDataPacket CreatePacket(IChunk chunk)
         {
-            // TODO: Be smarter about this
             var X = chunk.Coordinates.X;
             var Z = chunk.Coordinates.Z;
 

@@ -149,7 +149,8 @@ namespace TrueCraft
             for (int i = 0; i < Clients.Count; i++)
             {
                 var client = Clients[i] as RemoteClient;
-                while (client.PacketQueue.Count != 0)
+                var sendTimeout = DateTime.Now.AddMilliseconds(50);
+                while (client.PacketQueue.Count != 0 && DateTime.Now < sendTimeout)
                 {
                     IPacket packet;
                     while (!client.PacketQueue.TryDequeue(out packet)) { }
@@ -161,7 +162,8 @@ namespace TrueCraft
                         break;
                     }
                 }
-                if (client.DataAvailable)
+                var receiveTimeout = DateTime.Now.AddMilliseconds(50);
+                while (client.DataAvailable && DateTime.Now < receiveTimeout)
                 {
                     var packet = PacketReader.ReadPacket(client.MinecraftStream);
                     if (PacketHandlers[packet.ID] != null)

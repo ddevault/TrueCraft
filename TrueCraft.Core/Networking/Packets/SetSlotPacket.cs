@@ -10,6 +10,15 @@ namespace TrueCraft.Core.Networking.Packets
     {
         public byte ID { get { return 0x67; } }
 
+        public SetSlotPacket(sbyte windowID, short slotIndex, short itemID, sbyte count, short metadata)
+        {
+            WindowID = windowID;
+            SlotIndex = slotIndex;
+            ItemID = itemID;
+            Count = count;
+            Metadata = metadata;
+        }
+
         public sbyte WindowID;
         public short SlotIndex;
         public short ItemID;
