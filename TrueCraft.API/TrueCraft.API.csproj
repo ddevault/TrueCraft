@@ -71,6 +71,7 @@
     <Compile Include="Windows\WindowChangeEventArgs.cs" />
     <Compile Include="Logic\IBlockProvider.cs" />
     <Compile Include="Logic\IItemProvider.cs" />
+    <Compile Include="ChatColor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

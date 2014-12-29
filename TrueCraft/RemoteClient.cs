@@ -64,6 +64,11 @@ namespace TrueCraft
             PacketQueue.Enqueue(packet);
         }
 
+        public void SendMessage(string message)
+        {
+            QueuePacket(new ChatMessagePacket(message));
+        }
+
         internal void ExpandChunkRadius(IMultiplayerServer server)
         {
             if (ChunkRadius < 5)
