@@ -216,7 +216,6 @@ namespace TrueCraft.Core.World
         public void Deserialize(NbtTag value)
         {
             IsModified = true;
-            var compound = value as NbtCompound;
             var chunk = (Chunk)Serializer.Deserialize(value, true);
 
             this.Biomes = chunk.Biomes;

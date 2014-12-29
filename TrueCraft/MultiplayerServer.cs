@@ -65,7 +65,7 @@ namespace TrueCraft
             EntityManagers.Add(manager);
         }
 
-        void HandleBlockChanged (object sender, BlockChangeEventArgs e)
+        void HandleBlockChanged(object sender, BlockChangeEventArgs e)
         {
             for (int i = 0, ClientsCount = Clients.Count; i < ClientsCount; i++)
             {

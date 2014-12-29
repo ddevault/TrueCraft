@@ -22,6 +22,9 @@ namespace TrueCraft.Core.Logic
 
         public virtual string DisplayName { get { return string.Empty; } }
 
-        public virtual Tuple<int, int> TextureMap { get { return null; } }
+        public virtual Tuple<int, int> GetTextureMap(byte metadata)
+        {
+            return null;
+        }
     }
 }
