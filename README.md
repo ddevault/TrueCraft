@@ -25,8 +25,14 @@ that I don't like. I'm tired of Craft.Net. Let's do this instead.
 
 ## Status
 
-This project is very young, so don't expect much. The server is underway. You
-can log in, walk around the world, dig up stuff, and sort of place blocks.
+This project is very young, so don't expect much. The server is in-progress.
+Here's what you can do with it:
+
+* Connect and walk around the world
+* Dig up and place blocks
+* Chat
+
+Pretty basic. More to come over time.
 
 ## Roadmap
 
