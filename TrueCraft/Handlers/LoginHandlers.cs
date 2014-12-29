@@ -30,19 +30,19 @@ namespace TrueCraft.Handlers
                 client.QueuePacket(new DisconnectPacket("Server has no worlds configured."));
             else
             {
-                server.Log(LogCategory.Notice, "{0} joined the server.", client.Username); // TODO: Mention the same thing in chat
                 client.LoggedIn = true;
                 client.Entity = new PlayerEntity(client.Username);
                 client.World = server.Worlds[0];
                 server.GetEntityManagerForWorld(client.World).SpawnEntity(client.Entity);
                 client.QueuePacket(new LoginResponsePacket(0, 0, Dimension.Overworld));
-                client.ChunkRadius = 2;
+                client.ChunkRadius = 3;
                 client.UpdateChunks();
                 client.QueuePacket(new WindowItemsPacket(0, client.Inventory.GetSlots()));
                 client.QueuePacket(new SpawnPositionPacket(0, 16, 0));
                 client.QueuePacket(new SetPlayerPositionPacket(0, 16, 17, 0, 0, 0, true));
                 server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(10), client.SendKeepAlive);
                 server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(1), client.ExpandChunkRadius);
+                server.SendMessage(ChatColor.Yellow + "{0} joined the server.", client.Username);
             }
         }
     }

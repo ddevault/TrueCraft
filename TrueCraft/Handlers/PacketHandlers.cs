@@ -3,6 +3,7 @@ using TrueCraft.API;
 using TrueCraft.API.Server;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.API.Networking;
+using TrueCraft.API.Logging;
 
 namespace TrueCraft.Handlers
 {
@@ -27,15 +28,16 @@ namespace TrueCraft.Handlers
             // TODO
         }
 
-        internal static void HandleChatMessage(IPacket _packet, IRemoteClient _client, IMultiplayerServer server)
+        internal static void HandleChatMessage(IPacket _packet, IRemoteClient _client, IMultiplayerServer _server)
         {
             // TODO: Abstract this to support things like commands
             // TODO: Sanitize messages
             var packet = (ChatMessagePacket)_packet;
-            foreach (var client in server.Clients)
-            {
-                client.SendMessage(ChatColor.Yellow + string.Format("<{0}> {1}", _client.Username, packet.Message));
-            }
+            var server = (MultiplayerServer)_server;
+            var args = new ChatMessageEventArgs(_client, packet.Message);
+            server.OnChatMessageReceived(args);
+            if (!args.PreventDefault)
+                server.SendMessage("<{0}> {1}", _client.Username, packet.Message);
         }
     }
 }

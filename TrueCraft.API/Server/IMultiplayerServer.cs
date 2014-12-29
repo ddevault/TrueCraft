@@ -15,6 +15,8 @@ namespace TrueCraft.API.Server
 
     public interface IMultiplayerServer
     {
+        event EventHandler<ChatMessageEventArgs> ChatMessageReceived;
+
         IPacketReader PacketReader { get; }
         IList<IRemoteClient> Clients { get; }
         IList<IWorld> Worlds { get; }
@@ -26,5 +28,6 @@ namespace TrueCraft.API.Server
         void AddLogProvider(ILogProvider provider);
         void Log(LogCategory category, string text, params object[] parameters);
         IEntityManager GetEntityManagerForWorld(IWorld world);
+        void SendMessage(string message, params object[] parameters);
     }
 }

@@ -9,11 +9,14 @@ using System.Collections.Generic;
 using TrueCraft.API.World;
 using TrueCraft.API.Logging;
 using TrueCraft.Core.Networking.Packets;
+using TrueCraft.API;
 
 namespace TrueCraft
 {
     public class MultiplayerServer : IMultiplayerServer
     {
+        public event EventHandler<ChatMessageEventArgs> ChatMessageReceived;
+
         public IPacketReader PacketReader { get; private set; }
         public IList<IRemoteClient> Clients { get; private set; }
         public IList<IWorld> Worlds { get; private set; }
@@ -104,6 +107,22 @@ namespace TrueCraft
             return null;
         }
 
+        public void SendMessage(string message, params object[] parameters)
+        {
+            var compiled = string.Format(message, parameters);
+            foreach (var client in Clients)
+            {
+                client.SendMessage(compiled);
+                Log(LogCategory.Notice, compiled);
+            }
+        }
+
+        protected internal void OnChatMessageReceived(ChatMessageEventArgs e)
+        {
+            if (ChatMessageReceived != null)
+                ChatMessageReceived(this, e);
+        }
+
         private void DisconnectClient(IRemoteClient _client)
         {
             var client = (RemoteClient)_client;
@@ -130,7 +149,7 @@ namespace TrueCraft
             for (int i = 0; i < Clients.Count; i++)
             {
                 var client = Clients[i] as RemoteClient;
-                if (client.PacketQueue.Count != 0)
+                while (client.PacketQueue.Count != 0)
                 {
                     IPacket packet;
                     while (!client.PacketQueue.TryDequeue(out packet)) { }
@@ -139,6 +158,7 @@ namespace TrueCraft
                     {
                         DisconnectClient(client);
                         i--;
+                        break;
                     }
                 }
                 if (client.DataAvailable)
