@@ -16,6 +16,7 @@ namespace TrueCraft.API.World
         byte GetBlockID(Coordinates3D coordinates);
         byte GetMetadata(Coordinates3D coordinates);
         byte GetSkyLight(Coordinates3D coordinates);
+        BlockData GetBlockData(Coordinates3D coordinates);
         void SetBlockID(Coordinates3D coordinates, byte value);
         void SetMetadata(Coordinates3D coordinates, byte value);
         void SetSkyLight(Coordinates3D coordinates, byte value);

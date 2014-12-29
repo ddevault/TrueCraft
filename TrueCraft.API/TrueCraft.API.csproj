@@ -73,6 +73,7 @@
     <Compile Include="Logic\IItemProvider.cs" />
     <Compile Include="ChatColor.cs" />
     <Compile Include="Server\ChatMessageEventArgs.cs" />
+    <Compile Include="BlockFace.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

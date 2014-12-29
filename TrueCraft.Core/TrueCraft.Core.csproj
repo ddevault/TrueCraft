@@ -57,7 +57,6 @@
     <Compile Include="Networking\Packets\SetPlayerPositionPacket.cs" />
     <Compile Include="Networking\Packets\PlayerDiggingPacket.cs" />
     <Compile Include="Networking\Packets\PlayerBlockPlacementPacket.cs" />
-    <Compile Include="Networking\NetworkBlockFace.cs" />
     <Compile Include="Networking\Packets\ChangeHeldItemPacket.cs" />
     <Compile Include="Networking\Packets\UseBedPacket.cs" />
     <Compile Include="Networking\Packets\AnimationPacket.cs" />
@@ -192,6 +191,7 @@
     <Compile Include="Logic\Blocks\LockedChestBlock.cs" />
     <Compile Include="Logic\Blocks\TallGrassBlock.cs" />
     <Compile Include="Logic\Blocks\StoneSlabBlock.cs" />
+    <Compile Include="MathHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -1,5 +1,6 @@
 ﻿using System;
 using TrueCraft.API.Networking;
+using TrueCraft.API;
 
 namespace TrueCraft.Core.Networking.Packets
 {
@@ -14,7 +15,7 @@ namespace TrueCraft.Core.Networking.Packets
         public int X;
         public sbyte Y;
         public int Z;
-        public NetworkBlockFace Direction;
+        public BlockFace Face;
         /// <summary>
         /// The block or item ID. You should probably ignore this and use a server-side inventory.
         /// </summary>
@@ -33,9 +34,9 @@ namespace TrueCraft.Core.Networking.Packets
             X = stream.ReadInt32();
             Y = stream.ReadInt8();
             Z = stream.ReadInt32();
-            Direction = (NetworkBlockFace)stream.ReadInt8();
+            Face = (BlockFace)stream.ReadInt8();
             ItemID = stream.ReadInt16();
-            if (ItemID != 0)
+            if (ItemID != -1)
             {
                 Amount = stream.ReadInt8();
                 Metadata = stream.ReadInt16();
@@ -47,9 +48,9 @@ namespace TrueCraft.Core.Networking.Packets
             stream.WriteInt32(X);
             stream.WriteInt8(Y);
             stream.WriteInt32(Z);
-            stream.WriteInt8((sbyte)Direction);
+            stream.WriteInt8((sbyte)Face);
             stream.WriteInt16(ItemID);
-            if (ItemID != 0)
+            if (ItemID != -1)
             {
                 stream.WriteInt8(Amount.Value);
                 stream.WriteInt16(Metadata.Value);

@@ -14,6 +14,8 @@ using TrueCraft.Core.World;
 using Ionic.Zlib;
 using TrueCraft.API.Windows;
 using TrueCraft.Core.Windows;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace TrueCraft
 {
@@ -28,6 +30,7 @@ namespace TrueCraft
             Server = server;
             Inventory = new InventoryWindow();
             InventoryWindow.WindowChange += HandleWindowChange;
+            SelectedSlot = InventoryWindow.HotbarIndex;
         }
         
         public NetworkStream NetworkStream { get; set; }
@@ -39,6 +42,15 @@ namespace TrueCraft
         public IWorld World { get; internal set; }
         public IEntity Entity { get; internal set; }
         public IWindow Inventory { get; private set; }
+        public short SelectedSlot { get; internal set; }
+
+        public ItemStack SelectedItem
+        {
+            get
+            {
+                return Inventory[SelectedSlot];
+            }
+        }
 
         public InventoryWindow InventoryWindow
         {

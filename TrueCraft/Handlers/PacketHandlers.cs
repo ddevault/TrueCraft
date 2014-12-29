@@ -13,6 +13,7 @@ namespace TrueCraft.Handlers
         {
             server.RegisterPacketHandler(new KeepAlivePacket().ID, HandleKeepAlive);
             server.RegisterPacketHandler(new ChatMessagePacket().ID, HandleChatMessage);
+            server.RegisterPacketHandler(new DisconnectPacket().ID, HandleDisconnect);
 
             server.RegisterPacketHandler(new HandshakePacket().ID, LoginHandlers.HandleHandshakePacket);
             server.RegisterPacketHandler(new LoginRequestPacket().ID, LoginHandlers.HandleLoginRequestPacket);
@@ -21,6 +22,7 @@ namespace TrueCraft.Handlers
 
             server.RegisterPacketHandler(new PlayerDiggingPacket().ID, InteractionHandlers.HandlePlayerDiggingPacket);
             server.RegisterPacketHandler(new PlayerBlockPlacementPacket().ID, InteractionHandlers.HandlePlayerBlockPlacementPacket);
+            server.RegisterPacketHandler(new ChangeHeldItemPacket().ID, InteractionHandlers.HandleChangeHeldItem);
         }
 
         internal static void HandleKeepAlive(IPacket _packet, IRemoteClient _client, IMultiplayerServer server)
@@ -38,6 +40,11 @@ namespace TrueCraft.Handlers
             server.OnChatMessageReceived(args);
             if (!args.PreventDefault)
                 server.SendMessage("<{0}> {1}", _client.Username, packet.Message);
+        }
+
+        internal static void HandleDisconnect(IPacket _packet, IRemoteClient _client, IMultiplayerServer server)
+        {
+            throw new Exception("Player disconnected"); // TODO: PlayerDisconnectException or something
         }
     }
 }

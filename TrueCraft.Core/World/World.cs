@@ -139,7 +139,14 @@ namespace TrueCraft.Core.World
             return chunk.GetBlockLight(coordinates);
         }
 
-        private BlockData GetBlockData(Coordinates3D adjustedCoordinates, IChunk chunk)
+        public BlockData GetBlockData(Coordinates3D coordinates)
+        {
+            IChunk chunk;
+            coordinates = FindBlockPosition(coordinates, out chunk);
+            return GetBlockDataFromChunk(coordinates, chunk);
+        }
+
+        private BlockData GetBlockDataFromChunk(Coordinates3D adjustedCoordinates, IChunk chunk)
         {
             return new BlockData
             {
@@ -156,10 +163,10 @@ namespace TrueCraft.Core.World
             var adjustedCoordinates = FindBlockPosition(coordinates, out chunk);
             BlockData old = new BlockData();
             if (BlockChanged != null)
-                old = GetBlockData(adjustedCoordinates, chunk);
+                old = GetBlockDataFromChunk(adjustedCoordinates, chunk);
             chunk.SetBlockID(adjustedCoordinates, value);
             if (BlockChanged != null)
-                BlockChanged(this, new BlockChangeEventArgs(coordinates, old, GetBlockData(adjustedCoordinates, chunk)));
+                BlockChanged(this, new BlockChangeEventArgs(coordinates, old, GetBlockDataFromChunk(adjustedCoordinates, chunk)));
         }
 
         public void SetMetadata(Coordinates3D coordinates, byte value)
@@ -168,10 +175,10 @@ namespace TrueCraft.Core.World
             var adjustedCoordinates = FindBlockPosition(coordinates, out chunk);
             BlockData old = new BlockData();
             if (BlockChanged != null)
-                old = GetBlockData(adjustedCoordinates, chunk);
+                old = GetBlockDataFromChunk(adjustedCoordinates, chunk);
             chunk.SetMetadata(adjustedCoordinates, value);
             if (BlockChanged != null)
-                BlockChanged(this, new BlockChangeEventArgs(coordinates, old, GetBlockData(adjustedCoordinates, chunk)));
+                BlockChanged(this, new BlockChangeEventArgs(coordinates, old, GetBlockDataFromChunk(adjustedCoordinates, chunk)));
         }
 
         public void SetSkyLight(Coordinates3D coordinates, byte value)

@@ -13,6 +13,8 @@ namespace TrueCraft.API.Networking
         IEntity Entity { get; }
         IWindow Inventory { get; }
         string Username { get; }
+        short SelectedSlot { get; }
+        ItemStack SelectedItem { get; }
 
         void QueuePacket(IPacket packet);
         void SendMessage(string message);

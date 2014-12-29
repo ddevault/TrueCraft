@@ -1,5 +1,6 @@
 ﻿using System;
 using TrueCraft.API.Networking;
+using TrueCraft.API;
 
 namespace TrueCraft.Core.Networking.Packets
 {
@@ -22,7 +23,7 @@ namespace TrueCraft.Core.Networking.Packets
         public int X;
         public sbyte Y;
         public int Z;
-        public NetworkBlockFace BlockFace;
+        public BlockFace Face;
 
         public void ReadPacket(IMinecraftStream stream)
         {
@@ -30,7 +31,7 @@ namespace TrueCraft.Core.Networking.Packets
             X = stream.ReadInt32();
             Y = stream.ReadInt8();
             Z = stream.ReadInt32();
-            BlockFace = (NetworkBlockFace)stream.ReadInt8();
+            Face = (BlockFace)stream.ReadInt8();
         }
 
         public void WritePacket(IMinecraftStream stream)
@@ -39,7 +40,7 @@ namespace TrueCraft.Core.Networking.Packets
             stream.WriteInt32(X);
             stream.WriteInt8(Y);
             stream.WriteInt32(Z);
-            stream.WriteInt8((sbyte)BlockFace);
+            stream.WriteInt8((sbyte)Face);
         }
     }
 }
