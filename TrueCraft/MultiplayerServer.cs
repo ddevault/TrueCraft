@@ -16,6 +16,7 @@ namespace TrueCraft
     public class MultiplayerServer : IMultiplayerServer
     {
         public event EventHandler<ChatMessageEventArgs> ChatMessageReceived;
+        public event EventHandler<PlayerJoinedEventArgs> PlayerJoined;
 
         public IPacketReader PacketReader { get; private set; }
         public IList<IRemoteClient> Clients { get; private set; }
@@ -123,6 +124,12 @@ namespace TrueCraft
         {
             if (ChatMessageReceived != null)
                 ChatMessageReceived(this, e);
+        }
+
+        protected internal void OnPlayerJoined(PlayerJoinedEventArgs e)
+        {
+            if (PlayerJoined != null)
+                PlayerJoined(this, e);
         }
 
         private void DisconnectClient(IRemoteClient _client)

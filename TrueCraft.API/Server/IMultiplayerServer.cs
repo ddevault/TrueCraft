@@ -16,6 +16,7 @@ namespace TrueCraft.API.Server
     public interface IMultiplayerServer
     {
         event EventHandler<ChatMessageEventArgs> ChatMessageReceived;
+        event EventHandler<PlayerJoinedEventArgs> PlayerJoined;
 
         IPacketReader PacketReader { get; }
         IList<IRemoteClient> Clients { get; }
