@@ -66,6 +66,8 @@ namespace TrueCraft.Handlers
                     position += MathHelper.BlockFaceToCoordinates(packet.Face);
                     client.World.SetBlockID(position, (byte)slot.Id);
                     client.World.SetMetadata(position, (byte)slot.Metadata);
+                    slot.Count--;
+                    client.Inventory[client.SelectedSlot] = slot;
                     // End temporary
                     if (block != null)
                     {
