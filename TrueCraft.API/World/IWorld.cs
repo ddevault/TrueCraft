@@ -9,6 +9,7 @@ namespace TrueCraft.API.World
     public interface IWorld
     {
         string Name { get; set; }
+        IChunkProvider ChunkProvider { get; set; }
 
         event EventHandler<BlockChangeEventArgs> BlockChanged;
 

@@ -83,9 +83,11 @@ namespace TrueCraft
 
         internal void ExpandChunkRadius(IMultiplayerServer server)
         {
-            if (ChunkRadius < 5)
+            if (ChunkRadius < 16) // TODO: Allow customization of this number
             {
                 ChunkRadius++;
+                Console.WriteLine("Expanding chunk radius to {0}", ChunkRadius);
+                UpdateChunks();
                 server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(1), ExpandChunkRadius);
             }
         }

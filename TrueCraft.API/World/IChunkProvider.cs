@@ -8,5 +8,6 @@ namespace TrueCraft.API.World
     public interface IChunkProvider
     {
         IChunk GenerateChunk(IWorld world, Coordinates2D coordinates);
+        Vector3 SpawnPoint { get; }
     }
 }

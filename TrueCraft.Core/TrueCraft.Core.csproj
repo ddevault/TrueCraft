@@ -192,6 +192,8 @@
     <Compile Include="Logic\Blocks\TallGrassBlock.cs" />
     <Compile Include="Logic\Blocks\StoneSlabBlock.cs" />
     <Compile Include="MathHelper.cs" />
+    <Compile Include="TerrainGen\Noise.cs" />
+    <Compile Include="TerrainGen\StandardGenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

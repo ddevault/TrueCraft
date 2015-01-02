@@ -27,6 +27,7 @@ namespace TrueCraft
         private TcpListener Listener;
         private readonly PacketHandler[] PacketHandlers;
         private IList<ILogProvider> LogProviders;
+        private volatile bool ExecutingTick;
 
         public MultiplayerServer()
         {
@@ -40,6 +41,7 @@ namespace TrueCraft
             EntityManagers = new List<IEntityManager>();
             LogProviders = new List<ILogProvider>();
             Scheduler = new EventScheduler(this);
+            ExecutingTick = false;
 
             reader.RegisterCorePackets();
             Handlers.PacketHandlers.RegisterHandlers(this);
@@ -146,6 +148,9 @@ namespace TrueCraft
 
         private void DoNetwork(object discarded)
         {
+            if (ExecutingTick)
+                return; // TODO: Warn about skipped updates?
+            ExecutingTick = true;
             for (int i = 0; i < Clients.Count; i++)
             {
                 var client = Clients[i] as RemoteClient;
@@ -186,6 +191,7 @@ namespace TrueCraft
                     }
                 }
             }
+            ExecutingTick = false;
         }
     }
 }

@@ -33,13 +33,20 @@ namespace TrueCraft.Handlers
                 client.LoggedIn = true;
                 client.Entity = new PlayerEntity(client.Username);
                 client.World = server.Worlds[0];
-                server.GetEntityManagerForWorld(client.World).SpawnEntity(client.Entity);
+                client.ChunkRadius = 5;
+
+                // Send setup packets
                 client.QueuePacket(new LoginResponsePacket(0, 0, Dimension.Overworld));
-                client.ChunkRadius = 3;
                 client.UpdateChunks();
                 client.QueuePacket(new WindowItemsPacket(0, client.Inventory.GetSlots()));
-                client.QueuePacket(new SpawnPositionPacket(0, 16, 0));
-                client.QueuePacket(new SetPlayerPositionPacket(0, 16, 17, 0, 0, 0, true));
+                client.Entity.Position = client.World.ChunkProvider.SpawnPoint;
+                client.QueuePacket(new SpawnPositionPacket((int)client.Entity.Position.X,
+                    (int)client.Entity.Position.Y, (int)client.Entity.Position.Z));
+                client.QueuePacket(new SetPlayerPositionPacket(client.Entity.Position.X, client.Entity.Position.Y,
+                    client.Entity.Position.Y + client.Entity.Size.Height, client.Entity.Position.Z, 0, 0, true));
+
+                // Start housekeeping for this client
+                server.GetEntityManagerForWorld(client.World).SpawnEntity(client.Entity);
                 server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(10), client.SendKeepAlive);
                 server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(1), client.ExpandChunkRadius);
                 server.SendMessage(ChatColor.Yellow + "{0} joined the server.", client.Username);
