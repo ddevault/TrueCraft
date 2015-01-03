@@ -194,6 +194,8 @@
     <Compile Include="MathHelper.cs" />
     <Compile Include="TerrainGen\Noise.cs" />
     <Compile Include="TerrainGen\StandardGenerator.cs" />
+    <Compile Include="Logging\PacketLogging.cs" />
+    <Compile Include="Logging\FileLogProvider.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

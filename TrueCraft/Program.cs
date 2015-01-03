@@ -8,6 +8,7 @@ using TrueCraft.API.Logging;
 using TrueCraft.API.Server;
 using TrueCraft.API;
 using TrueCraft.Core.Windows;
+using System.IO;
 
 namespace TrueCraft
 {
@@ -18,7 +19,10 @@ namespace TrueCraft
             // TODO: Make this more flexible
             var server = new MultiplayerServer();
             server.AddWorld(new World("default", new StandardGenerator()));
-            server.AddLogProvider(new ConsoleLogProvider(LogCategory.All));
+            server.AddLogProvider(new ConsoleLogProvider());
+            #if DEBUG
+            server.AddLogProvider(new FileLogProvider(new StreamWriter("packets.log", false), LogCategory.Packets));
+            #endif
             server.ChatMessageReceived += HandleChatMessageReceived;
             server.Start(new IPEndPoint(IPAddress.Any, 25565));
             while (true)

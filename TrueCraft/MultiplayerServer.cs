@@ -10,6 +10,7 @@ using TrueCraft.API.World;
 using TrueCraft.API.Logging;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.API;
+using TrueCraft.Core.Logging;
 
 namespace TrueCraft
 {
@@ -132,6 +133,15 @@ namespace TrueCraft
                 PlayerJoined(this, e);
         }
 
+        private void LogPacket(IPacket packet, bool clientToServer)
+        {
+            for (int i = 0, LogProvidersCount = LogProviders.Count; i < LogProvidersCount; i++)
+            {
+                var provider = LogProviders[i];
+                packet.Log(provider, clientToServer);
+            }
+        }
+
         private void DisconnectClient(IRemoteClient _client)
         {
             var client = (RemoteClient)_client;
@@ -166,6 +176,7 @@ namespace TrueCraft
                 {
                     IPacket packet;
                     while (!client.PacketQueue.TryDequeue(out packet)) { }
+                    LogPacket(packet, false);
                     PacketReader.WritePacket(client.MinecraftStream, packet);
                     if (packet is DisconnectPacket)
                     {
@@ -178,6 +189,7 @@ namespace TrueCraft
                 while (client.DataAvailable && DateTime.Now < receiveTimeout)
                 {
                     var packet = PacketReader.ReadPacket(client.MinecraftStream);
+                    LogPacket(packet, true);
                     if (PacketHandlers[packet.ID] != null)
                     {
                         try

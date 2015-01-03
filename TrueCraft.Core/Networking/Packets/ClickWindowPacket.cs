@@ -36,8 +36,11 @@ namespace TrueCraft.Core.Networking.Packets
             TransactionID = stream.ReadInt16();
             Shift = stream.ReadBoolean();
             ItemID = stream.ReadInt16();
-            Count = stream.ReadInt8();
-            Metadata = stream.ReadInt16();
+            if (ItemID != -1)
+            {
+                Count = stream.ReadInt8();
+                Metadata = stream.ReadInt16();
+            }
         }
 
         public void WritePacket(IMinecraftStream stream)
@@ -48,8 +51,11 @@ namespace TrueCraft.Core.Networking.Packets
             stream.WriteInt16(TransactionID);
             stream.WriteBoolean(Shift);
             stream.WriteInt16(ItemID);
-            stream.WriteInt8(Count);
-            stream.WriteInt16(Metadata);
+            if (ItemID != -1)
+            {
+                stream.WriteInt8(Count);
+                stream.WriteInt16(Metadata);
+            }
         }
     }
 }
