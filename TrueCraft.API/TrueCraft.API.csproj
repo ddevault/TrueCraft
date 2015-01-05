@@ -75,6 +75,7 @@
     <Compile Include="Server\ChatMessageEventArgs.cs" />
     <Compile Include="BlockFace.cs" />
     <Compile Include="Server\PlayerJoinedEventArgs.cs" />
+    <Compile Include="Server\ICommandHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

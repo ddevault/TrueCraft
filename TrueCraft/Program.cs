@@ -9,14 +9,19 @@ using TrueCraft.API.Server;
 using TrueCraft.API;
 using TrueCraft.Core.Windows;
 using System.IO;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace TrueCraft
 {
     class MainClass
     {
+        public static List<ICommandHandler> CommandHandlers = new List<ICommandHandler> ();
+
         public static void Main(string[] args)
         {
             // TODO: Make this more flexible
+            LoadCommandHandlers (); //Load all command handlers...
             var server = new MultiplayerServer();
             server.AddWorld(new World("default", new StandardGenerator()));
             server.AddLogProvider(new ConsoleLogProvider());
@@ -27,6 +32,13 @@ namespace TrueCraft
             server.Start(new IPEndPoint(IPAddress.Any, 25565));
             while (true)
                 Thread.Sleep(1000);
+        }
+            
+        static void LoadCommandHandlers()
+        {
+            CommandHandlers.Add (new Ping());
+            CommandHandlers.Add (new Give());
+            CommandHandlers.Add (new Help());
         }
 
         static void HandleChatMessageReceived(object sender, ChatMessageEventArgs e)
@@ -40,24 +52,17 @@ namespace TrueCraft
                     space = e.Message.Length;
                 var command = e.Message.Substring(1, space - 1);
                 var parameters = e.Message.Substring(command.Length + 1).Trim().Split(' ');
-                switch (command)
-                {
-                    case "ping":
-                        e.Client.SendMessage(ChatColor.Blue + "Pong!");
+
+                foreach (ICommandHandler h in CommandHandlers) 
+                { 
+                    if (h.Command.ToLower() == command.ToLower()) 
+                    {
+                        if (parameters.Length >= h.Arguments)
+                            h.Handle (e, parameters);
+                        else
+                            e.Client.SendMessage ("Incorrect usage. Use /help " + command + " for more information.");
                         break;
-                    case "give":
-                        if (parameters.Length != 3)
-                            break;
-                        // TODO: Send items to the client mentioned in the command, not the client issuing the command
-                        // TODO: Check to make sure an item with that ID actually exists
-                        short id;
-                        sbyte count;
-                        if (short.TryParse(parameters[1], out id) && sbyte.TryParse(parameters[2], out count))
-                        {
-                            var inventory = e.Client.Inventory as InventoryWindow;
-                            inventory.PickUpStack(new ItemStack(id, count));
-                        }
-                        break;
+                    }
                 }
             }
         }
