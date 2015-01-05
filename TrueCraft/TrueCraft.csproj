@@ -51,6 +51,9 @@
     <Compile Include="Entities\ObjectEntity.cs" />
     <Compile Include="Entities\PlayerEntity.cs" />
     <Compile Include="Handlers\InteractionHandlers.cs" />
+    <Compile Include="Commands\Ping.cs" />
+    <Compile Include="Commands\Give.cs" />
+    <Compile Include="Commands\Help.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -70,5 +73,6 @@
   <ItemGroup>
     <Folder Include="Handlers\" />
     <Folder Include="Entities\" />
+    <Folder Include="Commands\" />
   </ItemGroup>
 </Project>
