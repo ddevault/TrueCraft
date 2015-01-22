@@ -9,7 +9,11 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override byte ID { get { return 0x07; } }
 
-        public override double Hardness { get { return 0; } }
+        public override double BlastResistance { get { return 18000000; } }
+
+        public override double Hardness { get { return -1; } }
+
+        public override byte Luminance { get { return 0; } }
 
         public override string DisplayName { get { return "Bedrock"; } }
 
