@@ -8,9 +8,13 @@ namespace TrueCraft.Core.Logic.Blocks
         public static readonly byte BlockID = 0x21;
         
         public override byte ID { get { return 0x21; } }
+        
+        public override double BlastResistance { get { return 2.5; } }
 
         public override double Hardness { get { return 0.5; } }
 
+        public override byte Luminance { get { return 0; } }
+        
         public override string DisplayName { get { return "Piston"; } }
 
         public override Tuple<int, int> GetTextureMap(byte metadata)
@@ -25,7 +29,11 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override byte ID { get { return 0x1D; } }
 
+        public override double BlastResistance { get { return 2.5; } }
+
         public override double Hardness { get { return 0.5; } }
+
+        public override byte Luminance { get { return 0; } }
 
         public override string DisplayName { get { return "Sticky Piston"; } }
 
@@ -41,7 +49,11 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override byte ID { get { return 0x22; } }
 
+        public override double BlastResistance { get { return 2.5; } }
+
         public override double Hardness { get { return 0.5; } }
+
+        public override byte Luminance { get { return 0; } }
 
         public override string DisplayName { get { return "Piston Plunger"; } }
 
@@ -57,7 +69,11 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override byte ID { get { return 0x24; } }
 
+        public override double BlastResistance { get { return 0; } }
+
         public override double Hardness { get { return 0; } }
+
+        public override byte Luminance { get { return 0; } }
 
         public override string DisplayName { get { return "Piston Placeholder"; } }
     }

@@ -8,9 +8,13 @@ namespace TrueCraft.Core.Logic.Blocks
         public static readonly byte BlockID = 0x19;
         
         public override byte ID { get { return 0x19; } }
+        
+        public override double BlastResistance { get { return 4; } }
 
         public override double Hardness { get { return 0.8; } }
 
+        public override byte Luminance { get { return 0; } }
+        
         public override string DisplayName { get { return "Note Block"; } }
 
         public override Tuple<int, int> GetTextureMap(byte metadata)

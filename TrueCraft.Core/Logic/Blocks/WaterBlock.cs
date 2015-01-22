@@ -6,11 +6,15 @@ namespace TrueCraft.Core.Logic.Blocks
     public class WaterBlock : BlockProvider
     {
         public static readonly byte BlockID = 0x08;
-        
+
         public override byte ID { get { return 0x08; } }
+        
+        public override double BlastResistance { get { return 500; } }
 
         public override double Hardness { get { return 100; } }
 
+        public override byte Luminance { get { return 0; } }
+        
         public override string DisplayName { get { return "Water"; } }
     }
 
