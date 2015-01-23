@@ -9,11 +9,13 @@ using TrueCraft.API.Server;
 using TrueCraft.API;
 using TrueCraft.Core.Windows;
 using System.IO;
+using TrueCraft.Commands;
 
 namespace TrueCraft
 {
     class MainClass
     {
+        public static CommandManager CommandManager;
         public static void Main(string[] args)
         {
             // TODO: Make this more flexible
@@ -23,6 +25,7 @@ namespace TrueCraft
             #if DEBUG
             server.AddLogProvider(new FileLogProvider(new StreamWriter("packets.log", false), LogCategory.Packets));
             #endif
+            CommandManager = new CommandManager();
             server.ChatMessageReceived += HandleChatMessageReceived;
             server.Start(new IPEndPoint(IPAddress.Any, 25565));
             while (true)
@@ -35,30 +38,17 @@ namespace TrueCraft
             if (e.Message.StartsWith("/"))
             {
                 e.PreventDefault = true;
-                var space = e.Message.IndexOf(' ');
-                if (space == -1)
-                    space = e.Message.Length;
-                var command = e.Message.Substring(1, space - 1);
-                var parameters = e.Message.Substring(command.Length + 1).Trim().Split(' ');
-                switch (command)
+                var Message = e.Message.Remove(0, 1);
+                var Command = Message.Trim();
+                var Arguments = new string[0];
+                if (Message.Split(' ').Length > 1)
                 {
-                    case "ping":
-                        e.Client.SendMessage(ChatColor.Blue + "Pong!");
-                        break;
-                    case "give":
-                        if (parameters.Length != 3)
-                            break;
-                        // TODO: Send items to the client mentioned in the command, not the client issuing the command
-                        // TODO: Check to make sure an item with that ID actually exists
-                        short id;
-                        sbyte count;
-                        if (short.TryParse(parameters[1], out id) && sbyte.TryParse(parameters[2], out count))
-                        {
-                            var inventory = e.Client.Inventory as InventoryWindow;
-                            inventory.PickUpStack(new ItemStack(id, count));
-                        }
-                        break;
+                    Command = Message.Split(' ')[0];
+                    Arguments = Message.Substring(Command.Length).Trim().Split(' ');
                 }
+
+                CommandManager.HandleCommand(e.Client, Command, Arguments);
+                return;
             }
         }
     }

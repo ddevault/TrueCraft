@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -49,6 +49,8 @@
     <Compile Include="MetadataSlot.cs" />
     <Compile Include="MetadataString.cs" />
     <Compile Include="Ray.cs" />
+    <Compile Include="Server\ICommand.cs" />
+    <Compile Include="Server\ICommandManager.cs" />
     <Compile Include="Size.cs" />
     <Compile Include="Vector3.cs" />
     <Compile Include="Server\IMultiplayerServer.cs" />
@@ -77,15 +79,7 @@
     <Compile Include="Server\PlayerJoinedEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Networking\" />
-    <Folder Include="Server\" />
-    <Folder Include="World\" />
-    <Folder Include="Logging\" />
-    <Folder Include="Entities\" />
-    <Folder Include="Windows\" />
-    <Folder Include="Logic\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\externals\fNbt\fNbt\fNbt.csproj">
       <Project>{4488498D-976D-4DA3-BF72-109531AF0488}</Project>
