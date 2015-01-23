@@ -15,7 +15,7 @@ namespace TrueCraft
 {
     class MainClass
     {
-        public static CommandManager CManager;
+        public static CommandManager CommandManager;
         public static void Main(string[] args)
         {
             // TODO: Make this more flexible
@@ -25,7 +25,7 @@ namespace TrueCraft
             #if DEBUG
             server.AddLogProvider(new FileLogProvider(new StreamWriter("packets.log", false), LogCategory.Packets));
             #endif
-            CManager = new CommandManager();
+            CommandManager = new CommandManager();
             server.ChatMessageReceived += HandleChatMessageReceived;
             server.Start(new IPEndPoint(IPAddress.Any, 25565));
             while (true)
@@ -47,7 +47,7 @@ namespace TrueCraft
                     Arguments = Message.Substring(Command.Length).Trim().Split(' ');
                 }
 
-                CManager.HandleCommand(e.Client, Command, Arguments);
+                CommandManager.HandleCommand(e.Client, Command, Arguments);
                 return;
             }
         }

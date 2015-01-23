@@ -29,12 +29,12 @@ namespace TrueCraft.Commands
 
             string Identifier = Arguments[0];
             ICommand Found = null;
-            if ((Found = MainClass.CManager.FindByName(Identifier)) != null)
+            if ((Found = MainClass.CommandManager.FindByName(Identifier)) != null)
             {
                 Found.Handle(Client, Identifier, new string[0]);
                 return;
             }
-            else if ((Found = MainClass.CManager.FindByAlias(Identifier)) != null)
+            else if ((Found = MainClass.CommandManager.FindByAlias(Identifier)) != null)
             {
                 Found.Help(Client, Identifier, new string[0]);
                 return;
@@ -52,8 +52,8 @@ namespace TrueCraft.Commands
         public void HelpPage(IRemoteClient Client, int Page)
         {
             int PerPage = 5;
-            int Pages = (int)Math.Floor((double)(MainClass.CManager.Commands.Count / PerPage));
-            if ((MainClass.CManager.Commands.Count % PerPage) > 0)
+            int Pages = (int)Math.Floor((double)(MainClass.CommandManager.Commands.Count / PerPage));
+            if ((MainClass.CommandManager.Commands.Count % PerPage) > 0)
                 Pages++;
 
             if (Page < 1 || Page > Pages)
@@ -64,11 +64,11 @@ namespace TrueCraft.Commands
             for (int i = 0; i < PerPage; i++)
             {
                 int Index = StartingIndex + i;
-                if (Index > MainClass.CManager.Commands.Count - 1)
+                if (Index > MainClass.CommandManager.Commands.Count - 1)
                 {
                     break;
                 }
-                ICommand C = MainClass.CManager.Commands[Index];
+                ICommand C = MainClass.CommandManager.Commands[Index];
                 Client.SendMessage("/" + C.Name + " - " + C.Description);
             }
         }

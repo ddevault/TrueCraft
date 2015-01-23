@@ -17,7 +17,8 @@ namespace TrueCraft.Commands
             LoadCommands();
         }
 
-        private void LoadCommands() {
+        private void LoadCommands()
+        {
             Commands.Add(new PingCommand());
             Commands.Add(new GiveCommand());
             Commands.Add(new HelpCommand());
