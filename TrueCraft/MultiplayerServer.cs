@@ -17,6 +17,7 @@ namespace TrueCraft
     public class MultiplayerServer : IMultiplayerServer
     {
         public event EventHandler<ChatMessageEventArgs> ChatMessageReceived;
+        public event EventHandler<CommandEventArgs> CommandReceived;
         public event EventHandler<PlayerJoinedEventArgs> PlayerJoined;
 
         public IPacketReader PacketReader { get; private set; }
@@ -125,6 +126,12 @@ namespace TrueCraft
         {
             if (ChatMessageReceived != null)
                 ChatMessageReceived(this, e);
+        }
+
+        protected internal void OnCommandReceived(CommandEventArgs e)
+        {
+            if (CommandReceived != null)
+                CommandReceived(this, e);
         }
 
         protected internal void OnPlayerJoined(PlayerJoinedEventArgs e)
