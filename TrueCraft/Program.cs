@@ -16,11 +16,10 @@ namespace TrueCraft
     class MainClass
     {
         public static CommandManager CManager;
-        private static MultiplayerServer server;
         public static void Main(string[] args)
         {
             // TODO: Make this more flexible
-            server = new MultiplayerServer();
+            var server = new MultiplayerServer();
             server.AddWorld(new World("default", new StandardGenerator()));
             server.AddLogProvider(new ConsoleLogProvider());
             #if DEBUG
@@ -28,7 +27,6 @@ namespace TrueCraft
             #endif
             CManager = new CommandManager();
             server.ChatMessageReceived += HandleChatMessageReceived;
-            server.CommandReceived += HandleCommandReceived;
             server.Start(new IPEndPoint(IPAddress.Any, 25565));
             while (true)
                 Thread.Sleep(1000);
@@ -49,15 +47,9 @@ namespace TrueCraft
                     Arguments = Message.Substring(Command.Length).Trim().Split(' ');
                 }
 
-                var cmdArgs = new CommandEventArgs(e.Client, Command, Arguments);
-                server.OnCommandReceived(cmdArgs);
+                CManager.HandleCommand(e.Client, Command, Arguments);
                 return;
             }
-        }
-
-        static void HandleCommandReceived(object sender, CommandEventArgs e)
-        {
-            CManager.HandleCommand(e.Client, e.Command, e.Arguments);
         }
     }
 }

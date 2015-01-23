@@ -49,7 +49,6 @@
     <Compile Include="MetadataSlot.cs" />
     <Compile Include="MetadataString.cs" />
     <Compile Include="Ray.cs" />
-    <Compile Include="Server\CommandEventArgs.cs" />
     <Compile Include="Server\ICommand.cs" />
     <Compile Include="Server\ICommandManager.cs" />
     <Compile Include="Size.cs" />
