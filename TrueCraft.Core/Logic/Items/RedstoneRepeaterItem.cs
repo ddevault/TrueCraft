@@ -9,8 +9,6 @@ namespace TrueCraft.Core.Logic.Items
 
         public override short ID { get { return 0x164; } }
 
-        public override sbyte MaximumStack { get { return 64; } }
-
         public override string DisplayName { get { return "Redstone Repeater"; } }
     }
 }

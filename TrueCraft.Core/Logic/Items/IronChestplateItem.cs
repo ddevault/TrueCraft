@@ -12,6 +12,10 @@ namespace TrueCraft.Core.Logic.Items
 
         public override ArmourMaterial Material { get { return ArmourMaterial.Iron; } }
 
+        public override short BaseDurability { get { return 192; } }
+
+        public override float BaseArmour { get { return 4; } }
+
         public override string DisplayName { get { return "Iron Chestplate"; } }
     }
 }

@@ -70,11 +70,12 @@
     <Compile Include="Logic\Items\DiamondPickaxeItem.cs" />
     <Compile Include="Logic\Items\DiamondShovelItem.cs" />
     <Compile Include="Logic\Items\DiamondSwordItem.cs" />
+    <Compile Include="Logic\Items\DoorItem.cs" />
     <Compile Include="Logic\Items\DyeItem.cs" />
     <Compile Include="Logic\Items\EggItem.cs" />
     <Compile Include="Logic\Items\FeatherItem.cs" />
     <Compile Include="Logic\Items\FishingRodItem.cs" />
-    <Compile Include="Logic\Items\FlintandSteelItem.cs" />
+    <Compile Include="Logic\Items\FlintAndSteelItem.cs" />
     <Compile Include="Logic\Items\FlintItem.cs" />
     <Compile Include="Logic\Items\FoodItem.cs" />
     <Compile Include="Logic\Items\GlowstoneDustItem.cs" />
@@ -93,7 +94,6 @@
     <Compile Include="Logic\Items\IronAxeItem.cs" />
     <Compile Include="Logic\Items\IronBootsItem.cs" />
     <Compile Include="Logic\Items\IronChestplateItem.cs" />
-    <Compile Include="Logic\Items\IronDoorItem.cs" />
     <Compile Include="Logic\Items\IronHelmetItem.cs" />
     <Compile Include="Logic\Items\IronHoeItem.cs" />
     <Compile Include="Logic\Items\IronIngotItem.cs" />
@@ -134,7 +134,6 @@
     <Compile Include="Logic\Items\ToolItem.cs" />
     <Compile Include="Logic\Items\WheatItem.cs" />
     <Compile Include="Logic\Items\WoodenAxeItem.cs" />
-    <Compile Include="Logic\Items\WoodenDoorItem.cs" />
     <Compile Include="Logic\Items\WoodenHoeItem.cs" />
     <Compile Include="Logic\Items\WoodenPickaxeItem.cs" />
     <Compile Include="Logic\Items\WoodenShovelItem.cs" />
