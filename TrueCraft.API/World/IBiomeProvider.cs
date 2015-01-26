@@ -9,7 +9,14 @@ namespace TrueCraft.API.World
     public interface IBiomeProvider
     {
         byte ID { get; }
-        float Temperature { get; }
+        int Elevation { get; }
+        double Temperature { get; }
+        double Rainfall { get; }
+        TreeSpecies[] Trees { get; }
+        PlantSpecies[] Plants { get; }
+        OreTypes[] Ores { get; }
+        double TreeDensity { get; }
+        byte WaterBlock { get; }
         byte SurfaceBlock { get; }
         byte FillerBlock { get; }
     }

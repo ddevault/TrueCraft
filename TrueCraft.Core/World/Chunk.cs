@@ -177,14 +177,14 @@ namespace TrueCraft.Core.World
         public int GetHeight(byte x, byte z)
         {
             LastAccessed = DateTime.Now;
-            return HeightMap[(byte)(z * Depth) + x];
+            return HeightMap[(byte)(x * Width) + z];
         }
 
         private void SetHeight(byte x, byte z, int value)
         {
             LastAccessed = DateTime.Now;
             IsModified = true;
-            HeightMap[(byte)(z * Depth) + x] = value;
+            HeightMap[(byte)(x * Width) + z] = value;
         }
 
         public NbtFile ToNbt()

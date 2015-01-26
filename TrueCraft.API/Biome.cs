@@ -7,28 +7,25 @@ namespace TrueCraft.API
 {
     public enum Biome
     {
-        Ocean = 0,
-        Plains = 1,
-        Desert = 2,
-        ExtremeHills = 3,
-        Forest = 4,
-        Taiga = 5,
-        Swampland = 6,
-        River = 7,
+        //The 13 vanilla b1.7.3 biomes as found on http://b.wiki.vg/json/b1.7
+        Plains = 0,
+        Desert = 1,
+        Forest = 2,
+        Rainforest = 3,
+        SeasonalForest = 4,
+        Savanna = 5,
+        Shrubland = 6,
+        Swampland = 7,
         Hell = 8,
-        Sky = 9,
-        FrozenOcean = 10,
-        FrozenRiver = 11,
-        IcePlains = 12,
-        IceMountains = 13,
-        MushroomIsland = 14,
-        MushroomIslandShore = 15,
-        Beach = 16,
-        DesertHills = 17,
-        ForestHills = 18,
-        TaigaHills = 19,
-        ExtremeHillsEdge = 20,
-        Jungle = 21,
-        JungleHills = 22,
+        Sky = 9,//Implementation into truecraft is undetermined at this point
+        Taiga = 10,
+        Tundra = 11,
+        IceDesert = 12,//Implementation into truecraft is undetermined at this point
+        //Below are "transitional" biomes/biomes which are not in b1.7.3
+        Ocean = 13,
+        River = 14,//Implementation into truecraft is undetermined at this point
+        Beach = 15,//Implementation into truecraft is undetermined at this point
+        FrozenOcean = 16,
+        FrozenRiver = 17,//Implementation into truecraft is undetermined at this point
     }
 }

@@ -1,16 +1,16 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Threading;
 using TrueCraft.Core.World;
 using TrueCraft.Core.TerrainGen;
 using TrueCraft.Core.Logging;
 using TrueCraft.API.Logging;
 using TrueCraft.API.Server;
-using TrueCraft.API;
-using TrueCraft.Core.Windows;
 using System.IO;
 using TrueCraft.Commands;
 using TrueCraft.API.World;
+using System;
+using TrueCraft.Core;
+using TrueCraft.API;
 
 namespace TrueCraft
 {
@@ -30,11 +30,11 @@ namespace TrueCraft
             {
                 // TODO: Save and load levels, with seeds and everything
                 world = World.LoadWorld("world");
-                world.ChunkProvider = new StandardGenerator();
+                world.ChunkProvider = new NewGenerator();
             }
             catch
             {
-                world = new World("default", new StandardGenerator());
+                world = new World("default", new NewGenerator());
                 world.Save("world");
             }
             server.AddWorld(world);

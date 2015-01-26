@@ -33,7 +33,7 @@ namespace TrueCraft.Handlers
                 client.LoggedIn = true;
                 client.Entity = new PlayerEntity(client.Username);
                 client.World = server.Worlds[0];
-                client.ChunkRadius = 5;
+                client.ChunkRadius = 2;
 
                 // Send setup packets
                 client.QueuePacket(new LoginResponsePacket(0, 0, Dimension.Overworld));

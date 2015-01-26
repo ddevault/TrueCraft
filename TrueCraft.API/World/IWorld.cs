@@ -11,6 +11,8 @@ namespace TrueCraft.API.World
     {
         string Name { get; set; }
         IBlockRepository BlockRepository { get; set; }
+        int Seed { get; set; }
+        IBiomeMap BiomeDiagram { get; set; }
         IChunkProvider ChunkProvider { get; set; }
         long Time { get; set; }
 

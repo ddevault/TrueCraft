@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TrueCraft.API;
+using TrueCraft.Core.World;
 
 namespace TrueCraft.Core
 {
@@ -161,6 +162,16 @@ namespace TrueCraft.Core
         public static double ToNotchianPitch(double pitch)
         {
             return RadiansToDegrees(-pitch);
+        }
+
+        public static int ChunkToBlockX(int BlockCoord, int ChunkX)
+        {
+            return ChunkX * Chunk.Width + BlockCoord;
+        }
+
+        public static int ChunkToBlockZ(int BlockCoord, int ChunkZ)
+        {
+            return ChunkZ * Chunk.Depth + BlockCoord;
         }
 
         /// <summary>

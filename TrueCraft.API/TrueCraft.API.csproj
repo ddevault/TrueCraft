@@ -31,6 +31,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Coordinates3D.cs" />
+    <Compile Include="ArmourMaterial.cs" />
+    <Compile Include="PlantSpecies.cs" />
+    <Compile Include="OreTypes.cs" />
     <Compile Include="ToolMaterial.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Networking\IPacket.cs" />
@@ -58,8 +61,11 @@
     <Compile Include="Vector3.cs" />
     <Compile Include="Server\IMultiplayerServer.cs" />
     <Compile Include="Networking\IRemoteClient.cs" />
+    <Compile Include="World\IBiomeRepository.cs" />
+    <Compile Include="World\IBiomeMap.cs" />
     <Compile Include="World\IBiomeProvider.cs" />
     <Compile Include="World\IChunkDecorator.cs" />
+    <Compile Include="World\INoise.cs" />
     <Compile Include="World\IWorld.cs" />
     <Compile Include="World\IChunk.cs" />
     <Compile Include="World\IChunkProvider.cs" />
