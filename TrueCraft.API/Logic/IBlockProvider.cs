@@ -8,6 +8,8 @@ namespace TrueCraft.API.Logic
         double BlastResistance { get; }
         double Hardness { get; }
         byte Luminance { get; }
+        bool Opaque { get; }
+        byte LightModifier { get; }
         string DisplayName { get; }
         Tuple<int, int> GetTextureMap(byte metadata);
     }
