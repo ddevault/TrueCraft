@@ -44,6 +44,7 @@ namespace TrueCraft.Handlers
                     (int)client.Entity.Position.Y, (int)client.Entity.Position.Z));
                 client.QueuePacket(new SetPlayerPositionPacket(client.Entity.Position.X, client.Entity.Position.Y,
                     client.Entity.Position.Y + client.Entity.Size.Height, client.Entity.Position.Z, 0, 0, true));
+                client.QueuePacket(new TimeUpdatePacket(client.World.Time));
 
                 // Start housekeeping for this client
                 server.GetEntityManagerForWorld(client.World).SpawnEntity(client.Entity);
