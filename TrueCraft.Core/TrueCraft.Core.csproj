@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -123,7 +123,6 @@
     <Compile Include="Logic\Blocks\CobwebBlock.cs" />
     <Compile Include="Logic\Blocks\CraftingTableBlock.cs" />
     <Compile Include="Logic\Blocks\CropsBlock.cs" />
-    <Compile Include="Logic\Blocks\DetectorRailBlock.cs" />
     <Compile Include="Logic\Blocks\DiamondOreBlock.cs" />
     <Compile Include="Logic\Blocks\DirtBlock.cs" />
     <Compile Include="Logic\Blocks\DispenserBlock.cs" />
@@ -155,7 +154,6 @@
     <Compile Include="Logic\Blocks\ObsidianBlock.cs" />
     <Compile Include="Logic\Blocks\PistonBlock.cs" />
     <Compile Include="Logic\Blocks\PortalBlock.cs" />
-    <Compile Include="Logic\Blocks\PoweredRailBlock.cs" />
     <Compile Include="Logic\Blocks\PressurePlateBlock.cs" />
     <Compile Include="Logic\Blocks\PumpkinBlock.cs" />
     <Compile Include="Logic\Blocks\RailBlock.cs" />
@@ -209,11 +207,5 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Networking\Packets\" />
-    <Folder Include="World\" />
-    <Folder Include="Logging\" />
-    <Folder Include="Windows\" />
-    <Folder Include="Logic\" />
-    <Folder Include="Logic\Blocks\" />
   </ItemGroup>
 </Project>

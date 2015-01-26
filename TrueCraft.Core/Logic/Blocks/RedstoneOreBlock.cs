@@ -30,6 +30,8 @@ namespace TrueCraft.Core.Logic.Blocks
         public override byte ID { get { return 0x4A; } }
 
         public override byte Luminance { get { return 9; } }
+
+        public override bool Opaque { get { return false; } }
         
         public override string DisplayName { get { return "Redstone Ore (glowing)"; } }
     }
