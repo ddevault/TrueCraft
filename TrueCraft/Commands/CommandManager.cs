@@ -23,6 +23,8 @@ namespace TrueCraft.Commands
             Commands.Add(new GiveCommand());
             Commands.Add(new HelpCommand());
             Commands.Add(new ResendInvCommand());
+            Commands.Add(new PositionCommand());
+            Commands.Add(new TimeCommand());
         }
 
         /// <summary>

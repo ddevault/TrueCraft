@@ -16,6 +16,18 @@ namespace TrueCraft.Core.World
         public string BaseDirectory { get; internal set; }
         public IDictionary<Coordinates2D, IRegion> Regions { get; set; }
         public IChunkProvider ChunkProvider { get; set; }
+        public DateTime BaseTime { get; set; }
+        public long Time
+        {
+            get
+            {
+                return (long)((DateTime.Now - BaseTime).TotalSeconds * 20) % 24000;
+            }
+            set
+            {
+                // TODO
+            }
+        }
 
         public event EventHandler<BlockChangeEventArgs> BlockChanged;
 
@@ -23,6 +35,7 @@ namespace TrueCraft.Core.World
         {
             Name = name;
             Regions = new Dictionary<Coordinates2D, IRegion>();
+            BaseTime = DateTime.Now;
         }
 
         public World(string name, IChunkProvider chunkProvider) : this(name)

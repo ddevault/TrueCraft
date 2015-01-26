@@ -10,6 +10,7 @@ namespace TrueCraft.API.World
     {
         string Name { get; set; }
         IChunkProvider ChunkProvider { get; set; }
+        long Time { get; set; }
 
         event EventHandler<BlockChangeEventArgs> BlockChanged;
 

@@ -9,6 +9,72 @@ using TrueCraft.Core.Networking.Packets;
 
 namespace TrueCraft.Commands
 {
+    public class PositionCommand : Command
+    {
+        public override string Name
+        {
+            get { return "pos"; }
+        }
+
+        public override string Description
+        {
+            get { return "Shows your position."; }
+        }
+
+        public override string[] Aliases
+        {
+            get { return new string[0]; }
+        }
+
+        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        {
+            if (Arguments.Length != 0)
+            {
+                Help(Client, Alias, Arguments);
+                return;
+            }
+            Client.SendMessage(Client.Entity.Position.ToString());
+        }
+
+        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        {
+            Client.SendMessage("/pos: Shows your position.");
+        }
+    }
+
+    public class TimeCommand : Command
+    {
+        public override string Name
+        {
+            get { return "time"; }
+        }
+
+        public override string Description
+        {
+            get { return "Shows the current time."; }
+        }
+
+        public override string[] Aliases
+        {
+            get { return new string[0]; }
+        }
+
+        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        {
+            if (Arguments.Length != 0)
+            {
+                Help(Client, Alias, Arguments);
+                return;
+            }
+            Client.SendMessage(Client.World.Time.ToString());
+        }
+
+        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        {
+            Client.SendMessage("/time: Shows the current time.");
+        }
+    }
+
     public class ResendInvCommand : Command
     {
         public override string Name
