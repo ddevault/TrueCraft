@@ -18,6 +18,8 @@ namespace TrueCraft.Core.Logic.Blocks
         public override byte ID { get { return 0x27; } }
 
         public override byte Luminance { get { return 1; } }
+
+        public override bool Opaque { get { return false; } }
         
         public override string DisplayName { get { return "Brown Mushroom"; } }
 

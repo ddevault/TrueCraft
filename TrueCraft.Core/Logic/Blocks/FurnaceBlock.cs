@@ -31,6 +31,8 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override byte Luminance { get { return 13; } }
 
+        public override bool Opaque { get { return false; } }
+
         public override string DisplayName { get { return "Furnace (lit)"; } }
     }
 }

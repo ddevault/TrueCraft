@@ -14,6 +14,10 @@ namespace TrueCraft.Core.Logic.Blocks
         public override double Hardness { get { return 100; } }
 
         public override byte Luminance { get { return 0; } }
+
+        public override bool Opaque { get { return false; } }
+
+        public override byte LightModifier { get { return 3; } }
         
         public override string DisplayName { get { return "Water"; } }
     }

@@ -14,6 +14,8 @@ namespace TrueCraft.Core.Logic.Blocks
         public override double Hardness { get { return 0; } }
 
         public override byte Luminance { get { return 7; } }
+
+        public override bool Opaque { get { return false; } }
         
         public override string DisplayName { get { return "Redstone Torch"; } }
 

@@ -14,6 +14,10 @@ namespace TrueCraft.Core.Logic.Blocks
         public override double Hardness { get { return 4; } }
 
         public override byte Luminance { get { return 0; } }
+
+        public override bool Opaque { get { return false; } }
+
+        //TODO: Mark this as a block that diffuses sun light.
         
         public override string DisplayName { get { return "Cobweb"; } }
 
