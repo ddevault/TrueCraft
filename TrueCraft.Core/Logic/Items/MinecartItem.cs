@@ -14,7 +14,7 @@ namespace TrueCraft.Core.Logic.Items
         public override string DisplayName { get { return "Minecart"; } }
     }
 
-    public class MinecartwithChestItem : MinecartItem
+    public class MinecartWithChestItem : MinecartItem
     {
         public static readonly short ItemID = 0x156;
 
@@ -23,7 +23,7 @@ namespace TrueCraft.Core.Logic.Items
         public override string DisplayName { get { return "Minecart with Chest"; } }
     }
 
-    public class MinecartwithFurnaceItem : MinecartItem
+    public class MinecartWithFurnaceItem : MinecartItem
     {
         public static readonly short ItemID = 0x157;
 

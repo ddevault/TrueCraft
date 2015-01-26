@@ -3,24 +3,22 @@ using TrueCraft.API.Logic;
 
 namespace TrueCraft.Core.Logic.Items
 {
-    public class BucketItem : ItemProvider
+    public class BucketItem : ToolItem
     {
         public static readonly short ItemID = 0x145;
 
         public override short ID { get { return 0x145; } }
 
-        public override sbyte MaximumStack { get { return 1; } }
-
         public override string DisplayName { get { return "Bucket"; } }
     }
 
-    public class LavabucketItem : BucketItem
+    public class LavaBucketItem : BucketItem
     {
         public static readonly new short ItemID = 0x147;
 
         public override short ID { get { return 0x147; } }
 
-        public override string DisplayName { get { return "Lava bucket"; } }
+        public override string DisplayName { get { return "Lava Bucket"; } }
     }
 
     public class MilkItem : BucketItem

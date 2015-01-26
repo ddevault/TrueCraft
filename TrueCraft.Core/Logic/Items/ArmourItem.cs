@@ -10,6 +10,10 @@ namespace TrueCraft.Core.Logic.Items
     {
         public abstract ArmourMaterial Material { get; }
 
+        public virtual short BaseDurability { get { return 0; } }
+
+        public abstract float BaseArmour { get; }
+
         public override sbyte MaximumStack { get { return 1; } }
     }
 }

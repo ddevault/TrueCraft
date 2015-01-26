@@ -12,6 +12,10 @@ namespace TrueCraft.Core.Logic.Items
 
         public override ArmourMaterial Material { get { return ArmourMaterial.Chain; } }
 
+        public override short BaseDurability { get { return 67; } }
+
+        public override float BaseArmour { get { return 1.5f; } }
+
         public override string DisplayName { get { return "Chain Helmet"; } }
     }
 }

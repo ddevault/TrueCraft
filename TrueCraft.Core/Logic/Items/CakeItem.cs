@@ -9,8 +9,7 @@ namespace TrueCraft.Core.Logic.Items
 
         public override short ID { get { return 0x162; } }
 
-        public override sbyte MaximumStack { get { return 1; } }
-
+        //This is per "slice"
         public override float Restores { get { return 1.5f; } }
 
         public override string DisplayName { get { return "Cake"; } }

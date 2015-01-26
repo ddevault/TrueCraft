@@ -7,6 +7,7 @@ namespace TrueCraft.API
 {
     public enum ToolMaterial
     {
+        None,
         Wood,
         Stone,
         Iron,

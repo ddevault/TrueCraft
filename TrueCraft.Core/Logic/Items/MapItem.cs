@@ -3,7 +3,7 @@ using TrueCraft.API.Logic;
 
 namespace TrueCraft.Core.Logic.Items
 {
-    public class MapItem : ItemProvider
+    public class MapItem : ToolItem
     {
         public static readonly short ItemID = 0x166;
 
