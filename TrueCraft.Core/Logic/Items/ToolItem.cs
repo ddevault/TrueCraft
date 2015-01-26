@@ -33,9 +33,4 @@ namespace TrueCraft.Core.Logic
     public abstract class ShovelItem : ToolItem
     {
     }
-
-    public abstract class SwordItem : ToolItem
-    {
-        public abstract float Damage { get; }
-    }
 }
