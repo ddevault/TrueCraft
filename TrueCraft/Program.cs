@@ -21,10 +21,10 @@ namespace TrueCraft
         {
             // TODO: Make this more flexible
             var server = new MultiplayerServer();
-#if DEBUG
+            #if DEBUG
             if (Directory.Exists("world"))
                 Directory.Delete("world", true);
-#endif
+            #endif
             IWorld world;
             try
             {
@@ -39,6 +39,9 @@ namespace TrueCraft
             }
             server.AddWorld(world);
             server.AddLogProvider(new ConsoleLogProvider(LogCategory.Notice | LogCategory.Warning | LogCategory.Error | LogCategory.Debug));
+            #if DEBUG
+            server.AddLogProvider(new FileLogProvider(new StreamWriter("packets.log", false), LogCategory.Packets));
+            #endif
             #if DEBUG
             server.AddLogProvider(new FileLogProvider(new StreamWriter("packets.log", false), LogCategory.Packets));
             #endif
@@ -61,7 +64,11 @@ namespace TrueCraft
             {
                 e.PreventDefault = true;
                 var messageArray = e.Message.TrimStart('/')
+<<<<<<< HEAD
                     .Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+=======
+                .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+>>>>>>> New terrain generator
                 CommandManager.HandleCommand(e.Client, messageArray[0], messageArray);
                 return;
             }

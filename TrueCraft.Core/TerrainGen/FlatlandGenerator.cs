@@ -20,6 +20,7 @@ namespace TrueCraft.Core.TerrainGen
         {
             GeneratorOptions = DefaultGeneratorOptions;
             SpawnPoint = new Vector3(0, 5, 0);
+            ChunkDecorators = new List<IChunkDecorator>();
         }
 
         public FlatlandGenerator(string generatorOptions)
@@ -93,6 +94,8 @@ namespace TrueCraft.Core.TerrainGen
         public string GeneratorName { get { return "FLAT"; } }
 
         public long Seed { get; set; }
+
+        public IList<IChunkDecorator> ChunkDecorators { get; set; }
 
         public Vector3 SpawnPoint { get; set; }
 

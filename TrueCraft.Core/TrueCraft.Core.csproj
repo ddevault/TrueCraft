@@ -29,6 +29,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LibNoise">
+      <HintPath>..\lib\LibNoise.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="Ionic.Zip.Reduced">
       <HintPath>..\lib\Ionic.Zip.Reduced.dll</HintPath>
@@ -161,6 +164,9 @@
     <Compile Include="Networking\Packets\MapDataPacket.cs" />
     <Compile Include="Networking\Packets\UpdateStatisticPacket.cs" />
     <Compile Include="Networking\Packets\DisconnectPacket.cs" />
+    <Compile Include="TerrainGen\BiomeProvider.cs" />
+    <Compile Include="TerrainGen\Decorators\TreeDecorator.cs" />
+    <Compile Include="TerrainGen\TestGenerator.cs" />
     <Compile Include="World\Chunk.cs" />
     <Compile Include="World\Region.cs" />
     <Compile Include="World\World.cs" />
@@ -285,5 +291,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="TerrainGen\Biome\" />
   </ItemGroup>
 </Project>

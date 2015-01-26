@@ -23,11 +23,14 @@ namespace TrueCraft.Core.TerrainGen
 
         public StandardGenerator()
         {
+            ChunkDecorators = new List<IChunkDecorator>();
             const double persistence = 1, frequency = 0.01, amplitude = 80;
             int octaves = 2;
             noise = new Noise(persistence, frequency, amplitude, octaves, new Random().Next());
             SpawnPoint = new Vector3(0, GetHeight(0, 0) + 1, 0);
         }
+
+        public IList<IChunkDecorator> ChunkDecorators { get; set; }
 
         public Vector3 SpawnPoint { get; private set; }
 
