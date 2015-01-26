@@ -31,6 +31,8 @@ namespace TrueCraft
             Inventory = new InventoryWindow();
             InventoryWindow.WindowChange += HandleWindowChange;
             SelectedSlot = InventoryWindow.HotbarIndex;
+            CurrentWindow = InventoryWindow;
+            ItemStaging = ItemStack.EmptyStack;
         }
         
         public NetworkStream NetworkStream { get; set; }
@@ -43,6 +45,8 @@ namespace TrueCraft
         public IEntity Entity { get; internal set; }
         public IWindow Inventory { get; private set; }
         public short SelectedSlot { get; internal set; }
+        public ItemStack ItemStaging { get; set; }
+        public IWindow CurrentWindow { get; set; }
 
         public ItemStack SelectedItem
         {
@@ -86,7 +90,6 @@ namespace TrueCraft
             if (ChunkRadius < 16) // TODO: Allow customization of this number
             {
                 ChunkRadius++;
-                Console.WriteLine("Expanding chunk radius to {0}", ChunkRadius);
                 UpdateChunks();
                 server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(1), ExpandChunkRadius);
             }

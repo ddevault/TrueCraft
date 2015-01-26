@@ -22,6 +22,7 @@ namespace TrueCraft.Commands
             Commands.Add(new PingCommand());
             Commands.Add(new GiveCommand());
             Commands.Add(new HelpCommand());
+            Commands.Add(new ResendInvCommand());
         }
 
         /// <summary>
