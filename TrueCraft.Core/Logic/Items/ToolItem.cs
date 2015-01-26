@@ -14,23 +14,4 @@ namespace TrueCraft.Core.Logic
 
         public override sbyte MaximumStack { get { return 1; } }
     }
-
-    public abstract class AxeItem : ToolItem
-    {
-
-    }
-
-    public abstract class HoeItem : ToolItem
-    {
-
-    }
-
-    public abstract class PickaxeItem : ToolItem
-    {
-
-    }
-
-    public abstract class ShovelItem : ToolItem
-    {
-    }
 }
