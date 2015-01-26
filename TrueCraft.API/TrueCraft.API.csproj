@@ -30,6 +30,8 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArmourMaterial.cs" />
+    <Compile Include="ToolMaterial.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Networking\IPacket.cs" />
     <Compile Include="Networking\IPacketReader.cs" />

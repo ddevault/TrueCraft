@@ -22,6 +22,11 @@ namespace TrueCraft.Core.Logic
         public abstract byte ID { get; }
 
         /// <summary>
+        /// The maximum amount that can be in a single stack of this block.
+        /// </summary>
+        public virtual sbyte MaximumStack { get { return 64; } }
+
+        /// <summary>
         /// How resist the block is to explosions.
         /// </summary>
         public virtual double BlastResistance { get { return 0; } }
