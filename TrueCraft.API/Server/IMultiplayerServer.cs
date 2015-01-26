@@ -4,6 +4,7 @@ using System.Net;
 using System.Collections.Generic;
 using TrueCraft.API.World;
 using TrueCraft.API.Logging;
+using TrueCraft.API.Logic;
 
 namespace TrueCraft.API.Server
 {
@@ -22,6 +23,7 @@ namespace TrueCraft.API.Server
         IList<IRemoteClient> Clients { get; }
         IList<IWorld> Worlds { get; }
         IEventScheduler Scheduler { get; }
+        IBlockRepository BlockRepository { get; }
 
         void Start(IPEndPoint endPoint);
         void RegisterPacketHandler(byte packetId, PacketHandler handler);

@@ -57,6 +57,7 @@
     <Compile Include="Entities\PlayerEntity.cs" />
     <Compile Include="Handlers\InteractionHandlers.cs" />
     <Compile Include="Commands\DebugCommands.cs" />
+    <Compile Include="BlockRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

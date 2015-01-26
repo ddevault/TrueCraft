@@ -79,6 +79,7 @@
     <Compile Include="Server\ChatMessageEventArgs.cs" />
     <Compile Include="BlockFace.cs" />
     <Compile Include="Server\PlayerJoinedEventArgs.cs" />
+    <Compile Include="Logic\IBlockRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

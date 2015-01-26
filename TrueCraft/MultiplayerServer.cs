@@ -11,6 +11,7 @@ using TrueCraft.API.Logging;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.API;
 using TrueCraft.Core.Logging;
+using TrueCraft.API.Logic;
 
 namespace TrueCraft
 {
@@ -24,6 +25,7 @@ namespace TrueCraft
         public IList<IWorld> Worlds { get; private set; }
         public IList<IEntityManager> EntityManagers { get; private set; }
         public IEventScheduler Scheduler { get; private set; }
+        public IBlockRepository BlockRepository { get; private set; }
 
         private Timer NetworkWorker, EnvironmentWorker;
         private TcpListener Listener;
@@ -43,6 +45,9 @@ namespace TrueCraft
             EntityManagers = new List<IEntityManager>();
             LogProviders = new List<ILogProvider>();
             Scheduler = new EventScheduler(this);
+            var blockRepository = new BlockRepository();
+            blockRepository.DiscoverBlockProviders();
+            BlockRepository = blockRepository;
             ExecutingTick = false;
 
             reader.RegisterCorePackets();
