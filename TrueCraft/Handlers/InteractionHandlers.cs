@@ -81,6 +81,31 @@ namespace TrueCraft.Handlers
             }
         }
 
+        public static void HandleClickWindowPacket(IPacket _packet, IRemoteClient _client, IMultiplayerServer server)
+        {
+            var packet = (ClickWindowPacket)_packet;
+            var client = (RemoteClient)_client;
+            var window = client.CurrentWindow;
+            if (packet.SlotIndex >= window.Length || packet.SlotIndex < 0)
+                return;
+            if (client.ItemStaging.Empty) // Picking up something
+            {
+                if (packet.Shift)
+                {
+                    Console.WriteLine("Moving to alternate");
+                    window.MoveToAlternateArea(packet.SlotIndex);
+                }
+                else
+                {
+                    client.ItemStaging = window[packet.SlotIndex];
+                }
+            }
+            else // Setting something down
+            {
+                
+            }
+        }
+
         public static void HandleChangeHeldItem(IPacket _packet, IRemoteClient _client, IMultiplayerServer server)
         {
             var packet = (ChangeHeldItemPacket)_packet;
