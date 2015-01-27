@@ -158,7 +158,7 @@ namespace TrueCraft
 
         void HandleWindowChange(object sender, WindowChangeEventArgs e)
         {
-            QueuePacket(new SetSlotPacket(0, (short)e.SlotIndex, e.Value.Id, e.Value.Count, e.Value.Metadata));
+            QueuePacket(new SetSlotPacket(0, (short)e.SlotIndex, e.Value.ID, e.Value.Count, e.Value.Metadata));
         }
 
         private static ChunkDataPacket CreatePacket(IChunk chunk)

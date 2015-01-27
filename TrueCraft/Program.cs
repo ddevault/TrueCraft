@@ -21,7 +21,7 @@ namespace TrueCraft
             // TODO: Make this more flexible
             var server = new MultiplayerServer();
             server.AddWorld(new World("default", new StandardGenerator()));
-            server.AddLogProvider(new ConsoleLogProvider());
+            server.AddLogProvider(new ConsoleLogProvider(LogCategory.Notice | LogCategory.Warning | LogCategory.Error | LogCategory.Debug));
             #if DEBUG
             server.AddLogProvider(new FileLogProvider(new StreamWriter("packets.log", false), LogCategory.Packets));
             #endif

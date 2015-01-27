@@ -173,7 +173,7 @@ namespace TrueCraft
             if (ExecutingTick)
                 return; // TODO: Warn about skipped updates?
             ExecutingTick = true;
-            for (int i = 0; i < Clients.Count; i++)
+            for (int i = 0; i < Clients.Count && i >= 0; i++)
             {
                 var client = Clients[i] as RemoteClient;
                 var sendTimeout = DateTime.Now.AddMilliseconds(50);

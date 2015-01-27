@@ -17,6 +17,7 @@ namespace TrueCraft.Handlers
             var client = (RemoteClient)_client;
             var world = _client.World;
             var position = new Coordinates3D(packet.X, packet.Y, packet.Z);
+            var descriptor = world.GetBlockData(position);
             switch (packet.PlayerAction)
             {
                 case PlayerDiggingPacket.Action.DropItem:
@@ -26,10 +27,8 @@ namespace TrueCraft.Handlers
                     // TODO
                     break;
                 case PlayerDiggingPacket.Action.StopDigging:
-                    // TODO: Do this properly
-                    var stack = new ItemStack(world.GetBlockID(position), 1, world.GetMetadata(position));
-                    client.InventoryWindow.PickUpStack(stack);
-                    world.SetBlockID(position, 0);
+                    var provider = server.BlockRepository.GetBlockProvider(descriptor.ID);
+                    provider.BlockMined(descriptor, packet.Face, world, client);
                     break;
             }
         }
@@ -41,7 +40,7 @@ namespace TrueCraft.Handlers
 
             var slot = client.SelectedItem;
             var position = new Coordinates3D(packet.X, packet.Y, packet.Z);
-            BlockData? block = null;
+            BlockDescriptor? block = null;
             if (position != -Coordinates3D.One)
             {
                 if (position.DistanceTo((Coordinates3D)client.Entity.Position) > 10 /* TODO: Reach */)
@@ -56,7 +55,16 @@ namespace TrueCraft.Handlers
             bool use = true;
             if (block != null)
             {
-                // TODO: Call the handler for the block being clicked on and possible cancel use
+                var provider = server.BlockRepository.GetBlockProvider(block.Value.ID);
+                if (!provider.BlockRightClicked(block.Value, packet.Face, client.World, client))
+                {
+                    position += MathHelper.BlockFaceToCoordinates(packet.Face);
+                    var oldID = client.World.GetBlockID(position);
+                    var oldMeta = client.World.GetMetadata(position);
+                    client.QueuePacket(new BlockChangePacket(position.X, (sbyte)position.Y, position.Z, (sbyte)oldID, (sbyte)oldMeta));
+                    client.QueuePacket(new SetSlotPacket(0, client.SelectedSlot, client.SelectedItem.ID, client.SelectedItem.Count, client.SelectedItem.Metadata));
+                    return;
+                }
             }
             if (!slot.Empty)
             {
@@ -64,7 +72,7 @@ namespace TrueCraft.Handlers
                 {
                     // Temporary: just place the damn thing
                     position += MathHelper.BlockFaceToCoordinates(packet.Face);
-                    client.World.SetBlockID(position, (byte)slot.Id);
+                    client.World.SetBlockID(position, (byte)slot.ID);
                     client.World.SetMetadata(position, (byte)slot.Metadata);
                     slot.Count--;
                     client.Inventory[client.SelectedSlot] = slot;

@@ -59,7 +59,7 @@ namespace TrueCraft.API
             Nbt = nbt;
             if (Count == 0)
             {
-                Id = -1;
+                ID = -1;
                 Metadata = 0;
                 Nbt = null;
             }
@@ -68,7 +68,7 @@ namespace TrueCraft.API
         public static ItemStack FromStream(IMinecraftStream stream)
         {
             var slot = ItemStack.EmptyStack;
-            slot.Id = stream.ReadInt16();
+            slot.ID = stream.ReadInt16();
             if (slot.Empty)
                 return slot;
             slot.Count = stream.ReadInt8();
@@ -86,7 +86,7 @@ namespace TrueCraft.API
 
         public void WriteTo(IMinecraftStream stream)
         {
-            stream.WriteInt16(Id);
+            stream.WriteInt16(ID);
             if (Empty)
                 return;
             stream.WriteInt8(Count);
@@ -106,7 +106,7 @@ namespace TrueCraft.API
         public static ItemStack FromNbt(NbtCompound compound)
         {
             var s = ItemStack.EmptyStack;
-            s.Id = compound.Get<NbtShort>("id").Value;
+            s.ID = compound.Get<NbtShort>("id").Value;
             s.Metadata = compound.Get<NbtShort>("Damage").Value;
             s.Count = (sbyte)compound.Get<NbtByte>("Count").Value;
             s.Index = compound.Get<NbtByte>("Slot").Value;
@@ -118,7 +118,7 @@ namespace TrueCraft.API
         public NbtCompound ToNbt()
         {
             var c = new NbtCompound();
-            c.Add(new NbtShort("id", Id));
+            c.Add(new NbtShort("id", ID));
             c.Add(new NbtShort("Damage", Metadata));
             c.Add(new NbtByte("Count", (byte)Count));
             c.Add(new NbtByte("Slot", (byte)Index));
@@ -130,10 +130,10 @@ namespace TrueCraft.API
         [NbtIgnore]
         public bool Empty
         {
-            get { return Id == -1; }
+            get { return ID == -1; }
         }
 
-        public short Id
+        public short ID
         {
             get { return _Id; }
             set
@@ -181,7 +181,7 @@ namespace TrueCraft.API
         {
             if (Empty)
                 return "(Empty)";
-            string result = "ID: " + Id;
+            string result = "ID: " + ID;
             if (Count != 1) result += "; Count: " + Count;
             if (Metadata != 0) result += "; Metadata: " + Metadata;
             if (Nbt != null) result += Environment.NewLine + Nbt.ToString();
@@ -190,7 +190,7 @@ namespace TrueCraft.API
 
         public object Clone()
         {
-            return new ItemStack(Id, Count, Metadata, Nbt);
+            return new ItemStack(ID, Count, Metadata, Nbt);
         }
 
         [NbtIgnore]

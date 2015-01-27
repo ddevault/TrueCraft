@@ -1,5 +1,8 @@
 ﻿using System;
 using TrueCraft.API.Logic;
+using TrueCraft.API.World;
+using TrueCraft.API;
+using TrueCraft.API.Networking;
 
 namespace TrueCraft.Core.Logic
 {
@@ -8,6 +11,34 @@ namespace TrueCraft.Core.Logic
     /// </summary>
     public abstract class BlockProvider : IBlockProvider, IItemProvider
     {
+        public virtual bool BlockRightClicked(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            return true;
+        }
+
+        public virtual bool BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void BlockMined(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            // TODO: Spawn item entity
+            var stack = new ItemStack(descriptor.ID, 1, descriptor.Metadata);
+            user.Inventory.PickUpStack(stack);
+            world.SetBlockID(descriptor.Coordinates, 0);
+        }
+
+        public virtual void BlockUpdate(BlockDescriptor descriptor, IWorld world)
+        {
+            // This space intentionally left blank
+        }
+
+        public virtual void BlockScheduledEvent(BlockDescriptor descriptor, IWorld world, object data)
+        {
+            // This space intentionally left blank
+        }
+
         short IItemProvider.ID
         {
             get

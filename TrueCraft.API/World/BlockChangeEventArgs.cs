@@ -4,7 +4,7 @@ namespace TrueCraft.API.World
 {
     public class BlockChangeEventArgs : EventArgs
     {
-        public BlockChangeEventArgs(Coordinates3D position, BlockData oldBlock, BlockData newBlock)
+        public BlockChangeEventArgs(Coordinates3D position, BlockDescriptor oldBlock, BlockDescriptor newBlock)
         {
             Position = position;
             OldBlock = oldBlock;
@@ -12,7 +12,7 @@ namespace TrueCraft.API.World
         }
 
         public Coordinates3D Position;
-        public BlockData OldBlock;
-        public BlockData NewBlock;
+        public BlockDescriptor OldBlock;
+        public BlockDescriptor NewBlock;
     }
 }

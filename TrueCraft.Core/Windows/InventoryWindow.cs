@@ -69,12 +69,12 @@ namespace TrueCraft.Core.Windows
             return Hotbar;
         }
 
-        public bool PickUpStack(ItemStack slot)
+        public override bool PickUpStack(ItemStack slot)
         {
             var area = MainInventory;
             foreach (var item in Hotbar.Items)
             {
-                if (item.Empty || (slot.Id == item.Id && slot.Metadata == item.Metadata))
+                if (item.Empty || (slot.ID == item.ID && slot.Metadata == item.Metadata))
                     //&& item.Count + slot.Count < Item.GetMaximumStackSize(new ItemDescriptor(item.Id, item.Metadata)))) // TODO
                 {
                     area = Hotbar;

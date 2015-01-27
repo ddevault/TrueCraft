@@ -152,21 +152,22 @@ namespace TrueCraft.Core.World
             return chunk.GetBlockLight(coordinates);
         }
 
-        public BlockData GetBlockData(Coordinates3D coordinates)
+        public BlockDescriptor GetBlockData(Coordinates3D coordinates)
         {
             IChunk chunk;
-            coordinates = FindBlockPosition(coordinates, out chunk);
-            return GetBlockDataFromChunk(coordinates, chunk);
+            var adjustedCoordinates = FindBlockPosition(coordinates, out chunk);
+            return GetBlockDataFromChunk(adjustedCoordinates, chunk, coordinates);
         }
 
-        private BlockData GetBlockDataFromChunk(Coordinates3D adjustedCoordinates, IChunk chunk)
+        private BlockDescriptor GetBlockDataFromChunk(Coordinates3D adjustedCoordinates, IChunk chunk, Coordinates3D coordinates)
         {
-            return new BlockData
+            return new BlockDescriptor
             {
                 ID = chunk.GetBlockID(adjustedCoordinates),
                 Metadata = chunk.GetMetadata(adjustedCoordinates),
                 BlockLight = chunk.GetBlockLight(adjustedCoordinates),
-                SkyLight = chunk.GetSkyLight(adjustedCoordinates)
+                SkyLight = chunk.GetSkyLight(adjustedCoordinates),
+                Coordinates = coordinates
             };
         }
 
@@ -174,24 +175,24 @@ namespace TrueCraft.Core.World
         {
             IChunk chunk;
             var adjustedCoordinates = FindBlockPosition(coordinates, out chunk);
-            BlockData old = new BlockData();
+            BlockDescriptor old = new BlockDescriptor();
             if (BlockChanged != null)
-                old = GetBlockDataFromChunk(adjustedCoordinates, chunk);
+                old = GetBlockDataFromChunk(adjustedCoordinates, chunk, coordinates);
             chunk.SetBlockID(adjustedCoordinates, value);
             if (BlockChanged != null)
-                BlockChanged(this, new BlockChangeEventArgs(coordinates, old, GetBlockDataFromChunk(adjustedCoordinates, chunk)));
+                BlockChanged(this, new BlockChangeEventArgs(coordinates, old, GetBlockDataFromChunk(adjustedCoordinates, chunk, coordinates)));
         }
 
         public void SetMetadata(Coordinates3D coordinates, byte value)
         {
             IChunk chunk;
             var adjustedCoordinates = FindBlockPosition(coordinates, out chunk);
-            BlockData old = new BlockData();
+            BlockDescriptor old = new BlockDescriptor();
             if (BlockChanged != null)
-                old = GetBlockDataFromChunk(adjustedCoordinates, chunk);
+                old = GetBlockDataFromChunk(adjustedCoordinates, chunk, coordinates);
             chunk.SetMetadata(adjustedCoordinates, value);
             if (BlockChanged != null)
-                BlockChanged(this, new BlockChangeEventArgs(coordinates, old, GetBlockDataFromChunk(adjustedCoordinates, chunk)));
+                BlockChanged(this, new BlockChangeEventArgs(coordinates, old, GetBlockDataFromChunk(adjustedCoordinates, chunk, coordinates)));
         }
 
         public void SetSkyLight(Coordinates3D coordinates, byte value)

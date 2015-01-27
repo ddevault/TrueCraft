@@ -19,5 +19,9 @@ namespace TrueCraft.API.Windows
         /// Gets an array of all slots in this window. Suitable for sending to clients over the network.
         /// </summary>
         ItemStack[] GetSlots();
+        /// <summary>
+        /// Adds the specified item stack to this window, merging with established slots as neccessary.
+        /// </summary>
+        bool PickUpStack(ItemStack slot);
     }
 }

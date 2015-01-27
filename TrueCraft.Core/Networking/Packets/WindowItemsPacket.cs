@@ -45,7 +45,7 @@ namespace TrueCraft.Core.Networking.Packets
             stream.WriteInt16((short)Items.Length);
             for (int i = 0; i < Items.Length; i++)
             {
-                stream.WriteInt16(Items[i].Id);
+                stream.WriteInt16(Items[i].ID);
                 if (!Items[i].Empty)
                 {
                     stream.WriteInt8(Items[i].Count);
