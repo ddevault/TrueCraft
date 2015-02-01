@@ -152,7 +152,10 @@ namespace TrueCraft
         {
             var client = (RemoteClient)_client;
             if (client.LoggedIn)
+            {
                 Log(LogCategory.Notice, "{0} has left the server.", client.Username);
+                GetEntityManagerForWorld(client.World).DespawnEntity(client.Entity);
+            }
             Clients.Remove(client);
         }
 
@@ -177,7 +180,7 @@ namespace TrueCraft
             for (int i = 0; i < Clients.Count && i >= 0; i++)
             {
                 var client = Clients[i] as RemoteClient;
-                var sendTimeout = DateTime.Now.AddMilliseconds(50);
+                var sendTimeout = DateTime.Now.AddMilliseconds(200);
                 while (client.PacketQueue.Count != 0 && DateTime.Now < sendTimeout)
                 {
                     IPacket packet;
@@ -191,7 +194,7 @@ namespace TrueCraft
                         break;
                     }
                 }
-                var receiveTimeout = DateTime.Now.AddMilliseconds(50);
+                var receiveTimeout = DateTime.Now.AddMilliseconds(200);
                 while (client.DataAvailable && DateTime.Now < receiveTimeout)
                 {
                     var packet = PacketReader.ReadPacket(client.MinecraftStream);
