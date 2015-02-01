@@ -4,6 +4,7 @@ using TrueCraft.API.Server;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.API.Networking;
 using TrueCraft.API.Logging;
+using TrueCraft.Exceptions;
 
 namespace TrueCraft.Handlers
 {
@@ -45,7 +46,7 @@ namespace TrueCraft.Handlers
 
         internal static void HandleDisconnect(IPacket _packet, IRemoteClient _client, IMultiplayerServer server)
         {
-            throw new Exception("Player disconnected"); // TODO: PlayerDisconnectException or something
+            throw new PlayerDisconnectException(true);
         }
     }
 }

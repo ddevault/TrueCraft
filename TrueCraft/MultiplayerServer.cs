@@ -12,6 +12,7 @@ using TrueCraft.Core.Networking.Packets;
 using TrueCraft.API;
 using TrueCraft.Core.Logging;
 using TrueCraft.API.Logic;
+using TrueCraft.Exceptions;
 
 namespace TrueCraft
 {
@@ -180,7 +181,7 @@ namespace TrueCraft
                 while (client.PacketQueue.Count != 0 && DateTime.Now < sendTimeout)
                 {
                     IPacket packet;
-                    while (!client.PacketQueue.TryDequeue(out packet)) { }
+                    while (!client.PacketQueue.TryDequeue(out packet)) ;
                     LogPacket(packet, false);
                     PacketReader.WritePacket(client.MinecraftStream, packet);
                     if (packet is DisconnectPacket)
@@ -200,6 +201,11 @@ namespace TrueCraft
                         try
                         {
                             PacketHandlers[packet.ID](packet, client, this);
+                        }
+                        catch (PlayerDisconnectException)
+                        {
+                            DisconnectClient(client);
+                            i--;
                         }
                         catch (Exception e)
                         {

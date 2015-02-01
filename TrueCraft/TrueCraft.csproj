@@ -58,6 +58,7 @@
     <Compile Include="Handlers\InteractionHandlers.cs" />
     <Compile Include="Commands\DebugCommands.cs" />
     <Compile Include="BlockRepository.cs" />
+    <Compile Include="Exceptions\PlayerDisconnectException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -75,4 +76,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
+  </ItemGroup>
 </Project>
