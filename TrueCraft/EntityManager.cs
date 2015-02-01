@@ -105,7 +105,30 @@ namespace TrueCraft
             return Entities.Where(e => e != entity && IsInRange(e.Position, entity.Position, maxChunks)).ToArray();
         }
 
-        IRemoteClient GetClientForEntity(PlayerEntity entity)
+        private void SendEntityToClient(RemoteClient client, IEntity entity)
+        {
+            RemoteClient spawnedClient = null;
+            if (entity is PlayerEntity)
+                spawnedClient = (RemoteClient)GetClientForEntity(entity as PlayerEntity);
+            client.KnownEntities.Add(entity);
+            client.QueuePacket(entity.SpawnPacket);
+            if (spawnedClient != null)
+            {
+                // Send equipment when spawning player entities
+                client.QueuePacket(new EntityEquipmentPacket(entity.EntityID,
+                        0, spawnedClient.SelectedItem.ID, spawnedClient.SelectedItem.Metadata));
+                client.QueuePacket(new EntityEquipmentPacket(entity.EntityID,
+                        4, spawnedClient.InventoryWindow.Armor[0].ID, spawnedClient.InventoryWindow.Armor[0].Metadata));
+                client.QueuePacket(new EntityEquipmentPacket(entity.EntityID,
+                        3, spawnedClient.InventoryWindow.Armor[1].ID, spawnedClient.InventoryWindow.Armor[1].Metadata));
+                client.QueuePacket(new EntityEquipmentPacket(entity.EntityID,
+                        2, spawnedClient.InventoryWindow.Armor[2].ID, spawnedClient.InventoryWindow.Armor[2].Metadata));
+                client.QueuePacket(new EntityEquipmentPacket(entity.EntityID,
+                        1, spawnedClient.InventoryWindow.Armor[3].ID, spawnedClient.InventoryWindow.Armor[3].Metadata));
+            }
+        }
+
+        private IRemoteClient GetClientForEntity(PlayerEntity entity)
         {
             return Server.Clients.SingleOrDefault(c => c.Entity != null && c.Entity.EntityID == entity.EntityID);
         }
@@ -122,6 +145,7 @@ namespace TrueCraft
 
         public void SpawnEntity(IEntity entity)
         {
+            
             entity.EntityID = NextEntityID++;
             entity.PropertyChanged -= HandlePropertyChanged;
             entity.PropertyChanged += HandlePropertyChanged;
@@ -134,8 +158,7 @@ namespace TrueCraft
                 if (clientEntity != entity && clientEntity is PlayerEntity)
                 {
                     var client = (RemoteClient)GetClientForEntity((PlayerEntity)clientEntity);
-                    client.KnownEntities.Add(entity);
-                    client.QueuePacket(entity.SpawnPacket);
+                    SendEntityToClient(client, entity);
                 }
             }
             if (entity is IPhysicsEntity)
@@ -159,19 +182,10 @@ namespace TrueCraft
             {
                 lock (Entities)
                 {
-                    var updates = Parallel.ForEach(Entities, e =>
+                    foreach (var e in Entities)
                     {
-                        try
-                        {
-                            e.Update(this);
-                        }
-                        catch (Exception ex)
-                        {
-                            DespawnEntity(e);
-                            Server.Log(LogCategory.Error, "Despawning entity {0} due to exception in update\n{1}", e.EntityID, ex);
-                        }
-                    });
-                    while (!updates.IsCompleted);
+                        e.Update(this);
+                    }
                 }
             }
             catch
@@ -206,10 +220,7 @@ namespace TrueCraft
             foreach (var entity in GetEntitiesInRange(client.Entity, MaxClientDistance))
             {
                 if (entity != client.Entity)
-                {
-                    client.KnownEntities.Add(entity);
-                    client.QueuePacket(entity.SpawnPacket);
-                }
+                    SendEntityToClient(client, entity);
             }
         }
     }

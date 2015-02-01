@@ -194,6 +194,19 @@ namespace TrueCraft
         void HandleWindowChange(object sender, WindowChangeEventArgs e)
         {
             QueuePacket(new SetSlotPacket(0, (short)e.SlotIndex, e.Value.ID, e.Value.Count, e.Value.Metadata));
+            if (e.SlotIndex == SelectedSlot)
+            {
+                var notified = Server.GetEntityManagerForWorld(World).ClientsForEntity(Entity);
+                foreach (var c in notified)
+                    c.QueuePacket(new EntityEquipmentPacket(Entity.EntityID, 0, SelectedItem.ID, SelectedItem.Metadata));
+            }
+            if (e.SlotIndex >= InventoryWindow.ArmorIndex && e.SlotIndex < InventoryWindow.ArmorIndex + InventoryWindow.Armor.Length)
+            {
+                short slot = (short)(4 - (e.SlotIndex - InventoryWindow.ArmorIndex));
+                var notified = Server.GetEntityManagerForWorld(World).ClientsForEntity(Entity);
+                foreach (var c in notified)
+                    c.QueuePacket(new EntityEquipmentPacket(Entity.EntityID, slot, e.Value.ID, e.Value.Metadata));
+            }
         }
 
         private static ChunkDataPacket CreatePacket(IChunk chunk)

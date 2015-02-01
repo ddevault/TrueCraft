@@ -184,6 +184,9 @@ namespace TrueCraft.Handlers
             var packet = (ChangeHeldItemPacket)_packet;
             var client = (RemoteClient)_client;
             client.SelectedSlot = (short)(packet.Slot + InventoryWindow.HotbarIndex);
+            var notified = server.GetEntityManagerForWorld(client.World).ClientsForEntity(client.Entity);
+            foreach (var c in notified)
+                c.QueuePacket(new EntityEquipmentPacket(client.Entity.EntityID, 0, client.SelectedItem.ID, client.SelectedItem.Metadata));
         }
     }
 }
