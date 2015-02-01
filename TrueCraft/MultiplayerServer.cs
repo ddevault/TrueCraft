@@ -122,10 +122,8 @@ namespace TrueCraft
         {
             var compiled = string.Format(message, parameters);
             foreach (var client in Clients)
-            {
                 client.SendMessage(compiled);
-                Log(LogCategory.Notice, compiled);
-            }
+            Log(LogCategory.Notice, compiled);
         }
 
         protected internal void OnChatMessageReceived(ChatMessageEventArgs e)
@@ -154,7 +152,7 @@ namespace TrueCraft
             var client = (RemoteClient)_client;
             if (client.LoggedIn)
             {
-                Log(LogCategory.Notice, "{0} has left the server.", client.Username);
+                SendMessage(ChatColor.Yellow + "{0} has left the server.", client.Username);
                 GetEntityManagerForWorld(client.World).DespawnEntity(client.Entity);
             }
             Clients.Remove(client);
