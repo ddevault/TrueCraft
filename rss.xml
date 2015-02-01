@@ -1,0 +1,26 @@
+---
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>TrueCraft Blog</title>
+		<description>Updates from the TrueCraft team</description>
+        <link>http://truecraft.io/</link>
+        <atom:link href="http://truecraft.io/rss.xml" rel="self" type="application/rss+xml" />
+		{% for post in site.posts limit:10 %}
+			<item>
+				<title>{{ post.title }}</title>
+                <description>
+                    {% if post.in_browser %}
+                    &lt;p&gt;Hello RSS user! Head&apos;s up - this post is more easily viewed in a web browser.
+                        &lt;a href=&quot;http://truecraft.io{{ post.url }}&quot;&gt;Click here!&lt;/a&gt;&lt;/p&gt;
+                    {% endif %}
+                    {{ post.content | xml_escape }}
+                </description>
+				<pubDate>{{ post.date | date: "%a, %d %b %Y %H:%M:%S %z" }}</pubDate>
+                <link>http://truecraft.io{{ post.url }}</link>
+                <guid isPermaLink="true">http://truecraft.io{{ post.url }}</guid>
+			</item>
+		{% endfor %}
+	</channel>
+</rss>
