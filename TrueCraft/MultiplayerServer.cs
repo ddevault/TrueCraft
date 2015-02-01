@@ -211,6 +211,8 @@ namespace TrueCraft
                         {
                             Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
                             Log(LogCategory.Debug, e.ToString());
+                            PacketReader.WritePacket(client.MinecraftStream, new DisconnectPacket("An exception has occured on the server."));
+                            client.MinecraftStream.BaseStream.Flush();
                             DisconnectClient(client);
                             i--;
                         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TrueCraft.API;
+using TrueCraft.API.Networking;
 
 namespace TrueCraft.Entities
 {
@@ -20,6 +21,14 @@ namespace TrueCraft.Entities
         public ItemStack Item { get; set; }
 
         private DateTime SpawnTime { get; set; }
+
+        public override IPacket SpawnPacket
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
         public override Size Size
         {

@@ -22,6 +22,11 @@ namespace TrueCraft.Core
             return (sbyte)(((value % 360) / 360) * 256);
         }
 
+        public static float UnpackRotationByte(sbyte value)
+        {
+            return (value / 256f) * 360f;
+        }
+
         public static int CreateAbsoluteInt(double value)
         {
             return (int)(value * 32);

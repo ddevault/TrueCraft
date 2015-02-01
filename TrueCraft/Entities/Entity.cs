@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using TrueCraft.API.Entities;
 using TrueCraft.API;
+using TrueCraft.API.Networking;
 
 namespace TrueCraft.Entities
 {
@@ -63,6 +64,8 @@ namespace TrueCraft.Entities
         }
 
         public abstract Size Size { get; }
+
+        public abstract IPacket SpawnPacket { get; }
 
         public virtual bool SendMetadataToClients { get { return false; } }
 

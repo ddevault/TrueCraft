@@ -34,17 +34,12 @@ namespace TrueCraft
             CurrentWindow = InventoryWindow;
             ItemStaging = ItemStack.EmptyStack;
             KnownEntities = new List<IEntity>();
-            InverseKnownEntities = new List<IEntity>();
         }
             
         /// <summary>
         /// A list of entities that this client is aware of.
         /// </summary>
         internal List<IEntity> KnownEntities { get; set; }
-        /// <summary>
-        /// A list of entities that are aware of this client.
-        /// </summary>
-        internal List<IEntity> InverseKnownEntities { get; set; }
         
         public NetworkStream NetworkStream { get; set; }
         public IMinecraftStream MinecraftStream { get; internal set; }
@@ -109,7 +104,7 @@ namespace TrueCraft
         internal void SendKeepAlive(IMultiplayerServer server)
         {
             QueuePacket(new KeepAlivePacket());
-            server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(10), SendKeepAlive);
+            server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(1), SendKeepAlive);
         }
 
         internal void UpdateChunks()

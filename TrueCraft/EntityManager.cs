@@ -9,6 +9,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.Core;
+using System.Collections.Generic;
+using TrueCraft.Core.World;
+using TrueCraft.API;
 
 namespace TrueCraft
 {
@@ -18,11 +21,16 @@ namespace TrueCraft
         public IMultiplayerServer Server { get; set; }
 
         private int NextEntityID { get; set; }
+        private List<IEntity> Entities { get; set; } // TODO: Persist to disk
+        private object EntityLock = new object();
+
+        private static readonly int MaxClientDistance = 4;
 
         public EntityManager(IMultiplayerServer server, IWorld world)
         {
             Server = server;
             World = world;
+            Entities = new List<IEntity>();
             // TODO: Handle loading worlds that already have entities
             // Note: probably not the concern of EntityManager. The server could manually set this?
             NextEntityID = 1;
@@ -38,6 +46,8 @@ namespace TrueCraft
             switch (e.PropertyName)
             {
                 case "Position":
+                case "Yaw":
+                case "Pitch":
                     PropegateEntityPositionUpdates(entity);
                     break;
             }
@@ -78,9 +88,20 @@ namespace TrueCraft
             }
         }
 
+        private bool IsInRange(Vector3 a, Vector3 b, int range)
+        {
+            return Math.Abs(a.X - b.X) < range * Chunk.Width &&
+                Math.Abs(a.Z - b.Z) < range * Chunk.Depth;
+        }
+
+        private IEntity[] GetEntitiesInRange(IEntity entity, int maxChunks)
+        {
+            return Entities.Where(e => e != entity && IsInRange(e.Position, entity.Position, maxChunks)).ToArray();
+        }
+
         IRemoteClient GetClientForEntity(PlayerEntity entity)
         {
-            return Server.Clients.SingleOrDefault(c => c.Entity.EntityID == entity.EntityID);
+            return Server.Clients.SingleOrDefault(c => c.Entity != null && c.Entity.EntityID == entity.EntityID);
         }
 
         public void SpawnEntity(IEntity entity)
@@ -88,16 +109,40 @@ namespace TrueCraft
             entity.EntityID = NextEntityID++;
             entity.PropertyChanged -= HandlePropertyChanged;
             entity.PropertyChanged += HandlePropertyChanged;
+            lock (EntityLock)
+            {
+                Entities.Add(entity);
+            }
+            foreach (var clientEntity in GetEntitiesInRange(entity, MaxClientDistance))
+            {
+                if (clientEntity != entity && clientEntity is PlayerEntity)
+                {
+                    var client = (RemoteClient)GetClientForEntity((PlayerEntity)clientEntity);
+                    client.KnownEntities.Add(entity);
+                    client.QueuePacket(entity.SpawnPacket);
+                }
+            }
         }
 
         public void DespawnEntity(IEntity entity)
         {
-            throw new NotImplementedException();
+            for (int i = 0, ServerClientsCount = Server.Clients.Count; i < ServerClientsCount; i++)
+            {
+                var client = (RemoteClient)Server.Clients[i];
+                if (client.KnownEntities.Contains(entity))
+                {
+                    client.QueuePacket(new DestroyEntityPacket(entity.EntityID));
+                }
+            }
+            lock (EntityLock)
+            {
+                Entities.Remove(entity);
+            }
         }
 
         public IEntity GetEntityByID(int id)
         {
-            throw new NotImplementedException();
+            return Entities.SingleOrDefault(e => e.EntityID == id);
         }
 
         public void Update()
@@ -105,9 +150,20 @@ namespace TrueCraft
             throw new NotImplementedException();
         }
 
-        public void SendEntitiesToClient(IRemoteClient client)
+        /// <summary>
+        /// Performs the initial population of client entities.
+        /// </summary>
+        public void SendEntitiesToClient(IRemoteClient _client)
         {
-            throw new NotImplementedException();
+            var client = _client as RemoteClient;
+            foreach (var entity in GetEntitiesInRange(client.Entity, MaxClientDistance))
+            {
+                if (entity != client.Entity)
+                {
+                    client.KnownEntities.Add(entity);
+                    client.QueuePacket(entity.SpawnPacket);
+                }
+            }
         }
     }
 }

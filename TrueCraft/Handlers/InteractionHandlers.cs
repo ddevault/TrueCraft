@@ -24,9 +24,20 @@ namespace TrueCraft.Handlers
                     // TODO
                     break;
                 case PlayerDiggingPacket.Action.StartDigging:
-                    // TODO
+                    foreach (var nearbyClient in server.Clients) // TODO: Send this repeatedly during the course of the digging
+                    {
+                        var c = (RemoteClient)nearbyClient;
+                        if (c.KnownEntities.Contains(client.Entity))
+                            c.QueuePacket(new AnimationPacket(client.Entity.EntityID, AnimationPacket.PlayerAnimation.SwingArm));
+                    }
                     break;
                 case PlayerDiggingPacket.Action.StopDigging:
+                    foreach (var nearbyClient in server.Clients)
+                    {
+                        var c = (RemoteClient)nearbyClient;
+                        if (c.KnownEntities.Contains(client.Entity))
+                            c.QueuePacket(new AnimationPacket(client.Entity.EntityID, AnimationPacket.PlayerAnimation.None));
+                    }
                     var provider = server.BlockRepository.GetBlockProvider(descriptor.ID);
                     provider.BlockMined(descriptor, packet.Face, world, client);
                     break;

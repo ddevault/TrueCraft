@@ -9,6 +9,11 @@ namespace TrueCraft.Core.Networking.Packets
 
         public int EntityID;
 
+        public DestroyEntityPacket(int entityID)
+        {
+            EntityID = entityID;
+        }
+
         public void ReadPacket(IMinecraftStream stream)
         {
             EntityID = stream.ReadInt32();

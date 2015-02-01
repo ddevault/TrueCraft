@@ -21,6 +21,12 @@ namespace TrueCraft.Core.Networking.Packets
         public int EntityID;
         public PlayerAnimation Animation;
 
+        public AnimationPacket(int entityID, PlayerAnimation animation)
+        {
+            EntityID = entityID;
+            Animation = animation;
+        }
+
         public void ReadPacket(IMinecraftStream stream)
         {
             EntityID = stream.ReadInt32();

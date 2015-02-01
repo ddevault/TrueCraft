@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TrueCraft.API;
+using TrueCraft.API.Networking;
+using TrueCraft.Core.Networking.Packets;
+using TrueCraft.Core;
 
 namespace TrueCraft.Entities
 {
@@ -17,6 +20,19 @@ namespace TrueCraft.Entities
         public const double Width = 0.6;
         public const double Height = 1.62;
         public const double Depth = 0.6;
+
+        public override IPacket SpawnPacket
+        {
+            get
+            {
+                return new SpawnPlayerPacket(EntityID, Username,
+                    MathHelper.CreateAbsoluteInt(Position.X),
+                    MathHelper.CreateAbsoluteInt(Position.Y),
+                    MathHelper.CreateAbsoluteInt(Position.Z),
+                    MathHelper.CreateRotationByte(Yaw),
+                    MathHelper.CreateRotationByte(Pitch), 0 /* Note: current item is set through other means */);
+            }
+        }
 
         public override Size Size
         {
