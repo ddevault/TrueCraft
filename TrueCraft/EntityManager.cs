@@ -7,6 +7,8 @@ using System.ComponentModel;
 using TrueCraft.Entities;
 using System.Linq;
 using System.Threading.Tasks;
+using TrueCraft.Core.Networking.Packets;
+using TrueCraft.Core;
 
 namespace TrueCraft
 {
@@ -21,7 +23,64 @@ namespace TrueCraft
         {
             Server = server;
             World = world;
-            NextEntityID = 1; // TODO: Handle loading worlds that already have entities
+            // TODO: Handle loading worlds that already have entities
+            // Note: probably not the concern of EntityManager. The server could manually set this?
+            NextEntityID = 1;
+        }
+
+        private void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var entity = sender as IEntity;
+            if (entity == null)
+                throw new InvalidCastException("Attempted to handle property changes for non-entity");
+            if (entity is PlayerEntity)
+                HandlePlayerPropertyChanged(e.PropertyName, entity as PlayerEntity);
+            switch (e.PropertyName)
+            {
+                case "Position":
+                    PropegateEntityPositionUpdates(entity);
+                    break;
+            }
+        }
+
+        private void HandlePlayerPropertyChanged(string property, PlayerEntity entity)
+        {
+            var client = GetClientForEntity(entity) as RemoteClient;
+            if (client == null)
+                return; // Note: would an exception be appropriate here?
+            switch (property)
+            {
+                case "Position":
+                    // TODO: Only trigger this if the player crosses a chunk boundary
+                    Task.Factory.StartNew(client.UpdateChunks);
+                    break;
+            }
+        }
+
+        private void PropegateEntityPositionUpdates(IEntity entity)
+        {
+            for (int i = 0, ServerClientsCount = Server.Clients.Count; i < ServerClientsCount; i++)
+            {
+                var client = Server.Clients[i] as RemoteClient;
+                if (client.Entity == entity)
+                    continue; // Do not send movement updates back to the client that triggered them
+                if (client.KnownEntities.Contains(entity))
+                {
+                    // TODO: Consider using more kinds of entity packets (i.e. EntityRelativeMovePacket) that may be more effecient
+                    // In the past I've done this and entity positions quickly got very inaccurate on the client.
+                    client.QueuePacket(new EntityTeleportPacket(entity.EntityID,
+                        MathHelper.CreateAbsoluteInt(entity.Position.X),
+                        MathHelper.CreateAbsoluteInt(entity.Position.Y),
+                        MathHelper.CreateAbsoluteInt(entity.Position.Z),
+                        MathHelper.CreateRotationByte(entity.Yaw),
+                        MathHelper.CreateRotationByte(entity.Pitch)));
+                }
+            }
+        }
+
+        IRemoteClient GetClientForEntity(PlayerEntity entity)
+        {
+            return Server.Clients.SingleOrDefault(c => c.Entity.EntityID == entity.EntityID);
         }
 
         public void SpawnEntity(IEntity entity)
@@ -29,42 +88,6 @@ namespace TrueCraft
             entity.EntityID = NextEntityID++;
             entity.PropertyChanged -= HandlePropertyChanged;
             entity.PropertyChanged += HandlePropertyChanged;
-        }
-
-        void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            var entity = sender as IEntity;
-            if (entity == null)
-                throw new InvalidCastException("Attempted to handle property changes for non-entity");
-            if (entity is PlayerEntity)
-            {
-                switch (e.PropertyName)
-                {
-                    case "Position":
-                        UpdatePlayerPosition(entity as PlayerEntity);
-                        break;
-                }
-            }
-        }
-
-        private void UpdatePlayerPosition(PlayerEntity entity)
-        {
-            var self = GetClientForEntity(entity);
-            for (int i = 0, ServerClientsCount = Server.Clients.Count; i < ServerClientsCount; i++)
-            {
-                var client = Server.Clients[i];
-                if (client == self) continue;
-                // TODO: Send updates about
-            }
-            if (self is RemoteClient)
-            {
-                Task.Factory.StartNew(() => (self as RemoteClient).UpdateChunks());
-            }
-        }
-
-        IRemoteClient GetClientForEntity(PlayerEntity entity)
-        {
-            return Server.Clients.SingleOrDefault(c => c.Entity.EntityID == entity.EntityID);
         }
 
         public void DespawnEntity(IEntity entity)

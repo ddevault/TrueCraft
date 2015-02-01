@@ -17,9 +17,9 @@ namespace TrueCraft.Core
         /// Maps a float from 0...360 to 0...255
         /// </summary>
         /// <param name="value"></param>
-        public static byte CreateRotationByte(float value)
+        public static sbyte CreateRotationByte(float value)
         {
-            return (byte)(((value % 360) / 360) * 256);
+            return (sbyte)(((value % 360) / 360) * 256);
         }
 
         public static int CreateAbsoluteInt(double value)

@@ -34,6 +34,15 @@ namespace TrueCraft
             CurrentWindow = InventoryWindow;
             ItemStaging = ItemStack.EmptyStack;
         }
+            
+        /// <summary>
+        /// A list of entities that this client is aware of.
+        /// </summary>
+        internal List<IEntity> KnownEntities { get; set; }
+        /// <summary>
+        /// A list of entities that are aware of this client.
+        /// </summary>
+        internal List<IEntity> InverseKnownEntities { get; set; }
         
         public NetworkStream NetworkStream { get; set; }
         public IMinecraftStream MinecraftStream { get; internal set; }

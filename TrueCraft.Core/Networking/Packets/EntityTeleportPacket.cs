@@ -14,6 +14,16 @@ namespace TrueCraft.Core.Networking.Packets
         public int X, Y, Z;
         public sbyte Yaw, Pitch;
 
+        public EntityTeleportPacket(int entityID, int x, int y, int z, sbyte yaw, sbyte pitch)
+        {
+            EntityID = entityID;
+            X = x;
+            Y = y;
+            Z = z;
+            Yaw = yaw;
+            Pitch = pitch;
+        }
+
         public void ReadPacket(IMinecraftStream stream)
         {
             EntityID = stream.ReadInt32();
