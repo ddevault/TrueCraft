@@ -19,7 +19,7 @@ namespace TrueCraft.Core.Entities
             SpawnTime = DateTime.Now;
         }
 
-        protected DateTime SpawnTime { get; set; }
+        public DateTime SpawnTime { get; set; }
 
         public int EntityID { get; set; }
 
@@ -66,6 +66,8 @@ namespace TrueCraft.Core.Entities
                 OnPropertyChanged("Pitch");
             }
         }
+
+        public bool Despawned { get; set; }
 
         public abstract Size Size { get; }
 

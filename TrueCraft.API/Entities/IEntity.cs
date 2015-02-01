@@ -12,6 +12,8 @@ namespace TrueCraft.API.Entities
         Vector3 Position { get; set; }
         float Yaw { get; set; }
         float Pitch { get; set; }
+        bool Despawned { get; set; }
+        DateTime SpawnTime { get; set; }
         MetadataDictionary Metadata { get; }
         Size Size { get; }
         bool SendMetadataToClients { get; }

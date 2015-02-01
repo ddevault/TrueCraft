@@ -25,8 +25,11 @@ namespace TrueCraft.Core.Logic
         public virtual void BlockMined(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
             var entityManager = user.Server.GetEntityManagerForWorld(world);
-            entityManager.SpawnEntity(new ItemEntity(new Vector3(descriptor.Coordinates) + new Vector3(0.5),
-                new ItemStack(descriptor.ID, 1, descriptor.Metadata)));
+            var items = GetDrop(descriptor);
+            foreach (var item in items)
+            {
+                entityManager.SpawnEntity(new ItemEntity(new Vector3(descriptor.Coordinates) + new Vector3(0.5), item));
+            }
             world.SetBlockID(descriptor.Coordinates, 0);
         }
 
@@ -38,6 +41,11 @@ namespace TrueCraft.Core.Logic
         public virtual void BlockScheduledEvent(BlockDescriptor descriptor, IWorld world, object data)
         {
             // This space intentionally left blank
+        }
+
+        protected virtual ItemStack[] GetDrop(BlockDescriptor descriptor) // TODO: Include tools
+        {
+            return new[] { new ItemStack(descriptor.ID, 1, descriptor.Metadata) };
         }
 
         short IItemProvider.ID

@@ -145,7 +145,7 @@ namespace TrueCraft
 
         public void SpawnEntity(IEntity entity)
         {
-            
+            entity.SpawnTime = DateTime.Now;
             entity.EntityID = NextEntityID++;
             entity.PropertyChanged -= HandlePropertyChanged;
             entity.PropertyChanged += HandlePropertyChanged;
@@ -168,6 +168,7 @@ namespace TrueCraft
         public void DespawnEntity(IEntity entity)
         {
             PendingDespawns.Add(entity);
+            entity.Despawned = true;
         }
 
         public IEntity GetEntityByID(int id)
@@ -184,7 +185,8 @@ namespace TrueCraft
                 {
                     foreach (var e in Entities)
                     {
-                        e.Update(this);
+                        if (!e.Despawned)
+                            e.Update(this);
                     }
                 }
             }

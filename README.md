@@ -39,7 +39,7 @@ SharpDevelop or something equally idiot-proof.
 ## Get Involved
 
 If you want to keep up with development or contribute, join #truecraft on
-irc.esper.net. Pull request will be rejected from authors who have read any
+irc.esper.net. Pull requests will be rejected from authors who have read any
 decompiled official Minecraft code.
 
 ## Roadmap

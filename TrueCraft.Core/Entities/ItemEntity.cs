@@ -19,12 +19,9 @@ namespace TrueCraft.Core.Entities
         {
             Position = position;
             Item = item;
-            SpawnTime = DateTime.Now;
         }
 
         public ItemStack Item { get; set; }
-
-        private DateTime SpawnTime { get; set; }
 
         public override IPacket SpawnPacket
         {
@@ -109,6 +106,7 @@ namespace TrueCraft.Core.Entities
                     playerEntity.OnPickUpItem(this);
                     entityManager.DespawnEntity(this);
                 }
+                /* TODO: Merging item entities (this code behaves strangely
                 var item = nearbyEntities.FirstOrDefault(e => e is ItemEntity
                     && e != this
                     && (DateTime.Now - (e as ItemEntity).SpawnTime).TotalSeconds > 1
@@ -123,7 +121,7 @@ namespace TrueCraft.Core.Entities
                     newItem.Count += (item as ItemEntity).Item.Count;
                     Item = newItem;
                     OnPropertyChanged("Metadata");
-                }
+                }*/
             }
         }
 
