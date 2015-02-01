@@ -28,7 +28,8 @@ namespace TrueCraft
         public IEventScheduler Scheduler { get; private set; }
         public IBlockRepository BlockRepository { get; private set; }
 
-        private Timer NetworkWorker, EnvironmentWorker;
+        private Timer EnvironmentWorker;
+        private Thread NetworkWorker;
         private TcpListener Listener;
         private readonly PacketHandler[] PacketHandlers;
         private IList<ILogProvider> LogProviders;
@@ -39,7 +40,7 @@ namespace TrueCraft
             var reader = new PacketReader();
             PacketReader = reader;
             Clients = new List<IRemoteClient>();
-            NetworkWorker = new Timer(DoNetwork);
+            NetworkWorker = new Thread(new ThreadStart(DoNetwork));
             EnvironmentWorker = new Timer(DoEnvironment);
             PacketHandlers = new PacketHandler[0x100];
             Worlds = new List<IWorld>();
@@ -66,7 +67,7 @@ namespace TrueCraft
             Listener.Start();
             Listener.BeginAcceptTcpClient(AcceptClient, null);
             Log(LogCategory.Notice, "Running TrueCraft server on {0}", endPoint);
-            NetworkWorker.Change(100, 1000 / 20);
+            NetworkWorker.Start();
             EnvironmentWorker.Change(100, 1000 / 20);
         }
 
@@ -172,61 +173,65 @@ namespace TrueCraft
             Scheduler.Update();
         }
 
-        private void DoNetwork(object discarded)
+        private void DoNetwork()
         {
-            if (ExecutingTick)
-                return; // TODO: Warn about skipped updates?
-            ExecutingTick = true;
-            for (int i = 0; i < Clients.Count && i >= 0; i++)
+            while (true)
             {
-                var client = Clients[i] as RemoteClient;
-                var sendTimeout = DateTime.Now.AddMilliseconds(200);
-                while (client.PacketQueue.Count != 0 && DateTime.Now < sendTimeout)
+                bool idle = true;
+                for (int i = 0; i < Clients.Count && i >= 0; i++)
                 {
-                    IPacket packet;
-                    while (!client.PacketQueue.TryDequeue(out packet)) ;
-                    LogPacket(packet, false);
-                    PacketReader.WritePacket(client.MinecraftStream, packet);
-                    if (packet is DisconnectPacket)
+                    var client = Clients[i] as RemoteClient;
+                    var sendTimeout = DateTime.Now.AddMilliseconds(200);
+                    while (client.PacketQueue.Count != 0 && DateTime.Now < sendTimeout)
                     {
-                        DisconnectClient(client);
-                        i--;
-                        break;
-                    }
-                }
-                var receiveTimeout = DateTime.Now.AddMilliseconds(200);
-                while (client.DataAvailable && DateTime.Now < receiveTimeout)
-                {
-                    var packet = PacketReader.ReadPacket(client.MinecraftStream);
-                    LogPacket(packet, true);
-                    if (PacketHandlers[packet.ID] != null)
-                    {
-                        try
-                        {
-                            PacketHandlers[packet.ID](packet, client, this);
-                        }
-                        catch (PlayerDisconnectException)
+                        idle = false;
+                        IPacket packet;
+                        while (!client.PacketQueue.TryDequeue(out packet)) ;
+                        LogPacket(packet, false);
+                        PacketReader.WritePacket(client.MinecraftStream, packet);
+                        if (packet is DisconnectPacket)
                         {
                             DisconnectClient(client);
                             i--;
-                        }
-                        catch (Exception e)
-                        {
-                            Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
-                            Log(LogCategory.Debug, e.ToString());
-                            PacketReader.WritePacket(client.MinecraftStream, new DisconnectPacket("An exception has occured on the server."));
-                            client.MinecraftStream.BaseStream.Flush();
-                            DisconnectClient(client);
-                            i--;
+                            break;
                         }
                     }
-                    else
+                    var receiveTimeout = DateTime.Now.AddMilliseconds(200);
+                    while (client.DataAvailable && DateTime.Now < receiveTimeout)
                     {
-                        // TODO: Something productive
+                        idle = false;
+                        var packet = PacketReader.ReadPacket(client.MinecraftStream);
+                        LogPacket(packet, true);
+                        if (PacketHandlers[packet.ID] != null)
+                        {
+                            try
+                            {
+                                PacketHandlers[packet.ID](packet, client, this);
+                            }
+                            catch (PlayerDisconnectException)
+                            {
+                                DisconnectClient(client);
+                                i--;
+                            }
+                            catch (Exception e)
+                            {
+                                Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
+                                Log(LogCategory.Debug, e.ToString());
+                                PacketReader.WritePacket(client.MinecraftStream, new DisconnectPacket("An exception has occured on the server."));
+                                client.MinecraftStream.BaseStream.Flush();
+                                DisconnectClient(client);
+                                i--;
+                            }
+                        }
+                        else
+                        {
+                            // TODO: Something productive
+                        }
                     }
+                    if (idle)
+                        Thread.Sleep(100);
                 }
             }
-            ExecutingTick = false;
         }
     }
 }
