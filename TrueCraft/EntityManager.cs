@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using TrueCraft.Core.World;
 using TrueCraft.API;
 using System.Collections.Concurrent;
+using TrueCraft.API.Logging;
 
 namespace TrueCraft
 {
@@ -154,8 +155,29 @@ namespace TrueCraft
         public void Update()
         {
             PhysicsEngine.Update();
-            var updates = Parallel.ForEach(Entities, e => e.Update(this));
-            while (!updates.IsCompleted);
+            try
+            {
+                lock (Entities)
+                {
+                    var updates = Parallel.ForEach(Entities, e =>
+                    {
+                        try
+                        {
+                            e.Update(this);
+                        }
+                        catch (Exception ex)
+                        {
+                            DespawnEntity(e);
+                            Server.Log(LogCategory.Error, "Despawning entity {0} due to exception in update\n{1}", e.EntityID, ex);
+                        }
+                    });
+                    while (!updates.IsCompleted);
+                }
+            }
+            catch
+            {
+                // Do nothing
+            }
             IEntity entity;
             while (PendingDespawns.Count != 0)
             {
