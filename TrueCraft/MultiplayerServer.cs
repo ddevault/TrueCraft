@@ -186,7 +186,7 @@ namespace TrueCraft
                 {
                     Console.WriteLine("Running update " + DateTime.Now);
                     var client = Clients[i] as RemoteClient;
-                    var sendTimeout = DateTime.Now.AddMilliseconds(200);
+                    var sendTimeout = DateTime.Now.AddMilliseconds(50);
                     while (client.PacketQueue.Count != 0 && DateTime.Now < sendTimeout)
                     {
                         idle = false;
@@ -225,7 +225,7 @@ namespace TrueCraft
                         Clients.RemoveAt(i);
                         break;
                     }
-                    var receiveTimeout = DateTime.Now.AddMilliseconds(200);
+                    var receiveTimeout = DateTime.Now.AddMilliseconds(50);
                     while (client.DataAvailable && DateTime.Now < receiveTimeout)
                     {
                         idle = false;
