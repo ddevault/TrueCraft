@@ -31,7 +31,9 @@ namespace TrueCraft.Handlers
                         if (c.KnownEntities.Contains(client.Entity))
                             c.QueuePacket(new AnimationPacket(client.Entity.EntityID, AnimationPacket.PlayerAnimation.SwingArm));
                     }
-                    if (provider.Hardness == 0)
+                    if (provider == null)
+                        server.SendMessage(ChatColor.Red + "WARNING: block provider for ID {0} is null (player digging)", descriptor.ID);
+                    if (provider != null && provider.Hardness == 0)
                         provider.BlockMined(descriptor, packet.Face, world, client);
                     break;
                 case PlayerDiggingPacket.Action.StopDigging:
@@ -41,7 +43,8 @@ namespace TrueCraft.Handlers
                         if (c.KnownEntities.Contains(client.Entity))
                             c.QueuePacket(new AnimationPacket(client.Entity.EntityID, AnimationPacket.PlayerAnimation.None));
                     }
-                    provider.BlockMined(descriptor, packet.Face, world, client);
+                    if (provider != null)
+                        provider.BlockMined(descriptor, packet.Face, world, client);
                     break;
             }
         }
@@ -69,6 +72,13 @@ namespace TrueCraft.Handlers
             if (block != null)
             {
                 var provider = server.BlockRepository.GetBlockProvider(block.Value.ID);
+                if (provider == null)
+                {
+                    server.SendMessage(ChatColor.Red + "WARNING: block provider for ID {0} is null (player placing)", block.Value.ID);
+                    server.SendMessage(ChatColor.Red + "Error occured from client {0} at coordinates {1}", client.Username, block.Value.Coordinates);
+                    server.SendMessage(ChatColor.Red + "Packet logged at {0}, please report upstream", DateTime.Now);
+                    return;
+                }
                 if (!provider.BlockRightClicked(block.Value, packet.Face, client.World, client))
                 {
                     position += MathHelper.BlockFaceToCoordinates(packet.Face);

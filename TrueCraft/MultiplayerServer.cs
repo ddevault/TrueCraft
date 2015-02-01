@@ -156,8 +156,8 @@ namespace TrueCraft
             {
                 SendMessage(ChatColor.Yellow + "{0} has left the server.", client.Username);
                 GetEntityManagerForWorld(client.World).DespawnEntity(client.Entity);
+                client.Disconnected = true;
             }
-            Clients.Remove(client);
         }
 
         private void AcceptClient(IAsyncResult result)
@@ -184,21 +184,46 @@ namespace TrueCraft
                 bool idle = true;
                 for (int i = 0; i < Clients.Count && i >= 0; i++)
                 {
+                    Console.WriteLine("Running update " + DateTime.Now);
                     var client = Clients[i] as RemoteClient;
                     var sendTimeout = DateTime.Now.AddMilliseconds(200);
                     while (client.PacketQueue.Count != 0 && DateTime.Now < sendTimeout)
                     {
                         idle = false;
-                        IPacket packet;
-                        while (!client.PacketQueue.TryDequeue(out packet)) ;
-                        LogPacket(packet, false);
-                        PacketReader.WritePacket(client.MinecraftStream, packet);
-                        if (packet is DisconnectPacket)
+                        try
                         {
+                            IPacket packet;
+                            while (!client.PacketQueue.TryDequeue(out packet)) ;
+                            LogPacket(packet, false);
+                            PacketReader.WritePacket(client.MinecraftStream, packet);
+                            client.MinecraftStream.BaseStream.Flush();
+                            if (packet is DisconnectPacket)
+                            {
+                                DisconnectClient(client);
+                                break;
+                            }
+                        }
+                        catch (SocketException e)
+                        {
+                            Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
+                            Log(LogCategory.Debug, e.ToString());
+                            PacketReader.WritePacket(client.MinecraftStream, new DisconnectPacket("An exception has occured on the server."));
+                            client.MinecraftStream.BaseStream.Flush();
                             DisconnectClient(client);
-                            i--;
                             break;
                         }
+                        catch (Exception e)
+                        {
+                            Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
+                            Log(LogCategory.Debug, e.ToString());
+                            DisconnectClient(client);
+                            break;
+                        }
+                    }
+                    if (client.Disconnected)
+                    {
+                        Clients.RemoveAt(i);
+                        break;
                     }
                     var receiveTimeout = DateTime.Now.AddMilliseconds(200);
                     while (client.DataAvailable && DateTime.Now < receiveTimeout)
@@ -215,7 +240,14 @@ namespace TrueCraft
                             catch (PlayerDisconnectException)
                             {
                                 DisconnectClient(client);
-                                i--;
+                                break;
+                            }
+                            catch (SocketException e)
+                            {
+                                Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
+                                Log(LogCategory.Debug, e.ToString());
+                                DisconnectClient(client);
+                                break;
                             }
                             catch (Exception e)
                             {
@@ -224,7 +256,7 @@ namespace TrueCraft
                                 PacketReader.WritePacket(client.MinecraftStream, new DisconnectPacket("An exception has occured on the server."));
                                 client.MinecraftStream.BaseStream.Flush();
                                 DisconnectClient(client);
-                                i--;
+                                break;
                             }
                         }
                         else
@@ -234,6 +266,11 @@ namespace TrueCraft
                     }
                     if (idle)
                         Thread.Sleep(100);
+                    if (client.Disconnected)
+                    {
+                        Clients.RemoveAt(i);
+                        break;
+                    }
                 }
             }
         }

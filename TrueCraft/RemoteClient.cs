@@ -35,13 +35,15 @@ namespace TrueCraft
             CurrentWindow = InventoryWindow;
             ItemStaging = ItemStack.EmptyStack;
             KnownEntities = new List<IEntity>();
+            Disconnected = false;
         }
             
         /// <summary>
         /// A list of entities that this client is aware of.
         /// </summary>
         internal List<IEntity> KnownEntities { get; set; }
-        
+        internal bool Disconnected { get; set; }
+
         public NetworkStream NetworkStream { get; set; }
         public IMinecraftStream MinecraftStream { get; internal set; }
         public ConcurrentQueue<IPacket> PacketQueue { get; private set; }
