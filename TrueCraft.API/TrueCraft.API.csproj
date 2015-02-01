@@ -83,6 +83,7 @@
     <Compile Include="Entities\IAABBEntity.cs" />
     <Compile Include="Entities\IBlockPhysicsProvider.cs" />
     <Compile Include="Entities\IPhysicsEntity.cs" />
+    <Compile Include="Logic\IItemRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

@@ -18,6 +18,7 @@ namespace TrueCraft.Handlers
             var world = _client.World;
             var position = new Coordinates3D(packet.X, packet.Y, packet.Z);
             var descriptor = world.GetBlockData(position);
+            var provider = server.BlockRepository.GetBlockProvider(descriptor.ID);
             switch (packet.PlayerAction)
             {
                 case PlayerDiggingPacket.Action.DropItem:
@@ -30,6 +31,8 @@ namespace TrueCraft.Handlers
                         if (c.KnownEntities.Contains(client.Entity))
                             c.QueuePacket(new AnimationPacket(client.Entity.EntityID, AnimationPacket.PlayerAnimation.SwingArm));
                     }
+                    if (provider.Hardness == 0)
+                        provider.BlockMined(descriptor, packet.Face, world, client);
                     break;
                 case PlayerDiggingPacket.Action.StopDigging:
                     foreach (var nearbyClient in server.Clients)
@@ -38,7 +41,6 @@ namespace TrueCraft.Handlers
                         if (c.KnownEntities.Contains(client.Entity))
                             c.QueuePacket(new AnimationPacket(client.Entity.EntityID, AnimationPacket.PlayerAnimation.None));
                     }
-                    var provider = server.BlockRepository.GetBlockProvider(descriptor.ID);
                     provider.BlockMined(descriptor, packet.Face, world, client);
                     break;
             }

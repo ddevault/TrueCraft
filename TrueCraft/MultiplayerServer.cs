@@ -27,6 +27,7 @@ namespace TrueCraft
         public IList<IEntityManager> EntityManagers { get; private set; }
         public IEventScheduler Scheduler { get; private set; }
         public IBlockRepository BlockRepository { get; private set; }
+        public IItemRepository ItemRepository { get; private set; }
 
         private Timer EnvironmentWorker;
         private Thread NetworkWorker;
@@ -49,6 +50,9 @@ namespace TrueCraft
             var blockRepository = new BlockRepository();
             blockRepository.DiscoverBlockProviders();
             BlockRepository = blockRepository;
+            var itemRepository = new ItemRepository();
+            itemRepository.DiscoverItemProviders();
+            ItemRepository = itemRepository;
 
             reader.RegisterCorePackets();
             Handlers.PacketHandlers.RegisterHandlers(this);

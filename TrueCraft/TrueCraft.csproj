@@ -54,6 +54,7 @@
     <Compile Include="BlockRepository.cs" />
     <Compile Include="Exceptions\PlayerDisconnectException.cs" />
     <Compile Include="PhysicsEngine.cs" />
+    <Compile Include="ItemRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -24,6 +24,7 @@ namespace TrueCraft.API.Server
         IList<IWorld> Worlds { get; }
         IEventScheduler Scheduler { get; }
         IBlockRepository BlockRepository { get; }
+        IItemRepository ItemRepository { get; }
 
         void Start(IPEndPoint endPoint);
         void RegisterPacketHandler(byte packetId, PacketHandler handler);

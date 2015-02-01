@@ -1,5 +1,7 @@
 using System;
 using TrueCraft.API.Logic;
+using TrueCraft.API;
+using TrueCraft.API.World;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
@@ -24,6 +26,14 @@ namespace TrueCraft.Core.Logic.Blocks
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(4, 3);
+        }
+
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        {
+            if (MathHelper.Random.Next(20) == 0) // 5% chance
+                return new[] { new ItemStack(SaplingBlock.BlockID, 1, descriptor.Metadata) };
+            else
+                return new ItemStack[0];
         }
     }
 }
