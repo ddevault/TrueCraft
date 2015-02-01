@@ -7,7 +7,7 @@ using TrueCraft.API.Networking;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.Core;
 
-namespace TrueCraft.Entities
+namespace TrueCraft.Core.Entities
 {
     public class PlayerEntity : LivingEntity
     {
@@ -104,6 +104,12 @@ namespace TrueCraft.Entities
                 _FoodExhaustion = value;
                 OnPropertyChanged("FoodExhaustion");
             }
+        }
+
+        public event EventHandler<EntityEventArgs> PickUpItem;
+        public void OnPickUpItem(ItemEntity item)
+        {
+            if (PickUpItem != null) PickUpItem(this, new EntityEventArgs(item));
         }
     }
 }

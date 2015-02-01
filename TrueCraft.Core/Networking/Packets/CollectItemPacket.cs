@@ -13,6 +13,12 @@ namespace TrueCraft.Core.Networking.Packets
         public int CollectedItemID;
         public int CollectorID;
 
+        public CollectItemPacket(int collectedItemID, int collectorID)
+        {
+            CollectedItemID = collectedItemID;
+            CollectorID = collectorID;
+        }
+
         public void ReadPacket(IMinecraftStream stream)
         {
             CollectedItemID = stream.ReadInt32();

@@ -6,8 +6,9 @@ using System.Text;
 using TrueCraft.API.Entities;
 using TrueCraft.API;
 using TrueCraft.API.Networking;
+using TrueCraft.API.Server;
 
-namespace TrueCraft.Entities
+namespace TrueCraft.Core.Entities
 {
     public abstract class Entity : IEntity
     {
@@ -15,7 +16,10 @@ namespace TrueCraft.Entities
         {
             EnablePropertyChange = true;
             EntityID = -1;
+            SpawnTime = DateTime.Now;
         }
+
+        protected DateTime SpawnTime { get; set; }
 
         public int EntityID { get; set; }
 
@@ -80,7 +84,7 @@ namespace TrueCraft.Entities
             }
         }
 
-        public virtual void Update(Entity[] nearbyEntities)
+        public virtual void Update(IEntityManager entityManager)
         {
         }
 

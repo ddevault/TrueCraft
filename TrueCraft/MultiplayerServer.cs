@@ -33,7 +33,6 @@ namespace TrueCraft
         private TcpListener Listener;
         private readonly PacketHandler[] PacketHandlers;
         private IList<ILogProvider> LogProviders;
-        private volatile bool ExecutingTick;
 
         public MultiplayerServer()
         {
@@ -50,7 +49,6 @@ namespace TrueCraft
             var blockRepository = new BlockRepository();
             blockRepository.DiscoverBlockProviders();
             BlockRepository = blockRepository;
-            ExecutingTick = false;
 
             reader.RegisterCorePackets();
             Handlers.PacketHandlers.RegisterHandlers(this);
@@ -169,6 +167,10 @@ namespace TrueCraft
         private void DoEnvironment(object discarded)
         {
             Scheduler.Update();
+            foreach (var manager in EntityManagers)
+            {
+                manager.Update();
+            }
         }
 
         private void DoNetwork()

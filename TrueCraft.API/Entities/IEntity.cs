@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using TrueCraft.API.Networking;
+using TrueCraft.API.Server;
 
 namespace TrueCraft.API.Entities
 {
@@ -14,5 +15,6 @@ namespace TrueCraft.API.Entities
         MetadataDictionary Metadata { get; }
         Size Size { get; }
         bool SendMetadataToClients { get; }
+        void Update(IEntityManager entityManager);
     }
 }

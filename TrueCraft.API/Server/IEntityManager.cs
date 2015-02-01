@@ -15,5 +15,7 @@ namespace TrueCraft.API.Server
         IEntity GetEntityByID(int id);
         void Update();
         void SendEntitiesToClient(IRemoteClient client);
+        IList<IEntity> EntitiesInRange(Vector3 center, float radius);
+        IList<IRemoteClient> ClientsForEntity(IEntity entity);
     }
 }

@@ -10,7 +10,7 @@ namespace TrueCraft.Core.World
 {
     public class World : IDisposable, IWorld
     {
-        public const int Height = 256;
+        public static readonly int Height = 128;
 
         public string Name { get; set; }
         public string BaseDirectory { get; internal set; }

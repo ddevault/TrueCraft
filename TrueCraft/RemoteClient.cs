@@ -16,6 +16,7 @@ using TrueCraft.API.Windows;
 using TrueCraft.Core.Windows;
 using System.Threading.Tasks;
 using System.Threading;
+using TrueCraft.Core.Entities;
 
 namespace TrueCraft
 {
@@ -48,11 +49,39 @@ namespace TrueCraft
         public bool LoggedIn { get; internal set; }
         public IMultiplayerServer Server { get; set; }
         public IWorld World { get; internal set; }
-        public IEntity Entity { get; internal set; }
         public IWindow Inventory { get; private set; }
         public short SelectedSlot { get; internal set; }
         public ItemStack ItemStaging { get; set; }
         public IWindow CurrentWindow { get; set; }
+
+        private IEntity _Entity;
+        public IEntity Entity
+        {
+            get
+            {
+                return _Entity;
+            }
+            internal set
+            {
+                var player = _Entity as PlayerEntity;
+                if (player != null)
+                    player.PickUpItem -= HandlePickUpItem;
+                _Entity = value;
+                player = _Entity as PlayerEntity;
+                if (player != null)
+                    player.PickUpItem += HandlePickUpItem;
+            }
+        }
+
+        void HandlePickUpItem(object sender, EntityEventArgs e)
+        {
+            var packet = new CollectItemPacket(e.Entity.EntityID, Entity.EntityID);
+            QueuePacket(packet);
+            var manager = Server.GetEntityManagerForWorld(World);
+            foreach (var client in manager.ClientsForEntity(Entity))
+                client.QueuePacket(packet);
+            Inventory.PickUpStack((e.Entity as ItemEntity).Item);
+        }
 
         public ItemStack SelectedItem
         {

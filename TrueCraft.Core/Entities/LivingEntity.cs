@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace TrueCraft.Entities
+namespace TrueCraft.Core.Entities
 {
     public abstract class LivingEntity : Entity
     {

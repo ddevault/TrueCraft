@@ -3,6 +3,7 @@ using TrueCraft.API.Logic;
 using TrueCraft.API.World;
 using TrueCraft.API;
 using TrueCraft.API.Networking;
+using TrueCraft.Core.Entities;
 
 namespace TrueCraft.Core.Logic
 {
@@ -23,9 +24,9 @@ namespace TrueCraft.Core.Logic
 
         public virtual void BlockMined(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
-            // TODO: Spawn item entity
-            var stack = new ItemStack(descriptor.ID, 1, descriptor.Metadata);
-            user.Inventory.PickUpStack(stack);
+            var entityManager = user.Server.GetEntityManagerForWorld(world);
+            entityManager.SpawnEntity(new ItemEntity(new Vector3(descriptor.Coordinates) + new Vector3(0.5),
+                new ItemStack(descriptor.ID, 1, descriptor.Metadata)));
             world.SetBlockID(descriptor.Coordinates, 0);
         }
 
