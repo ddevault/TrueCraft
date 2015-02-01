@@ -33,6 +33,8 @@ namespace TrueCraft
             SelectedSlot = InventoryWindow.HotbarIndex;
             CurrentWindow = InventoryWindow;
             ItemStaging = ItemStack.EmptyStack;
+            KnownEntities = new List<IEntity>();
+            InverseKnownEntities = new List<IEntity>();
         }
             
         /// <summary>
