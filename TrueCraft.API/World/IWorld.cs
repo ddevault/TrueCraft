@@ -1,4 +1,5 @@
 ﻿using System;
+using TrueCraft.API.Logic;
 
 namespace TrueCraft.API.World
 {
@@ -19,6 +20,7 @@ namespace TrueCraft.API.World
         byte GetMetadata(Coordinates3D coordinates);
         byte GetSkyLight(Coordinates3D coordinates);
         BlockDescriptor GetBlockData(Coordinates3D coordinates);
+        void SetBlockData(Coordinates3D coordinates, BlockDescriptor block);
         void SetBlockID(Coordinates3D coordinates, byte value);
         void SetMetadata(Coordinates3D coordinates, byte value);
         void SetSkyLight(Coordinates3D coordinates, byte value);

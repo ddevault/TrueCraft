@@ -25,6 +25,7 @@ namespace TrueCraft.API.Server
         IEventScheduler Scheduler { get; }
         IBlockRepository BlockRepository { get; }
         IItemRepository ItemRepository { get; }
+        bool BlockUpdatesEnabled { get; set; }
 
         void Start(IPEndPoint endPoint);
         void RegisterPacketHandler(byte packetId, PacketHandler handler);

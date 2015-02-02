@@ -79,11 +79,11 @@
     <Compile Include="BlockFace.cs" />
     <Compile Include="Server\PlayerJoinedEventArgs.cs" />
     <Compile Include="Logic\IBlockRepository.cs" />
-    <Compile Include="World\BlockDescriptor.cs" />
     <Compile Include="Entities\IAABBEntity.cs" />
     <Compile Include="Entities\IBlockPhysicsProvider.cs" />
     <Compile Include="Entities\IPhysicsEntity.cs" />
     <Compile Include="Logic\IItemRepository.cs" />
+    <Compile Include="Logic\BlockDescriptor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

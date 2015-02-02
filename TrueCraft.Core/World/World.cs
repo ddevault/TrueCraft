@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading;
 using TrueCraft.API;
 using TrueCraft.API.World;
+using TrueCraft.API.Logic;
 
 namespace TrueCraft.Core.World
 {
@@ -157,6 +158,18 @@ namespace TrueCraft.Core.World
             IChunk chunk;
             var adjustedCoordinates = FindBlockPosition(coordinates, out chunk);
             return GetBlockDataFromChunk(adjustedCoordinates, chunk, coordinates);
+        }
+
+        public void SetBlockData(Coordinates3D coordinates, BlockDescriptor descriptor)
+        {
+            // TODO: Figure out the best way to handle light in this scenario
+            IChunk chunk;
+            var adjustedCoordinates = FindBlockPosition(coordinates, out chunk);
+            var old = GetBlockDataFromChunk(adjustedCoordinates, chunk, coordinates);
+            chunk.SetBlockID(adjustedCoordinates, descriptor.ID);
+            chunk.SetMetadata(adjustedCoordinates,descriptor.Metadata);
+            if (BlockChanged != null)
+                BlockChanged(this, new BlockChangeEventArgs(coordinates, old, GetBlockDataFromChunk(adjustedCoordinates, chunk, coordinates)));
         }
 
         private BlockDescriptor GetBlockDataFromChunk(Coordinates3D adjustedCoordinates, IChunk chunk, Coordinates3D coordinates)

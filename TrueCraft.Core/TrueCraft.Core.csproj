@@ -267,6 +267,7 @@
     <Compile Include="Entities\LivingEntity.cs" />
     <Compile Include="Entities\ObjectEntity.cs" />
     <Compile Include="Entities\PlayerEntity.cs" />
+    <Compile Include="Logic\Blocks\AirBlock.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

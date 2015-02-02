@@ -29,11 +29,35 @@ namespace TrueCraft
         public IBlockRepository BlockRepository { get; private set; }
         public IItemRepository ItemRepository { get; private set; }
 
+        private bool _BlockUpdatesEnabled = true;
+        private struct BlockUpdate
+        {
+            public Coordinates3D Coordinates;
+            public IWorld World;
+        }
+        private Queue<BlockUpdate> PendingBlockUpdates { get; set; }
+        public bool BlockUpdatesEnabled
+        {
+            get
+            {
+                return _BlockUpdatesEnabled;
+            }
+            set
+            {
+                _BlockUpdatesEnabled = value;
+                if (_BlockUpdatesEnabled)
+                {
+                    ProcessBlockUpdates();
+                }
+            }
+        }
+
         private Timer EnvironmentWorker;
         private Thread NetworkWorker;
         private TcpListener Listener;
         private readonly PacketHandler[] PacketHandlers;
         private IList<ILogProvider> LogProviders;
+        private object ClientLock = new object();
 
         public MultiplayerServer()
         {
@@ -53,6 +77,7 @@ namespace TrueCraft
             var itemRepository = new ItemRepository();
             itemRepository.DiscoverItemProviders();
             ItemRepository = itemRepository;
+            PendingBlockUpdates = new Queue<BlockUpdate>();
 
             reader.RegisterCorePackets();
             Handlers.PacketHandlers.RegisterHandlers(this);
@@ -90,7 +115,32 @@ namespace TrueCraft
                 if (client.LoggedIn && client.World == sender)
                 {
                     client.QueuePacket(new BlockChangePacket(e.Position.X, (sbyte)e.Position.Y, e.Position.Z,
-                        (sbyte)e.NewBlock.ID, (sbyte)e.NewBlock.Metadata));
+                            (sbyte)e.NewBlock.ID, (sbyte)e.NewBlock.Metadata));
+                }
+            }
+            PendingBlockUpdates.Enqueue(new BlockUpdate { Coordinates = e.Position, World = sender as IWorld });
+            ProcessBlockUpdates();
+        }
+
+        private void ProcessBlockUpdates()
+        {
+            if (!BlockUpdatesEnabled)
+                return;
+            var adjacent = new[]
+            {
+                Coordinates3D.Up, Coordinates3D.Down,
+                Coordinates3D.Left, Coordinates3D.Right,
+                Coordinates3D.Forwards, Coordinates3D.Backwards
+            };
+            while (PendingBlockUpdates.Count != 0)
+            {
+                var update = PendingBlockUpdates.Dequeue();
+                foreach (var offset in adjacent)
+                {
+                    var descriptor = update.World.GetBlockData(update.Coordinates + offset);
+                    var provider = BlockRepository.GetBlockProvider(descriptor.ID);
+                    if (provider != null)
+                        provider.BlockUpdate(descriptor, this, update.World);
                 }
             }
         }
@@ -164,7 +214,8 @@ namespace TrueCraft
         {
             var tcpClient = Listener.EndAcceptTcpClient(result);
             var client = new RemoteClient(this, tcpClient.GetStream());
-            Clients.Add(client);
+            lock (ClientLock)
+                Clients.Add(client);
             Listener.BeginAcceptTcpClient(AcceptClient, null);
         }
 
@@ -184,11 +235,17 @@ namespace TrueCraft
                 bool idle = true;
                 for (int i = 0; i < Clients.Count && i >= 0; i++)
                 {
-                    Console.WriteLine("Running update " + DateTime.Now);
-                    var client = Clients[i] as RemoteClient;
-                    var sendTimeout = DateTime.Now.AddMilliseconds(50);
-                    while (client.PacketQueue.Count != 0 && DateTime.Now < sendTimeout)
+                    RemoteClient client;
+                    lock (ClientLock)
+                        client = Clients[i] as RemoteClient;
+                    var sendTimeout = DateTime.Now.AddMilliseconds(100);
+                    while (client.PacketQueue.Count != 0)
                     {
+                        if (DateTime.Now > sendTimeout)
+                        {
+                            Console.WriteLine("Send timeout" + DateTime.Now);
+                            break;
+                        }
                         idle = false;
                         try
                         {
@@ -225,9 +282,14 @@ namespace TrueCraft
                         Clients.RemoveAt(i);
                         break;
                     }
-                    var receiveTimeout = DateTime.Now.AddMilliseconds(50);
-                    while (client.DataAvailable && DateTime.Now < receiveTimeout)
+                    var receiveTimeout = DateTime.Now.AddMilliseconds(100);
+                    while (client.DataAvailable)
                     {
+                        if (DateTime.Now > receiveTimeout)
+                        {
+                            Console.WriteLine("Receive timeout" + DateTime.Now);
+                            break;
+                        }
                         idle = false;
                         var packet = PacketReader.ReadPacket(client.MinecraftStream);
                         LogPacket(packet, true);
@@ -268,7 +330,8 @@ namespace TrueCraft
                         Thread.Sleep(100);
                     if (client.Disconnected)
                     {
-                        Clients.RemoveAt(i);
+                        lock (ClientLock)
+                            Clients.RemoveAt(i);
                         break;
                     }
                 }

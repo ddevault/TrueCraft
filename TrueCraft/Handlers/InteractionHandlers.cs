@@ -6,6 +6,7 @@ using TrueCraft.API;
 using TrueCraft.API.World;
 using TrueCraft.Core;
 using TrueCraft.Core.Windows;
+using TrueCraft.API.Logic;
 
 namespace TrueCraft.Handlers
 {
@@ -43,7 +44,7 @@ namespace TrueCraft.Handlers
                         if (c.KnownEntities.Contains(client.Entity))
                             c.QueuePacket(new AnimationPacket(client.Entity.EntityID, AnimationPacket.PlayerAnimation.None));
                     }
-                    if (provider != null)
+                    if (provider != null && descriptor.ID != 0)
                         provider.BlockMined(descriptor, packet.Face, world, client);
                     break;
             }
@@ -93,16 +94,17 @@ namespace TrueCraft.Handlers
             {
                 if (use)
                 {
-                    // Temporary: just place the damn thing
-                    position += MathHelper.BlockFaceToCoordinates(packet.Face);
-                    client.World.SetBlockID(position, (byte)slot.ID);
-                    client.World.SetMetadata(position, (byte)slot.Metadata);
-                    slot.Count--;
-                    client.Inventory[client.SelectedSlot] = slot;
-                    // End temporary
+                    var itemProvider = server.ItemRepository.GetItemProvider(slot.ID);
+                    if (itemProvider == null)
+                    {
+                        server.SendMessage(ChatColor.Red + "WARNING: item provider for ID {0} is null (player placing)", block.Value.ID);
+                        server.SendMessage(ChatColor.Red + "Error occured from client {0} at coordinates {1}", client.Username, block.Value.Coordinates);
+                        server.SendMessage(ChatColor.Red + "Packet logged at {0}, please report upstream", DateTime.Now);
+                    }
                     if (block != null)
                     {
-                        // TODO: Use item on block
+                        if (itemProvider != null)
+                            itemProvider.ItemUsedOnBlock(position, slot, packet.Face, client.World, client);
                     }
                     else
                     {

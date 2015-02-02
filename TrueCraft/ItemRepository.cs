@@ -19,16 +19,11 @@ namespace TrueCraft
 
         public IItemProvider GetItemProvider(short id)
         {
-            int max = ItemProviders.Count - 1, min = 0;
-            while (max >= min)
+            // TODO: Binary search
+            for (int i = 0; i < ItemProviders.Count; i++)
             {
-                int mid = (max - min / 2) + min;
-                if (ItemProviders[mid].ID == id)
-                    return ItemProviders[mid];
-                else if(ItemProviders[mid].ID < id)
-                    min = mid + 1;
-                else
-                    max = min - 1;
+                if (ItemProviders[i].ID == id)
+                    return ItemProviders[i];
             }
             return null;
         }

@@ -4,13 +4,15 @@ using TrueCraft.API.World;
 using TrueCraft.API;
 using TrueCraft.API.Networking;
 using TrueCraft.Core.Entities;
+using TrueCraft.API.Entities;
+using TrueCraft.API.Server;
 
 namespace TrueCraft.Core.Logic
 {
     /// <summary>
     /// Provides common implementations of block logic.
     /// </summary>
-    public abstract class BlockProvider : IBlockProvider, IItemProvider
+    public abstract class BlockProvider : IItemProvider, IBlockProvider
     {
         public virtual bool BlockRightClicked(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
@@ -24,18 +26,38 @@ namespace TrueCraft.Core.Logic
 
         public virtual void BlockMined(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
-            var entityManager = user.Server.GetEntityManagerForWorld(world);
-            var items = GetDrop(descriptor);
-            foreach (var item in items)
-            {
-                entityManager.SpawnEntity(new ItemEntity(new Vector3(descriptor.Coordinates) + new Vector3(0.5), item));
-            }
+            GenerateDropEntity(descriptor, world, user.Server);
             world.SetBlockID(descriptor.Coordinates, 0);
         }
 
-        public virtual void BlockUpdate(BlockDescriptor descriptor, IWorld world)
+        private void GenerateDropEntity(BlockDescriptor descriptor, IWorld world, IMultiplayerServer server)
         {
-            // This space intentionally left blank
+            var entityManager = server.GetEntityManagerForWorld(world);
+            var items = GetDrop(descriptor);
+            foreach (var item in items)
+                entityManager.SpawnEntity(new ItemEntity(new Vector3(descriptor.Coordinates) + new Vector3(0.5), item));
+        }
+
+        public virtual bool IsSupported(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world)
+        {
+            var support = GetSupportDirection(descriptor);
+            if (support != Coordinates3D.Zero)
+            {
+                var supportingBlock = server.BlockRepository.GetBlockProvider(world.GetBlockID(descriptor.Coordinates + support));
+                if (!supportingBlock.Opaque)
+                    return false;
+            }
+            return true;
+        }
+
+        public virtual void BlockUpdate(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world)
+        {
+            if (!IsSupported(descriptor, server, world))
+            {
+                server.SendMessage(ChatColor.Red + "Removing block due to insufficient opaque support blocks");
+                GenerateDropEntity(descriptor, world, server);
+                world.SetBlockID(descriptor.Coordinates, 0);
+            }
         }
 
         public virtual void BlockScheduledEvent(BlockDescriptor descriptor, IWorld world, object data)
@@ -46,6 +68,25 @@ namespace TrueCraft.Core.Logic
         protected virtual ItemStack[] GetDrop(BlockDescriptor descriptor) // TODO: Include tools
         {
             return new[] { new ItemStack(descriptor.ID, 1, descriptor.Metadata) };
+        }
+
+        public virtual void ItemUsedOnEntity(ItemStack item, IEntity usedOn, IWorld world, IRemoteClient user)
+        {
+            // This space intentionally left blank
+        }
+
+        public virtual void ItemUsedOnNothing(ItemStack item, IWorld world, IRemoteClient user)
+        {
+            // This space intentionally left blank
+        }
+
+        public virtual void ItemUsedOnBlock(Coordinates3D coordinates, ItemStack item, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            coordinates += MathHelper.BlockFaceToCoordinates(face);
+            world.SetBlockID(coordinates, (byte)item.ID);
+            world.SetMetadata(coordinates, (byte)item.Metadata);
+            item.Count--;
+            user.Inventory[user.SelectedSlot] = item;
         }
 
         short IItemProvider.ID
@@ -60,6 +101,11 @@ namespace TrueCraft.Core.Logic
         /// The ID of the block.
         /// </summary>
         public abstract byte ID { get; }
+
+        public virtual Coordinates3D GetSupportDirection(BlockDescriptor descriptor)
+        {
+            return Coordinates3D.Zero;
+        }
 
         /// <summary>
         /// The maximum amount that can be in a single stack of this block.

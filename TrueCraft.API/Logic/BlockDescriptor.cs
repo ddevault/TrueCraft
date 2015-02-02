@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TrueCraft.API.World
+namespace TrueCraft.API.Logic
 {
     public struct BlockDescriptor
     {

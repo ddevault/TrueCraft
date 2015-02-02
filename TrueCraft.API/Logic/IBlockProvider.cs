@@ -1,6 +1,7 @@
 ﻿using System;
 using TrueCraft.API.World;
 using TrueCraft.API.Networking;
+using TrueCraft.API.Server;
 
 namespace TrueCraft.API.Logic
 {
@@ -17,7 +18,7 @@ namespace TrueCraft.API.Logic
         bool BlockRightClicked(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user);
         bool BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user);
         void BlockMined(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user);
-        void BlockUpdate(BlockDescriptor descriptor, IWorld world);
+        void BlockUpdate(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world);
         void BlockScheduledEvent(BlockDescriptor descriptor, IWorld world, object data);
     }
 }
