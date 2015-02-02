@@ -240,14 +240,8 @@ namespace TrueCraft
                     RemoteClient client;
                     lock (ClientLock)
                         client = Clients[i] as RemoteClient;
-                    var sendTimeout = DateTime.Now.AddMilliseconds(100);
                     while (client.PacketQueue.Count != 0)
                     {
-                        if (DateTime.Now > sendTimeout)
-                        {
-                            Console.WriteLine("Send timeout" + DateTime.Now);
-                            break;
-                        }
                         idle = false;
                         try
                         {
@@ -284,14 +278,8 @@ namespace TrueCraft
                         Clients.RemoveAt(i);
                         break;
                     }
-                    var receiveTimeout = DateTime.Now.AddMilliseconds(100);
                     while (client.DataAvailable)
                     {
-                        if (DateTime.Now > receiveTimeout)
-                        {
-                            Console.WriteLine("Receive timeout" + DateTime.Now);
-                            break;
-                        }
                         idle = false;
                         var packet = PacketReader.ReadPacket(client.MinecraftStream);
                         LogPacket(packet, true);

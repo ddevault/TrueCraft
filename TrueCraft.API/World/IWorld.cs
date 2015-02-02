@@ -27,5 +27,6 @@ namespace TrueCraft.API.World
         void SetBlockLight(Coordinates3D coordinates, byte value);
         bool IsValidPosition(Coordinates3D position);
         void Save();
+        void Save(string path);
     }
 }

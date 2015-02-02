@@ -209,23 +209,34 @@ namespace TrueCraft.Core.World
             var chunk = (NbtCompound)Serializer.Serialize(this, tagName, true);
             var entities = new NbtList("Entities", NbtTagType.Compound);
             chunk.Add(entities);
-            // TODO: Save block data
+            chunk.Add(new NbtByteArray("Blocks", Blocks));
+            chunk.Add(new NbtByteArray("Data", Metadata.Data));
+            chunk.Add(new NbtByteArray("SkyLight", SkyLight.Data));
+            chunk.Add(new NbtByteArray("BlockLight", BlockLight.Data));
+            // TODO: Tile entities, entities
             return chunk;
         }
 
         public void Deserialize(NbtTag value)
         {
-            IsModified = true;
             var chunk = (Chunk)Serializer.Deserialize(value, true);
+            var tag = (NbtCompound)value;
 
-            this.Biomes = chunk.Biomes;
-            this.HeightMap = chunk.HeightMap;
-            this.LastUpdate = chunk.LastUpdate;
-            this.TerrainPopulated = chunk.TerrainPopulated;
-            this.X = chunk.X;
-            this.Z = chunk.Z;
+            Biomes = chunk.Biomes;
+            HeightMap = chunk.HeightMap;
+            LastUpdate = chunk.LastUpdate;
+            TerrainPopulated = chunk.TerrainPopulated;
+            X = tag["xPos"].IntValue;
+            Z = tag["zPos"].IntValue;
+            Blocks = tag["Blocks"].ByteArrayValue;
+            Metadata = new NibbleArray();
+            Metadata.Data = tag["Data"].ByteArrayValue;
+            BlockLight = new NibbleArray();
+            BlockLight.Data = tag["BlockLight"].ByteArrayValue;
+            SkyLight = new NibbleArray();
+            SkyLight.Data = tag["SkyLight"].ByteArrayValue;
 
-            // TODO: Load block data
+            // TODO: Tile entities, entities
         }
     }
 }

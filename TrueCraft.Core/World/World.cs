@@ -81,17 +81,6 @@ namespace TrueCraft.Core.World
             region.GenerateChunk(new Coordinates2D(coordinates.X - regionX * 32, coordinates.Z - regionZ * 32));
         }
 
-        public Chunk GetChunkWithoutGeneration(Coordinates2D coordinates)
-        {
-            int regionX = coordinates.X / Region.Width - ((coordinates.X < 0) ? 1 : 0);
-            int regionZ = coordinates.Z / Region.Depth - ((coordinates.Z < 0) ? 1 : 0);
-
-            var regionPosition = new Coordinates2D(regionX, regionZ);
-            if (!Regions.ContainsKey(regionPosition)) return null;
-            return (Chunk)((Region)Regions[regionPosition]).GetChunkWithoutGeneration(
-                new Coordinates2D(coordinates.X - regionX * 32, coordinates.Z - regionZ * 32));
-        }
-
         public void SetChunk(Coordinates2D coordinates, Chunk chunk)
         {
             int regionX = coordinates.X / Region.Width - ((coordinates.X < 0) ? 1 : 0);
