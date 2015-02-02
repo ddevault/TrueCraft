@@ -42,6 +42,39 @@ namespace TrueCraft.Commands
         }
     }
 
+    public class LogCommand : Command
+    {
+        public override string Name
+        {
+            get { return "log"; }
+        }
+
+        public override string Description
+        {
+            get { return "Toggles client logging."; }
+        }
+
+        public override string[] Aliases
+        {
+            get { return new string[0]; }
+        }
+
+        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        {
+            if (Arguments.Length != 0)
+            {
+                Help(Client, Alias, Arguments);
+                return;
+            }
+            Client.EnableLogging = !Client.EnableLogging;
+        }
+
+        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        {
+            Client.SendMessage("/pos: Toggles client logging.");
+        }
+    }
+
     public class TimeCommand : Command
     {
         public override string Name

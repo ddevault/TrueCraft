@@ -26,6 +26,7 @@ namespace TrueCraft.API.Server
         IBlockRepository BlockRepository { get; }
         IItemRepository ItemRepository { get; }
         bool BlockUpdatesEnabled { get; set; }
+        bool EnableClientLogging { get; set; }
 
         void Start(IPEndPoint endPoint);
         void RegisterPacketHandler(byte packetId, PacketHandler handler);

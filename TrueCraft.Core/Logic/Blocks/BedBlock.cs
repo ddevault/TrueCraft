@@ -86,10 +86,7 @@ namespace TrueCraft.Core.Logic.Blocks
         public override void BlockUpdate(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world)
         {
             if (!ValidBedPosition(descriptor, server.BlockRepository, world))
-            {
                 world.SetBlockID(descriptor.Coordinates, 0);
-                server.SendMessage(ChatColor.Red + "Removing block due to insufficient neighboring bed blocks");
-            }
             base.BlockUpdate(descriptor, server, world);
         }
     }

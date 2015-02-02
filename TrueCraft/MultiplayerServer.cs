@@ -28,6 +28,7 @@ namespace TrueCraft
         public IEventScheduler Scheduler { get; private set; }
         public IBlockRepository BlockRepository { get; private set; }
         public IItemRepository ItemRepository { get; private set; }
+        public bool EnableClientLogging { get; set; }
 
         private bool _BlockUpdatesEnabled = true;
         private struct BlockUpdate
@@ -78,6 +79,7 @@ namespace TrueCraft
             itemRepository.DiscoverItemProviders();
             ItemRepository = itemRepository;
             PendingBlockUpdates = new Queue<BlockUpdate>();
+            EnableClientLogging = false;
 
             reader.RegisterCorePackets();
             Handlers.PacketHandlers.RegisterHandlers(this);

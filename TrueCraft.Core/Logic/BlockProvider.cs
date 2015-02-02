@@ -54,7 +54,6 @@ namespace TrueCraft.Core.Logic
         {
             if (!IsSupported(descriptor, server, world))
             {
-                server.SendMessage(ChatColor.Red + "Removing block due to insufficient opaque support blocks");
                 GenerateDropEntity(descriptor, world, server);
                 world.SetBlockID(descriptor.Coordinates, 0);
             }

@@ -25,6 +25,7 @@ namespace TrueCraft.Commands
             Commands.Add(new ResendInvCommand());
             Commands.Add(new PositionCommand());
             Commands.Add(new TimeCommand());
+            Commands.Add(new LogCommand());
         }
 
         /// <summary>

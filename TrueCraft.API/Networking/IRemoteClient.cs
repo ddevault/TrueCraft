@@ -17,8 +17,10 @@ namespace TrueCraft.API.Networking
         short SelectedSlot { get; }
         ItemStack SelectedItem { get; }
         IMultiplayerServer Server { get; }
+        bool EnableLogging { get; set; }
 
         void QueuePacket(IPacket packet);
         void SendMessage(string message);
+        void Log(string message, params object[] parameters);
     }
 }

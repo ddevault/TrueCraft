@@ -49,6 +49,33 @@ namespace TrueCraft.Core.Entities
         public bool IsCrouching { get; set; }
         public double PositiveDeltaY { get; set; }
 
+        private Vector3 _OldPosition;
+        public Vector3 OldPosition
+        {
+            get
+            {
+                return _OldPosition;
+            }
+            private set
+            {
+                _OldPosition = value;
+            }
+        }
+
+        public override Vector3 Position
+        {
+            get
+            {
+                return _Position;
+            }
+            set
+            {
+                _OldPosition = _Position;
+                _Position = value;
+                OnPropertyChanged("Position");
+            }
+        }
+
         protected short _SelectedSlot;
         public short SelectedSlot
         {

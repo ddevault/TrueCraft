@@ -28,8 +28,6 @@ namespace TrueCraft
         private object EntityLock = new object();
         private ConcurrentBag<IEntity> PendingDespawns { get; set; }
 
-        private static readonly int MaxClientDistance = 4;
-
         public EntityManager(IMultiplayerServer server, IWorld world)
         {
             Server = server;
@@ -67,9 +65,57 @@ namespace TrueCraft
             switch (property)
             {
                 case "Position":
-                    // TODO: Only trigger this if the player crosses a chunk boundary
-                    Task.Factory.StartNew(client.UpdateChunks);
+                    if ((int)(entity.Position.X) >> 4 != (int)(entity.OldPosition.X) >> 4 ||
+                        (int)(entity.Position.Z) >> 4 != (int)(entity.OldPosition.Z) >> 4)
+                    {
+                        client.Log("Passed chunk boundary at {0}, {1}", (int)(entity.Position.X) >> 4, (int)(entity.Position.Z) >> 4);
+                        Task.Factory.StartNew(client.UpdateChunks);
+                        UpdateClientEntities(client);
+                    }
                     break;
+            }
+        }
+
+        internal void UpdateClientEntities(RemoteClient client)
+        {
+            var entity = client.Entity;
+            // Calculate entities you shouldn't know about anymore
+            for (int i = 0; i < client.KnownEntities.Count; i++)
+            {
+                var knownEntity = client.KnownEntities[i];
+                if (knownEntity.Position.DistanceTo(entity.Position) > client.ChunkRadius * Chunk.Depth)
+                {
+                    client.QueuePacket(new DestroyEntityPacket(knownEntity.EntityID));
+                    client.KnownEntities.Remove(knownEntity);
+                    i--;
+                    if (knownEntity is PlayerEntity)
+                    {
+                        var c = (RemoteClient)GetClientForEntity(knownEntity as PlayerEntity);
+                        if (c.KnownEntities.Contains(entity))
+                        {
+                            c.KnownEntities.Remove(entity);
+                            c.QueuePacket(new DestroyEntityPacket(entity.EntityID));
+                            c.Log("Destroying entity {0} ({1})", knownEntity.EntityID, knownEntity.GetType().Name);
+                        }
+                    }
+                    client.Log("Destroying entity {0} ({1})", knownEntity.EntityID, knownEntity.GetType().Name);
+                }
+            }
+            // Calculate entities you should now know about
+            var toSpawn = GetEntitiesInRange(entity, client.ChunkRadius);
+            foreach (var e in toSpawn)
+            {
+                if (e != entity && !client.KnownEntities.Contains(e))
+                {
+                    SendEntityToClient(client, e);
+                    // Make sure other players know about you since you've moved
+                    if (e is PlayerEntity)
+                    {
+                        var c = (RemoteClient)GetClientForEntity(e as PlayerEntity);
+                        if (!c.KnownEntities.Contains(entity))
+                            SendEntityToClient(c, entity);
+                    }
+                }
             }
         }
 
@@ -107,6 +153,7 @@ namespace TrueCraft
 
         private void SendEntityToClient(RemoteClient client, IEntity entity)
         {
+            client.Log("Spawning entity {0} ({1}) at {2}", entity.EntityID, entity.GetType().Name, (Coordinates3D)entity.Position);
             RemoteClient spawnedClient = null;
             if (entity is PlayerEntity)
                 spawnedClient = (RemoteClient)GetClientForEntity(entity as PlayerEntity);
@@ -153,7 +200,7 @@ namespace TrueCraft
             {
                 Entities.Add(entity);
             }
-            foreach (var clientEntity in GetEntitiesInRange(entity, MaxClientDistance))
+            foreach (var clientEntity in GetEntitiesInRange(entity, 8)) // Note: 8 is pretty arbitrary here
             {
                 if (clientEntity != entity && clientEntity is PlayerEntity)
                 {
@@ -204,6 +251,8 @@ namespace TrueCraft
                     if (client.KnownEntities.Contains(entity))
                     {
                         client.QueuePacket(new DestroyEntityPacket(entity.EntityID));
+                        client.KnownEntities.Remove(entity);
+                        client.Log("Destroying entity {0} ({1})", entity.EntityID, entity.GetType().Name);
                     }
                 }
                 lock (EntityLock)
@@ -219,7 +268,7 @@ namespace TrueCraft
         public void SendEntitiesToClient(IRemoteClient _client)
         {
             var client = _client as RemoteClient;
-            foreach (var entity in GetEntitiesInRange(client.Entity, MaxClientDistance))
+            foreach (var entity in GetEntitiesInRange(client.Entity, client.ChunkRadius))
             {
                 if (entity != client.Entity)
                     SendEntityToClient(client, entity);

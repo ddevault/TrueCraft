@@ -36,6 +36,7 @@ namespace TrueCraft
             ItemStaging = ItemStack.EmptyStack;
             KnownEntities = new List<IEntity>();
             Disconnected = false;
+            EnableLogging = server.EnableClientLogging;
         }
             
         /// <summary>
@@ -55,6 +56,7 @@ namespace TrueCraft
         public short SelectedSlot { get; internal set; }
         public ItemStack ItemStaging { get; set; }
         public IWindow CurrentWindow { get; set; }
+        public bool EnableLogging { get; set; }
 
         private IEntity _Entity;
         public IEntity Entity
@@ -112,6 +114,12 @@ namespace TrueCraft
             }
         }
 
+        public void Log(string message, params object[] parameters)
+        {
+            if (EnableLogging)
+                SendMessage(ChatColor.Gray + string.Format("[" + DateTime.Now.ToShortTimeString() + "] " + message, parameters));
+        }
+
         public void QueuePacket(IPacket packet)
         {
             PacketQueue.Enqueue(packet);
@@ -166,6 +174,7 @@ namespace TrueCraft
                         LoadChunk(chunk);
                 }
             }
+            ((EntityManager)Server.GetEntityManagerForWorld(World)).UpdateClientEntities(this);
         }
 
         internal void UnloadAllChunks()
