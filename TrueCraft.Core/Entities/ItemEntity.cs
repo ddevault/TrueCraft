@@ -19,8 +19,6 @@ namespace TrueCraft.Core.Entities
         {
             Position = position;
             Item = item;
-            if (Item.ID == 0)
-                System.Diagnostics.Debugger.Break();
         }
 
         public ItemStack Item { get; set; }
@@ -79,7 +77,7 @@ namespace TrueCraft.Core.Entities
         {
             get
             {
-                return true;
+                return false;
             }
         }
 
