@@ -42,6 +42,10 @@ If you want to keep up with development or contribute, join #truecraft on
 irc.esper.net. Pull requests will be rejected from authors who have read any
 decompiled official Minecraft code.
 
+To get started, sign the [Contributor License
+Agreement](https://www.clahub.com/agreements/SirCmpwn/TrueCraft) to establish
+that you have not, in fact, ever read decompiled Minecraft code.
+
 ## Roadmap
 
 1. Implement server (in progress)
