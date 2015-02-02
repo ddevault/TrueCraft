@@ -45,6 +45,14 @@ namespace TrueCraft.Core.Entities
             }
         }
 
+        public override bool SendMetadataToClients
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public abstract short MaxHealth { get; }
     }
 }

@@ -75,12 +75,23 @@ namespace TrueCraft.Core.Entities
 
         public virtual bool SendMetadataToClients { get { return false; } }
 
+        protected EntityFlags _EntityFlags;
+        public virtual EntityFlags EntityFlags
+        {
+            get { return _EntityFlags; }
+            set
+            {
+                _EntityFlags = value;
+                OnPropertyChanged("Metadata");
+            }
+        }
+
         public virtual MetadataDictionary Metadata
         {
             get
             {
                 var dictionary = new MetadataDictionary();
-                dictionary[0] = new MetadataByte(0); // Flags
+                dictionary[0] = new MetadataByte((byte)EntityFlags);
                 dictionary[1] = new MetadataShort(300);
                 return dictionary;
             }

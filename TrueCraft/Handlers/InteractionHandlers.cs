@@ -7,6 +7,7 @@ using TrueCraft.API.World;
 using TrueCraft.Core;
 using TrueCraft.Core.Windows;
 using TrueCraft.API.Logic;
+using TrueCraft.Core.Entities;
 
 namespace TrueCraft.Handlers
 {
@@ -201,6 +202,22 @@ namespace TrueCraft.Handlers
             var notified = server.GetEntityManagerForWorld(client.World).ClientsForEntity(client.Entity);
             foreach (var c in notified)
                 c.QueuePacket(new EntityEquipmentPacket(client.Entity.EntityID, 0, client.SelectedItem.ID, client.SelectedItem.Metadata));
+        }
+
+        public static void HandlePlayerAction(IPacket _packet, IRemoteClient _client, IMultiplayerServer server)
+        {
+            var packet = (PlayerActionPacket)_packet;
+            var client = (RemoteClient)_client;
+            var entity = (PlayerEntity)client.Entity;
+            switch (packet.Action)
+            {
+                case PlayerActionPacket.PlayerAction.Crouch:
+                    entity.EntityFlags |= EntityFlags.Crouched;
+                    break;
+                case PlayerActionPacket.PlayerAction.Uncrouch:
+                    entity.EntityFlags &= ~EntityFlags.Crouched;
+                    break;
+            }
         }
     }
 }

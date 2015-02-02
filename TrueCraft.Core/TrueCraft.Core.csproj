@@ -268,6 +268,7 @@
     <Compile Include="Entities\ObjectEntity.cs" />
     <Compile Include="Entities\PlayerEntity.cs" />
     <Compile Include="Logic\Blocks\AirBlock.cs" />
+    <Compile Include="Entities\EntityFlags.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

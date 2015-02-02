@@ -19,6 +19,7 @@ namespace TrueCraft.Handlers
             server.RegisterPacketHandler(new HandshakePacket().ID, LoginHandlers.HandleHandshakePacket);
             server.RegisterPacketHandler(new LoginRequestPacket().ID, LoginHandlers.HandleLoginRequestPacket);
 
+            server.RegisterPacketHandler(new PlayerGroundedPacket().ID, (a, b, c) => { /* no-op */ });
             server.RegisterPacketHandler(new PlayerPositionPacket().ID, EntityHandlers.HandlePlayerPositionPacket);
             server.RegisterPacketHandler(new PlayerLookPacket().ID, EntityHandlers.HandlePlayerLookPacket);
             server.RegisterPacketHandler(new PlayerPositionAndLookPacket().ID, EntityHandlers.HandlePlayerPositionAndLookPacket);
@@ -26,6 +27,7 @@ namespace TrueCraft.Handlers
             server.RegisterPacketHandler(new PlayerDiggingPacket().ID, InteractionHandlers.HandlePlayerDiggingPacket);
             server.RegisterPacketHandler(new PlayerBlockPlacementPacket().ID, InteractionHandlers.HandlePlayerBlockPlacementPacket);
             server.RegisterPacketHandler(new ChangeHeldItemPacket().ID, InteractionHandlers.HandleChangeHeldItem);
+            server.RegisterPacketHandler(new PlayerActionPacket().ID, InteractionHandlers.HandlePlayerAction);
             server.RegisterPacketHandler(new ClickWindowPacket().ID, InteractionHandlers.HandleClickWindowPacket);
         }
 

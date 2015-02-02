@@ -54,6 +54,9 @@ namespace TrueCraft
                 case "Pitch":
                     PropegateEntityPositionUpdates(entity);
                     break;
+                case "Metadata":
+                    PropegateEntityMetadataUpdates(entity);
+                    break;
             }
         }
 
@@ -88,6 +91,7 @@ namespace TrueCraft
                     client.QueuePacket(new DestroyEntityPacket(knownEntity.EntityID));
                     client.KnownEntities.Remove(knownEntity);
                     i--;
+                    // Make sure you're despawned on other clients if you move away from stationary players
                     if (knownEntity is PlayerEntity)
                     {
                         var c = (RemoteClient)GetClientForEntity(knownEntity as PlayerEntity);
@@ -140,6 +144,20 @@ namespace TrueCraft
             }
         }
 
+        private void PropegateEntityMetadataUpdates(IEntity entity)
+        {
+            if (!entity.SendMetadataToClients)
+                return;
+            for (int i = 0, ServerClientsCount = Server.Clients.Count; i < ServerClientsCount; i++)
+            {
+                var client = Server.Clients[i] as RemoteClient;
+                if (client.Entity == entity)
+                    continue; // Do not send movement updates back to the client that triggered them
+                if (client.KnownEntities.Contains(entity))
+                    client.QueuePacket(new EntityMetadataPacket(entity.EntityID, entity.Metadata));
+            }
+        }
+
         private bool IsInRange(Vector3 a, Vector3 b, int range)
         {
             return Math.Abs(a.X - b.X) < range * Chunk.Width &&
@@ -159,6 +177,8 @@ namespace TrueCraft
                 spawnedClient = (RemoteClient)GetClientForEntity(entity as PlayerEntity);
             client.KnownEntities.Add(entity);
             client.QueuePacket(entity.SpawnPacket);
+            if (entity.SendMetadataToClients)
+                client.QueuePacket(new EntityMetadataPacket(entity.EntityID, entity.Metadata));
             if (spawnedClient != null)
             {
                 // Send equipment when spawning player entities

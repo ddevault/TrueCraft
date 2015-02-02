@@ -325,7 +325,7 @@ namespace TrueCraft
                         }
                         else
                         {
-                            // TODO: Something productive
+                            client.Log("Unhandled packet {0}", packet.GetType().Name);
                         }
                     }
                     if (idle)
