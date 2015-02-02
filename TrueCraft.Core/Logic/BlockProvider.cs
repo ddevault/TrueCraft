@@ -35,7 +35,11 @@ namespace TrueCraft.Core.Logic
             var entityManager = server.GetEntityManagerForWorld(world);
             var items = GetDrop(descriptor);
             foreach (var item in items)
-                entityManager.SpawnEntity(new ItemEntity(new Vector3(descriptor.Coordinates) + new Vector3(0.5), item));
+            {
+                var entity = new ItemEntity(new Vector3(descriptor.Coordinates) + new Vector3(0.5), item);
+                entity.Velocity += new Vector3(MathHelper.Random.NextDouble());
+                entityManager.SpawnEntity(entity);
+            }
         }
 
         public virtual bool IsSupported(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world)

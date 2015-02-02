@@ -55,6 +55,20 @@ namespace TrueCraft.API
         }
 
         /// <summary>
+        /// Clamps the vector to within the specified value.
+        /// </summary>
+        /// <param name="value">Value.</param>
+        public void Clamp(double value)
+        {
+            if (Math.Abs(X) > value)
+                X = value * (X < 0 ? -1 : 1);
+            if (Math.Abs(Y) > value)
+                Y = value * (Y < 0 ? -1 : 1);
+            if (Math.Abs(Z) > value)
+                Z = value * (Z < 0 ? -1 : 1);
+        }
+
+        /// <summary>
         /// Calculates the distance between two Vector3 objects.
         /// </summary>
         public double DistanceTo(Vector3 other)

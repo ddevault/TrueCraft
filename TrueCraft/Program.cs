@@ -24,7 +24,6 @@ namespace TrueCraft
             server.AddLogProvider(new ConsoleLogProvider(LogCategory.Notice | LogCategory.Warning | LogCategory.Error | LogCategory.Debug));
             #if DEBUG
             server.AddLogProvider(new FileLogProvider(new StreamWriter("packets.log", false), LogCategory.Packets));
-            server.EnableClientLogging = true;
             #endif
             CommandManager = new CommandManager();
             server.ChatMessageReceived += HandleChatMessageReceived;

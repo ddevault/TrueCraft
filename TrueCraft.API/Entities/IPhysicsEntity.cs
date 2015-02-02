@@ -11,6 +11,7 @@ namespace TrueCraft.API.Entities
         Vector3 Velocity { get; set; }
         float AccelerationDueToGravity { get; }
         float Drag { get; }
+        float TerminalVelocity { get; }
 
         bool BeginUpdate();
         void EndUpdate(Vector3 newPosition);

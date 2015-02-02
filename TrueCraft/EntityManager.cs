@@ -177,6 +177,17 @@ namespace TrueCraft
                 spawnedClient = (RemoteClient)GetClientForEntity(entity as PlayerEntity);
             client.KnownEntities.Add(entity);
             client.QueuePacket(entity.SpawnPacket);
+            if (entity is IPhysicsEntity)
+            {
+                var pentity = entity as IPhysicsEntity;
+                client.QueuePacket(new EntityVelocityPacket
+                    {
+                        EntityID = entity.EntityID,
+                        XVelocity = (short)(pentity.Velocity.X * 320),
+                        YVelocity = (short)(pentity.Velocity.Y * 320),
+                        ZVelocity = (short)(pentity.Velocity.Z * 320),
+                    });
+            }
             if (entity.SendMetadataToClients)
                 client.QueuePacket(new EntityMetadataPacket(entity.EntityID, entity.Metadata));
             if (spawnedClient != null)
@@ -265,6 +276,8 @@ namespace TrueCraft
             while (PendingDespawns.Count != 0)
             {
                 while (!PendingDespawns.TryTake(out entity));
+                if (entity is IPhysicsEntity)
+                    PhysicsEngine.RemoveEntity((IPhysicsEntity)entity);
                 for (int i = 0, ServerClientsCount = Server.Clients.Count; i < ServerClientsCount; i++)
                 {
                     var client = (RemoteClient)Server.Clients[i];

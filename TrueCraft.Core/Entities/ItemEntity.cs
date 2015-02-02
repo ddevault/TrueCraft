@@ -123,16 +123,22 @@ namespace TrueCraft.Core.Entities
                     OnPropertyChanged("Metadata");
                 }*/
             }
+            base.Update(entityManager);
         }
 
         public float AccelerationDueToGravity
         {
-            get { return 0.08f; }
+            get { return 0.4f; }
         }
 
         public float Drag
         {
-            get { return 0.98f; }
+            get { return 0.2f; }
+        }
+
+        public float TerminalVelocity
+        {
+            get { return 1.96f; }
         }
     }
 }

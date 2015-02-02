@@ -99,6 +99,9 @@ namespace TrueCraft.Core.Entities
 
         public virtual void Update(IEntityManager entityManager)
         {
+            // TODO: Losing health and all that jazz
+            if (Position.Y < -50)
+                entityManager.DespawnEntity(this);
         }
 
         protected bool EnablePropertyChange { get; set; }

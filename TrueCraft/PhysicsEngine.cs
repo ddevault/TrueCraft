@@ -40,7 +40,8 @@ namespace TrueCraft
         {
             if (!Entities.Contains(entity))
                 return;
-            Entities.Remove(entity);
+            lock (EntityLock)
+                Entities.Remove(entity);
         }
 
         private BoundingBox TempBoundingBox;
@@ -57,6 +58,7 @@ namespace TrueCraft
                     {
                         entity.Velocity *= entity.Drag * multipler;
                         entity.Velocity -= new Vector3(0, entity.AccelerationDueToGravity * multipler, 0);
+                        entity.Velocity.Clamp(entity.TerminalVelocity);
                         if (entity is IAABBEntity)
                             CheckWithTerrain((IAABBEntity)entity, World);
                         entity.EndUpdate(entity.Position + entity.Velocity);
@@ -69,7 +71,7 @@ namespace TrueCraft
         private void CheckWithTerrain(IAABBEntity entity, IWorld world)
         {
             Vector3 collisionPoint, collisionDirection;
-            if (entity.Position.Y + entity.Velocity.Y >= 0 && entity.Position.Y + entity.Velocity.Y <= 255) // Don't do checks outside the map
+            if (entity.Position.Y > 0 && entity.Position.Y <= 127) // Don't do checks outside the map
             {
                 bool fireEvent = entity.Velocity != Vector3.Zero;
                 // Do terrain collisions
@@ -80,7 +82,7 @@ namespace TrueCraft
                 }
                 if (AdjustVelocityY(entity, world, out collisionPoint, out collisionDirection))
                 {
-                    entity.Velocity *= new Vector3(0.2, 1, 0.2); // TODO: More sophisticated friction
+                    entity.Velocity *= new Vector3(0.1, 1, 0.1); // TODO: More sophisticated friction
                     if (fireEvent)
                         entity.TerrainCollision(collisionPoint, collisionDirection);
                 }
@@ -114,22 +116,19 @@ namespace TrueCraft
             if (entity.Velocity.X < 0)
             {
                 TempBoundingBox = new BoundingBox(
-                    new Vector3(entity.BoundingBox.Min.X + entity.Velocity.X, entity.BoundingBox.Min.Y, entity.BoundingBox.Min.Z) - (entity.Size / 2),
-                    new Vector3(entity.BoundingBox.Max.X, entity.BoundingBox.Max.Y, entity.BoundingBox.Max.Z) - (entity.Size / 2)
-                );
+                    new Vector3(entity.BoundingBox.Min.X + entity.Velocity.X, entity.BoundingBox.Min.Y, entity.BoundingBox.Min.Z),
+                    entity.BoundingBox.Max);
 
                 maxX = (int)(TempBoundingBox.Max.X);
-                minX = (int)(TempBoundingBox.Min.X + entity.Velocity.X);
+                minX = (int)(TempBoundingBox.Min.X + entity.Velocity.X) - 1;
             }
             else
             {
                 TempBoundingBox = new BoundingBox(
-                    entity.BoundingBox.Min - (entity.Size / 2),
-                    new Vector3(
-                    entity.BoundingBox.Max.X + entity.Velocity.X, entity.BoundingBox.Max.Y, entity.BoundingBox.Max.Z) - (entity.Size / 2)
-                );
+                    entity.BoundingBox.Min,
+                    new Vector3(entity.BoundingBox.Max.X + entity.Velocity.X, entity.BoundingBox.Max.Y, entity.BoundingBox.Max.Z));
                 minX = (int)(entity.BoundingBox.Min.X);
-                maxX = (int)(entity.BoundingBox.Max.X + entity.Velocity.X);
+                maxX = (int)(entity.BoundingBox.Max.X + entity.Velocity.X) + 1;
             }
 
             // Do terrain checks
@@ -141,8 +140,8 @@ namespace TrueCraft
                 {
                     for (int z = minZ; z <= maxZ; z++)
                     {
-                        var position = new Vector3(x, y, z);
-                        var boundingBox = BlockPhysicsProvider.GetBoundingBox(world, (Coordinates3D)position);
+                        var position = new Coordinates3D(x, y, z);
+                        var boundingBox = BlockPhysicsProvider.GetBoundingBox(world, position);
                         if (boundingBox == null)
                             continue;
                         blockBox = boundingBox.Value.OffsetBy(position);
@@ -213,22 +212,19 @@ namespace TrueCraft
             if (entity.Velocity.Y < 0)
             {
                 TempBoundingBox = new BoundingBox(
-                    new Vector3(entity.BoundingBox.Min.X, entity.BoundingBox.Min.Y + entity.Velocity.Y, entity.BoundingBox.Min.Z) - (entity.Size / 2),
-                    new Vector3(entity.BoundingBox.Max.X, entity.BoundingBox.Max.Y, entity.BoundingBox.Max.Z) - (entity.Size / 2)
-                );
+                    new Vector3(entity.BoundingBox.Min.X, entity.BoundingBox.Min.Y + entity.Velocity.Y, entity.BoundingBox.Min.Z),
+                    entity.BoundingBox.Max);
 
                 maxY = (int)(TempBoundingBox.Max.Y);
-                minY = (int)(TempBoundingBox.Min.Y + entity.Velocity.Y);
+                minY = (int)(TempBoundingBox.Min.Y + entity.Velocity.Y) - 1;
             }
             else
             {
                 TempBoundingBox = new BoundingBox(
-                    entity.BoundingBox.Min - (entity.Size / 2),
-                    new Vector3(
-                    entity.BoundingBox.Max.X, entity.BoundingBox.Max.Y + entity.Velocity.Y, entity.BoundingBox.Max.Z) - (entity.Size / 2)
-                );
+                    entity.BoundingBox.Min,
+                    new Vector3(entity.BoundingBox.Max.X, entity.BoundingBox.Max.Y + entity.Velocity.Y, entity.BoundingBox.Max.Z));
                 minY = (int)(entity.BoundingBox.Min.Y);
-                maxY = (int)(entity.BoundingBox.Max.Y + entity.Velocity.Y);
+                maxY = (int)(entity.BoundingBox.Max.Y + entity.Velocity.Y) + 1;
             }
 
             // Clamp Y into map boundaries
@@ -250,8 +246,10 @@ namespace TrueCraft
                 {
                     for (int z = minZ; z <= maxZ; z++)
                     {
-                        var position = new Vector3(x, y, z);
-                        var boundingBox = BlockPhysicsProvider.GetBoundingBox(world, (Coordinates3D)position);
+                        var position = new Coordinates3D(x, y, z);
+                        if (!World.IsValidPosition(position))
+                            continue;
+                        var boundingBox = BlockPhysicsProvider.GetBoundingBox(world, position);
                         if (boundingBox == null)
                             continue;
                         blockBox = boundingBox.Value.OffsetBy(position);
@@ -323,22 +321,20 @@ namespace TrueCraft
             if (entity.Velocity.Z < 0)
             {
                 TempBoundingBox = new BoundingBox(
-                    new Vector3(entity.BoundingBox.Min.X, entity.BoundingBox.Min.Y, entity.BoundingBox.Min.Z + entity.Velocity.Z) - (entity.Size / 2),
-                    new Vector3(entity.BoundingBox.Max.X, entity.BoundingBox.Max.Y, entity.BoundingBox.Max.Z) - (entity.Size / 2)
-                );
+                    new Vector3(entity.BoundingBox.Min.X, entity.BoundingBox.Min.Y, entity.BoundingBox.Min.Z + entity.Velocity.Z),
+                    entity.BoundingBox.Max);
 
                 maxZ = (int)(TempBoundingBox.Max.Z);
-                minZ = (int)(TempBoundingBox.Min.Z + entity.Velocity.Z);
+                minZ = (int)(TempBoundingBox.Min.Z + entity.Velocity.Z) - 1;
             }
             else
             {
                 TempBoundingBox = new BoundingBox(
-                    entity.BoundingBox.Min - (entity.Size / 2),
-                    new Vector3(
-                    entity.BoundingBox.Max.X, entity.BoundingBox.Max.Y, entity.BoundingBox.Max.Z + entity.Velocity.Z) - (entity.Size / 2)
+                    entity.BoundingBox.Min,
+                    new Vector3(entity.BoundingBox.Max.X, entity.BoundingBox.Max.Y, entity.BoundingBox.Max.Z + entity.Velocity.Z)
                 );
                 minZ = (int)(entity.BoundingBox.Min.Z);
-                maxZ = (int)(entity.BoundingBox.Max.Z + entity.Velocity.Z);
+                maxZ = (int)(entity.BoundingBox.Max.Z + entity.Velocity.Z) + 1;
             }
 
             // Do terrain checks
@@ -350,8 +346,8 @@ namespace TrueCraft
                 {
                     for (int z = minZ; z <= maxZ; z++)
                     {
-                        var position = new Vector3(x, y, z);
-                        var boundingBox = BlockPhysicsProvider.GetBoundingBox(world, (Coordinates3D)position);
+                        var position = new Coordinates3D(x, y, z);
+                        var boundingBox = BlockPhysicsProvider.GetBoundingBox(world, position);
                         if (boundingBox == null)
                             continue;
                         blockBox = boundingBox.Value.OffsetBy(position);
