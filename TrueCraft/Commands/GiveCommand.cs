@@ -25,27 +25,28 @@ namespace TrueCraft.Commands
             get { return new string[1]{ "i" }; }
         }
 
-        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
-            if (Arguments.Length != 3)
+            if (arguments.Length != 3)
             {
-                Help(Client, Alias, Arguments);
+                Help(client, alias, arguments);
                 return;
             }
             // TODO: Send items to the client mentioned in the command, not the client issuing the command
             // TODO: Check to make sure an item with that ID actually exists
             short id;
             sbyte count;
-            if (short.TryParse(Arguments[1], out id) && sbyte.TryParse(Arguments[2], out count))
+            if (short.TryParse(arguments[1], out id) && sbyte.TryParse(arguments[2], out count))
             {
-                var inventory = Client.Inventory as InventoryWindow;
-                inventory.PickUpStack(new ItemStack(id, count));
+                var inventory = client.Inventory as InventoryWindow;
+                if (inventory != null)
+                    inventory.PickUpStack(new ItemStack(id, count));
             }
         }
 
-        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
         {
-            Client.SendMessage("Correct usage is /" + Alias + " <Item ID> <Amount>");
+            client.SendMessage("Correct usage is /" + alias + "<Partial player name> <Item ID> <Amount>");
         }
     }
 }

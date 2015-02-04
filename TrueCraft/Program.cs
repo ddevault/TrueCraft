@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Net;
+using System.Linq;
 using System.Threading;
 using TrueCraft.Core.World;
 using TrueCraft.Core.TerrainGen;
@@ -8,7 +10,6 @@ using TrueCraft.API.Logging;
 using TrueCraft.API.Server;
 using TrueCraft.API;
 using TrueCraft.Core.Windows;
-using System.IO;
 using TrueCraft.Commands;
 using TrueCraft.API.World;
 
@@ -19,6 +20,7 @@ namespace TrueCraft
         public static CommandManager CommandManager;
         public static void Main(string[] args)
         {
+            // TODO: Introduce command line argument parsing to allow for user options
             // TODO: Make this more flexible
             var server = new MultiplayerServer();
             IWorld world;
@@ -54,20 +56,13 @@ namespace TrueCraft
 
         static void HandleChatMessageReceived(object sender, ChatMessageEventArgs e)
         {
-            // TODO: Make this more sophisticated
-            if (e.Message.StartsWith("/"))
+            if (e.Message[0] == '/')
             {
                 e.PreventDefault = true;
-                var Message = e.Message.Remove(0, 1);
-                var Command = Message.Trim();
-                var Arguments = new string[0];
-                if (Message.Split(' ').Length > 1)
-                {
-                    Command = Message.Split(' ')[0];
-                    Arguments = Message.Substring(Command.Length).Trim().Split(' ');
-                }
-
-                CommandManager.HandleCommand(e.Client, Command, Arguments);
+                var messageArray = e.Message.TrimStart('/') // replace with .Remove(0,1) if we're going to allow forward slashes in command aliases
+                                            .Split(new[] {' '},
+                                                StringSplitOptions.RemoveEmptyEntries);
+                CommandManager.HandleCommand(e.Client, messageArray[0], messageArray);
                 return;
             }
         }
