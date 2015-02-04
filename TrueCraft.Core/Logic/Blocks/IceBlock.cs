@@ -1,5 +1,8 @@
 using System;
 using TrueCraft.API.Logic;
+using TrueCraft.API;
+using TrueCraft.API.World;
+using TrueCraft.API.Networking;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
@@ -26,7 +29,7 @@ namespace TrueCraft.Core.Logic.Blocks
             return new Tuple<int, int>(3, 4);
         }
 
-        public override void BlockMined(BlockDescriptor descriptor, API.BlockFace face, API.World.IWorld world, API.Networking.IRemoteClient user)
+        public override void BlockMined(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
             world.SetBlockID(descriptor.Coordinates, WaterBlock.BlockID);
         }
