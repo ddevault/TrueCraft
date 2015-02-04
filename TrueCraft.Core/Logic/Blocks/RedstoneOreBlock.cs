@@ -1,5 +1,7 @@
 using System;
 using TrueCraft.API.Logic;
+using TrueCraft.API;
+using TrueCraft.Core.Logic.Items;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
@@ -20,6 +22,11 @@ namespace TrueCraft.Core.Logic.Blocks
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(3, 3);
+        }
+
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        {
+            return new[] { new ItemStack(RedstoneItem.ItemID, (sbyte)new Random().Next(4, 5), descriptor.Metadata) };
         }
     }
 
