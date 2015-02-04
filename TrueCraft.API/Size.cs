@@ -17,6 +17,7 @@ namespace TrueCraft.API
         public double Depth;
 
         #region Constructors
+
         public Size(double d)
         {
             this.Width = this.Height = this.Depth = d;
@@ -34,9 +35,11 @@ namespace TrueCraft.API
             this.Height = s.Height;
             this.Depth = s.Depth;
         }
+
         #endregion
 
         #region Operators
+
         public static Size operator /(Size a, double b)
         {
             return new Size(a.Width / b,
@@ -195,9 +198,11 @@ namespace TrueCraft.API
         {
             return a.Volume <= b.Volume;
         }
+
         #endregion
 
         #region Conversion operators
+
         public static implicit operator Size(Vector3 v)
         {
             return new Size(v.X, v.Y, v.Z);
@@ -220,9 +225,11 @@ namespace TrueCraft.API
                             t.Item2,
                             t.Item3);
         }
+
         #endregion
 
         #region Math methods
+
         public static Size Min(Size a, Size b)
         {
             return new Size(Math.Min(a.Width, b.Width),
@@ -274,7 +281,9 @@ namespace TrueCraft.API
                             Math.Abs(this.Height),
                             Math.Abs(this.Depth));
         }
+
         #endregion
+
         public double Volume
         {
             get
