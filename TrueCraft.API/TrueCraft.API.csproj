@@ -68,7 +68,6 @@
     <Compile Include="Server\IEventScheduler.cs" />
     <Compile Include="Server\IEntityManager.cs" />
     <Compile Include="Entities\IEntity.cs" />
-    <Compile Include="World\BlockData.cs" />
     <Compile Include="World\BlockChangeEventArgs.cs" />
     <Compile Include="Windows\IWindow.cs" />
     <Compile Include="Windows\IWindowArea.cs" />
@@ -79,6 +78,12 @@
     <Compile Include="Server\ChatMessageEventArgs.cs" />
     <Compile Include="BlockFace.cs" />
     <Compile Include="Server\PlayerJoinedEventArgs.cs" />
+    <Compile Include="Logic\IBlockRepository.cs" />
+    <Compile Include="Entities\IAABBEntity.cs" />
+    <Compile Include="Entities\IBlockPhysicsProvider.cs" />
+    <Compile Include="Entities\IPhysicsEntity.cs" />
+    <Compile Include="Logic\IItemRepository.cs" />
+    <Compile Include="Logic\BlockDescriptor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

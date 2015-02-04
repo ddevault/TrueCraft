@@ -6,6 +6,8 @@ using TrueCraft.API;
 using TrueCraft.API.World;
 using TrueCraft.Core;
 using TrueCraft.Core.Windows;
+using TrueCraft.API.Logic;
+using TrueCraft.Core.Entities;
 
 namespace TrueCraft.Handlers
 {
@@ -17,19 +19,34 @@ namespace TrueCraft.Handlers
             var client = (RemoteClient)_client;
             var world = _client.World;
             var position = new Coordinates3D(packet.X, packet.Y, packet.Z);
+            var descriptor = world.GetBlockData(position);
+            var provider = server.BlockRepository.GetBlockProvider(descriptor.ID);
             switch (packet.PlayerAction)
             {
                 case PlayerDiggingPacket.Action.DropItem:
                     // TODO
                     break;
                 case PlayerDiggingPacket.Action.StartDigging:
-                    // TODO
+                    foreach (var nearbyClient in server.Clients) // TODO: Send this repeatedly during the course of the digging
+                    {
+                        var c = (RemoteClient)nearbyClient;
+                        if (c.KnownEntities.Contains(client.Entity))
+                            c.QueuePacket(new AnimationPacket(client.Entity.EntityID, AnimationPacket.PlayerAnimation.SwingArm));
+                    }
+                    if (provider == null)
+                        server.SendMessage(ChatColor.Red + "WARNING: block provider for ID {0} is null (player digging)", descriptor.ID);
+                    if (provider != null && provider.Hardness == 0)
+                        provider.BlockMined(descriptor, packet.Face, world, client);
                     break;
                 case PlayerDiggingPacket.Action.StopDigging:
-                    // TODO: Do this properly
-                    var stack = new ItemStack(world.GetBlockID(position), 1, world.GetMetadata(position));
-                    client.InventoryWindow.PickUpStack(stack);
-                    world.SetBlockID(position, 0);
+                    foreach (var nearbyClient in server.Clients)
+                    {
+                        var c = (RemoteClient)nearbyClient;
+                        if (c.KnownEntities.Contains(client.Entity))
+                            c.QueuePacket(new AnimationPacket(client.Entity.EntityID, AnimationPacket.PlayerAnimation.None));
+                    }
+                    if (provider != null && descriptor.ID != 0)
+                        provider.BlockMined(descriptor, packet.Face, world, client);
                     break;
             }
         }
@@ -41,7 +58,7 @@ namespace TrueCraft.Handlers
 
             var slot = client.SelectedItem;
             var position = new Coordinates3D(packet.X, packet.Y, packet.Z);
-            BlockData? block = null;
+            BlockDescriptor? block = null;
             if (position != -Coordinates3D.One)
             {
                 if (position.DistanceTo((Coordinates3D)client.Entity.Position) > 10 /* TODO: Reach */)
@@ -56,22 +73,39 @@ namespace TrueCraft.Handlers
             bool use = true;
             if (block != null)
             {
-                // TODO: Call the handler for the block being clicked on and possible cancel use
+                var provider = server.BlockRepository.GetBlockProvider(block.Value.ID);
+                if (provider == null)
+                {
+                    server.SendMessage(ChatColor.Red + "WARNING: block provider for ID {0} is null (player placing)", block.Value.ID);
+                    server.SendMessage(ChatColor.Red + "Error occured from client {0} at coordinates {1}", client.Username, block.Value.Coordinates);
+                    server.SendMessage(ChatColor.Red + "Packet logged at {0}, please report upstream", DateTime.Now);
+                    return;
+                }
+                if (!provider.BlockRightClicked(block.Value, packet.Face, client.World, client))
+                {
+                    position += MathHelper.BlockFaceToCoordinates(packet.Face);
+                    var oldID = client.World.GetBlockID(position);
+                    var oldMeta = client.World.GetMetadata(position);
+                    client.QueuePacket(new BlockChangePacket(position.X, (sbyte)position.Y, position.Z, (sbyte)oldID, (sbyte)oldMeta));
+                    client.QueuePacket(new SetSlotPacket(0, client.SelectedSlot, client.SelectedItem.ID, client.SelectedItem.Count, client.SelectedItem.Metadata));
+                    return;
+                }
             }
             if (!slot.Empty)
             {
                 if (use)
                 {
-                    // Temporary: just place the damn thing
-                    position += MathHelper.BlockFaceToCoordinates(packet.Face);
-                    client.World.SetBlockID(position, (byte)slot.Id);
-                    client.World.SetMetadata(position, (byte)slot.Metadata);
-                    slot.Count--;
-                    client.Inventory[client.SelectedSlot] = slot;
-                    // End temporary
+                    var itemProvider = server.ItemRepository.GetItemProvider(slot.ID);
+                    if (itemProvider == null)
+                    {
+                        server.SendMessage(ChatColor.Red + "WARNING: item provider for ID {0} is null (player placing)", block.Value.ID);
+                        server.SendMessage(ChatColor.Red + "Error occured from client {0} at coordinates {1}", client.Username, block.Value.Coordinates);
+                        server.SendMessage(ChatColor.Red + "Packet logged at {0}, please report upstream", DateTime.Now);
+                    }
                     if (block != null)
                     {
-                        // TODO: Use item on block
+                        if (itemProvider != null)
+                            itemProvider.ItemUsedOnBlock(position, slot, packet.Face, client.World, client);
                     }
                     else
                     {
@@ -165,6 +199,25 @@ namespace TrueCraft.Handlers
             var packet = (ChangeHeldItemPacket)_packet;
             var client = (RemoteClient)_client;
             client.SelectedSlot = (short)(packet.Slot + InventoryWindow.HotbarIndex);
+            var notified = server.GetEntityManagerForWorld(client.World).ClientsForEntity(client.Entity);
+            foreach (var c in notified)
+                c.QueuePacket(new EntityEquipmentPacket(client.Entity.EntityID, 0, client.SelectedItem.ID, client.SelectedItem.Metadata));
+        }
+
+        public static void HandlePlayerAction(IPacket _packet, IRemoteClient _client, IMultiplayerServer server)
+        {
+            var packet = (PlayerActionPacket)_packet;
+            var client = (RemoteClient)_client;
+            var entity = (PlayerEntity)client.Entity;
+            switch (packet.Action)
+            {
+                case PlayerActionPacket.PlayerAction.Crouch:
+                    entity.EntityFlags |= EntityFlags.Crouched;
+                    break;
+                case PlayerActionPacket.PlayerAction.Uncrouch:
+                    entity.EntityFlags &= ~EntityFlags.Crouched;
+                    break;
+            }
         }
     }
 }

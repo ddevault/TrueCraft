@@ -16,6 +16,7 @@ using TrueCraft.API.Windows;
 using TrueCraft.Core.Windows;
 using System.Threading.Tasks;
 using System.Threading;
+using TrueCraft.Core.Entities;
 
 namespace TrueCraft
 {
@@ -33,8 +34,17 @@ namespace TrueCraft
             SelectedSlot = InventoryWindow.HotbarIndex;
             CurrentWindow = InventoryWindow;
             ItemStaging = ItemStack.EmptyStack;
+            KnownEntities = new List<IEntity>();
+            Disconnected = false;
+            EnableLogging = server.EnableClientLogging;
         }
-        
+            
+        /// <summary>
+        /// A list of entities that this client is aware of.
+        /// </summary>
+        internal List<IEntity> KnownEntities { get; set; }
+        internal bool Disconnected { get; set; }
+
         public NetworkStream NetworkStream { get; set; }
         public IMinecraftStream MinecraftStream { get; internal set; }
         public ConcurrentQueue<IPacket> PacketQueue { get; private set; }
@@ -42,11 +52,40 @@ namespace TrueCraft
         public bool LoggedIn { get; internal set; }
         public IMultiplayerServer Server { get; set; }
         public IWorld World { get; internal set; }
-        public IEntity Entity { get; internal set; }
         public IWindow Inventory { get; private set; }
         public short SelectedSlot { get; internal set; }
         public ItemStack ItemStaging { get; set; }
         public IWindow CurrentWindow { get; set; }
+        public bool EnableLogging { get; set; }
+
+        private IEntity _Entity;
+        public IEntity Entity
+        {
+            get
+            {
+                return _Entity;
+            }
+            internal set
+            {
+                var player = _Entity as PlayerEntity;
+                if (player != null)
+                    player.PickUpItem -= HandlePickUpItem;
+                _Entity = value;
+                player = _Entity as PlayerEntity;
+                if (player != null)
+                    player.PickUpItem += HandlePickUpItem;
+            }
+        }
+
+        void HandlePickUpItem(object sender, EntityEventArgs e)
+        {
+            var packet = new CollectItemPacket(e.Entity.EntityID, Entity.EntityID);
+            QueuePacket(packet);
+            var manager = Server.GetEntityManagerForWorld(World);
+            foreach (var client in manager.ClientsForEntity(Entity))
+                client.QueuePacket(packet);
+            Inventory.PickUpStack((e.Entity as ItemEntity).Item);
+        }
 
         public ItemStack SelectedItem
         {
@@ -75,6 +114,12 @@ namespace TrueCraft
             }
         }
 
+        public void Log(string message, params object[] parameters)
+        {
+            if (EnableLogging)
+                SendMessage(ChatColor.Gray + string.Format("[" + DateTime.Now.ToShortTimeString() + "] " + message, parameters));
+        }
+
         public void QueuePacket(IPacket packet)
         {
             PacketQueue.Enqueue(packet);
@@ -98,7 +143,7 @@ namespace TrueCraft
         internal void SendKeepAlive(IMultiplayerServer server)
         {
             QueuePacket(new KeepAlivePacket());
-            server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(10), SendKeepAlive);
+            server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(1), SendKeepAlive);
         }
 
         internal void UpdateChunks()
@@ -129,6 +174,7 @@ namespace TrueCraft
                         LoadChunk(chunk);
                 }
             }
+            ((EntityManager)Server.GetEntityManagerForWorld(World)).UpdateClientEntities(this);
         }
 
         internal void UnloadAllChunks()
@@ -158,7 +204,20 @@ namespace TrueCraft
 
         void HandleWindowChange(object sender, WindowChangeEventArgs e)
         {
-            QueuePacket(new SetSlotPacket(0, (short)e.SlotIndex, e.Value.Id, e.Value.Count, e.Value.Metadata));
+            QueuePacket(new SetSlotPacket(0, (short)e.SlotIndex, e.Value.ID, e.Value.Count, e.Value.Metadata));
+            if (e.SlotIndex == SelectedSlot)
+            {
+                var notified = Server.GetEntityManagerForWorld(World).ClientsForEntity(Entity);
+                foreach (var c in notified)
+                    c.QueuePacket(new EntityEquipmentPacket(Entity.EntityID, 0, SelectedItem.ID, SelectedItem.Metadata));
+            }
+            if (e.SlotIndex >= InventoryWindow.ArmorIndex && e.SlotIndex < InventoryWindow.ArmorIndex + InventoryWindow.Armor.Length)
+            {
+                short slot = (short)(4 - (e.SlotIndex - InventoryWindow.ArmorIndex));
+                var notified = Server.GetEntityManagerForWorld(World).ClientsForEntity(Entity);
+                foreach (var c in notified)
+                    c.QueuePacket(new EntityEquipmentPacket(Entity.EntityID, slot, e.Value.ID, e.Value.Metadata));
+            }
         }
 
         private static ChunkDataPacket CreatePacket(IChunk chunk)

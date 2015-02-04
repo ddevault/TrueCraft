@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using TrueCraft.API.Entities;
 
-namespace TrueCraft.Entities
+namespace TrueCraft.Core.Entities
 {
     public class EntityEventArgs : EventArgs
     {

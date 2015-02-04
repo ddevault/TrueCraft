@@ -26,7 +26,7 @@ namespace TrueCraft.Core.Networking
             RegisterPacketType<TimeUpdatePacket>(serverbound: false, clientbound: true);                // 0x04
             RegisterPacketType<EntityEquipmentPacket>(serverbound: false, clientbound: true);           // 0x05 // NOTE: serverbound not confirmed
             RegisterPacketType<SpawnPositionPacket>(serverbound: true, clientbound: false);             // 0x06
-            RegisterPacketType<UseEntityPacket>(serverbound: false, clientbound: true);                 // 0x07
+            RegisterPacketType<UseEntityPacket>(serverbound: true, clientbound: false);                 // 0x07
             RegisterPacketType<UpdateHealthPacket>(serverbound: false, clientbound: true);              // 0x08
             RegisterPacketType<RespawnPacket>();                                                        // 0x09
             RegisterPacketType<PlayerGroundedPacket>(serverbound: true, clientbound: false);            // 0x0A

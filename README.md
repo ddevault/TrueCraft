@@ -1,5 +1,7 @@
 # TrueCraft
 
+http://truecraft.io - blog and such
+
 A completely
 [clean-room](https://en.wikipedia.org/wiki/Clean_room_design) implementation of
 Minecraft beta 1.7.3 (circa September 2011). No decompiled code has been used in
@@ -23,16 +25,26 @@ Craft.Net aims to support the latest version of Minecraft. That means I'm aiming
 for a moving target every time Mojang updates the game, adding more features
 that I don't like. I'm tired of Craft.Net. Let's do this instead.
 
-## Status
+## Compiling
 
-This project is very young, so don't expect much. The server is in-progress.
-Here's what you can do with it:
+**Use a recursive git clone.**
 
-* Connect and walk around the world
-* Dig up and place blocks
-* Chat
+    git clone --recursive git://github.com/SirCmpwn/TrueCraft.git
+    cd TrueCraft
+    xbuild
 
-Pretty basic. More to come over time.
+Now you have binaries in TrueCraft/bin/Debug/. On Windows use Visual Studio or
+SharpDevelop or something equally idiot-proof.
+
+## Get Involved
+
+If you want to keep up with development or contribute, join #truecraft on
+irc.esper.net. Pull requests will be rejected from authors who have read any
+decompiled official Minecraft code.
+
+To get started, sign the [Contributor License
+Agreement](https://www.clahub.com/agreements/SirCmpwn/TrueCraft) to establish
+that you have not, in fact, ever read decompiled Minecraft code.
 
 ## Roadmap
 
@@ -59,11 +71,6 @@ smaller changes like lighting improvements and bow usage mechanics.
 
 Finally, if we've got a nice mature project and a good community going, modding
 support would be great.
-
-## Get Involved
-
-If you want to keep up with development or contribute, join #truecraft on
-irc.esper.net.
 
 ## Blah blah blah
 

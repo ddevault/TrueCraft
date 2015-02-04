@@ -11,6 +11,12 @@ namespace TrueCraft.Core.Networking.Packets
         public int EntityID;
         public MetadataDictionary Metadata;
 
+        public EntityMetadataPacket(int entityID, MetadataDictionary metadata)
+        {
+            EntityID = entityID;
+            Metadata = metadata;
+        }
+
         public void ReadPacket(IMinecraftStream stream)
         {
             EntityID = stream.ReadInt32();

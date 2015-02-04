@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace TrueCraft.Entities
+namespace TrueCraft.Core.Entities
 {
     public abstract class LivingEntity : Entity
     {
@@ -42,6 +42,14 @@ namespace TrueCraft.Entities
             {
                 _HeadYaw = value;
                 OnPropertyChanged("HeadYaw");
+            }
+        }
+
+        public override bool SendMetadataToClients
+        {
+            get
+            {
+                return true;
             }
         }
 

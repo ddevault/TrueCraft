@@ -36,7 +36,7 @@ namespace TrueCraft.API
         }
 
         /// <summary>
-        /// Converts this Vector3 to a string in the format &lt;x, y, z&gt;.
+        /// Converts this Vector3 to a string in the format &lt;x,y,z&gt;.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -52,6 +52,20 @@ namespace TrueCraft.API
         public Vector3 Floor()
         {
             return new Vector3(Math.Floor(X), Math.Floor(Y), Math.Floor(Z));
+        }
+
+        /// <summary>
+        /// Clamps the vector to within the specified value.
+        /// </summary>
+        /// <param name="value">Value.</param>
+        public void Clamp(double value)
+        {
+            if (Math.Abs(X) > value)
+                X = value * (X < 0 ? -1 : 1);
+            if (Math.Abs(Y) > value)
+                Y = value * (Y < 0 ? -1 : 1);
+            if (Math.Abs(Z) > value)
+                Z = value * (Z < 0 ? -1 : 1);
         }
 
         /// <summary>
@@ -278,9 +292,9 @@ namespace TrueCraft.API
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (obj.GetType() != typeof(Vector3)) return false;
-            return Equals((Vector3)obj);
+            if (obj is Vector3)
+                return Equals((Vector3)obj);
+            return false;
         }
 
         public override int GetHashCode()

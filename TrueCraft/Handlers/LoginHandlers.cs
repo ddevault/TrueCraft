@@ -4,7 +4,7 @@ using TrueCraft.API.Networking;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.API.Logging;
 using TrueCraft.API;
-using TrueCraft.Entities;
+using TrueCraft.Core.Entities;
 
 namespace TrueCraft.Handlers
 {
@@ -47,7 +47,9 @@ namespace TrueCraft.Handlers
                 client.QueuePacket(new TimeUpdatePacket(client.World.Time));
 
                 // Start housekeeping for this client
-                server.GetEntityManagerForWorld(client.World).SpawnEntity(client.Entity);
+                var entityManager = server.GetEntityManagerForWorld(client.World);
+                entityManager.SpawnEntity(client.Entity);
+                entityManager.SendEntitiesToClient(client);
                 server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(10), client.SendKeepAlive);
                 server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(1), client.ExpandChunkRadius);
                 server.SendMessage(ChatColor.Yellow + "{0} joined the server.", client.Username);

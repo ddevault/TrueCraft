@@ -118,6 +118,11 @@ namespace TrueCraft.Core.Windows
             }
         }
 
+        public virtual bool PickUpStack(ItemStack slot)
+        {
+            throw new NotSupportedException();
+        }
+
         protected internal virtual void OnWindowChange(WindowChangeEventArgs e)
         {
             if (WindowChange != null)

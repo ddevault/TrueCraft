@@ -1,5 +1,7 @@
 using System;
 using TrueCraft.API.Logic;
+using TrueCraft.API;
+using TrueCraft.API.World;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
@@ -15,13 +17,16 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override byte Luminance { get { return 0; } }
 
-        public override bool Opaque { get { return false; } }
-        
         public override string DisplayName { get { return "Grass"; } }
 
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(3, 0);
+        }
+
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        {
+            return new[] { new ItemStack(DirtBlock.BlockID, 1) };
         }
     }
 }

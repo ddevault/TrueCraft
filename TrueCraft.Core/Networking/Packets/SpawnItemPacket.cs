@@ -19,6 +19,20 @@ namespace TrueCraft.Core.Networking.Packets
         public sbyte Pitch;
         public sbyte Roll;
 
+        public SpawnItemPacket(int entityID, short itemID, sbyte count, short metadata, int x, int y, int z, sbyte yaw, sbyte pitch, sbyte roll)
+        {
+            EntityID = entityID;
+            ItemID = itemID;
+            Count = count;
+            Metadata = metadata;
+            X = x;
+            Y = y;
+            Z = z;
+            Yaw = yaw;
+            Pitch = pitch;
+            Roll = roll;
+        }
+
         public void ReadPacket(IMinecraftStream stream)
         {
             EntityID = stream.ReadInt32();

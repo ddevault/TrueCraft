@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using TrueCraft.API.Entities;
 using TrueCraft.API;
+using TrueCraft.API.Networking;
+using TrueCraft.API.Server;
 
-namespace TrueCraft.Entities
+namespace TrueCraft.Core.Entities
 {
     public abstract class Entity : IEntity
     {
@@ -14,7 +16,10 @@ namespace TrueCraft.Entities
         {
             EnablePropertyChange = true;
             EntityID = -1;
+            SpawnTime = DateTime.Now;
         }
+
+        public DateTime SpawnTime { get; set; }
 
         public int EntityID { get; set; }
 
@@ -62,23 +67,41 @@ namespace TrueCraft.Entities
             }
         }
 
+        public bool Despawned { get; set; }
+
         public abstract Size Size { get; }
 
+        public abstract IPacket SpawnPacket { get; }
+
         public virtual bool SendMetadataToClients { get { return false; } }
+
+        protected EntityFlags _EntityFlags;
+        public virtual EntityFlags EntityFlags
+        {
+            get { return _EntityFlags; }
+            set
+            {
+                _EntityFlags = value;
+                OnPropertyChanged("Metadata");
+            }
+        }
 
         public virtual MetadataDictionary Metadata
         {
             get
             {
                 var dictionary = new MetadataDictionary();
-                dictionary[0] = new MetadataByte(0); // Flags
+                dictionary[0] = new MetadataByte((byte)EntityFlags);
                 dictionary[1] = new MetadataShort(300);
                 return dictionary;
             }
         }
 
-        public virtual void Update(Entity[] nearbyEntities)
+        public virtual void Update(IEntityManager entityManager)
         {
+            // TODO: Losing health and all that jazz
+            if (Position.Y < -50)
+                entityManager.DespawnEntity(this);
         }
 
         protected bool EnablePropertyChange { get; set; }

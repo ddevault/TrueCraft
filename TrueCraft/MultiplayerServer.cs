@@ -11,6 +11,8 @@ using TrueCraft.API.Logging;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.API;
 using TrueCraft.Core.Logging;
+using TrueCraft.API.Logic;
+using TrueCraft.Exceptions;
 
 namespace TrueCraft
 {
@@ -24,26 +26,60 @@ namespace TrueCraft
         public IList<IWorld> Worlds { get; private set; }
         public IList<IEntityManager> EntityManagers { get; private set; }
         public IEventScheduler Scheduler { get; private set; }
+        public IBlockRepository BlockRepository { get; private set; }
+        public IItemRepository ItemRepository { get; private set; }
+        public bool EnableClientLogging { get; set; }
 
-        private Timer NetworkWorker, EnvironmentWorker;
+        private bool _BlockUpdatesEnabled = true;
+        private struct BlockUpdate
+        {
+            public Coordinates3D Coordinates;
+            public IWorld World;
+        }
+        private Queue<BlockUpdate> PendingBlockUpdates { get; set; }
+        public bool BlockUpdatesEnabled
+        {
+            get
+            {
+                return _BlockUpdatesEnabled;
+            }
+            set
+            {
+                _BlockUpdatesEnabled = value;
+                if (_BlockUpdatesEnabled)
+                {
+                    ProcessBlockUpdates();
+                }
+            }
+        }
+
+        private Timer EnvironmentWorker;
+        private Thread NetworkWorker;
         private TcpListener Listener;
         private readonly PacketHandler[] PacketHandlers;
         private IList<ILogProvider> LogProviders;
-        private volatile bool ExecutingTick;
+        private object ClientLock = new object();
 
         public MultiplayerServer()
         {
             var reader = new PacketReader();
             PacketReader = reader;
             Clients = new List<IRemoteClient>();
-            NetworkWorker = new Timer(DoNetwork);
+            NetworkWorker = new Thread(new ThreadStart(DoNetwork));
             EnvironmentWorker = new Timer(DoEnvironment);
             PacketHandlers = new PacketHandler[0x100];
             Worlds = new List<IWorld>();
             EntityManagers = new List<IEntityManager>();
             LogProviders = new List<ILogProvider>();
             Scheduler = new EventScheduler(this);
-            ExecutingTick = false;
+            var blockRepository = new BlockRepository();
+            blockRepository.DiscoverBlockProviders();
+            BlockRepository = blockRepository;
+            var itemRepository = new ItemRepository();
+            itemRepository.DiscoverItemProviders();
+            ItemRepository = itemRepository;
+            PendingBlockUpdates = new Queue<BlockUpdate>();
+            EnableClientLogging = false;
 
             reader.RegisterCorePackets();
             Handlers.PacketHandlers.RegisterHandlers(this);
@@ -60,7 +96,7 @@ namespace TrueCraft
             Listener.Start();
             Listener.BeginAcceptTcpClient(AcceptClient, null);
             Log(LogCategory.Notice, "Running TrueCraft server on {0}", endPoint);
-            NetworkWorker.Change(100, 1000 / 20);
+            NetworkWorker.Start();
             EnvironmentWorker.Change(100, 1000 / 20);
         }
 
@@ -81,7 +117,32 @@ namespace TrueCraft
                 if (client.LoggedIn && client.World == sender)
                 {
                     client.QueuePacket(new BlockChangePacket(e.Position.X, (sbyte)e.Position.Y, e.Position.Z,
-                        (sbyte)e.NewBlock.ID, (sbyte)e.NewBlock.Metadata));
+                            (sbyte)e.NewBlock.ID, (sbyte)e.NewBlock.Metadata));
+                }
+            }
+            PendingBlockUpdates.Enqueue(new BlockUpdate { Coordinates = e.Position, World = sender as IWorld });
+            ProcessBlockUpdates();
+        }
+
+        private void ProcessBlockUpdates()
+        {
+            if (!BlockUpdatesEnabled)
+                return;
+            var adjacent = new[]
+            {
+                Coordinates3D.Up, Coordinates3D.Down,
+                Coordinates3D.Left, Coordinates3D.Right,
+                Coordinates3D.Forwards, Coordinates3D.Backwards
+            };
+            while (PendingBlockUpdates.Count != 0)
+            {
+                var update = PendingBlockUpdates.Dequeue();
+                foreach (var offset in adjacent)
+                {
+                    var descriptor = update.World.GetBlockData(update.Coordinates + offset);
+                    var provider = BlockRepository.GetBlockProvider(descriptor.ID);
+                    if (provider != null)
+                        provider.BlockUpdate(descriptor, this, update.World);
                 }
             }
         }
@@ -115,10 +176,8 @@ namespace TrueCraft
         {
             var compiled = string.Format(message, parameters);
             foreach (var client in Clients)
-            {
                 client.SendMessage(compiled);
-                Log(LogCategory.Notice, compiled);
-            }
+            Log(LogCategory.Notice, compiled);
         }
 
         protected internal void OnChatMessageReceived(ChatMessageEventArgs e)
@@ -146,71 +205,127 @@ namespace TrueCraft
         {
             var client = (RemoteClient)_client;
             if (client.LoggedIn)
-                Log(LogCategory.Notice, "{0} has left the server.", client.Username);
-            Clients.Remove(client);
+            {
+                SendMessage(ChatColor.Yellow + "{0} has left the server.", client.Username);
+                GetEntityManagerForWorld(client.World).DespawnEntity(client.Entity);
+                client.Disconnected = true;
+            }
         }
 
         private void AcceptClient(IAsyncResult result)
         {
             var tcpClient = Listener.EndAcceptTcpClient(result);
             var client = new RemoteClient(this, tcpClient.GetStream());
-            Clients.Add(client);
+            lock (ClientLock)
+                Clients.Add(client);
             Listener.BeginAcceptTcpClient(AcceptClient, null);
         }
 
         private void DoEnvironment(object discarded)
         {
             Scheduler.Update();
+            foreach (var manager in EntityManagers)
+            {
+                manager.Update();
+            }
         }
 
-        private void DoNetwork(object discarded)
+        private void DoNetwork()
         {
-            if (ExecutingTick)
-                return; // TODO: Warn about skipped updates?
-            ExecutingTick = true;
-            for (int i = 0; i < Clients.Count; i++)
+            while (true)
             {
-                var client = Clients[i] as RemoteClient;
-                var sendTimeout = DateTime.Now.AddMilliseconds(50);
-                while (client.PacketQueue.Count != 0 && DateTime.Now < sendTimeout)
+                bool idle = true;
+                for (int i = 0; i < Clients.Count && i >= 0; i++)
                 {
-                    IPacket packet;
-                    while (!client.PacketQueue.TryDequeue(out packet)) { }
-                    LogPacket(packet, false);
-                    PacketReader.WritePacket(client.MinecraftStream, packet);
-                    if (packet is DisconnectPacket)
+                    RemoteClient client;
+                    lock (ClientLock)
+                        client = Clients[i] as RemoteClient;
+                    while (client.PacketQueue.Count != 0)
                     {
-                        DisconnectClient(client);
-                        i--;
-                        break;
-                    }
-                }
-                var receiveTimeout = DateTime.Now.AddMilliseconds(50);
-                while (client.DataAvailable && DateTime.Now < receiveTimeout)
-                {
-                    var packet = PacketReader.ReadPacket(client.MinecraftStream);
-                    LogPacket(packet, true);
-                    if (PacketHandlers[packet.ID] != null)
-                    {
+                        idle = false;
                         try
                         {
-                            PacketHandlers[packet.ID](packet, client, this);
+                            IPacket packet;
+                            while (!client.PacketQueue.TryDequeue(out packet)) ;
+                            LogPacket(packet, false);
+                            PacketReader.WritePacket(client.MinecraftStream, packet);
+                            client.MinecraftStream.BaseStream.Flush();
+                            if (packet is DisconnectPacket)
+                            {
+                                DisconnectClient(client);
+                                break;
+                            }
+                        }
+                        catch (SocketException e)
+                        {
+                            Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
+                            Log(LogCategory.Debug, e.ToString());
+                            PacketReader.WritePacket(client.MinecraftStream, new DisconnectPacket("An exception has occured on the server."));
+                            client.MinecraftStream.BaseStream.Flush();
+                            DisconnectClient(client);
+                            break;
                         }
                         catch (Exception e)
                         {
                             Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
                             Log(LogCategory.Debug, e.ToString());
                             DisconnectClient(client);
-                            i--;
+                            break;
                         }
                     }
-                    else
+                    if (client.Disconnected)
                     {
-                        // TODO: Something productive
+                        Clients.RemoveAt(i);
+                        break;
+                    }
+                    while (client.DataAvailable)
+                    {
+                        idle = false;
+                        var packet = PacketReader.ReadPacket(client.MinecraftStream);
+                        LogPacket(packet, true);
+                        if (PacketHandlers[packet.ID] != null)
+                        {
+                            try
+                            {
+                                PacketHandlers[packet.ID](packet, client, this);
+                            }
+                            catch (PlayerDisconnectException)
+                            {
+                                DisconnectClient(client);
+                                break;
+                            }
+                            catch (SocketException e)
+                            {
+                                Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
+                                Log(LogCategory.Debug, e.ToString());
+                                DisconnectClient(client);
+                                break;
+                            }
+                            catch (Exception e)
+                            {
+                                Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
+                                Log(LogCategory.Debug, e.ToString());
+                                PacketReader.WritePacket(client.MinecraftStream, new DisconnectPacket("An exception has occured on the server."));
+                                client.MinecraftStream.BaseStream.Flush();
+                                DisconnectClient(client);
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            client.Log("Unhandled packet {0}", packet.GetType().Name);
+                        }
+                    }
+                    if (idle)
+                        Thread.Sleep(100);
+                    if (client.Disconnected)
+                    {
+                        lock (ClientLock)
+                            Clients.RemoveAt(i);
+                        break;
                     }
                 }
             }
-            ExecutingTick = false;
         }
     }
 }

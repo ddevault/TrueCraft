@@ -16,7 +16,7 @@ namespace TrueCraft.Core.Logic.Items
 
     public class MinecartWithChestItem : MinecartItem
     {
-        public static readonly short ItemID = 0x156;
+        public static readonly new short ItemID = 0x156;
 
         public override short ID { get { return 0x156; } }
 
@@ -25,7 +25,7 @@ namespace TrueCraft.Core.Logic.Items
 
     public class MinecartWithFurnaceItem : MinecartItem
     {
-        public static readonly short ItemID = 0x157;
+        public static readonly new short ItemID = 0x157;
 
         public override short ID { get { return 0x157; } }
 

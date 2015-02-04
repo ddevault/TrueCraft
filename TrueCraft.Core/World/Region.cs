@@ -94,54 +94,8 @@ namespace TrueCraft.Core.World
                                     var nbt = new NbtFile();
                                     nbt.LoadFromStream(regionFile, NbtCompression.ZLib, null);
                                     var chunk = Chunk.FromNbt(nbt);
-                                    Chunks.Add(position, (IChunk)chunk);
-                                    break;
-                                default:
-                                    throw new InvalidDataException("Invalid compression scheme provided by region file.");
-                            }
-                        }
-                    }
-                    else if (World.ChunkProvider == null)
-                        throw new ArgumentException("The requested chunk is not loaded.", "position");
-                    else
-                        GenerateChunk(position);
-                }
-                return Chunks[position];
-            }
-        }
-
-        /// <summary>
-        /// Retrieves the requested chunk from the region, without using the
-        /// world generator if it does not exist.
-        /// </summary>
-        /// <param name="position">The position of the requested local chunk coordinates.</param>
-        public IChunk GetChunkWithoutGeneration(Coordinates2D position)
-        {
-            // TODO: This could use some refactoring
-            lock (Chunks)
-            {
-                if (!Chunks.ContainsKey(position))
-                {
-                    if (regionFile != null)
-                    {
-                        // Search the stream for that region
-                        lock (regionFile)
-                        {
-                            var chunkData = GetChunkFromTable(position);
-                            if (chunkData == null)
-                                return null;
-                            regionFile.Seek(chunkData.Item1, SeekOrigin.Begin);
-                            /*int length = */new MinecraftStream(regionFile).ReadInt32(); // TODO: Avoid making new objects here, and in the WriteInt32
-                            int compressionMode = regionFile.ReadByte();
-                            switch (compressionMode)
-                            {
-                                case 1: // gzip
-                                    break;
-                                case 2: // zlib
-                                    var nbt = new NbtFile();
-                                    nbt.LoadFromStream(regionFile, NbtCompression.ZLib, null);
-                                    var chunk = Chunk.FromNbt(nbt);
-                                    Chunks.Add(position, (IChunk)chunk);
+                                    Chunks.Add(position, chunk);
+                                    Console.WriteLine("Loaded chunk at {0}", chunk.Coordinates);
                                     break;
                                 default:
                                     throw new InvalidDataException("Invalid compression scheme provided by region file.");
@@ -209,6 +163,7 @@ namespace TrueCraft.Core.World
                         var chunk = kvp.Value;
                         if (chunk.IsModified)
                         {
+                            Console.WriteLine("Saving modified chunk at {0}", chunk.Coordinates);
                             var data = ((Chunk)chunk).ToNbt();
                             byte[] raw = data.SaveToBuffer(NbtCompression.ZLib);
 
