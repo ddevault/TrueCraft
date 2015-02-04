@@ -31,6 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArmourMaterial.cs" />
+    <Compile Include="Coordinates3D.cs" />
     <Compile Include="ToolMaterial.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Networking\IPacket.cs" />
@@ -40,7 +41,7 @@
     <Compile Include="Difficulty.cs" />
     <Compile Include="Dimension.cs" />
     <Compile Include="BoundingBox.cs" />
-    <Compile Include="Coordinates.cs" />
+    <Compile Include="Coordinates2D.cs" />
     <Compile Include="ItemStack.cs" />
     <Compile Include="MetadataByte.cs" />
     <Compile Include="MetadataDictionary.cs" />
