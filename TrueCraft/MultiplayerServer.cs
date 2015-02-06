@@ -177,7 +177,7 @@ namespace TrueCraft
             var compiled = string.Format(message, parameters);
             foreach (var client in Clients)
                 client.SendMessage(compiled);
-            Log(LogCategory.Notice, compiled);
+            Log(LogCategory.Notice, ChatColor.RemoveColors(compiled));
         }
 
         protected internal void OnChatMessageReceived(ChatMessageEventArgs e)
