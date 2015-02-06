@@ -192,5 +192,13 @@ namespace TrueCraft.API
         {
             get { return Max.Z - Min.Z; }
         }
+
+        public Vector3 Center
+        {
+            get
+            {
+                return (this.Min + this.Max) / 2;
+            }
+        }
     }
 }

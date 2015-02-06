@@ -9,6 +9,6 @@ namespace TrueCraft.API.Server
     public interface ICommandManager
     {
         IList<ICommand> Commands { get; }
-        void HandleCommand(IRemoteClient Client, string Alias, string[] Arguments);
+        void HandleCommand(IRemoteClient client, string Alias, string[] arguments);
     }
 }

@@ -89,7 +89,7 @@ namespace TrueCraft.API
         /// <summary>
         /// Finds the distance of this vector from Vector3.Zero
         /// </summary>
-        public double Distance 
+        public double Distance
         {
             get
             {
@@ -266,6 +266,23 @@ namespace TrueCraft.API
 
         #endregion
 
+        #region Conversion operators
+        public static implicit operator Vector3(Coordinates3D a)
+        {
+            return new Vector3(a.X, a.Y, a.Z);
+        }
+
+        public static explicit operator Vector3(Coordinates2D c)
+        {
+            return new Vector3(c.X, 0, c.Z);
+        }
+
+        public static implicit operator Vector3(Size s)
+        {
+            return new Vector3(s.Width, s.Height, s.Depth);
+        }
+        #endregion
+
         #region Constants
 
         public static readonly Vector3 Zero = new Vector3(0);
@@ -292,9 +309,7 @@ namespace TrueCraft.API
 
         public override bool Equals(object obj)
         {
-            if (obj is Vector3)
-                return Equals((Vector3)obj);
-            return false;
+            return obj is Vector3 && Equals((Vector3)obj);
         }
 
         public override int GetHashCode()

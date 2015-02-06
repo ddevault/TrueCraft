@@ -43,21 +43,21 @@ namespace TrueCraft.Core.TerrainGen
             // TODO: Add Ores
             // TODO: Add Caves
             int trees = new Random().Next(0, 10);
-            int[,] heights = new int[16, 16];
+            int[,] heights = new int[Chunk.Width, Chunk.Depth];
             int[,] treeBasePositions = new int[trees, 2];
 
             for (int t = 0; t < trees; t++)
             {
-                treeBasePositions[t, 0] = new Random().Next(1, 16);
-                treeBasePositions[t, 1] = new Random().Next(1, 16);
+                treeBasePositions[t, 0] = new Random().Next(1, Chunk.Width);
+                treeBasePositions[t, 1] = new Random().Next(1, Chunk.Depth);
             }
 
             //Make a new Chunk
             var chunk = new Chunk(position);
             //Loop through all the blocks in the chunk
-            for (int x = 0; x < 16; x++)
+            for (int x = 0; x < Chunk.Width; x++)
             {
-                for (int z = 0; z < 16; z++)
+                for (int z = 0; z < Chunk.Depth; z++)
                 {
                     int height = GetHeight(chunk.X * Chunk.Width + x, chunk.Z * Chunk.Depth + z);
                     for (int y = 0; y < height; y++)

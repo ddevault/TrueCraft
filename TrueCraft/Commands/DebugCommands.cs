@@ -26,19 +26,19 @@ namespace TrueCraft.Commands
             get { return new string[0]; }
         }
 
-        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
-            if (Arguments.Length != 0)
+            if (arguments.Length != 0)
             {
-                Help(Client, Alias, Arguments);
+                Help(client, alias, arguments);
                 return;
             }
-            Client.SendMessage(Client.Entity.Position.ToString());
+            client.SendMessage(client.Entity.Position.ToString());
         }
 
-        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
         {
-            Client.SendMessage("/pos: Shows your position.");
+            client.SendMessage("/pos: Shows your position.");
         }
     }
 
@@ -59,19 +59,19 @@ namespace TrueCraft.Commands
             get { return new string[0]; }
         }
 
-        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
-            if (Arguments.Length != 0)
+            if (arguments.Length != 0)
             {
-                Help(Client, Alias, Arguments);
+                Help(client, alias, arguments);
                 return;
             }
-            Client.EnableLogging = !Client.EnableLogging;
+            client.EnableLogging = !client.EnableLogging;
         }
 
-        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
         {
-            Client.SendMessage("/pos: Toggles client logging.");
+            client.SendMessage("/pos: Toggles client logging.");
         }
     }
 
@@ -92,19 +92,19 @@ namespace TrueCraft.Commands
             get { return new string[0]; }
         }
 
-        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
-            if (Arguments.Length != 0)
+            if (arguments.Length != 0)
             {
-                Help(Client, Alias, Arguments);
+                Help(client, alias, arguments);
                 return;
             }
-            Client.SendMessage(Client.World.Time.ToString());
+            client.SendMessage(client.World.Time.ToString());
         }
 
-        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
         {
-            Client.SendMessage("/time: Shows the current time.");
+            client.SendMessage("/time: Shows the current time.");
         }
     }
 
@@ -125,19 +125,19 @@ namespace TrueCraft.Commands
             get { return new string[0]; }
         }
 
-        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
-            if (Arguments.Length != 0)
+            if (arguments.Length != 0)
             {
-                Help(Client, Alias, Arguments);
+                Help(client, alias, arguments);
                 return;
             }
-            Client.QueuePacket(new WindowItemsPacket(0, Client.Inventory.GetSlots()));
+            client.QueuePacket(new WindowItemsPacket(0, client.Inventory.GetSlots()));
         }
 
-        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
         {
-            Client.SendMessage("/reinv: Resends your inventory.");
+            client.SendMessage("/reinv: Resends your inventory.");
         }
     }
 }

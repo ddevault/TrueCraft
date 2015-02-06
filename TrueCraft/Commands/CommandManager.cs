@@ -9,6 +9,7 @@ namespace TrueCraft.Commands
 {
     public class CommandManager : ICommandManager
     {
+        // Is there any reason for the setter being public?
         public IList<ICommand> Commands { get; set; }
 
         public CommandManager()
@@ -29,51 +30,32 @@ namespace TrueCraft.Commands
         }
 
         /// <summary>
-        /// Handle the specified command if it exists. We run the check twice to separate
-        /// actual command names from command aliases to prevent aliases from being prioritized
-        /// over other command names.
+        ///     Tries to find the specified command by first performing a
+        ///     case-insensitive search on the command names, then a
+        ///     case-sensitive search on the aliases.
         /// </summary>
-        /// <param name="Client"></param>
-        /// <param name="Command"></param>
-        /// <param name="Arguments"></param>
-        public void HandleCommand(IRemoteClient Client, string Alias, string[] Arguments)
+        /// <param name="client">Client which called the command</param>
+        /// <param name="alias">Case-insensitive name or case-sensitive alias of the command</param>
+        /// <param name="arguments"></param>
+        public void HandleCommand(IRemoteClient client, string alias, string[] arguments)
         {
-            ICommand Found = null;
-            if ((Found = FindByName(Alias)) != null)
+            ICommand foundCommand = FindByName(alias) ?? FindByName(alias);
+            if (foundCommand == null)
             {
-                Found.Handle(Client, Alias, Arguments);
+                client.SendMessage("Unable to locate the command \"" + alias + "\". It might be in a different server!");
                 return;
             }
-            else if ((Found = FindByAlias(Alias)) != null)
-            {
-                Found.Handle(Client, Alias, Arguments);
-                return;
-            }
-            Client.SendMessage("Unable to locate the command \"" + Alias + "\". It might be in a different server!");
+            foundCommand.Handle(client, alias, arguments);
         }
 
-        public ICommand FindByName(string Name)
+        public ICommand FindByName(string name)
         {
-            foreach (ICommand C in Commands)
-            {
-                if (C.Name.ToLower() == Name.ToLower())
-                {
-                    return C;
-                }
-            }
-            return null;
+            return Commands.FirstOrDefault(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
 
-        public ICommand FindByAlias(string Alias)
+        public ICommand FindByAlias(string alias)
         {
-            foreach (ICommand C in Commands)
-            {
-                if (C.Aliases.Contains(Alias))
-                {
-                    return C;
-                }
-            }
-            return null;
+            return Commands.FirstOrDefault(c => c.Aliases.Contains(alias /*, StringComparer.OrdinalIgnoreCase*/));
         }
     }
 }
