@@ -60,8 +60,7 @@ namespace TrueCraft
             {
                 e.PreventDefault = true;
                 var messageArray = e.Message.TrimStart('/') // replace with .Remove(0,1) if we're going to allow forward slashes in command aliases
-                                            .Split(new[] {' '},
-                                                StringSplitOptions.RemoveEmptyEntries);
+                    .Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
                 CommandManager.HandleCommand(e.Client, messageArray[0], messageArray);
                 return;
             }

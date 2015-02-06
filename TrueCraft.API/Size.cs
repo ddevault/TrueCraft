@@ -297,8 +297,8 @@ namespace TrueCraft.API
             get
             {
                 return 2 * (Width * Depth +
-                             Width * Height +
-                             Depth * Height);
+                            Width * Height +
+                            Depth * Height);
             }
         }
 
@@ -307,7 +307,7 @@ namespace TrueCraft.API
             get
             {
                 return 2 * (Width * Depth +
-                             Depth * Height);
+                            Depth * Height);
             }
         }
 
