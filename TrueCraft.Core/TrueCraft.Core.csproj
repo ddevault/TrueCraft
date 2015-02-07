@@ -35,6 +35,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Logging\LogHelpers.cs" />
     <Compile Include="Logic\ItemProvider.cs" />
     <Compile Include="Logic\Items\AppleItem.cs" />
     <Compile Include="Logic\Items\ArmourItem.cs" />
