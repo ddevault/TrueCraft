@@ -95,7 +95,6 @@ namespace TrueCraft.Core.World
                                     nbt.LoadFromStream(regionFile, NbtCompression.ZLib, null);
                                     var chunk = Chunk.FromNbt(nbt);
                                     Chunks.Add(position, chunk);
-                                    Console.WriteLine("Loaded chunk at {0}", chunk.Coordinates);
                                     break;
                                 default:
                                     throw new InvalidDataException("Invalid compression scheme provided by region file.");
@@ -163,7 +162,6 @@ namespace TrueCraft.Core.World
                         var chunk = kvp.Value;
                         if (chunk.IsModified)
                         {
-                            Console.WriteLine("Saving modified chunk at {0}", chunk.Coordinates);
                             var data = ((Chunk)chunk).ToNbt();
                             byte[] raw = data.SaveToBuffer(NbtCompression.ZLib);
 

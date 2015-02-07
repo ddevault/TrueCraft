@@ -24,6 +24,7 @@ namespace TrueCraft.API.Server
         IList<IWorld> Worlds { get; }
         IEventScheduler Scheduler { get; }
         IBlockRepository BlockRepository { get; }
+        ICraftingRepository CraftingRepository { get; }
         IItemRepository ItemRepository { get; }
         bool BlockUpdatesEnabled { get; set; }
         bool EnableClientLogging { get; set; }

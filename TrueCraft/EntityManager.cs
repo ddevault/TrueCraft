@@ -249,6 +249,31 @@ namespace TrueCraft
             entity.Despawned = true;
         }
 
+        public void FlushDespawns()
+        {
+            IEntity entity;
+            while (PendingDespawns.Count != 0)
+            {
+                while (!PendingDespawns.TryTake(out entity));
+                if (entity is IPhysicsEntity)
+                    PhysicsEngine.RemoveEntity((IPhysicsEntity)entity);
+                for (int i = 0, ServerClientsCount = Server.Clients.Count; i < ServerClientsCount; i++)
+                {
+                    var client = (RemoteClient)Server.Clients[i];
+                    if (client.KnownEntities.Contains(entity) && !client.Disconnected)
+                    {
+                        client.QueuePacket(new DestroyEntityPacket(entity.EntityID));
+                        client.KnownEntities.Remove(entity);
+                        client.Log("Destroying entity {0} ({1})", entity.EntityID, entity.GetType().Name);
+                    }
+                }
+                lock (EntityLock)
+                {
+                    Entities.Remove(entity);
+                }
+            }
+        }
+
         public IEntity GetEntityByID(int id)
         {
             return Entities.SingleOrDefault(e => e.EntityID == id);
@@ -272,27 +297,7 @@ namespace TrueCraft
             {
                 // Do nothing
             }
-            IEntity entity;
-            while (PendingDespawns.Count != 0)
-            {
-                while (!PendingDespawns.TryTake(out entity));
-                if (entity is IPhysicsEntity)
-                    PhysicsEngine.RemoveEntity((IPhysicsEntity)entity);
-                for (int i = 0, ServerClientsCount = Server.Clients.Count; i < ServerClientsCount; i++)
-                {
-                    var client = (RemoteClient)Server.Clients[i];
-                    if (client.KnownEntities.Contains(entity))
-                    {
-                        client.QueuePacket(new DestroyEntityPacket(entity.EntityID));
-                        client.KnownEntities.Remove(entity);
-                        client.Log("Destroying entity {0} ({1})", entity.EntityID, entity.GetType().Name);
-                    }
-                }
-                lock (EntityLock)
-                {
-                    Entities.Remove(entity);
-                }
-            }
+            FlushDespawns();
         }
 
         /// <summary>

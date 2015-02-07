@@ -12,6 +12,7 @@ namespace TrueCraft.API.Server
         /// </summary>
         void SpawnEntity(IEntity entity);
         void DespawnEntity(IEntity entity);
+        void FlushDespawns();
         IEntity GetEntityByID(int id);
         void Update();
         void SendEntitiesToClient(IRemoteClient client);

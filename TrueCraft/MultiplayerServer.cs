@@ -28,6 +28,7 @@ namespace TrueCraft
         public IEventScheduler Scheduler { get; private set; }
         public IBlockRepository BlockRepository { get; private set; }
         public IItemRepository ItemRepository { get; private set; }
+        public ICraftingRepository CraftingRepository { get; private set; }
         public bool EnableClientLogging { get; set; }
 
         private bool _BlockUpdatesEnabled = true;
@@ -78,6 +79,9 @@ namespace TrueCraft
             var itemRepository = new ItemRepository();
             itemRepository.DiscoverItemProviders();
             ItemRepository = itemRepository;
+            var craftingRepository = new CraftingRepository();
+            craftingRepository.DiscoverRecipes();
+            CraftingRepository = craftingRepository;
             PendingBlockUpdates = new Queue<BlockUpdate>();
             EnableClientLogging = false;
 
@@ -208,6 +212,7 @@ namespace TrueCraft
             {
                 SendMessage(ChatColor.Yellow + "{0} has left the server.", client.Username);
                 GetEntityManagerForWorld(client.World).DespawnEntity(client.Entity);
+                GetEntityManagerForWorld(client.World).FlushDespawns();
                 client.Disconnected = true;
             }
         }

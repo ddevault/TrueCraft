@@ -21,6 +21,10 @@ namespace TrueCraft
         {
             // TODO: Make this more flexible
             var server = new MultiplayerServer();
+#if DEBUG
+            if (Directory.Exists("world"))
+                Directory.Delete("world", true);
+#endif
             IWorld world;
             try
             {
@@ -46,7 +50,6 @@ namespace TrueCraft
                 Thread.Sleep(1000 * 30); // TODO: Allow users to customize world save interval
                 foreach (var w in server.Worlds)
                 {
-                    server.Log(LogCategory.Debug, "Saved world '{0}'", w.Name);
                     w.Save();
                 }
             }

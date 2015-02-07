@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TrueCraft.API.Windows;
+using TrueCraft.API.Logic;
 using TrueCraft.API;
 
 namespace TrueCraft.Core.Windows
 {
     public class InventoryWindow : Window
     {
-        public InventoryWindow()
+        public InventoryWindow(ICraftingRepository craftingRepository)
         {
             WindowAreas = new[]
                 {
-                    new CraftingWindowArea(CraftingOutputIndex),
+                    new CraftingWindowArea(craftingRepository, CraftingOutputIndex),
                     new ArmorWindowArea(ArmorIndex),
-                    new WindowArea(MainIndex, 27), // Main inventory
-                    new WindowArea(HotbarIndex, 9) // Hotbar
+                    new WindowArea(MainIndex, 27, 9, 3), // Main inventory
+                    new WindowArea(HotbarIndex, 9, 9, 1) // Hotbar
                 };
             foreach (var area in WindowAreas)
                 area.WindowChange += (s, e) => OnWindowChange(new WindowChangeEventArgs(

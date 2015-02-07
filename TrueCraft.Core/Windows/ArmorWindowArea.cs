@@ -14,7 +14,7 @@ namespace TrueCraft.Core.Windows
         public const int Chestplate = 1;
         public const int Headgear = 0;
 
-        public ArmorWindowArea(int startIndex) : base(startIndex, 4)
+        public ArmorWindowArea(int startIndex) : base(startIndex, 4, 1, 4)
         {
         }
 

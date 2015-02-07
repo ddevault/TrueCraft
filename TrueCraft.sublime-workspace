@@ -1,0 +1,1064 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"ICra",
+				"ICraftingRecipe	ICraftingRecipe"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "TrueCraft.API/Logic/ICraftingRepository.cs",
+			"settings":
+			{
+				"buffer_size": 266,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "TrueCraft/CraftingRepository.cs",
+			"settings":
+			{
+				"buffer_size": 2858,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "TrueCraft.Core/Windows/CraftingWindowArea.cs",
+			"settings":
+			{
+				"buffer_size": 2241,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "TrueCraft/Program.cs",
+			"settings":
+			{
+				"buffer_size": 2366,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "TrueCraft.Core/Windows/InventoryWindow.cs",
+			"settings":
+			{
+				"buffer_size": 2684,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "TrueCraft/RemoteClient.cs",
+			"settings":
+			{
+				"buffer_size": 8955,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "TrueCraft/BlockRepository.cs",
+			"settings":
+			{
+				"buffer_size": 1596,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/User/C#.sublime-build",
+	"command_palette":
+	{
+		"height": 92.0,
+		"selected_items":
+		[
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"exec",
+				"Snippet: Exception documentation tag"
+			],
+			[
+				"build",
+				"OmniSharpSublime: Build"
+			]
+		],
+		"width": 449.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by) "
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/sircmpwn/sources/TrueCraft",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.API",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.API/Logic",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.API/Windows",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core"
+	],
+	"file_history":
+	[
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft/Commands/GiveCommand.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Logic/Items/GoldIngotItem.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Logic/Blocks/GrassBlock.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Windows/WindowArea.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Windows/Window.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Logic/Items/WheatItem.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Logic/Blocks/WoodenPlanksBlock.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft/Program.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Networking/PacketReader.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft/PhysicsEngine.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.API/Windows/WindowChangeEventArgs.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.API/Server/IMultiplayerServer.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft/MultiplayerServer.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.API/Server/IEntityManager.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/World/Region.cs",
+		"/home/sircmpwn/sources/TrueCraft/externals/fNbt/fNbt/Serialization/IgnoreOnNullAttribute.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.API/Windows/IWindowArea.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Logic/Blocks/CraftingTableBlock.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.API/Logging/LogCategory.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/TerrainGen/FlatlandGenerator.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/World/Chunk.cs",
+		"/home/sircmpwn/sources/TrueCraft/scripts/templates/Block.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.API/Windows/IWindow.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Windows/InventoryWindow.cs",
+		"/home/sircmpwn/.config/sublime-text-3/Packages/Default/Preferences.sublime-settings",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft/CraftingRepository.cs",
+		"/home/sircmpwn/.config/sublime-text-3/Packages/User/C#.sublime-settings",
+		"/home/sircmpwn/.config/sublime-text-3/Packages/User/Preferences.sublime-settings",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.API/Logic/ICraftingRecipe.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.API/obj/Debug/TrueCraft.API.csproj.FilesWrittenAbsolute.txt",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.API/Networking/IRemoteClient.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft/ItemRepository.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Windows/CraftingWindowArea.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft/EntityManager.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft/BlockRepository.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.API/Logic/ICraftingRepository.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Logic/Blocks/WoodBlock.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Logic/Blocks/WoodenDoorBlock.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/World/World.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.API/World/IChunkProvider.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Logic/Blocks/GoldBlock.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Logic/Blocks/SaplingBlock.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Logic/Blocks/GoldOreBlock.cs",
+		"/home/sircmpwn/sources/TrueCraft/doc/login-sequence",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Logic/Blocks/LapisLazuliOreBlock.cs",
+		"/home/sircmpwn/sources/TrueCraft/LICENSE",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Logic/Blocks/RedstoneOreBlock.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Entities/EntityEventArgs.cs",
+		"/home/sircmpwn/sources/TrueCraft/externals/fNbt/fNbt/NbtReader.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.sln",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Logic/BlockProvider.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.API/Biome.cs",
+		"/home/sircmpwn/sources/TrueCraft/README.md",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Networking/Packets/ChangeHeldItemPacket.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Windows/ArmorWindowArea.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/TrueCraft.Core.csproj",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft/Handlers/PacketHandlers.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.API/Coordinates.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft/Commands/HelpCommand.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Logic/Items/HoeItem.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.sublime-project",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Logic/Blocks/RedstoneDustBlock.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.API/NibbleArray.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft/bin/Debug/TrueCraft.API.dll.mdb",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Logic/Blocks/LapisLazuliBlock.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Logic/Items/BucketItem.cs",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Networking/BufferedStream.cs",
+		"/home/sircmpwn/.config/sublime-text-3/Packages/User/C#.sublime-build",
+		"/home/sircmpwn/sources/TrueCraft/TrueCraft.API/GameMode.cs"
+	],
+	"find":
+	{
+		"height": 23.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"                \n",
+			"0",
+			"loaded chunk"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "TrueCraft.API/Logic/ICraftingRepository.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 266,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								257,
+								257
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C#/C#.tmLanguage",
+							"vintage":
+							{
+								"_vintageous_glue_until_normal_mode": false,
+								"action": null,
+								"action_count": "",
+								"mode": "mode_normal",
+								"motion": null,
+								"motion_count": "",
+								"must_capture_register_name": false,
+								"normal_insert_count": "1",
+								"partial_sequence": "",
+								"register": "\"",
+								"repeat_data":
+								[
+									"native",
+									[
+										"sequence",
+										{
+											"commands":
+											[
+												[
+													"_vi_o",
+													{
+														"count": 1,
+														"mode": "mode_internal_normal"
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": "bool"
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": " TestRece"
+													}
+												],
+												[
+													"left_delete",
+													null
+												],
+												[
+													"insert",
+													{
+														"characters": "ipe"
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": " "
+													}
+												],
+												[
+													"left_delete",
+													null
+												],
+												[
+													"insert",
+													{
+														"characters": "(IWond"
+													}
+												],
+												[
+													"left_delete",
+													null
+												],
+												[
+													"left_delete",
+													null
+												],
+												[
+													"left_delete",
+													null
+												],
+												[
+													"insert",
+													{
+														"characters": "indowArea"
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": " r"
+													}
+												],
+												[
+													"left_delete",
+													null
+												],
+												[
+													"insert",
+													{
+														"characters": "crea"
+													}
+												],
+												[
+													"insert_best_completion",
+													{
+														"default": "	",
+														"exact": false
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": ","
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": " I"
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": "Craftin"
+													}
+												],
+												[
+													"insert_best_completion",
+													{
+														"default": "	",
+														"exact": false
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": " rece"
+													}
+												],
+												[
+													"left_delete",
+													null
+												],
+												[
+													"insert",
+													{
+														"characters": "ipe,"
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": " int"
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": " x,"
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": " iy"
+													}
+												],
+												[
+													"left_delete",
+													null
+												],
+												[
+													"insert",
+													{
+														"characters": "nt"
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": " y);"
+													}
+												]
+											]
+										}
+									],
+									"mode_insert",
+									null
+								],
+								"sequence": "",
+								"xpos": 87
+							}
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "TrueCraft/CraftingRepository.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2858,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2615,
+								2615
+							]
+						],
+						"settings":
+						{
+							"highlight_line": false,
+							"syntax": "Packages/C#/C#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true,
+							"vintage":
+							{
+								"_vintageous_glue_until_normal_mode": false,
+								"action": null,
+								"action_count": "",
+								"mode": "mode_normal",
+								"motion": null,
+								"motion_count": "",
+								"must_capture_register_name": false,
+								"normal_insert_count": "1",
+								"partial_sequence": "",
+								"register": "\"",
+								"repeat_data":
+								[
+									"vi",
+									"<lt>",
+									"mode_normal",
+									[
+										2,
+										0,
+										"mode_visual_line"
+									]
+								],
+								"sequence": "",
+								"xpos": 0
+							}
+						},
+						"translation.x": 0.0,
+						"translation.y": 688.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "TrueCraft.Core/Windows/CraftingWindowArea.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2241,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1344,
+								1344
+							]
+						],
+						"settings":
+						{
+							"highlight_line": false,
+							"syntax": "Packages/C#/C#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true,
+							"vintage":
+							{
+								"_vintageous_glue_until_normal_mode": false,
+								"_vintageous_non_interactive": false,
+								"_vintageous_processing_notation": false,
+								"action": null,
+								"action_count": "",
+								"mode": "mode_normal",
+								"motion": null,
+								"motion_count": "",
+								"must_capture_register_name": false,
+								"normal_insert_count": "1",
+								"partial_sequence": "",
+								"register": "\"",
+								"repeat_data":
+								[
+									"native",
+									[
+										"sequence",
+										{
+											"commands":
+											[
+												[
+													"_vi_a",
+													{
+														"count": 1,
+														"mode": "mode_internal_normal"
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": " ="
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": " 0"
+													}
+												]
+											]
+										}
+									],
+									"mode_insert",
+									null
+								],
+								"sequence": "",
+								"xpos": 43
+							}
+						},
+						"translation.x": 0.0,
+						"translation.y": 315.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "TrueCraft/Program.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2366,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								511,
+								511
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C#/C#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true,
+							"vintage":
+							{
+								"_vintageous_glue_until_normal_mode": false,
+								"action": null,
+								"action_count": "",
+								"mode": "mode_normal",
+								"motion": null,
+								"motion_count": "",
+								"must_capture_register_name": false,
+								"normal_insert_count": "1",
+								"partial_sequence": "",
+								"register": "\"",
+								"repeat_data":
+								[
+									"vi",
+									">>",
+									"mode_internal_normal",
+									null
+								],
+								"sequence": "",
+								"xpos": 45
+							}
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "TrueCraft.Core/Windows/InventoryWindow.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2684,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								588,
+								588
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C#/C#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true,
+							"vintage":
+							{
+								"_vintageous_glue_until_normal_mode": false,
+								"_vintageous_non_interactive": false,
+								"_vintageous_processing_notation": false,
+								"action": null,
+								"action_count": "",
+								"mode": "mode_normal",
+								"motion": null,
+								"motion_count": "",
+								"must_capture_register_name": false,
+								"normal_insert_count": "1",
+								"partial_sequence": "",
+								"register": "\"",
+								"repeat_data":
+								[
+									"native",
+									[
+										"sequence",
+										{
+											"commands":
+											[
+												[
+													"_vi_o",
+													{
+														"count": 1,
+														"mode": "mode_internal_normal"
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": "su"
+													}
+												],
+												[
+													"delete_word",
+													{
+														"forward": false
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": "using"
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": " TrueCraft.API."
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": "Logitc"
+													}
+												],
+												[
+													"left_delete",
+													null
+												],
+												[
+													"left_delete",
+													null
+												],
+												[
+													"insert",
+													{
+														"characters": "c;"
+													}
+												]
+											]
+										}
+									],
+									"mode_insert",
+									null
+								],
+								"sequence": "",
+								"xpos": 72
+							}
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "TrueCraft/RemoteClient.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8955,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								955,
+								955
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C#/C#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true,
+							"vintage":
+							{
+								"_vintageous_glue_until_normal_mode": false,
+								"action": null,
+								"action_count": "",
+								"mode": "mode_normal",
+								"motion": null,
+								"motion_count": "",
+								"must_capture_register_name": false,
+								"normal_insert_count": "1",
+								"partial_sequence": "",
+								"register": "\"",
+								"repeat_data":
+								[
+									"native",
+									[
+										"sequence",
+										{
+											"commands":
+											[
+												[
+													"_vi_a",
+													{
+														"count": 1,
+														"mode": "mode_internal_normal"
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": "server."
+													}
+												],
+												[
+													"insert",
+													{
+														"characters": "CraftingRepository"
+													}
+												]
+											]
+										}
+									],
+									"mode_insert",
+									null
+								],
+								"sequence": "",
+								"xpos": 27
+							}
+						},
+						"translation.x": 0.0,
+						"translation.y": 225.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "TrueCraft/BlockRepository.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1596,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C#/C#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true,
+							"vintage":
+							{
+								"action": null,
+								"action_count": "",
+								"mode": "mode_normal",
+								"motion": null,
+								"motion_count": "",
+								"must_capture_register_name": false,
+								"partial_sequence": "",
+								"register": "\"",
+								"sequence": "",
+								"xpos": 0
+							}
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 259.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.git":
+	{
+		"height": 100.0
+	},
+	"output.variable_get":
+	{
+		"height": 100.0
+	},
+	"project": "TrueCraft.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"giveco",
+				"TrueCraft/Commands/GiveCommand.cs"
+			],
+			[
+				"windowarea",
+				"TrueCraft.Core/Windows/WindowArea.cs"
+			],
+			[
+				"program",
+				"TrueCraft/Program.cs"
+			],
+			[
+				"multip",
+				"TrueCraft/MultiplayerServer.cs"
+			],
+			[
+				"imultiplayer",
+				"TrueCraft.API/Server/IMultiplayerServer.cs"
+			],
+			[
+				"remoteclient",
+				"TrueCraft/RemoteClient.cs"
+			],
+			[
+				"inventory",
+				"TrueCraft.Core/Windows/InventoryWindow.cs"
+			],
+			[
+				"craftingarea",
+				"TrueCraft.Core/Windows/CraftingWindowArea.cs"
+			],
+			[
+				"blockrep",
+				"TrueCraft/BlockRepository.cs"
+			],
+			[
+				"craftinre",
+				"TrueCraft/CraftingRepository.cs"
+			],
+			[
+				"iwindowarea",
+				"TrueCraft.API/Windows/IWindowArea.cs"
+			],
+			[
+				"craftig",
+				"TrueCraft/CraftingRepository.cs"
+			],
+			[
+				"icraftingreposi",
+				"TrueCraft.API/Logic/ICraftingRepository.cs"
+			],
+			[
+				"crafting",
+				"TrueCraft/CraftingRepository.cs"
+			],
+			[
+				"woodenpla",
+				"TrueCraft.Core/Logic/Blocks/WoodenPlanksBlock.cs"
+			],
+			[
+				"woodblock",
+				"TrueCraft.Core/Logic/Blocks/WoodBlock.cs"
+			],
+			[
+				"blockprovider",
+				"TrueCraft.Core/Logic/BlockProvider.cs"
+			],
+			[
+				"block.cs",
+				"scripts/templates/Block.cs"
+			],
+			[
+				"region",
+				"TrueCraft.Core/World/Region.cs"
+			],
+			[
+				"chunk",
+				"TrueCraft.Core/World/Chunk.cs"
+			],
+			[
+				"physics",
+				"TrueCraft/PhysicsEngine.cs"
+			],
+			[
+				"craftingare",
+				"TrueCraft.Core/Windows/CraftingWindowArea.cs"
+			],
+			[
+				"grassbl",
+				"TrueCraft.Core/Logic/Blocks/GrassBlock.cs"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+		"_vintageous_last_buffer_search": "spaces",
+		"_vintageous_last_buffer_search_command": "vi_slash",
+		"_vintageous_last_char_search_command": "vi_t",
+		"_vintageous_last_character_search": "I",
+		"_vintageous_reset_during_init": true,
+		"vintage":
+		{
+			"_cmdline_cd": "/home/sircmpwn/sources/TrueCraft/TrueCraft.Core/Windows"
+		}
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 237.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

@@ -8,6 +8,8 @@ namespace TrueCraft.API.Windows
 
         int StartIndex { get; set; }
         int Length { get; set; }
+        int Width { get; }
+        int Height { get; }
         ItemStack[] Items { get; set; }
 
         ItemStack this[int index] { get; set; }

@@ -124,6 +124,20 @@ namespace TrueCraft.Handlers
                 return;
             ItemStack existing = window[packet.SlotIndex];
             ItemStack held = client.ItemStaging;
+            if (packet.SlotIndex == InventoryWindow.CraftingOutputIndex)
+            {
+                // Stupid special case because Minecraft was written by morons
+                if (held.ID == existing.ID || held.Empty)
+                {
+                    if (held.Empty)
+                        held = existing;
+                    else
+                        held.Count += existing.Count;
+                    client.ItemStaging = held;
+                    window[packet.SlotIndex] = ItemStack.EmptyStack;
+                }
+                return;
+            }
             if (client.ItemStaging.Empty) // Picking up something
             {
                 if (packet.Shift)

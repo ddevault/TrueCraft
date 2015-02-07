@@ -37,7 +37,6 @@ namespace TrueCraft.Core.Logic
             foreach (var item in items)
             {
                 var entity = new ItemEntity(new Vector3(descriptor.Coordinates) + new Vector3(0.5), item);
-                entity.Velocity += new Vector3(MathHelper.Random.NextDouble());
                 entityManager.SpawnEntity(entity);
             }
         }

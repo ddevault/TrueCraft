@@ -1,24 +1,75 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using TrueCraft.API;
+using TrueCraft.API.Windows;
+using TrueCraft.API.Logic;
 
 namespace TrueCraft.Core.Windows
 {
     public class CraftingWindowArea : WindowArea
     {
-        public const int CraftingOutput = 0;
+        public static readonly int CraftingOutput = 0;
+        public ICraftingRepository Repository { get; set; }
 
-        public CraftingWindowArea(int startIndex) : base(startIndex, 5)
+        public CraftingWindowArea(ICraftingRepository repository, int startIndex) : base(startIndex, 5, 2, 2)
         {
+            Repository = repository;
+            WindowChange += HandleWindowChange;
         }
 
-        protected override bool IsValid(ItemStack slot, int index)
+        private void HandleWindowChange(object sender, WindowChangeEventArgs e)
         {
-            if (index == CraftingOutput && !slot.Empty)
-                return false;
-            return base.IsValid(slot, index);
+            var current = Repository.GetRecipe(Bench);
+            if (e.SlotIndex == CraftingOutput)
+            {
+                if (e.Value.Empty && current != null) // Item picked up
+                {
+                    RemoveItemFromOutput(current);
+                    current = Repository.GetRecipe(Bench);
+                }
+            }
+            if (current == null)
+                Items[CraftingOutput] = ItemStack.EmptyStack;
+            else
+                Items[CraftingOutput] = current.Output;
+        }
+
+        private void RemoveItemFromOutput(ICraftingRecipe recipe)
+        {
+            // Locate area on crafting bench
+            int x, y = 0;
+            for (x = 0; x < Width; x++)
+            {
+                bool found = false;
+                for (y = 0; y < Height; y++)
+                {
+                    if (Repository.TestRecipe(Bench, recipe, x, y))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) break;
+            }
+            // Remove items
+            for (int _x = 0; _x < recipe.Pattern.GetLength(0); _x++)
+            {
+                for (int _y = 0; _y < recipe.Pattern.GetLength(1); _y++)
+                {
+                    var item = Items[(y + _y) * Width + (x + _x) + 1];
+                    item.Count -= recipe.Pattern[_x, _y].Count;
+                    Items[(y + _y) * Width + (x + _x) + 1] = item;
+                }
+            }
+        }
+
+        public WindowArea Bench
+        {
+            get
+            {
+                var result = new WindowArea(1, 4, 2, 2);
+                for (var i = 1; i < Items.Length; i++)
+                    result.Items[i - 1] = Items[i];
+                return result;
+            }
         }
     }
 }

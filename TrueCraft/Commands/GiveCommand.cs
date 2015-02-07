@@ -27,7 +27,7 @@ namespace TrueCraft.Commands
 
         public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
         {
-            if (Arguments.Length != 3)
+            if (Arguments.Length != 4)
             {
                 Help(Client, Alias, Arguments);
                 return;
@@ -36,7 +36,7 @@ namespace TrueCraft.Commands
             // TODO: Check to make sure an item with that ID actually exists
             short id;
             sbyte count;
-            if (short.TryParse(Arguments[1], out id) && sbyte.TryParse(Arguments[2], out count))
+            if (short.TryParse(Arguments[2], out id) && sbyte.TryParse(Arguments[3], out count))
             {
                 var inventory = Client.Inventory as InventoryWindow;
                 inventory.PickUpStack(new ItemStack(id, count));
@@ -45,7 +45,7 @@ namespace TrueCraft.Commands
 
         public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
         {
-            Client.SendMessage("Correct usage is /" + Alias + " <Item ID> <Amount>");
+            Client.SendMessage("Correct usage is /" + Alias + " <User> <Item ID> <Amount>");
         }
     }
 }

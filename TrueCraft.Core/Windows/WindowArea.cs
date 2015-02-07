@@ -9,17 +9,21 @@ namespace TrueCraft.Core.Windows
 {
     public class WindowArea : IWindowArea
     {
-        public WindowArea(int startIndex, int length)
+        public WindowArea(int startIndex, int length, int width, int height)
         {
             StartIndex = startIndex;
             Length = length;
             Items = new ItemStack[Length];
+            Width = width;
+            Height = height;
             for (int i = 0; i < Items.Length; i++)
                 Items[i] = ItemStack.EmptyStack;
         }
 
         public int StartIndex { get; set; }
         public int Length { get; set; }
+        public virtual int Width { get; set; }
+        public virtual int Height { get; set; }
         public ItemStack[] Items { get; set; }
         public event EventHandler<WindowChangeEventArgs> WindowChange;
 

@@ -29,7 +29,7 @@ namespace TrueCraft
             PacketQueue = new ConcurrentQueue<IPacket>();
             LoadedChunks = new List<Coordinates2D>();
             Server = server;
-            Inventory = new InventoryWindow();
+            Inventory = new InventoryWindow(server.CraftingRepository);
             InventoryWindow.WindowChange += HandleWindowChange;
             SelectedSlot = InventoryWindow.HotbarIndex;
             CurrentWindow = InventoryWindow;
@@ -204,7 +204,8 @@ namespace TrueCraft
 
         void HandleWindowChange(object sender, WindowChangeEventArgs e)
         {
-            QueuePacket(new SetSlotPacket(0, (short)e.SlotIndex, e.Value.ID, e.Value.Count, e.Value.Metadata));
+            if (e.SlotIndex != InventoryWindow.CraftingOutputIndex) // Because Minecraft is stupid
+                QueuePacket(new SetSlotPacket(0, (short)e.SlotIndex, e.Value.ID, e.Value.Count, e.Value.Metadata));
             if (e.SlotIndex == SelectedSlot)
             {
                 var notified = Server.GetEntityManagerForWorld(World).ClientsForEntity(Entity);
