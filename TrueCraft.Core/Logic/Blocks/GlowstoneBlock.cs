@@ -5,7 +5,7 @@ using TrueCraft.Core.Logic.Items;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class GlowstoneBlock : BlockProvider
+    public class GlowstoneBlock : BlockProvider, ICraftingRecipe
     {
         public static readonly byte BlockID = 0x59;
         
@@ -29,6 +29,34 @@ namespace TrueCraft.Core.Logic.Blocks
         protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
         {
             return new[] { new ItemStack(GlowstoneDustItem.ItemID, (sbyte)new Random().Next(2, 4), descriptor.Metadata) };
+        }
+
+        public ItemStack[,] Pattern
+        {
+            get
+            {
+                return new[,]
+                {
+                    {
+                        new ItemStack(GlowstoneDustItem.ItemID),
+                        new ItemStack(GlowstoneDustItem.ItemID)
+                    },
+                    {
+                        new ItemStack(GlowstoneDustItem.ItemID),
+                        new ItemStack(GlowstoneDustItem.ItemID)
+                    }
+                };
+            }
+        }
+
+        public ItemStack Output
+        {
+            get { return new ItemStack(BlockID); }
+        }
+
+        public bool SignificantMetadata
+        {
+            get { return false; }
         }
     }
 }

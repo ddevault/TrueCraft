@@ -1,9 +1,11 @@
 using System;
+using TrueCraft.API;
 using TrueCraft.API.Logic;
+using TrueCraft.Core.Logic.Items;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class BookshelfBlock : BlockProvider
+    public class BookshelfBlock : BlockProvider, ICraftingRecipe
     {
         public static readonly byte BlockID = 0x2F;
         
@@ -20,6 +22,41 @@ namespace TrueCraft.Core.Logic.Blocks
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(3, 2);
+        }
+
+        public ItemStack[,] Pattern
+        {
+            get
+            {
+                return new[,]
+                {
+                    {
+                        new ItemStack(WoodenPlanksBlock.BlockID),
+                        new ItemStack(WoodenPlanksBlock.BlockID),
+                        new ItemStack(WoodenPlanksBlock.BlockID)
+                    },
+                    {
+                        new ItemStack(BookItem.ItemID),
+                        new ItemStack(BookItem.ItemID),
+                        new ItemStack(BookItem.ItemID)
+                    },
+                    {
+                        new ItemStack(WoodenPlanksBlock.BlockID),
+                        new ItemStack(WoodenPlanksBlock.BlockID),
+                        new ItemStack(WoodenPlanksBlock.BlockID)
+                    }
+                };
+            }
+        }
+
+        public ItemStack Output
+        {
+            get { return new ItemStack(BlockID); }
+        }
+
+        public bool SignificantMetadata
+        {
+            get { return false; }
         }
     }
 }

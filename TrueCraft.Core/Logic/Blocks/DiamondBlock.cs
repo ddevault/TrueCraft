@@ -1,9 +1,11 @@
 using System;
 using TrueCraft.API.Logic;
+using TrueCraft.API;
+using TrueCraft.Core.Logic.Items;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class DiamondBlock : BlockProvider
+    public class DiamondBlock : BlockProvider, ICraftingRecipe
     {
         public static readonly byte BlockID = 0x39;
         
@@ -20,6 +22,29 @@ namespace TrueCraft.Core.Logic.Blocks
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(8, 1);
+        }
+
+        public ItemStack[,] Pattern
+        {
+            get
+            {
+                return new [,]
+                {
+                    {new ItemStack(DiamondItem.ItemID), new ItemStack(DiamondItem.ItemID), new ItemStack(DiamondItem.ItemID)},
+                    {new ItemStack(DiamondItem.ItemID), new ItemStack(DiamondItem.ItemID), new ItemStack(DiamondItem.ItemID)},
+                    {new ItemStack(DiamondItem.ItemID), new ItemStack(DiamondItem.ItemID), new ItemStack(DiamondItem.ItemID)}
+                };
+            }
+        }
+
+        public ItemStack Output
+        {
+            get { return new ItemStack(BlockID); }
+        }
+
+        public bool SignificantMetadata
+        {
+            get { return false; }
         }
     }
 }

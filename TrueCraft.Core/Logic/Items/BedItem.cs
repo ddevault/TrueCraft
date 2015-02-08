@@ -87,5 +87,10 @@ namespace TrueCraft.Core.Logic.Items
                 return new ItemStack(ItemID);
             }
         }
+
+        public bool SignificantMetadata
+        {
+            get { return false; }
+        }
     }
 }

@@ -1,9 +1,11 @@
 using System;
 using TrueCraft.API.Logic;
+using TrueCraft.API;
+using TrueCraft.Core.Logic.Items;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class PistonBlock : BlockProvider
+    public class PistonBlock : BlockProvider, ICraftingRecipe
     {
         public static readonly byte BlockID = 0x21;
         
@@ -23,9 +25,44 @@ namespace TrueCraft.Core.Logic.Blocks
         {
             return new Tuple<int, int>(11, 6);
         }
+
+        public ItemStack[,] Pattern
+        {
+            get
+            {
+                return new[,]
+                {
+                    {
+                        new ItemStack(WoodenPlanksBlock.BlockID),
+                        new ItemStack(WoodenPlanksBlock.BlockID),
+                        new ItemStack(WoodenPlanksBlock.BlockID)
+                    },
+                    {
+                        new ItemStack(CobblestoneBlock.BlockID),
+                        new ItemStack(IronIngotItem.ItemID),
+                        new ItemStack(CobblestoneBlock.BlockID)
+                    },
+                    {
+                        new ItemStack(CobblestoneBlock.BlockID),
+                        new ItemStack(RedstoneItem.ItemID),
+                        new ItemStack(CobblestoneBlock.BlockID)
+                    }
+                };
+            }
+        }
+
+        public ItemStack Output
+        {
+            get { return new ItemStack(BlockID); }
+        }
+
+        public bool SignificantMetadata
+        {
+            get { return false; }
+        }
     }
 
-    public class StickyPistonBlock : BlockProvider
+    public class StickyPistonBlock : BlockProvider, ICraftingRecipe
     {
         public static readonly byte BlockID = 0x1D;
 
@@ -44,6 +81,28 @@ namespace TrueCraft.Core.Logic.Blocks
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(10, 6);
+        }
+
+        public ItemStack[,] Pattern
+        {
+            get
+            {
+                return new[,]
+                {
+                    {new ItemStack(SlimeballItem.ItemID)},
+                    {new ItemStack(PistonBlock.BlockID)}
+                };
+            }
+        }
+
+        public ItemStack Output
+        {
+            get { return new ItemStack(BlockID); }
+        }
+
+        public bool SignificantMetadata
+        {
+            get { return false; }
         }
     }
 

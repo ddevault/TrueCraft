@@ -52,5 +52,10 @@ namespace TrueCraft.Core.Logic.Blocks
                 return new ItemStack(BlockID);
             }
         }
+
+        public bool SignificantMetadata
+        {
+            get { return false; }
+        }
     }
 }

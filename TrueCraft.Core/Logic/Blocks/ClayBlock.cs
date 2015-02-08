@@ -6,7 +6,7 @@ using TrueCraft.Core.Logic.Items;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class ClayBlock : BlockProvider
+    public class ClayBlock : BlockProvider, ICraftingRecipe
     {
         public static readonly byte BlockID = 0x52;
         
@@ -28,6 +28,28 @@ namespace TrueCraft.Core.Logic.Blocks
         protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
         {
             return new[] { new ItemStack(ClayItem.ItemID, 4) };
+        }
+
+        public ItemStack[,] Pattern
+        {
+            get
+            {
+                return new[,]
+                {
+                    {new ItemStack(ClayItem.ItemID), new ItemStack(ClayItem.ItemID)},
+                    {new ItemStack(ClayItem.ItemID), new ItemStack(ClayItem.ItemID)}
+                };
+            }
+        }
+
+        public ItemStack Output
+        {
+            get { return new ItemStack(BlockID); }
+        }
+
+        public bool SignificantMetadata
+        {
+            get { return false; }
         }
     }
 }
