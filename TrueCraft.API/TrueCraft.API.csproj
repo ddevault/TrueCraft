@@ -30,7 +30,6 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArmourMaterial.cs" />
     <Compile Include="Coordinates3D.cs" />
     <Compile Include="ToolMaterial.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -87,6 +86,7 @@
     <Compile Include="Entities\IPhysicsEntity.cs" />
     <Compile Include="Logic\IItemRepository.cs" />
     <Compile Include="Logic\BlockDescriptor.cs" />
+    <Compile Include="ArmorMaterial.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

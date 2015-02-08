@@ -1,9 +1,10 @@
 using System;
 using TrueCraft.API.Logic;
+using TrueCraft.API;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class JackoLanternBlock : BlockProvider
+    public class JackoLanternBlock : BlockProvider, ICraftingRecipe
     {
         public static readonly byte BlockID = 0x5B;
         
@@ -24,6 +25,34 @@ namespace TrueCraft.Core.Logic.Blocks
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(6, 6);
+        }
+
+        public ItemStack[,] Pattern
+        {
+            get
+            {
+                return new[,]
+                {
+                    { new ItemStack(PumpkinBlock.BlockID) },
+                    { new ItemStack(TorchBlock.BlockID) }
+                };
+            }
+        }
+
+        public ItemStack Output
+        {
+            get
+            {
+                return new ItemStack(BlockID);
+            }
+        }
+
+        public bool SignificantMetadata
+        {
+            get
+            {
+                return false;
+            }
         }
     }
 }

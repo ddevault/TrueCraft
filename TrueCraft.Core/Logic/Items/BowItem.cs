@@ -1,9 +1,10 @@
 using System;
 using TrueCraft.API.Logic;
+using TrueCraft.API;
 
 namespace TrueCraft.Core.Logic.Items
 {
-    public class BowItem : ItemProvider
+    public class BowItem : ItemProvider, ICraftingRecipe
     {
         public static readonly short ItemID = 0x105;
 
@@ -12,5 +13,34 @@ namespace TrueCraft.Core.Logic.Items
         public override sbyte MaximumStack { get { return 1; } }
 
         public override string DisplayName { get { return "Bow"; } }
+
+        public ItemStack[,] Pattern
+        {
+            get
+            {
+                return new[,]
+                {
+                    { ItemStack.EmptyStack, new ItemStack(StickItem.ItemID), new ItemStack(StringItem.ItemID) },
+                    { new ItemStack(StickItem.ItemID), ItemStack.EmptyStack, new ItemStack(StringItem.ItemID) },
+                    { ItemStack.EmptyStack, new ItemStack(StickItem.ItemID), new ItemStack(StringItem.ItemID) },
+                };
+            }
+        }
+
+        public ItemStack Output
+        {
+            get
+            {
+                return new ItemStack(ItemID);
+            }
+        }
+
+        public bool SignificantMetadata
+        {
+            get
+            {
+                return false;
+            }
+        }
     }
 }

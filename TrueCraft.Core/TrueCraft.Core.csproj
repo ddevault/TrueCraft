@@ -38,7 +38,6 @@
     <Compile Include="Logging\LogHelpers.cs" />
     <Compile Include="Logic\ItemProvider.cs" />
     <Compile Include="Logic\Items\AppleItem.cs" />
-    <Compile Include="Logic\Items\ArmourItem.cs" />
     <Compile Include="Logic\Items\ArrowItem.cs" />
     <Compile Include="Logic\Items\AxeItem.cs" />
     <Compile Include="Logic\Items\BedItem.cs" />
@@ -271,6 +270,7 @@
     <Compile Include="Entities\EntityFlags.cs" />
     <Compile Include="Windows\CraftingBenchWindow.cs" />
     <Compile Include="Networking\Packets\CloseWindowPacket.cs" />
+    <Compile Include="Logic\Items\ArmorItem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

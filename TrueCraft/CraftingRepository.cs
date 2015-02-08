@@ -74,22 +74,17 @@ namespace TrueCraft
                     if (TestRecipe(craftingArea, recipe, x, y))
                     {
                         // Check to make sure there aren't any sneaky unused items in the grid
-                        for (int _x = 0; _x < x; x++)
+                        int minX = x, maxX = x + recipe.Pattern.GetLength(1);
+                        int minY = y, maxY = y + recipe.Pattern.GetLength(0);
+                        for (int _x = 0; _x < craftingArea.Width; _x++)
                         {
-                            for (int _y = 0; _y < y; _y++)
+                            for (int _y = 0; _y < craftingArea.Height; _y++)
                             {
-                                var supplied = craftingArea[(y + _y) * craftingArea.Width + (x + _x)];
-                                if (!supplied.Empty)
-                                    return false;
-                            }
-                        }
-                        for (int _y = 0; _y < y; _y++)
-                        {
-                            for (int _x = 0; _x < x; x++)
-                            {
-                                var supplied = craftingArea[(y + _y) * craftingArea.Width + (x + _x)];
-                                if (!supplied.Empty)
-                                    return false;
+                                if (_x < minX || _x >= maxX || _y < minY || _y >= maxY)
+                                {
+                                    if (!craftingArea[(_y * craftingArea.Width) + _x].Empty)
+                                        return false;
+                                }
                             }
                         }
                         return true;

@@ -1,9 +1,11 @@
 using System;
 using TrueCraft.API.Logic;
+using TrueCraft.API;
+using TrueCraft.Core.Logic.Items;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class SnowBlock : BlockProvider
+    public class SnowBlock : BlockProvider, ICraftingRecipe
     {
         public static readonly byte BlockID = 0x50;
         
@@ -20,6 +22,34 @@ namespace TrueCraft.Core.Logic.Blocks
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(2, 4);
+        }
+
+        public ItemStack[,] Pattern
+        {
+            get
+            {
+                return new[,]
+                {
+                    { new ItemStack(SnowballItem.ItemID), new ItemStack(SnowballItem.ItemID) },
+                    { new ItemStack(SnowballItem.ItemID), new ItemStack(SnowballItem.ItemID) }
+                };
+            }
+        }
+
+        public ItemStack Output
+        {
+            get
+            {
+                return new ItemStack(BlockID);
+            }
+        }
+
+        public bool SignificantMetadata
+        {
+            get
+            {
+                return false;
+            }
         }
     }
 

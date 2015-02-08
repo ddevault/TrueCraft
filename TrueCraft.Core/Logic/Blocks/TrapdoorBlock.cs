@@ -1,9 +1,10 @@
 using System;
 using TrueCraft.API.Logic;
+using TrueCraft.API;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class TrapdoorBlock : BlockProvider
+    public class TrapdoorBlock : BlockProvider, ICraftingRecipe
     {
         public static readonly byte BlockID = 0x60;
         
@@ -22,6 +23,34 @@ namespace TrueCraft.Core.Logic.Blocks
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(4, 5);
+        }
+
+        public ItemStack[,] Pattern
+        {
+            get
+            {
+                return new[,]
+                {
+                    { new ItemStack(WoodenPlanksBlock.BlockID), new ItemStack(WoodenPlanksBlock.BlockID), new ItemStack(WoodenPlanksBlock.BlockID) },
+                    { new ItemStack(WoodenPlanksBlock.BlockID), new ItemStack(WoodenPlanksBlock.BlockID), new ItemStack(WoodenPlanksBlock.BlockID) }
+                };
+            }
+        }
+
+        public ItemStack Output
+        {
+            get
+            {
+                return new ItemStack(BlockID);
+            }
+        }
+
+        public bool SignificantMetadata
+        {
+            get
+            {
+                return false;
+            }
         }
     }
 }

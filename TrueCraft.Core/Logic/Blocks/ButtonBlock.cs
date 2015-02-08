@@ -26,6 +26,7 @@ namespace TrueCraft.Core.Logic.Blocks
             {
                 return new[,]
                 {
+                    {new ItemStack(StoneBlock.BlockID)},
                     {new ItemStack(StoneBlock.BlockID)}
                 };
             }

@@ -30,9 +30,21 @@ namespace TrueCraft.Core.Logic.Blocks
             {
                 return new [,]
                 {
-                    {new ItemStack(DyeItem.ItemID, 1, 4), new ItemStack(DyeItem.ItemID, 1, 4), new ItemStack(DyeItem.ItemID, 1, 4)},
-                    {new ItemStack(DyeItem.ItemID, 1, 4), new ItemStack(DyeItem.ItemID, 1, 4), new ItemStack(DyeItem.ItemID, 1, 4)},
-                    {new ItemStack(DyeItem.ItemID, 1, 4), new ItemStack(DyeItem.ItemID, 1, 4), new ItemStack(DyeItem.ItemID, 1, 4)}
+                    {
+                        new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.LapisLazuli),
+                        new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.LapisLazuli),
+                        new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.LapisLazuli)
+                    },
+                    {
+                        new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.LapisLazuli),
+                        new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.LapisLazuli),
+                        new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.LapisLazuli)
+                    },
+                    {
+                        new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.LapisLazuli),
+                        new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.LapisLazuli),
+                        new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.LapisLazuli)
+                    }
                 };
             }
         }

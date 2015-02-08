@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TrueCraft.API
 {
-    public enum ArmourMaterial
+    public enum ArmorMaterial
     {
         Leather,
         Chain,

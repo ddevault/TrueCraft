@@ -3,11 +3,72 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TrueCraft.API;
+using TrueCraft.API.Logic;
+using TrueCraft.Core.Logic.Blocks;
+using TrueCraft.API.World;
+using TrueCraft.API.Networking;
 
 namespace TrueCraft.Core.Logic.Items
 {
-    public abstract class HoeItem : ToolItem
+    public abstract class HoeItem : ToolItem, ICraftingRecipe
     {
+        public ItemStack[,] Pattern
+        {
+            get
+            {
+                short baseMaterial = 0;
+                switch (Material)
+                {
+                    case ToolMaterial.Diamond:
+                        baseMaterial = DiamondItem.ItemID;
+                        break;
+                    case ToolMaterial.Gold:
+                        baseMaterial = GoldIngotItem.ItemID;
+                        break;
+                    case ToolMaterial.Iron:
+                        baseMaterial = IronIngotItem.ItemID;
+                        break;
+                    case ToolMaterial.Stone:
+                        baseMaterial = CobblestoneBlock.BlockID;
+                        break;
+                    case ToolMaterial.Wood:
+                        baseMaterial = WoodenPlanksBlock.BlockID;
+                        break;
+                }
+
+                return new[,]
+                {
+                    { new ItemStack(baseMaterial), new ItemStack(baseMaterial) },
+                    { ItemStack.EmptyStack, new ItemStack(StickItem.ItemID) },
+                    { ItemStack.EmptyStack, new ItemStack(StickItem.ItemID) }
+                };
+            }
+        }
+
+        public ItemStack Output
+        {
+            get
+            {
+                return new ItemStack(ID);
+            }
+        }
+
+        public bool SignificantMetadata
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public override void ItemUsedOnBlock(Coordinates3D coordinates, ItemStack item, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            var id = world.GetBlockID(coordinates);
+            if (id == DirtBlock.BlockID || id == GrassBlock.BlockID)
+            {
+                world.SetBlockID(coordinates, FarmlandBlock.BlockID);
+            }
+        }
     }
 
     public class WoodenHoeItem : HoeItem

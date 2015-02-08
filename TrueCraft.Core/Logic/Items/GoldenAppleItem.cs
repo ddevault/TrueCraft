@@ -1,9 +1,11 @@
 using System;
 using TrueCraft.API.Logic;
+using TrueCraft.API;
+using TrueCraft.Core.Logic.Blocks;
 
 namespace TrueCraft.Core.Logic.Items
 {
-    public class GoldenAppleItem : FoodItem
+    public class GoldenAppleItem : FoodItem, ICraftingRecipe
     {
         public static readonly short ItemID = 0x142;
 
@@ -12,5 +14,46 @@ namespace TrueCraft.Core.Logic.Items
         public override float Restores { get { return 10; } }
 
         public override string DisplayName { get { return "Golden Apple"; } }
+
+        public ItemStack[,] Pattern
+        {
+            get
+            {
+                return new[,]
+                {
+                    { 
+                        new ItemStack(GoldBlock.BlockID),
+                        new ItemStack(GoldBlock.BlockID),
+                        new ItemStack(GoldBlock.BlockID),
+                    },
+                    { 
+                        new ItemStack(GoldBlock.BlockID),
+                        new ItemStack(AppleItem.ItemID),
+                        new ItemStack(GoldBlock.BlockID),
+                    },
+                    { 
+                        new ItemStack(GoldBlock.BlockID),
+                        new ItemStack(GoldBlock.BlockID),
+                        new ItemStack(GoldBlock.BlockID),
+                    }
+                };
+            }
+        }
+
+        public ItemStack Output
+        {
+            get
+            {
+                return new ItemStack(ItemID);
+            }
+        }
+
+        public bool SignificantMetadata
+        {
+            get
+            {
+                return true;
+            }
+        }
     }
 }
