@@ -153,7 +153,6 @@
     <Compile Include="Networking\Packets\EnvironmentStatePacket.cs" />
     <Compile Include="Networking\Packets\LightningPacket.cs" />
     <Compile Include="Networking\Packets\OpenWindowPacket.cs" />
-    <Compile Include="Networking\Packets\CloseWindow.cs" />
     <Compile Include="Networking\Packets\ClickWindowPacket.cs" />
     <Compile Include="Networking\Packets\SetSlotPacket.cs" />
     <Compile Include="Networking\Packets\WindowItemsPacket.cs" />
@@ -270,6 +269,8 @@
     <Compile Include="Entities\PlayerEntity.cs" />
     <Compile Include="Logic\Blocks\AirBlock.cs" />
     <Compile Include="Entities\EntityFlags.cs" />
+    <Compile Include="Windows\CraftingBenchWindow.cs" />
+    <Compile Include="Networking\Packets\CloseWindowPacket.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

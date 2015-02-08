@@ -1,6 +1,9 @@
 using System;
 using TrueCraft.API.Logic;
 using TrueCraft.API;
+using TrueCraft.API.World;
+using TrueCraft.API.Networking;
+using TrueCraft.Core.Windows;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
@@ -17,6 +20,13 @@ namespace TrueCraft.Core.Logic.Blocks
         public override byte Luminance { get { return 0; } }
         
         public override string DisplayName { get { return "Crafting Table"; } }
+
+        public override bool BlockRightClicked(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            var window = new CraftingBenchWindow(user.Server.CraftingRepository, (InventoryWindow)user.Inventory);
+            user.OpenWindow(window);
+            return false;
+        }
 
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {

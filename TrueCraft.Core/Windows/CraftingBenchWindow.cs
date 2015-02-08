@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,35 +8,48 @@ using TrueCraft.API;
 
 namespace TrueCraft.Core.Windows
 {
-    public class InventoryWindow : Window
+    public class CraftingBenchWindow : Window
     {
-        public InventoryWindow(ICraftingRepository craftingRepository)
+        public CraftingBenchWindow(ICraftingRepository craftingRepository, InventoryWindow inventory)
         {
             WindowAreas = new[]
                 {
-                    new CraftingWindowArea(craftingRepository, CraftingOutputIndex),
-                    new ArmorWindowArea(ArmorIndex),
+                    new CraftingWindowArea(craftingRepository, CraftingOutputIndex, 3, 3),
                     new WindowArea(MainIndex, 27, 9, 3), // Main inventory
                     new WindowArea(HotbarIndex, 9, 9, 1) // Hotbar
                 };
+            inventory.MainInventory.CopyTo(MainInventory);
+            inventory.Hotbar.CopyTo(Hotbar);
             foreach (var area in WindowAreas)
                 area.WindowChange += (s, e) => OnWindowChange(new WindowChangeEventArgs(
                     (s as WindowArea).StartIndex + e.SlotIndex, e.Value));
+            Copying = false;
+            inventory.WindowChange += (sender, e) =>
+            {
+                if (Copying) return;
+                if ((e.SlotIndex >= InventoryWindow.MainIndex && e.SlotIndex < InventoryWindow.MainIndex + inventory.MainInventory.Length)
+                    || (e.SlotIndex >= InventoryWindow.HotbarIndex && e.SlotIndex < InventoryWindow.HotbarIndex + inventory.Hotbar.Length))
+                {
+                    inventory.MainInventory.CopyTo(MainInventory);
+                    inventory.Hotbar.CopyTo(Hotbar);
+                }
+            };
         }
 
         #region Variables
 
-        public const int HotbarIndex = 36;
+        private bool Copying { get; set; }
+
+        public const int HotbarIndex = 37;
         public const int CraftingGridIndex = 1;
         public const int CraftingOutputIndex = 0;
-        public const int ArmorIndex = 5;
-        public const int MainIndex = 9;
+        public const int MainIndex = 10;
 
         public override string Name
         {
             get
             {
-                return "Inventory";
+                return "Workbench";
             }
         }
 
@@ -44,7 +57,7 @@ namespace TrueCraft.Core.Windows
         {
             get
             {
-                return -1; // NOTE: This window does not have a type
+                return 1;
             }
         }
 
@@ -57,33 +70,42 @@ namespace TrueCraft.Core.Windows
             get { return WindowAreas[0]; }
         }
 
-        public IWindowArea Armor
+        public IWindowArea MainInventory
         {
             get { return WindowAreas[1]; }
         }
 
-        public IWindowArea MainInventory
+        public IWindowArea Hotbar
         {
             get { return WindowAreas[2]; }
         }
 
-        public IWindowArea Hotbar
+        #endregion
+
+        #endregion
+
+        public override ItemStack[] GetSlots()
         {
-            get { return WindowAreas[3]; }
+            var relevantAreas = new[] { CraftingGrid };
+            int length = relevantAreas.Sum(area => area.Length);
+            var slots = new ItemStack[length];
+            foreach (var windowArea in relevantAreas)
+                Array.Copy(windowArea.Items, 0, slots, windowArea.StartIndex, windowArea.Length);
+            return slots;
         }
-
-        #endregion
-
-        #endregion
 
         public override void CopyToInventory(IWindow inventoryWindow)
         {
-            // This space intentionally left blank
+            var window = (InventoryWindow)inventoryWindow;
+            Copying = true;
+            MainInventory.CopyTo(window.MainInventory);
+            Hotbar.CopyTo(window.Hotbar);
+            Copying = false;
         }
 
         protected override IWindowArea GetLinkedArea(int index, ItemStack slot)
         {
-            if (index == 0 || index == 1 || index == 3)
+            if (index < MainIndex)
                 return MainInventory;
             return Hotbar;
         }

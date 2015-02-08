@@ -29,6 +29,7 @@ namespace TrueCraft.Handlers
             server.RegisterPacketHandler(new ChangeHeldItemPacket().ID, InteractionHandlers.HandleChangeHeldItem);
             server.RegisterPacketHandler(new PlayerActionPacket().ID, InteractionHandlers.HandlePlayerAction);
             server.RegisterPacketHandler(new ClickWindowPacket().ID, InteractionHandlers.HandleClickWindowPacket);
+            server.RegisterPacketHandler(new CloseWindowPacket().ID, InteractionHandlers.HandleCloseWindowPacket);
         }
 
         internal static void HandleKeepAlive(IPacket _packet, IRemoteClient _client, IMultiplayerServer server)

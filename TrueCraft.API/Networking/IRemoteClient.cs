@@ -22,5 +22,6 @@ namespace TrueCraft.API.Networking
         void QueuePacket(IPacket packet);
         void SendMessage(string message);
         void Log(string message, params object[] parameters);
+        void OpenWindow(IWindow window);
     }
 }

@@ -7,6 +7,9 @@ namespace TrueCraft.API.Windows
         event EventHandler<WindowChangeEventArgs> WindowChange;
 
         IWindowArea[] WindowAreas { get; }
+        sbyte ID { get; set; }
+        string Name { get; }
+        sbyte Type { get; }
         int Length { get; }
         ItemStack this[int index] { get; set; }
         bool Empty { get; }
@@ -23,5 +26,9 @@ namespace TrueCraft.API.Windows
         /// Adds the specified item stack to this window, merging with established slots as neccessary.
         /// </summary>
         bool PickUpStack(ItemStack slot);
+        /// <summary>
+        /// Copy the contents of this window back into an inventory window after changes have been made.
+        /// </summary>
+        void CopyToInventory(IWindow inventoryWindow);
     }
 }

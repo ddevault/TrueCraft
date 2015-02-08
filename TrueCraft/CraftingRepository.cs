@@ -47,14 +47,14 @@ namespace TrueCraft
 
         public bool TestRecipe(IWindowArea craftingArea, ICraftingRecipe recipe, int x, int y)
         {
-            if (x + recipe.Pattern.GetLength(0) > craftingArea.Width || y + recipe.Pattern.GetLength(1) > craftingArea.Height)
+            if (x + recipe.Pattern.GetLength(1) > craftingArea.Width || y + recipe.Pattern.GetLength(0) > craftingArea.Height)
                 return false;
-            for (int _x = 0; _x < recipe.Pattern.GetLength(0); _x++)
+            for (int _x = 0; _x < recipe.Pattern.GetLength(1); _x++)
             {
-                for (int _y = 0; _y < recipe.Pattern.GetLength(1); _y++)
+                for (int _y = 0; _y < recipe.Pattern.GetLength(0); _y++)
                 {
                     var supplied = craftingArea[(y + _y) * craftingArea.Width + (x + _x)];
-                    var required = recipe.Pattern[_x, _y];
+                    var required = recipe.Pattern[_y, _x];
                     if (supplied.ID != required.ID || supplied.Count < required.Count)
                     {
                         return false;
@@ -70,14 +70,29 @@ namespace TrueCraft
             {
                 for (int y = 0; y < craftingArea.Height; y++)
                 {
-                    var item = craftingArea[y * craftingArea.Width + x];
-                    if (item.ID == recipe.Pattern[0, 0].ID &&
-                        item.Count >= recipe.Pattern[0, 0].Count)
+                    if (TestRecipe(craftingArea, recipe, x, y))
                     {
-                        return TestRecipe(craftingArea, recipe, x, y);
+                        // Check to make sure there aren't any sneaky unused items in the grid
+                        for (int _x = 0; _x < x; x++)
+                        {
+                            for (int _y = 0; _y < y; _y++)
+                            {
+                                var supplied = craftingArea[(y + _y) * craftingArea.Width + (x + _x)];
+                                if (!supplied.Empty)
+                                    return false;
+                            }
+                        }
+                        for (int _y = 0; _y < y; _y++)
+                        {
+                            for (int _x = 0; _x < x; x++)
+                            {
+                                var supplied = craftingArea[(y + _y) * craftingArea.Width + (x + _x)];
+                                if (!supplied.Empty)
+                                    return false;
+                            }
+                        }
+                        return true;
                     }
-                    if (!item.Empty)
-                        return false;
                 }
             }
             return false;

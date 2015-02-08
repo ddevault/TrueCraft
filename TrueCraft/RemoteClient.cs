@@ -37,6 +37,7 @@ namespace TrueCraft
             KnownEntities = new List<IEntity>();
             Disconnected = false;
             EnableLogging = server.EnableClientLogging;
+            NextWindowID = 1;
         }
             
         /// <summary>
@@ -44,6 +45,7 @@ namespace TrueCraft
         /// </summary>
         internal List<IEntity> KnownEntities { get; set; }
         internal bool Disconnected { get; set; }
+        internal sbyte NextWindowID { get; set; }
 
         public NetworkStream NetworkStream { get; set; }
         public IMinecraftStream MinecraftStream { get; internal set; }
@@ -55,7 +57,7 @@ namespace TrueCraft
         public IWindow Inventory { get; private set; }
         public short SelectedSlot { get; internal set; }
         public ItemStack ItemStaging { get; set; }
-        public IWindow CurrentWindow { get; set; }
+        public IWindow CurrentWindow { get; internal set; }
         public bool EnableLogging { get; set; }
 
         private IEntity _Entity;
@@ -112,6 +114,23 @@ namespace TrueCraft
             {
                 return NetworkStream.DataAvailable;
             }
+        }
+
+        public void OpenWindow(IWindow window)
+        {
+            CurrentWindow = window;
+            window.ID = NextWindowID++;
+            if (NextWindowID < 0) NextWindowID = 1;
+            QueuePacket(new OpenWindowPacket(window.ID, window.Type, window.Name, (sbyte)window.Length));
+            QueuePacket(new WindowItemsPacket(window.ID, window.GetSlots()));
+        }
+
+        public void CloseWindow(bool clientInitiated = false)
+        {
+            if (!clientInitiated)
+                QueuePacket(new CloseWindowPacket(CurrentWindow.ID));
+            CurrentWindow.CopyToInventory(Inventory);
+            CurrentWindow = InventoryWindow;
         }
 
         public void Log(string message, params object[] parameters)

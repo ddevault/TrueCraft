@@ -124,7 +124,8 @@ namespace TrueCraft.Handlers
                 return;
             ItemStack existing = window[packet.SlotIndex];
             ItemStack held = client.ItemStaging;
-            if (packet.SlotIndex == InventoryWindow.CraftingOutputIndex)
+            if (packet.SlotIndex == InventoryWindow.CraftingOutputIndex
+                && (window is InventoryWindow || window is CraftingBenchWindow))
             {
                 // Stupid special case because Minecraft was written by morons
                 if (held.ID == existing.ID || held.Empty)
@@ -206,6 +207,13 @@ namespace TrueCraft.Handlers
                     }
                 }
             }
+        }
+
+        public static void HandleCloseWindowPacket(IPacket _packet, IRemoteClient _client, IMultiplayerServer server)
+        {
+            var packet = (CloseWindowPacket)_packet;
+            if (packet.WindowID != 0)
+                (_client as RemoteClient).CloseWindow(true);
         }
 
         public static void HandleChangeHeldItem(IPacket _packet, IRemoteClient _client, IMultiplayerServer server)

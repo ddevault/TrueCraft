@@ -72,7 +72,7 @@ namespace TrueCraft.Core.Networking
             RegisterPacketType<LightningPacket>(serverbound: false, clientbound: true);                 // 0x47
 
             RegisterPacketType<OpenWindowPacket>(serverbound: false, clientbound: true);                // 0x64
-            RegisterPacketType<CloseWindow>();                                                          // 0x65
+            RegisterPacketType<CloseWindowPacket>();                                                    // 0x65
             RegisterPacketType<ClickWindowPacket>(serverbound: true, clientbound: false);               // 0x66
             RegisterPacketType<SetSlotPacket>(serverbound: false, clientbound: true);                   // 0x67
             RegisterPacketType<WindowItemsPacket>(serverbound: false, clientbound: true);               // 0x68

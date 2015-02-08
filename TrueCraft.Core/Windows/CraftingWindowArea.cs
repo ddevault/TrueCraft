@@ -9,7 +9,8 @@ namespace TrueCraft.Core.Windows
         public static readonly int CraftingOutput = 0;
         public ICraftingRepository Repository { get; set; }
 
-        public CraftingWindowArea(ICraftingRepository repository, int startIndex) : base(startIndex, 5, 2, 2)
+        public CraftingWindowArea(ICraftingRepository repository, int startIndex, int width = 2, int height = 2)
+            : base(startIndex, width * height + 1, width, height)
         {
             Repository = repository;
             WindowChange += HandleWindowChange;
@@ -50,12 +51,12 @@ namespace TrueCraft.Core.Windows
                 if (found) break;
             }
             // Remove items
-            for (int _x = 0; _x < recipe.Pattern.GetLength(0); _x++)
+            for (int _x = 0; _x < recipe.Pattern.GetLength(1); _x++)
             {
-                for (int _y = 0; _y < recipe.Pattern.GetLength(1); _y++)
+                for (int _y = 0; _y < recipe.Pattern.GetLength(0); _y++)
                 {
                     var item = Items[(y + _y) * Width + (x + _x) + 1];
-                    item.Count -= recipe.Pattern[_x, _y].Count;
+                    item.Count -= recipe.Pattern[_y, _x].Count;
                     Items[(y + _y) * Width + (x + _x) + 1] = item;
                 }
             }
@@ -65,7 +66,7 @@ namespace TrueCraft.Core.Windows
         {
             get
             {
-                var result = new WindowArea(1, 4, 2, 2);
+                var result = new WindowArea(1, Width * Height, Width, Height);
                 for (var i = 1; i < Items.Length; i++)
                     result.Items[i - 1] = Items[i];
                 return result;

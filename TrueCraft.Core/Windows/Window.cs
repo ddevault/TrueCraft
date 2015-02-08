@@ -25,6 +25,10 @@ namespace TrueCraft.Core.Windows
             if (WindowChange != null && destination != -1)
                 WindowChange(this, new WindowChangeEventArgs(destination + to.StartIndex, slot));
         }
+                
+        public sbyte ID { get; set; }
+        public abstract string Name { get; }
+        public abstract sbyte Type { get; }
 
         /// <summary>
         /// When shift-clicking items between areas, this method is used
@@ -34,6 +38,7 @@ namespace TrueCraft.Core.Windows
         /// <param name="slot">The item being moved</param>
         /// <returns>The area to place the item into</returns>
         protected abstract IWindowArea GetLinkedArea(int index, ItemStack slot);
+        public abstract void CopyToInventory(IWindow inventoryWindow);
 
         /// <summary>
         /// Gets the window area to handle this index and adjust index accordingly
@@ -81,7 +86,7 @@ namespace TrueCraft.Core.Windows
             }
         }
 
-        public ItemStack[] GetSlots()
+        public virtual ItemStack[] GetSlots()
         {
             int length = WindowAreas.Sum(area => area.Length);
             var slots = new ItemStack[length];
