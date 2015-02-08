@@ -5,9 +5,9 @@ using TrueCraft.Core.Logic.Items;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class RedstoneTorchBlock : BlockProvider, ICraftingRecipe
+    public class RedstoneTorchBlock : TorchBlock, ICraftingRecipe
     {
-        public static readonly byte BlockID = 0x4C;
+        public static readonly new byte BlockID = 0x4C;
         
         public override byte ID { get { return 0x4C; } }
         
@@ -26,7 +26,7 @@ namespace TrueCraft.Core.Logic.Blocks
             return new Tuple<int, int>(3, 6);
         }
 
-        public ItemStack[,] Pattern
+        public override ItemStack[,] Pattern
         {
             get
             {
@@ -38,7 +38,7 @@ namespace TrueCraft.Core.Logic.Blocks
             }
         }
 
-        public ItemStack Output
+        public override ItemStack Output
         {
             get
             {
@@ -46,7 +46,7 @@ namespace TrueCraft.Core.Logic.Blocks
             }
         }
 
-        public bool SignificantMetadata
+        public override bool SignificantMetadata
         {
             get
             {

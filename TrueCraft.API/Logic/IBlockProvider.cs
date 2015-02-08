@@ -16,7 +16,7 @@ namespace TrueCraft.API.Logic
         string DisplayName { get; }
         Tuple<int, int> GetTextureMap(byte metadata);
         bool BlockRightClicked(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user);
-        bool BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user);
+        void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user);
         void BlockMined(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user);
         void BlockUpdate(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world);
         void BlockScheduledEvent(BlockDescriptor descriptor, IWorld world, object data);

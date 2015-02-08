@@ -19,9 +19,9 @@ namespace TrueCraft.Core.Logic
             return true;
         }
 
-        public virtual bool BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
+        public virtual void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
-            throw new NotImplementedException();
+            // This space intentionally left blank
         }
 
         public virtual void BlockMined(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
@@ -89,6 +89,7 @@ namespace TrueCraft.Core.Logic
             world.SetMetadata(coordinates, (byte)item.Metadata);
             item.Count--;
             user.Inventory[user.SelectedSlot] = item;
+            BlockPlaced(world.GetBlockData(coordinates), face, world, user);
         }
 
         short IItemProvider.ID
