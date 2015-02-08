@@ -56,9 +56,9 @@ namespace TrueCraft.Core.Logic.Items
                     return new[,]
                     {
                         {
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.InkSac),
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.BoneMeal),
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.BoneMeal),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.InkSac),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.BoneMeal),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.BoneMeal),
                         }
                     };
                 }
@@ -78,9 +78,9 @@ namespace TrueCraft.Core.Logic.Items
                     return new[,]
                     {
                         {
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.InkSac),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.InkSac),
                             ItemStack.EmptyStack,
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.BoneMeal),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.BoneMeal),
                         }
                     };
                 }
@@ -120,8 +120,8 @@ namespace TrueCraft.Core.Logic.Items
                     return new[,]
                     {
                         {
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.DandelionYellow),
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.RoseRed),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.DandelionYellow),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.RoseRed),
                         }
                     };
                 }
@@ -161,9 +161,9 @@ namespace TrueCraft.Core.Logic.Items
                     return new[,]
                     {
                         {
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.CactusGreen),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.CactusGreen),
                             ItemStack.EmptyStack,
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.BoneMeal),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.BoneMeal),
                         }
                     };
                 }
@@ -183,9 +183,9 @@ namespace TrueCraft.Core.Logic.Items
                     return new[,]
                     {
                         {
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.LapisLazuli),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.LapisLazuli),
                             ItemStack.EmptyStack,
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.BoneMeal),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.BoneMeal),
                         }
                     };
                 }
@@ -205,9 +205,9 @@ namespace TrueCraft.Core.Logic.Items
                     return new[,]
                     {
                         {
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.LapisLazuli),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.LapisLazuli),
                             ItemStack.EmptyStack,
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.CactusGreen),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.CactusGreen),
                         }
                     };
                 }
@@ -227,9 +227,9 @@ namespace TrueCraft.Core.Logic.Items
                     return new[,]
                     {
                         {
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.LapisLazuli),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.LapisLazuli),
                             ItemStack.EmptyStack,
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.RoseRed),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.RoseRed),
                         }
                     };
                 }
@@ -249,8 +249,8 @@ namespace TrueCraft.Core.Logic.Items
                     return new[,]
                     {
                         {
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.PurpleDye),
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.PinkDye),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.PurpleDye),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.PinkDye),
                         }
                     };
                 }
@@ -270,9 +270,9 @@ namespace TrueCraft.Core.Logic.Items
                     return new[,]
                     {
                         {
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.LapisLazuli),
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.BoneMeal),
-                            new ItemStack(DyeItem.ItemID, 2, DyeItem.DyeType.RoseRed),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.LapisLazuli),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.BoneMeal),
+                            new ItemStack(DyeItem.ItemID, 2, (short)DyeItem.DyeType.RoseRed),
                         }
                     };
                 }
@@ -292,9 +292,9 @@ namespace TrueCraft.Core.Logic.Items
                     return new[,]
                     {
                         {
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.LapisLazuli),
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.PinkDye),
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.RoseRed),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.LapisLazuli),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.PinkDye),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.RoseRed),
                         }
                     };
                 }
@@ -314,8 +314,8 @@ namespace TrueCraft.Core.Logic.Items
                     return new[,]
                     {
                         {
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.BoneMeal),
-                            new ItemStack(DyeItem.ItemID, 1, DyeItem.DyeType.RoseRed),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.BoneMeal),
+                            new ItemStack(DyeItem.ItemID, 1, (short)DyeItem.DyeType.RoseRed),
                         }
                     };
                 }
