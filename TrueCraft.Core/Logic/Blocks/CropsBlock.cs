@@ -1,5 +1,10 @@
 using System;
 using TrueCraft.API.Logic;
+using TrueCraft.API;
+using TrueCraft.Core.Logic.Items;
+using TrueCraft.API.Networking;
+using TrueCraft.API.World;
+using TrueCraft.API.Server;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
@@ -22,6 +27,43 @@ namespace TrueCraft.Core.Logic.Blocks
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(8, 5);
+        }
+
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        {
+            if (descriptor.Metadata >= 7)
+                return new[] { new ItemStack(WheatItem.ItemID), new ItemStack(SeedsItem.ItemID, (sbyte)MathHelper.Random.Next(3)) };
+            else
+                return new[] { new ItemStack(SeedsItem.ItemID) };
+        }
+
+        private void GrowBlock(IMultiplayerServer server, IWorld world, Coordinates3D coords)
+        {
+            if (world.GetBlockID(coords) != BlockID)
+                return;
+            var meta = world.GetMetadata(coords);
+            meta++;
+            world.SetMetadata(coords, meta);
+            if (meta < 7)
+            {
+                server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(MathHelper.Random.Next(30, 60)),
+                   (_server) => GrowBlock(_server, world, coords));
+            }
+        }
+
+        public override void BlockUpdate(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world)
+        {
+            if (world.GetBlockID(descriptor.Coordinates + Coordinates3D.Down) != FarmlandBlock.BlockID)
+            {
+                GenerateDropEntity(descriptor, world, server);
+                world.SetBlockID(descriptor.Coordinates, 0);
+            }
+        }
+
+        public override void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            user.Server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(MathHelper.Random.Next(30, 60)),
+                (server) => GrowBlock(server, world, descriptor.Coordinates + MathHelper.BlockFaceToCoordinates(face)));
         }
     }
 }

@@ -67,6 +67,8 @@ namespace TrueCraft.Core.Logic.Items
             if (id == DirtBlock.BlockID || id == GrassBlock.BlockID)
             {
                 world.SetBlockID(coordinates, FarmlandBlock.BlockID);
+                user.Server.BlockRepository.GetBlockProvider(FarmlandBlock.BlockID).BlockPlaced(
+                    new BlockDescriptor { Coordinates = coordinates }, face, world, user);
             }
         }
     }

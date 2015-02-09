@@ -36,6 +36,7 @@ namespace TrueCraft.Core.Logic
             var items = GetDrop(descriptor);
             foreach (var item in items)
             {
+                if (item.Empty) continue;
                 var entity = new ItemEntity(new Vector3(descriptor.Coordinates) + new Vector3(0.5), item);
                 entityManager.SpawnEntity(entity);
             }

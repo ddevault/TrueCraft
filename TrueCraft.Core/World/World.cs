@@ -17,6 +17,7 @@ namespace TrueCraft.Core.World
         public string BaseDirectory { get; internal set; }
         public IDictionary<Coordinates2D, IRegion> Regions { get; set; }
         public IChunkProvider ChunkProvider { get; set; }
+        public IBlockRepository BlockRepository { get; set; }
         public DateTime BaseTime { get; set; }
         public long Time
         {

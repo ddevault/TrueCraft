@@ -10,6 +10,7 @@ namespace TrueCraft.API.World
     public interface IWorld
     {
         string Name { get; set; }
+        IBlockRepository BlockRepository { get; set; }
         IChunkProvider ChunkProvider { get; set; }
         long Time { get; set; }
 

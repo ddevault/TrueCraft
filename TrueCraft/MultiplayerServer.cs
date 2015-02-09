@@ -107,6 +107,7 @@ namespace TrueCraft
         public void AddWorld(IWorld world)
         {
             Worlds.Add(world);
+            world.BlockRepository = BlockRepository;
             world.BlockChanged += HandleBlockChanged;
             var manager = new EntityManager(this, world);
             EntityManagers.Add(manager);
