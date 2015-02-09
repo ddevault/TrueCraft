@@ -7,6 +7,7 @@ blurb: |
 ---
 
 ![](http://a.pomf.se/nnktkq.png)
+
 Wheat farming was implemented yesterday, making it possible for players to grow their own wheat farm.
 Farmland saturation was also implemented, making TrueCraft better every day that goes by.
 
