@@ -9,6 +9,8 @@ namespace TrueCraft.Core.Logic.Blocks
 {
     public class FarmlandBlock : BlockProvider
     {
+        public static readonly int UpdateIntervalSeconds = 30;
+
         public static readonly byte BlockID = 0x3C;
         
         public override byte ID { get { return 0x3C; } }
@@ -55,25 +57,30 @@ namespace TrueCraft.Core.Logic.Blocks
                 return;
             if (MathHelper.Random.Next(3) == 0)
             {
-                if (IsHydrated(coords, world))
-                {
-                    world.SetMetadata(coords, 15);
-                }
+                var meta = world.GetMetadata(coords);
+                if (IsHydrated(coords, world) && meta != 15)
+                    meta++;
                 else
                 {
-                    world.SetBlockID(coords, DirtBlock.BlockID);
+                    meta--;
+                    if (meta == 0)
+                    {
+                        world.SetBlockID(coords, BlockID);
+                        return;
+                    }
                 }
+                world.SetMetadata(coords, meta);
             }
-            server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(30), (_server) => HydrationCheckEvent(_server, coords, world));
+            server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(UpdateIntervalSeconds), (_server) => HydrationCheckEvent(_server, coords, world));
         }
 
         public override void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
             if (IsHydrated(descriptor.Coordinates, world))
             {
-                world.SetMetadata(descriptor.Coordinates, 15);
+                world.SetMetadata(descriptor.Coordinates, 1);
             }
-            user.Server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(30), (server) => HydrationCheckEvent(server, descriptor.Coordinates, world));
+            user.Server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(UpdateIntervalSeconds), (server) => HydrationCheckEvent(server, descriptor.Coordinates, world));
         }
     }
 }
