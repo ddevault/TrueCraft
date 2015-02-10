@@ -10,7 +10,7 @@ blurb: |
 ![](http://a.pomf.se/blrzjl.png)
 
 With today's arduous coding efforts, fluid dynamics are mostly working and quite
-close to vanilla's implementation. Fluis in Minecraft is a form of celluar
+close to vanilla's implementation. Fluids in Minecraft is a form of celluar
 automaton that has a set of rules for how it propegates through the game world,
 and it's a huge pain in the ass to get right.
 
