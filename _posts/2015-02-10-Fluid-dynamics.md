@@ -22,4 +22,4 @@ time comes.
 Additionally, I streamed the entire development of this feature on Twitch.tv, to
 a rather large number of viewers. Hi everyone! I'll continue to stream some of
 my work on TrueCraft going forward, and I hope to see some folks hanging out in
-http://twitch.tv/sircmpwn.
+[twitch.tv/sircmpwn](http://www.twitch.tv/sircmpwn).
