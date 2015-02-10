@@ -14,6 +14,7 @@ namespace TrueCraft.API.Logic
         bool Opaque { get; }
         byte LightModifier { get; }
         string DisplayName { get; }
+        BoundingBox? BoundingBox { get; } // NOTE: Will this eventually need to be metadata-aware?
         Tuple<int, int> GetTextureMap(byte metadata);
         bool BlockRightClicked(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user);
         void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user);

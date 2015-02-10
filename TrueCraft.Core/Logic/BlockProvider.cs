@@ -154,5 +154,13 @@ namespace TrueCraft.Core.Logic
         {
             return null;
         }
+
+        public virtual BoundingBox? BoundingBox
+        {
+            get
+            {
+                return new BoundingBox(Vector3.Zero, Vector3.One);
+            }
+        }
     }
 }

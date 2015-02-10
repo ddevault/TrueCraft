@@ -4,11 +4,15 @@ using TrueCraft.API.Server;
 using TrueCraft.API.World;
 using TrueCraft.API;
 using TrueCraft.Core.Logic.Items;
+using TrueCraft.API.Networking;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
     public class SugarcaneBlock : BlockProvider
     {
+        public static readonly int MinGrowthSeconds = 30;
+        public static readonly int MaxGrowthSeconds = 120;
+
         public static readonly byte BlockID = 0x53;
         
         public override byte ID { get { return 0x53; } }
@@ -22,6 +26,14 @@ namespace TrueCraft.Core.Logic.Blocks
         public override bool Opaque { get { return false; } }
         
         public override string DisplayName { get { return "Sugar cane"; } }
+
+        public override BoundingBox? BoundingBox
+        {
+            get
+            {
+                return null;
+            }
+        }
 
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
@@ -45,17 +57,21 @@ namespace TrueCraft.Core.Logic.Blocks
                 Coordinates3D.Down + Coordinates3D.Backwards,
                 Coordinates3D.Down + Coordinates3D.Forwards
             };
-            bool foundWater = false;
-            for (int i = 0; i < toCheck.Length; i++)
+            if (below != BlockID)
             {
-                var id = world.GetBlockID(descriptor.Coordinates + toCheck[i]);
-                if (id == WaterBlock.BlockID || id == StationaryWaterBlock.BlockID)
+                bool foundWater = false;
+                for (int i = 0; i < toCheck.Length; i++)
                 {
-                    foundWater = true;
-                    break;
+                    var id = world.GetBlockID(descriptor.Coordinates + toCheck[i]);
+                    if (id == WaterBlock.BlockID || id == StationaryWaterBlock.BlockID)
+                    {
+                        foundWater = true;
+                        break;
+                    }
                 }
+                return foundWater;
             }
-            return foundWater;
+            return true;
         }
 
         public override void BlockUpdate(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world)
@@ -66,6 +82,42 @@ namespace TrueCraft.Core.Logic.Blocks
                 world.SetBlockID(descriptor.Coordinates, 0);
                 GenerateDropEntity(descriptor, world, server);
             }
+        }
+
+        private void TryGrowth(IMultiplayerServer server, Coordinates3D coords, IWorld world)
+        {
+            if (world.GetBlockID(coords) != BlockID)
+                return;
+            // Find current height of stalk
+            int height = 0;
+            for (int y = -3; y <= 3; y++)
+            {
+                if (world.GetBlockID(coords + (Coordinates3D.Down * y)) == BlockID)
+                    height++;
+            }
+            if (height < 3)
+            {
+                var meta = world.GetMetadata(coords);
+                meta++;
+                world.SetMetadata(coords, meta);
+                if (meta == 15)
+                {
+                    world.SetBlockID(coords + Coordinates3D.Up, BlockID);
+                    server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
+                        (_server) => TryGrowth(_server, coords + Coordinates3D.Up, world));
+                }
+                else
+                {
+                    server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
+                        (_server) => TryGrowth(_server, coords, world));
+                }
+            }
+        }
+
+        public override void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            user.Server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
+                (server) => TryGrowth(server, descriptor.Coordinates, world));
         }
     }
 }

@@ -46,7 +46,8 @@ namespace TrueCraft
             // TODO: Block-specific bounding boxes
             var id = world.GetBlockID(coordinates);
             if (id == 0) return null;
-            return new BoundingBox(Vector3.Zero, Vector3.One);
+            var provider = BlockProviders[id];
+            return provider.BoundingBox;
         }
     }
 }
