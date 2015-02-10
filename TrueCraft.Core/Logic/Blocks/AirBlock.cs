@@ -12,7 +12,7 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override double BlastResistance { get { return 0; } }
 
-        public override double Hardness { get { return 100000; } }
+        public override double Hardness { get { return 0; } }
 
         public override bool Opaque { get { return false; } }
 
