@@ -26,7 +26,7 @@ namespace TrueCraft.Core.Logic.Items
                 if (block == WaterBlock.BlockID || block == StationaryWaterBlock.BlockID)
                 {
                     var meta = world.GetMetadata(coordinates);
-                    if (meta == 15) // Is source block?
+                    if (meta == 0) // Is source block?
                     {
                         user.Inventory[user.SelectedSlot] = new ItemStack(WaterBucketItem.ItemID);
                         world.SetBlockID(coordinates, 0);
@@ -35,7 +35,7 @@ namespace TrueCraft.Core.Logic.Items
                 else if (block == LavaBlock.BlockID || block == StationaryLavaBlock.BlockID)
                 {
                     var meta = world.GetMetadata(coordinates);
-                    if (meta == 15) // Is source block?
+                    if (meta == 0) // Is source block?
                     {
                         user.Inventory[user.SelectedSlot] = new ItemStack(LavaBucketItem.ItemID);
                         world.SetBlockID(coordinates, 0);
@@ -52,8 +52,10 @@ namespace TrueCraft.Core.Logic.Items
                         var blockType = RelevantBlockType.Value;
                         user.Server.BlockUpdatesEnabled = false;
                         world.SetBlockID(coordinates, blockType);
-                        world.SetMetadata(coordinates, 15); // Source block
+                        world.SetMetadata(coordinates, 0); // Source block
                         user.Server.BlockUpdatesEnabled = true;
+                        var liquidProvider = world.BlockRepository.GetBlockProvider(blockType);
+                        liquidProvider.BlockPlaced(new BlockDescriptor { Coordinates = coordinates }, face, world, user);
                     }
                     user.Inventory[user.SelectedSlot] = new ItemStack(BucketItem.ItemID);
                 }

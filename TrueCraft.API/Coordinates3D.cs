@@ -40,6 +40,21 @@ namespace TrueCraft.API
         #region Math
 
         /// <summary>
+        /// Clamps the coordinates to within the specified value.
+        /// </summary>
+        /// <param name="value">Value.</param>
+        public void Clamp(int value)
+        {
+            // TODO: Fix for negative values
+            if (Math.Abs(X) > value)
+                X = value * (X < 0 ? -1 : 1);
+            if (Math.Abs(Y) > value)
+                Y = value * (Y < 0 ? -1 : 1);
+            if (Math.Abs(Z) > value)
+                Z = value * (Z < 0 ? -1 : 1);
+        }
+
+        /// <summary>
         /// Calculates the distance between two Coordinates3D objects.
         /// </summary>
         public double DistanceTo(Coordinates3D other)
@@ -221,6 +236,10 @@ namespace TrueCraft.API
         public static readonly Coordinates3D West = new Coordinates3D(-1, 0, 0);
         public static readonly Coordinates3D North = new Coordinates3D(0, 0, -1);
         public static readonly Coordinates3D South = new Coordinates3D(0, 0, 1);
+
+        public static readonly Coordinates3D OneX = new Coordinates3D(1, 0, 0);
+        public static readonly Coordinates3D OneY = new Coordinates3D(0, 1, 0);
+        public static readonly Coordinates3D OneZ = new Coordinates3D(0, 0, 1);
 
         #endregion
 

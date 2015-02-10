@@ -19,7 +19,7 @@ namespace TrueCraft.Core.TerrainGen
         public FlatlandGenerator()
         {
             GeneratorOptions = DefaultGeneratorOptions;
-            SpawnPoint = new Vector3(0, 4, 0);
+            SpawnPoint = new Vector3(0, 5, 0);
         }
 
         public FlatlandGenerator(string generatorOptions)

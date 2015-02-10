@@ -287,39 +287,35 @@ namespace TrueCraft
                     while (client.DataAvailable)
                     {
                         idle = false;
-                        var packet = PacketReader.ReadPacket(client.MinecraftStream);
-                        LogPacket(packet, true);
-                        if (PacketHandlers[packet.ID] != null)
+                        try
                         {
-                            try
-                            {
+                            var packet = PacketReader.ReadPacket(client.MinecraftStream);
+                            LogPacket(packet, true);
+                            if (PacketHandlers[packet.ID] != null)
                                 PacketHandlers[packet.ID](packet, client, this);
-                            }
-                            catch (PlayerDisconnectException)
-                            {
-                                DisconnectClient(client);
-                                break;
-                            }
-                            catch (SocketException e)
-                            {
-                                Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
-                                Log(LogCategory.Debug, e.ToString());
-                                DisconnectClient(client);
-                                break;
-                            }
-                            catch (Exception e)
-                            {
-                                Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
-                                Log(LogCategory.Debug, e.ToString());
-                                PacketReader.WritePacket(client.MinecraftStream, new DisconnectPacket("An exception has occured on the server."));
-                                client.MinecraftStream.BaseStream.Flush();
-                                DisconnectClient(client);
-                                break;
-                            }
+                            else
+                                client.Log("Unhandled packet {0}", packet.GetType().Name);
                         }
-                        else
+                        catch (PlayerDisconnectException)
                         {
-                            client.Log("Unhandled packet {0}", packet.GetType().Name);
+                            DisconnectClient(client);
+                            break;
+                        }
+                        catch (SocketException e)
+                        {
+                            Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
+                            Log(LogCategory.Debug, e.ToString());
+                            DisconnectClient(client);
+                            break;
+                        }
+                        catch (Exception e)
+                        {
+                            Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
+                            Log(LogCategory.Debug, e.ToString());
+                            PacketReader.WritePacket(client.MinecraftStream, new DisconnectPacket("An exception has occured on the server."));
+                            client.MinecraftStream.BaseStream.Flush();
+                            DisconnectClient(client);
+                            break;
                         }
                     }
                     if (idle)
