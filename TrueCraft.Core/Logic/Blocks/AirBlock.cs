@@ -1,4 +1,6 @@
 ﻿using System;
+using TrueCraft.API;
+using TrueCraft.API.Logic;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
@@ -21,6 +23,11 @@ namespace TrueCraft.Core.Logic.Blocks
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(0, 0);
+        }
+
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        {
+            return new ItemStack[0];
         }
     }
 }

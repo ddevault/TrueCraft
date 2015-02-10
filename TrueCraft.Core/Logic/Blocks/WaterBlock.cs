@@ -193,8 +193,8 @@ namespace TrueCraft.Core.Logic.Blocks
                         if (Math.Abs(z) + Math.Abs(x) > maxDistance)
                             continue;
                         var check = new Coordinates3D(x, -1, z);
-                        var c = world.GetBlockID(check + coords);
-                        if (c == 0 || c == WaterBlock.BlockID || c == StationaryWaterBlock.BlockID)
+                        var c = world.BlockRepository.GetBlockProvider(world.GetBlockID(check + coords));
+                        if (!c.Opaque)
                         {
                             if (!LineOfSight(world, check + coords, coords))
                                 continue;
@@ -220,18 +220,26 @@ namespace TrueCraft.Core.Logic.Blocks
                 {
                     var location = extraLocations[i];
                     location.Clamp(1);
-                    var xPotential = world.GetBlockID(new Coordinates3D(location.X, 0, 0) + coords);
-                    if (xPotential == 0)
+                    var xPotential = world.BlockRepository.GetBlockProvider(world.GetBlockID(new Coordinates3D(location.X, 0, 0) + coords));
+                    if (xPotential.Hardness == 0 && xPotential.ID != WaterBlock.BlockID && xPotential.ID != StationaryWaterBlock.BlockID)
                     {
                         if (PlaceWater(server, new Coordinates3D(location.X, 0, 0) + coords, world, (byte)(meta + 1)))
+                        {
                             spread = true;
+                            xPotential.GenerateDropEntity(new BlockDescriptor
+                                { Coordinates = new Coordinates3D(location.X, 0, 0) + coords, ID = xPotential.ID }, world, server);
+                        }
                     }
 
-                    var zPotential = world.GetBlockID(new Coordinates3D(0, 0, location.Z) + coords);
-                    if (zPotential == 0)
+                    var zPotential = world.BlockRepository.GetBlockProvider(world.GetBlockID(new Coordinates3D(0, 0, location.Z) + coords));
+                    if (zPotential.Hardness == 0 && zPotential.ID != WaterBlock.BlockID && zPotential.ID != StationaryWaterBlock.BlockID)
                     {
                         if (PlaceWater(server, new Coordinates3D(0, 0, location.Z) + coords, world, (byte)(meta + 1)))
+                        {
                             spread = true;
+                            zPotential.GenerateDropEntity(new BlockDescriptor
+                                { Coordinates = new Coordinates3D(0, 0, location.Z) + coords, ID = zPotential.ID }, world, server);
+                        }
                     }
                 }
                 if (!spread)

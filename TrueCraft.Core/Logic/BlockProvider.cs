@@ -30,7 +30,7 @@ namespace TrueCraft.Core.Logic
             world.SetBlockID(descriptor.Coordinates, 0);
         }
 
-        protected void GenerateDropEntity(BlockDescriptor descriptor, IWorld world, IMultiplayerServer server)
+        public void GenerateDropEntity(BlockDescriptor descriptor, IWorld world, IMultiplayerServer server)
         {
             var entityManager = server.GetEntityManagerForWorld(world);
             var items = GetDrop(descriptor);
