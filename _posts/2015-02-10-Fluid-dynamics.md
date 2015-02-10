@@ -11,7 +11,7 @@ blurb: |
 
 With today's arduous coding efforts, fluid dynamics are mostly working and quite
 close to vanilla's implementation. Fluids in Minecraft is a form of celluar
-automaton that has a set of rules for how it propegates through the game world,
+automaton that has a set of rules for how it propagates through the game world,
 and it's a huge pain in the ass to get right.
 
 There are still some problems with the implementation that will need to be
