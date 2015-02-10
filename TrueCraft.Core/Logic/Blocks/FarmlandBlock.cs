@@ -27,6 +27,11 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override string DisplayName { get { return "Farmland"; } }
 
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        {
+            return new[] { new ItemStack(DirtBlock.BlockID) };
+        }
+
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(7, 5);

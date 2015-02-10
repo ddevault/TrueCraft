@@ -1,5 +1,7 @@
 using System;
 using TrueCraft.API.Logic;
+using TrueCraft.API.Server;
+using TrueCraft.API.World;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
@@ -20,6 +22,11 @@ namespace TrueCraft.Core.Logic.Blocks
         public override byte LightModifier { get { return 3; } }
         
         public override string DisplayName { get { return "Water"; } }
+
+        public override void BlockUpdate(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world)
+        {
+            base.BlockUpdate(descriptor, server, world);
+        }
     }
 
     public class StationaryWaterBlock : WaterBlock
