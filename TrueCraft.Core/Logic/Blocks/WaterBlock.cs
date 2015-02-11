@@ -99,7 +99,7 @@ namespace TrueCraft.Core.Logic.Blocks
             if (again)
             {
                 server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(SecondsBetweenUpdates), (_server) =>
-                    DoAutomata(_server, world, coords));
+                    AutomataUpdate(_server, world, coords));
             }
         }
 
@@ -175,7 +175,7 @@ namespace TrueCraft.Core.Logic.Blocks
 
             var currentLevel = world.GetMetadata(coords);
             var blockBelow = world.BlockRepository.GetBlockProvider(world.GetBlockID(coords + Coordinates3D.Down));
-            if (!blockBelow.Opaque)
+            if (!blockBelow.Opaque && blockBelow.ID != WaterBlock.BlockID && blockBelow.ID != StationaryWaterBlock.BlockID)
             {
                 outwardFlow.Add(new LiquidFlow(coords + Coordinates3D.Down, 1));
                 if (currentLevel != 0)
@@ -268,7 +268,7 @@ namespace TrueCraft.Core.Logic.Blocks
             }
 
             // Process inward flow
-            if (inward > MaximumFluidDepletion)
+            if (inward >= MaximumFluidDepletion)
             {
                 world.SetBlockID(coords, 0);
                 return true;
@@ -293,7 +293,7 @@ namespace TrueCraft.Core.Logic.Blocks
                 server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(SecondsBetweenUpdates), s => AutomataUpdate(s, world, target));
             }
             // Set our block to still water if we are done spreading.
-            if (outward.Length == 0)
+            if (outward.Length == 0 && inward == previousLevel)
             {
                 world.SetBlockID(coords, StationaryWaterBlock.BlockID);
                 return false;
@@ -340,10 +340,9 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override void BlockUpdate(BlockDescriptor descriptor, BlockDescriptor source, IMultiplayerServer server, IWorld world)
         {
-            if (source.ID == StationaryWaterBlock.BlockID || source.ID == WaterBlock.BlockID)
-                return;
             var outward = DetermineOutwardFlow(world, descriptor.Coordinates);
-            if (outward.Length != 0)
+            var inward = DetermineInwardFlow(world, descriptor.Coordinates);
+            if (outward.Length != 0 || inward != descriptor.Metadata)
             {
                 world.SetBlockID(descriptor.Coordinates, WaterBlock.BlockID);
                 ScheduleNextEvent(descriptor.Coordinates, world, server);
