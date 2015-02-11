@@ -22,5 +22,5 @@ bugs that were tracked down and resolved.
 
 Additionally, some work was started towards supporting falling sand, but the
 physics engine wasn't cooperating and work on that will have to resume some
-other time. However, at to dextar0's suggestion, I did take the time to
-implement stair placement properly.
+other time. However, at dextar0's suggestion, I did take the time to implement
+stair placement properly.
