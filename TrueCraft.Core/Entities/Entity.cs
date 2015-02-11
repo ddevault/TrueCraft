@@ -7,6 +7,7 @@ using TrueCraft.API.Entities;
 using TrueCraft.API;
 using TrueCraft.API.Networking;
 using TrueCraft.API.Server;
+using TrueCraft.API.World;
 
 namespace TrueCraft.Core.Entities
 {
@@ -22,6 +23,8 @@ namespace TrueCraft.Core.Entities
         public DateTime SpawnTime { get; set; }
 
         public int EntityID { get; set; }
+        public IEntityManager EntityManager { get; set; }
+        public IWorld World { get; set; }
 
         protected Vector3 _Position;
         public virtual Vector3 Position

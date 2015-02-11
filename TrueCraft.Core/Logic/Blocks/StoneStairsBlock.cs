@@ -4,9 +4,9 @@ using TrueCraft.API;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class StoneStairsBlock : BlockProvider, ICraftingRecipe
+    public class StoneStairsBlock : WoodenStairsBlock, ICraftingRecipe
     {
-        public static readonly byte BlockID = 0x43;
+        public static new readonly byte BlockID = 0x43;
         
         public override byte ID { get { return 0x43; } }
         
@@ -22,7 +22,7 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override string DisplayName { get { return "Stone Stairs"; } }
 
-        public ItemStack[,] Pattern
+        public override ItemStack[,] Pattern
         {
             get
             {
@@ -35,7 +35,7 @@ namespace TrueCraft.Core.Logic.Blocks
             }
         }
 
-        public ItemStack Output
+        public override ItemStack Output
         {
             get
             {
@@ -43,7 +43,7 @@ namespace TrueCraft.Core.Logic.Blocks
             }
         }
 
-        public bool SignificantMetadata
+        public override bool SignificantMetadata
         {
             get
             {

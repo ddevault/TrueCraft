@@ -10,6 +10,20 @@ namespace TrueCraft.Core.Networking.Packets
     {
         public byte ID { get { return 0x17; } }
 
+        public SpawnGenericEntityPacket(int entityID, sbyte entityType, int x, int y, int z,
+            int data, short? xVelocity, short? yVelocity, short? zVelocity)
+        {
+            EntityID = entityID;
+            EntityType = entityType;
+            X = x;
+            Y = y;
+            Z = z;
+            Data = data;
+            XVelocity = xVelocity;
+            YVelocity = yVelocity;
+            ZVelocity = zVelocity;
+        }
+
         public int EntityID;
         public sbyte EntityType; // TODO: Enum? Maybe a lookup would be better.
         public int X, Y, Z;

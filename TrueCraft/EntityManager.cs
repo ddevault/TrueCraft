@@ -224,6 +224,8 @@ namespace TrueCraft
         public void SpawnEntity(IEntity entity)
         {
             entity.SpawnTime = DateTime.Now;
+            entity.EntityManager = this;
+            entity.World = World;
             entity.EntityID = NextEntityID++;
             entity.PropertyChanged -= HandlePropertyChanged;
             entity.PropertyChanged += HandlePropertyChanged;

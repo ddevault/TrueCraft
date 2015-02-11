@@ -1,11 +1,21 @@
 using System;
 using TrueCraft.API.Logic;
 using TrueCraft.API;
+using TrueCraft.API.World;
+using TrueCraft.API.Networking;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
     public class WoodenStairsBlock : BlockProvider, ICraftingRecipe
     {
+        public enum StairDirection
+        {
+            East = 0,
+            West = 1,
+            South = 2,
+            North = 3
+        }
+
         public static readonly byte BlockID = 0x35;
         
         public override byte ID { get { return 0x35; } }
@@ -22,7 +32,7 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override string DisplayName { get { return "Wooden Stairs"; } }
 
-        public ItemStack[,] Pattern
+        public virtual ItemStack[,] Pattern
         {
             get
             {
@@ -35,7 +45,7 @@ namespace TrueCraft.Core.Logic.Blocks
             }
         }
 
-        public ItemStack Output
+        public virtual ItemStack Output
         {
             get
             {
@@ -43,12 +53,36 @@ namespace TrueCraft.Core.Logic.Blocks
             }
         }
 
-        public bool SignificantMetadata
+        public virtual bool SignificantMetadata
         {
             get
             {
                 return false;
             }
+        }
+
+        public override void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            byte meta = 0;
+            switch (MathHelper.DirectionByRotationFlat(user.Entity.Yaw))
+            {
+                case Direction.East:
+                    meta = (byte)StairDirection.East;
+                    break;
+                case Direction.West:
+                    meta = (byte)StairDirection.West;
+                    break;
+                case Direction.North:
+                    meta = (byte)StairDirection.North;
+                    break;
+                case Direction.South:
+                    meta = (byte)StairDirection.South;
+                    break;
+                default:
+                    meta = 0; // Should never happen
+                    break;
+            }
+            world.SetMetadata(descriptor.Coordinates, meta);
         }
     }
 }

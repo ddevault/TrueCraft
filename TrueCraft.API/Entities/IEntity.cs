@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using TrueCraft.API.Networking;
 using TrueCraft.API.Server;
+using TrueCraft.API.World;
 
 namespace TrueCraft.API.Entities
 {
@@ -16,6 +17,8 @@ namespace TrueCraft.API.Entities
         DateTime SpawnTime { get; set; }
         MetadataDictionary Metadata { get; }
         Size Size { get; }
+        IEntityManager EntityManager { get; set; }
+        IWorld World { get; set; }
         bool SendMetadataToClients { get; }
         void Update(IEntityManager entityManager);
     }
