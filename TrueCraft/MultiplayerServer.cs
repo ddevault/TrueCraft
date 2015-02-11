@@ -142,12 +142,13 @@ namespace TrueCraft
             while (PendingBlockUpdates.Count != 0)
             {
                 var update = PendingBlockUpdates.Dequeue();
+                var source = update.World.GetBlockData(update.Coordinates);
                 foreach (var offset in adjacent)
                 {
                     var descriptor = update.World.GetBlockData(update.Coordinates + offset);
                     var provider = BlockRepository.GetBlockProvider(descriptor.ID);
                     if (provider != null)
-                        provider.BlockUpdate(descriptor, this, update.World);
+                        provider.BlockUpdate(descriptor, source, this, update.World);
                 }
             }
         }
@@ -284,7 +285,9 @@ namespace TrueCraft
                         Clients.RemoveAt(i);
                         break;
                     }
-                    while (client.DataAvailable)
+                    const long maxTicks = 100000 * 200; // 200ms
+                    var start = DateTime.Now;
+                    while (client.DataAvailable && (DateTime.Now.Ticks - start.Ticks) < maxTicks)
                     {
                         idle = false;
                         try

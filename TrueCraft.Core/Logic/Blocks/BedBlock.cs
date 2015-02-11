@@ -83,11 +83,11 @@ namespace TrueCraft.Core.Logic.Blocks
             return true;
         }
 
-        public override void BlockUpdate(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world)
+        public override void BlockUpdate(BlockDescriptor descriptor, BlockDescriptor source, IMultiplayerServer server, IWorld world)
         {
             if (!ValidBedPosition(descriptor, server.BlockRepository, world))
                 world.SetBlockID(descriptor.Coordinates, 0);
-            base.BlockUpdate(descriptor, server, world);
+            base.BlockUpdate(descriptor, source, server, world);
         }
     }
 }

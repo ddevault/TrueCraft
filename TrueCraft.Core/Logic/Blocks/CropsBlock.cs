@@ -51,7 +51,7 @@ namespace TrueCraft.Core.Logic.Blocks
             }
         }
 
-        public override void BlockUpdate(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world)
+        public override void BlockUpdate(BlockDescriptor descriptor, BlockDescriptor source, IMultiplayerServer server, IWorld world)
         {
             if (world.GetBlockID(descriptor.Coordinates + Coordinates3D.Down) != FarmlandBlock.BlockID)
             {

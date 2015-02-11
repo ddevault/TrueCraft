@@ -20,7 +20,7 @@ namespace TrueCraft.API.Logic
         bool BlockRightClicked(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user);
         void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user);
         void BlockMined(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user);
-        void BlockUpdate(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world);
+        void BlockUpdate(BlockDescriptor descriptor, BlockDescriptor source, IMultiplayerServer server, IWorld world);
         void BlockScheduledEvent(BlockDescriptor descriptor, IWorld world, object data);
     }
 }

@@ -54,7 +54,7 @@ namespace TrueCraft.Core.Logic
             return true;
         }
 
-        public virtual void BlockUpdate(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world)
+        public virtual void BlockUpdate(BlockDescriptor descriptor, BlockDescriptor source, IMultiplayerServer server, IWorld world)
         {
             if (!IsSupported(descriptor, server, world))
             {

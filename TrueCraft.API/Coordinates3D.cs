@@ -14,7 +14,7 @@ namespace TrueCraft.API
             X = Y = Z = value;
         }
 
-        public Coordinates3D(int x, int y, int z)
+        public Coordinates3D(int x = 0, int y = 0, int z = 0)
         {
             X = x;
             Y = y;
