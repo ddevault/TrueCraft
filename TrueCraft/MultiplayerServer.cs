@@ -59,7 +59,7 @@ namespace TrueCraft
         private TcpListener Listener;
         private readonly PacketHandler[] PacketHandlers;
         private IList<ILogProvider> LogProviders;
-        private object ClientLock = new object();
+        internal object ClientLock = new object();
 
         public MultiplayerServer()
         {
@@ -215,8 +215,8 @@ namespace TrueCraft
                 SendMessage(ChatColor.Yellow + "{0} has left the server.", client.Username);
                 GetEntityManagerForWorld(client.World).DespawnEntity(client.Entity);
                 GetEntityManagerForWorld(client.World).FlushDespawns();
-                client.Disconnected = true;
             }
+            client.Disconnected = true;
         }
 
         private void AcceptClient(IAsyncResult result)
@@ -253,7 +253,8 @@ namespace TrueCraft
                         try
                         {
                             IPacket packet;
-                            while (!client.PacketQueue.TryDequeue(out packet)) ;
+                            while (!client.PacketQueue.TryDequeue(out packet))
+                                ;
                             LogPacket(packet, false);
                             PacketReader.WritePacket(client.MinecraftStream, packet);
                             client.MinecraftStream.BaseStream.Flush();
@@ -293,6 +294,7 @@ namespace TrueCraft
                         try
                         {
                             var packet = PacketReader.ReadPacket(client.MinecraftStream);
+                            client.LastSuccessfulPacket = packet;
                             LogPacket(packet, true);
                             if (PacketHandlers[packet.ID] != null)
                                 PacketHandlers[packet.ID](packet, client, this);
@@ -315,8 +317,12 @@ namespace TrueCraft
                         {
                             Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
                             Log(LogCategory.Debug, e.ToString());
-                            PacketReader.WritePacket(client.MinecraftStream, new DisconnectPacket("An exception has occured on the server."));
-                            client.MinecraftStream.BaseStream.Flush();
+                            try
+                            {
+                                PacketReader.WritePacket(client.MinecraftStream, new DisconnectPacket("An exception has occured on the server."));
+                                client.MinecraftStream.BaseStream.Flush();
+                            }
+                            catch { /* Silently ignore, by now it's too late */ }
                             DisconnectClient(client);
                             break;
                         }

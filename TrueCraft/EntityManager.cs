@@ -254,17 +254,21 @@ namespace TrueCraft
             IEntity entity;
             while (PendingDespawns.Count != 0)
             {
-                while (!PendingDespawns.TryTake(out entity));
+                while (!PendingDespawns.TryTake(out entity))
+                    ;
                 if (entity is IPhysicsEntity)
                     PhysicsEngine.RemoveEntity((IPhysicsEntity)entity);
-                for (int i = 0, ServerClientsCount = Server.Clients.Count; i < ServerClientsCount; i++)
+                lock ((Server as MultiplayerServer).ClientLock) // TODO: Thread safe way to iterate over client collection
                 {
-                    var client = (RemoteClient)Server.Clients[i];
-                    if (client.KnownEntities.Contains(entity) && !client.Disconnected)
+                    for (int i = 0, ServerClientsCount = Server.Clients.Count; i < ServerClientsCount; i++)
                     {
-                        client.QueuePacket(new DestroyEntityPacket(entity.EntityID));
-                        client.KnownEntities.Remove(entity);
-                        client.Log("Destroying entity {0} ({1})", entity.EntityID, entity.GetType().Name);
+                        var client = (RemoteClient)Server.Clients[i];
+                        if (client.KnownEntities.Contains(entity) && !client.Disconnected)
+                        {
+                            client.QueuePacket(new DestroyEntityPacket(entity.EntityID));
+                            client.KnownEntities.Remove(entity);
+                            client.Log("Destroying entity {0} ({1})", entity.EntityID, entity.GetType().Name);
+                        }
                     }
                 }
                 lock (EntityLock)

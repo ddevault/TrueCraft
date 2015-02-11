@@ -59,6 +59,7 @@ namespace TrueCraft
         public ItemStack ItemStaging { get; set; }
         public IWindow CurrentWindow { get; internal set; }
         public bool EnableLogging { get; set; }
+        public IPacket LastSuccessfulPacket { get; set; }
 
         private IEntity _Entity;
         public IEntity Entity

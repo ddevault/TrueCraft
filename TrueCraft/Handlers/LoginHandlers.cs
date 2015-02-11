@@ -28,6 +28,8 @@ namespace TrueCraft.Handlers
                 client.QueuePacket(new DisconnectPacket("Server outdated! Use beta 1.7.3."));
             else if (server.Worlds.Count == 0)
                 client.QueuePacket(new DisconnectPacket("Server has no worlds configured."));
+            else if (client.Username == "PattyMac7")
+                client.QueuePacket(new DisconnectPacket("Come on dude"));
             else
             {
                 client.LoggedIn = true;

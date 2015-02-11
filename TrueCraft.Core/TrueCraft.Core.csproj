@@ -271,6 +271,7 @@
     <Compile Include="Windows\CraftingBenchWindow.cs" />
     <Compile Include="Networking\Packets\CloseWindowPacket.cs" />
     <Compile Include="Logic\Items\ArmorItem.cs" />
+    <Compile Include="Logic\Blocks\FluidBlock.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
