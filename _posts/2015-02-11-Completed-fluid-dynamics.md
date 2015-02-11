@@ -16,7 +16,7 @@ code, and applying it to lava.
 
 The code was refactored to move the fluid dynamics into a shared simulation
 provider, and then applied to both water and lava. This should allow modders in
-the future to create new kinds of fulids (I belive rivers of milk have been
+the future to create new kinds of fulids (I believe rivers of milk have been
 suggested). On top of that, yesterday's implementation came with a handful of
 bugs that were tracked down and resolved.
 
