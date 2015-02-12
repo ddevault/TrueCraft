@@ -33,6 +33,8 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override string DisplayName { get { return "Lava"; } }
 
+        protected override bool AllowSourceCreation { get { return false; } }
+
         protected override double SecondsBetweenUpdates { get { return 2; } }
 
         private byte _MaximumFluidDepletion { get; set; }

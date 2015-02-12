@@ -36,12 +36,14 @@ namespace TrueCraft.Core.Logic.Blocks
         protected abstract byte FlowingID { get; }
         protected abstract byte StillID { get; }
 
+        protected virtual bool AllowSourceCreation { get { return true; } }
+
         private static readonly Coordinates3D[] Neighbors =
             {
-                Coordinates3D.Left,
-                Coordinates3D.Right,
-                Coordinates3D.Forwards,
-                Coordinates3D.Backwards
+                Coordinates3D.North,
+                Coordinates3D.South,
+                Coordinates3D.East,
+                Coordinates3D.West
             };
 
         /// <summary>
@@ -93,7 +95,7 @@ namespace TrueCraft.Core.Logic.Blocks
 
         private void AutomataUpdate(IMultiplayerServer server, IWorld world, Coordinates3D coords)
         {
-            if (world.GetBlockID(coords) != ID)
+            if (world.GetBlockID(coords) != FlowingID && world.GetBlockID(coords) != StillID)
                 return;
             server.BlockUpdatesEnabled = false;
             var again = DoAutomata(server, world, coords);
@@ -183,7 +185,7 @@ namespace TrueCraft.Core.Logic.Blocks
                                 neighboringSourceBlocks++;
                         }
                     }
-                    if (neighboringSourceBlocks >= 2)
+                    if (neighboringSourceBlocks >= 2 && AllowSourceCreation)
                         currentLevel = 0;
                     if (highestNeighboringFluid > 0)
                         currentLevel = (byte)(highestNeighboringFluid + 1);
@@ -276,6 +278,18 @@ namespace TrueCraft.Core.Logic.Blocks
                     {
                         if (outwardFlow.All(f => f.TargetBlock != zCoordinateCheck))
                             outwardFlow.Add(new LiquidFlow(zCoordinateCheck, (byte)(currentLevel + 1)));
+                    }
+                }
+
+                // Occasionally, there are scenarios where the nearest candidate hole is not acceptable, but
+                // there is space immediately next to the block. We should fill that space.
+                if (outwardFlow.Count == 0 && blockBelow.ID != FlowingID && blockBelow.ID != StillID)
+                {
+                    for (int i = 0; i < Neighbors.Length; i++)
+                    {
+                        var b = world.BlockRepository.GetBlockProvider(world.GetBlockID(coords + Neighbors[i]));
+                        if (!b.Opaque && b.ID != StillID && b.ID != FlowingID)
+                            outwardFlow.Add(new LiquidFlow(Neighbors[i] + coords, (byte)(currentLevel + 1)));
                     }
                 }
             }
