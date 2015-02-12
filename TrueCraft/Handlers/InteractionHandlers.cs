@@ -35,6 +35,8 @@ namespace TrueCraft.Handlers
                     }
                     if (provider == null)
                         server.SendMessage(ChatColor.Red + "WARNING: block provider for ID {0} is null (player digging)", descriptor.ID);
+                    else
+                        provider.BlockLeftClicked(descriptor, packet.Face, world, client);
                     if (provider != null && provider.Hardness == 0)
                         provider.BlockMined(descriptor, packet.Face, world, client);
                     break;

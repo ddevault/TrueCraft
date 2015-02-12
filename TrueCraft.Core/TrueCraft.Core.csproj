@@ -203,7 +203,6 @@
     <Compile Include="Logic\Blocks\GrassBlock.cs" />
     <Compile Include="Logic\Blocks\GravelBlock.cs" />
     <Compile Include="Logic\Blocks\IceBlock.cs" />
-    <Compile Include="Logic\Blocks\IronDoorBlock.cs" />
     <Compile Include="Logic\Blocks\IronOreBlock.cs" />
     <Compile Include="Logic\Blocks\JackoLanternBlock.cs" />
     <Compile Include="Logic\Blocks\JukeboxBlock.cs" />
@@ -242,7 +241,6 @@
     <Compile Include="Logic\Blocks\TrapdoorBlock.cs" />
     <Compile Include="Logic\Blocks\WaterBlock.cs" />
     <Compile Include="Logic\Blocks\WoodBlock.cs" />
-    <Compile Include="Logic\Blocks\WoodenDoorBlock.cs" />
     <Compile Include="Logic\Blocks\WoodenPlanksBlock.cs" />
     <Compile Include="Logic\Blocks\WoodenStairsBlock.cs" />
     <Compile Include="Logic\Blocks\WoolBlock.cs" />
@@ -273,6 +271,7 @@
     <Compile Include="Logic\Items\ArmorItem.cs" />
     <Compile Include="Logic\Blocks\FluidBlock.cs" />
     <Compile Include="Entities\FallingSandEntity.cs" />
+    <Compile Include="Logic\Blocks\DoorBlock.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

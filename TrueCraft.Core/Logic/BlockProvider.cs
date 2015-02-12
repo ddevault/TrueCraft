@@ -14,6 +14,11 @@ namespace TrueCraft.Core.Logic
     /// </summary>
     public abstract class BlockProvider : IItemProvider, IBlockProvider
     {
+        public virtual void BlockLeftClicked(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            // This space intentionally left blank
+        }
+
         public virtual bool BlockRightClicked(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
             return true;
