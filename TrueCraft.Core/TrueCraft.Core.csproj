@@ -296,14 +296,7 @@
     <Compile Include="MathHelper.cs" />
     <Compile Include="Logging\PacketLogging.cs" />
     <Compile Include="Logging\FileLogProvider.cs" />
-    <Compile Include="Entities\Entity.cs" />
-    <Compile Include="Entities\EntityEventArgs.cs" />
-    <Compile Include="Entities\ItemEntity.cs" />
-    <Compile Include="Entities\LivingEntity.cs" />
-    <Compile Include="Entities\ObjectEntity.cs" />
-    <Compile Include="Entities\PlayerEntity.cs" />
     <Compile Include="Logic\Blocks\AirBlock.cs" />
-    <Compile Include="Entities\EntityFlags.cs" />
     <Compile Include="Windows\CraftingBenchWindow.cs" />
     <Compile Include="Networking\Packets\CloseWindowPacket.cs" />
     <Compile Include="Logic\Items\ArmorItem.cs" />

@@ -64,11 +64,7 @@ namespace TrueCraft
             {
                 e.PreventDefault = true;
                 var messageArray = e.Message.TrimStart('/')
-<<<<<<< HEAD
                     .Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-=======
-                .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
->>>>>>> New terrain generator
                 CommandManager.HandleCommand(e.Client, messageArray[0], messageArray);
                 return;
             }
