@@ -21,7 +21,7 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override byte Luminance { get { return 0; } }
 
-        public override bool Opaque { get { return false; } }
+        public override bool Opaque { get { return true; } } // TODO: Distinguish between opaque and instantly destroyable
 
         public override byte LightModifier { get { return 255; } }
         

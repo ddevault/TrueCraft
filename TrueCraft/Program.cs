@@ -21,10 +21,6 @@ namespace TrueCraft
         {
             // TODO: Make this more flexible
             var server = new MultiplayerServer();
-#if DEBUG
-            if (Directory.Exists("world"))
-                Directory.Delete("world", true);
-#endif
             IWorld world;
             try
             {
