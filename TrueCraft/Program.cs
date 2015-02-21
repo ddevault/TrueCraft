@@ -42,9 +42,6 @@ namespace TrueCraft
             #if DEBUG
             server.AddLogProvider(new FileLogProvider(new StreamWriter("packets.log", false), LogCategory.Packets));
             #endif
-            #if DEBUG
-            server.AddLogProvider(new FileLogProvider(new StreamWriter("packets.log", false), LogCategory.Packets));
-            #endif
             CommandManager = new CommandManager();
             server.ChatMessageReceived += HandleChatMessageReceived;
             server.Start(new IPEndPoint(IPAddress.Any, 25565));
