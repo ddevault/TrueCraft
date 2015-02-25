@@ -25,16 +25,18 @@ namespace TrueCraft.Core.TerrainGen.Decorators
                     IBiomeProvider Biome = biomes.GetBiome(chunk.Biomes[X * Chunk.Width + Z]);
                     var BlockX = MathHelper.ChunkToBlockX(X, chunk.Coordinates.X);
                     var BlockZ = MathHelper.ChunkToBlockZ(Z, chunk.Coordinates.Z);
-                    var Height = chunk.HeightMap[X * Chunk.Width + Z] + 1;
-                    if (Biome.Plants.Contains(PlantSpecies.Cactus) && ChanceNoise.Value2D(BlockX, BlockZ) > 1.3)
+                    var Height = chunk.HeightMap[X * Chunk.Width + Z];
+                    if (Biome.Plants.Contains(PlantSpecies.Cactus) && ChanceNoise.Value2D(BlockX, BlockZ) > 1.7)
                     {
-                        if (chunk.GetBlockID(new Coordinates3D(X, Height - 1, Z)).Equals(SandBlock.BlockID))
+                        Coordinates3D BlockLocation = new Coordinates3D(X, Height, Z);
+                        Coordinates3D CactiPosition = BlockLocation + Coordinates3D.Up;
+                        if (chunk.GetBlockID(BlockLocation).Equals(SandBlock.BlockID))
                         {
                             var HeightChance = ChanceNoise.Value2D(BlockX, BlockZ);
                             var CactusHeight = (HeightChance < 1.4) ? 2 : 3;
-                            for (int Y = Height; Y < Height + CactusHeight; Y++)
+                            for (int Y = CactiPosition.Y; Y < CactiPosition.Y + CactusHeight; Y++)
                             {
-                                chunk.SetBlockID(new Coordinates3D(X, Y, Z), CactusBlock.BlockID);
+                                chunk.SetBlockID(new Coordinates3D(CactiPosition.X, Y, CactiPosition.Z), CactusBlock.BlockID);
                             }
                         }
                     }

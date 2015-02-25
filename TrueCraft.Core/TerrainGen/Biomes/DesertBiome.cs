@@ -57,5 +57,13 @@ namespace TrueCraft.Core.TerrainGen.Biomes
                 return SandstoneBlock.BlockID;
             }
         }
+
+        public override int SurfaceDepth
+        {
+            get
+            {
+                return 4;
+            }
+        }
     }
 }

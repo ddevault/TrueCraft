@@ -34,19 +34,11 @@ namespace TrueCraft.Core.TerrainGen.Biomes
             }
         }
 
-        public override byte SurfaceBlock
+        public override double TreeDensity
         {
             get
             {
-                return GrassBlock.BlockID;
-            }
-        }
-
-        public override byte FillerBlock
-        {
-            get
-            {
-                return DirtBlock.BlockID;
+                return 5;
             }
         }
     }

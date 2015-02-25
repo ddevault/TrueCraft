@@ -19,5 +19,7 @@ namespace TrueCraft.API.World
         byte WaterBlock { get; }
         byte SurfaceBlock { get; }
         byte FillerBlock { get; }
+        int SurfaceDepth { get; }
+        int FillerDepth { get; }
     }
 }

@@ -26,7 +26,6 @@ namespace TrueCraft.Core.TerrainGen.Decorators
                     var BlockX = MathHelper.ChunkToBlockX(X, chunk.Coordinates.X);
                     var BlockZ = MathHelper.ChunkToBlockZ(Z, chunk.Coordinates.Z);
                     var Height = chunk.HeightMap[X * Chunk.Width + Z];
-                    Coordinates3D Below = new Coordinates3D(X, Height, Z) + Coordinates3D.Down;
                     if (Noise.Value2D(BlockX, BlockZ) > 0.25)
                     {
                         Coordinates3D BlockLocation = new Coordinates3D(X, Height, Z);

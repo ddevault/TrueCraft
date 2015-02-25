@@ -97,7 +97,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
                         if (X >= 0 && Z >= 0 && Y >= Data.MinY && X < Chunk.Width && Y < Data.MaxY && Z < Chunk.Depth)
                         {
                             IBiomeProvider Biome = biomes.GetBiome(chunk.Biomes[(int)(X * Chunk.Width + Z)]);
-                            if (Biome.Ores.Contains(Data.Type) && chunk.GetBlockID(new Coordinates3D((int)X, (int)Y, (int)Z)).Equals(GlassBlock.BlockID))
+                            if (Biome.Ores.Contains(Data.Type) && chunk.GetBlockID(new Coordinates3D((int)X, (int)Y, (int)Z)).Equals(StoneBlock.BlockID))
                             {
                                 chunk.SetBlockID(new Coordinates3D((int)X, (int)Y, (int)Z), Data.ID);
                             }
@@ -128,7 +128,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
                         if (NewX >= 0 && NewZ >= 0 && NewY >= Data.MinY && NewX < Chunk.Width && NewY < Data.MaxY && NewZ < Chunk.Depth)
                         {
                             IBiomeProvider Biome = biomes.GetBiome(chunk.Biomes[NewX * Chunk.Width + NewZ]);
-                            if (Biome.Ores.Contains(Data.Type) && chunk.GetBlockID(new Coordinates3D((int)NewX, (int)NewY, (int)NewZ)).Equals(GlassBlock.BlockID))
+                            if (Biome.Ores.Contains(Data.Type) && chunk.GetBlockID(new Coordinates3D((int)NewX, (int)NewY, (int)NewZ)).Equals(StoneBlock.BlockID))
                             {
                                 chunk.SetBlockID(new Coordinates3D((int)NewX, (int)NewY, (int)NewZ), Data.ID);
                             }

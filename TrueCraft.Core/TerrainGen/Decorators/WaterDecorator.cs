@@ -24,18 +24,24 @@ namespace TrueCraft.Core.TerrainGen.Decorators
                     {
                         Coordinates3D BlockLocation = new Coordinates3D(X, Y, Z);
                         int BlockID = chunk.GetBlockID(BlockLocation);
-                        if (BlockID.Equals(0))
+                        if (BlockID.Equals(AirBlock.BlockID))
                         {
                             chunk.SetBlockID(BlockLocation, Biome.WaterBlock);
                             Coordinates3D Below = BlockLocation + Coordinates3D.Down;
-                            if (!chunk.GetBlockID(Below).Equals(0) && !chunk.GetBlockID(Below).Equals(Biome.WaterBlock))
+                            if (!chunk.GetBlockID(Below).Equals(AirBlock.BlockID) && !chunk.GetBlockID(Below).Equals(Biome.WaterBlock))
                             {
-                                Random R = new Random(world.Seed);
-                                double Chance = R.NextDouble();
-                                if (Chance < 0.15)
-                                    chunk.SetBlockID(Below, ClayBlock.BlockID);
-                                else
-                                    chunk.SetBlockID(Below, SandBlock.BlockID);
+                                if (!Biome.WaterBlock.Equals(LavaBlock.BlockID) && !Biome.WaterBlock.Equals(StationaryLavaBlock.BlockID))
+                                {
+                                    Random R = new Random(world.Seed);
+                                    if (R.Next(100) < 40)
+                                    {
+                                        chunk.SetBlockID(Below, ClayBlock.BlockID);
+                                    }
+                                    else
+                                    {
+                                        chunk.SetBlockID(Below, SandBlock.BlockID);
+                                    }
+                                }
                             }
                         }
                     }

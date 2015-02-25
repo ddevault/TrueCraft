@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TrueCraft.API.World;
+using TrueCraft.API;
+using TrueCraft.Core.World;
 
 namespace TrueCraft.Core.TerrainGen.Noise
 {
@@ -52,9 +54,20 @@ namespace TrueCraft.Core.TerrainGen.Noise
             return Point0 * (1 - T) + Point1 * T;
         }
 
-        public static double[] ExpandData()
+        public static double BiLinearInterpolate(double X, double Y, double Point00, double Point01, double Point10, double Point11)
         {
-            return new double[0];
+            double Point0 = LinearInterpolate(Point00, Point10, X);
+            double Point1 = LinearInterpolate(Point01, Point11, X);
+
+            return LinearInterpolate(Point0, Point1, Y);
+        }
+
+        public static double TriLinearInterpolate(double X, double Y, double Z, double Point000, double Point001, double Point010, double Point100, double Point011, double Point101, double Point110, double Point111)
+        {
+            double Point0 = BiLinearInterpolate(X, Y, Point000, Point001, Point100, Point101);
+            double Point1 = BiLinearInterpolate(X, Y, Point010, Point011, Point110, Point111);
+
+            return LinearInterpolate(Point0, Point1, Z);
         }
     }
 

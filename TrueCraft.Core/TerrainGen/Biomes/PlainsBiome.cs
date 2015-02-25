@@ -33,21 +33,5 @@ namespace TrueCraft.Core.TerrainGen.Biomes
                 return new TreeSpecies[] { TreeSpecies.Oak };
             }
         }
-
-        public override byte SurfaceBlock
-        {
-            get
-            {
-                return GrassBlock.BlockID;
-            }
-        }
-
-        public override byte FillerBlock
-        {
-            get
-            {
-                return DirtBlock.BlockID;
-            }
-        }
     }
 }

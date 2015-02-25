@@ -72,14 +72,22 @@ namespace TrueCraft.Core.TerrainGen.Biomes
 
         /// <summary>
         /// The main surface block used for the terrain of the biome.
-        /// Note: This field may be removed in the future.
         /// </summary>
         public virtual byte SurfaceBlock { get { return GrassBlock.BlockID; } }
 
         /// <summary>
         /// The main "filler" block found under the surface block in the terrain of the biome.
-        /// Note: This field may be removed in the future.
         /// </summary>
-        public virtual byte FillerBlock { get { return StoneBlock.BlockID; } }
+        public virtual byte FillerBlock { get { return DirtBlock.BlockID; } }
+
+        /// <summary>
+        /// The depth of the surface block layer
+        /// </summary>
+        public virtual int SurfaceDepth { get { return 1; } }
+
+        /// <summary>
+        /// The depth of the "filler" blocks  located below the surface block layer
+        /// </summary>
+        public virtual int FillerDepth { get { return 4; } }
     }
 }

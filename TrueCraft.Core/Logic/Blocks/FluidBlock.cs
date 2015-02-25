@@ -206,7 +206,7 @@ namespace TrueCraft.Core.Logic.Blocks
 
             var currentLevel = world.GetMetadata(coords);
             var blockBelow = world.BlockRepository.GetBlockProvider(world.GetBlockID(coords + Coordinates3D.Down));
-            if (!blockBelow.Opaque && blockBelow.ID != FlowingID && blockBelow.ID != StillID)
+            if (blockBelow.Hardness == 0 && blockBelow.ID != FlowingID && blockBelow.ID != StillID)
             {
                 outwardFlow.Add(new LiquidFlow(coords + Coordinates3D.Down, 1));
                 if (currentLevel != 0)
@@ -232,7 +232,7 @@ namespace TrueCraft.Core.Logic.Blocks
                             continue;
                         var check = new Coordinates3D(x: x, z: z) + Coordinates3D.Down;
                         var c = world.BlockRepository.GetBlockProvider(world.GetBlockID(check + coords));
-                        if (!c.Opaque)
+                        if (c.Hardness == 0)
                         {
                             if (!LineOfSight(world, check + coords, coords))
                                 continue;
@@ -288,7 +288,7 @@ namespace TrueCraft.Core.Logic.Blocks
                     for (int i = 0; i < Neighbors.Length; i++)
                     {
                         var b = world.BlockRepository.GetBlockProvider(world.GetBlockID(coords + Neighbors[i]));
-                        if (!b.Opaque && b.ID != StillID && b.ID != FlowingID)
+                        if (b.Hardness == 0 && b.ID != StillID && b.ID != FlowingID)
                             outwardFlow.Add(new LiquidFlow(Neighbors[i] + coords, (byte)(currentLevel + 1)));
                     }
                 }
@@ -310,7 +310,7 @@ namespace TrueCraft.Core.Logic.Blocks
                 do
                 {
                     var p = world.BlockRepository.GetBlockProvider(world.GetBlockID(candidate));
-                    if (p.Opaque)
+                    if (p.Hardness != 0)
                         return false;
                     candidate.Z += direction.Z;
                 } while (target.Z != candidate.Z);

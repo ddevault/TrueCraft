@@ -40,6 +40,11 @@ namespace TrueCraft.Core.TerrainGen.Noise
 
         public OpenSimplex(long Seed)
         {
+            SetSeed(Seed);
+        }
+
+        public void SetSeed(long Seed)
+        {
             Perm = new short[256];
             PermGradIndex3D = new short[256];
             short[] Source = new short[256];
@@ -48,7 +53,8 @@ namespace TrueCraft.Core.TerrainGen.Noise
             Seed = Seed * 6364136223846793005L + 1442695040888963407L;
             Seed = Seed * 6364136223846793005L + 1442695040888963407L;
             Seed = Seed * 6364136223846793005L + 1442695040888963407L;
-            for (int I = 255; I >= 0; I--) {
+            for (int I = 255; I >= 0; I--)
+            {
                 Seed = Seed * 6364136223846793005L + 1442695040888963407L;
                 int R = (int)((Seed + 31) % (I + 1));
                 if (R < 0)
