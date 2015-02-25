@@ -36,6 +36,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Logging\LogHelpers.cs" />
+    <Compile Include="Entities\Entity.cs" />
+    <Compile Include="Entities\EntityEventArgs.cs" />
+    <Compile Include="Entities\EntityFlags.cs" />
+    <Compile Include="Entities\ItemEntity.cs" />
+    <Compile Include="Entities\LivingEntity.cs" />
+    <Compile Include="Entities\ObjectEntity.cs" />
+    <Compile Include="Entities\PlayerEntity.cs" />
     <Compile Include="Logic\ItemProvider.cs" />
     <Compile Include="Logic\Items\AppleItem.cs" />
     <Compile Include="Logic\Items\ArrowItem.cs" />
@@ -161,6 +168,39 @@
     <Compile Include="Networking\Packets\MapDataPacket.cs" />
     <Compile Include="Networking\Packets\UpdateStatisticPacket.cs" />
     <Compile Include="Networking\Packets\DisconnectPacket.cs" />
+    <Compile Include="TerrainGen\BiomeRepository.cs" />
+    <Compile Include="TerrainGen\Biomes\BiomeProvider.cs" />
+    <Compile Include="TerrainGen\Biomes\DesertBiome.cs" />
+    <Compile Include="TerrainGen\Biomes\ForestBiome.cs" />
+    <Compile Include="TerrainGen\Biomes\FrozenOceanBiome.cs" />
+    <Compile Include="TerrainGen\Biomes\OceanBiome.cs" />
+    <Compile Include="TerrainGen\Biomes\PlainsBiome.cs" />
+    <Compile Include="TerrainGen\Biomes\RainforestBiome.cs" />
+    <Compile Include="TerrainGen\Biomes\SavannaBiome.cs" />
+    <Compile Include="TerrainGen\Biomes\SeasonalForestBiome.cs" />
+    <Compile Include="TerrainGen\Biomes\ShrublandBiome.cs" />
+    <Compile Include="TerrainGen\Biomes\SwamplandBiome.cs" />
+    <Compile Include="TerrainGen\Biomes\TaigaBiome.cs" />
+    <Compile Include="TerrainGen\Biomes\TundraBiome.cs" />
+    <Compile Include="TerrainGen\Decorators\CactusDecorator.cs" />
+    <Compile Include="TerrainGen\Decorators\DungeonDecorator.cs" />
+    <Compile Include="TerrainGen\Decorators\PlantDecorator.cs" />
+    <Compile Include="TerrainGen\Decorators\FreezeDecorator.cs" />
+    <Compile Include="TerrainGen\Decorators\OreDecorator.cs" />
+    <Compile Include="TerrainGen\Decorators\SugarCaneDecorator.cs" />
+    <Compile Include="TerrainGen\Decorators\TreeDecorator.cs" />
+    <Compile Include="TerrainGen\Decorators\WaterDecorator.cs" />
+    <Compile Include="TerrainGen\Noise\ClampNoise.cs" />
+    <Compile Include="TerrainGen\Noise\FractalBrownianMotion.cs" />
+    <Compile Include="TerrainGen\Noise\InvertNoise.cs" />
+    <Compile Include="TerrainGen\Noise\ModifyNoise.cs" />
+    <Compile Include="TerrainGen\Noise\NoiseGen.cs" />
+    <Compile Include="TerrainGen\Noise\OpenSimplex.cs" />
+    <Compile Include="TerrainGen\Noise\Perlin.cs" />
+    <Compile Include="TerrainGen\Noise\ScaleNoise.cs" />
+    <Compile Include="TerrainGen\Noise\CellNoise.cs" />
+    <Compile Include="TerrainGen\NewGenerator.cs" />
+    <Compile Include="World\BiomeMap.cs" />
     <Compile Include="World\Chunk.cs" />
     <Compile Include="World\Region.cs" />
     <Compile Include="World\World.cs" />
@@ -254,18 +294,9 @@
     <Compile Include="Logic\Blocks\TallGrassBlock.cs" />
     <Compile Include="Logic\Blocks\StoneSlabBlock.cs" />
     <Compile Include="MathHelper.cs" />
-    <Compile Include="TerrainGen\Noise.cs" />
-    <Compile Include="TerrainGen\StandardGenerator.cs" />
     <Compile Include="Logging\PacketLogging.cs" />
     <Compile Include="Logging\FileLogProvider.cs" />
-    <Compile Include="Entities\Entity.cs" />
-    <Compile Include="Entities\EntityEventArgs.cs" />
-    <Compile Include="Entities\ItemEntity.cs" />
-    <Compile Include="Entities\LivingEntity.cs" />
-    <Compile Include="Entities\ObjectEntity.cs" />
-    <Compile Include="Entities\PlayerEntity.cs" />
     <Compile Include="Logic\Blocks\AirBlock.cs" />
-    <Compile Include="Entities\EntityFlags.cs" />
     <Compile Include="Windows\CraftingBenchWindow.cs" />
     <Compile Include="Networking\Packets\CloseWindowPacket.cs" />
     <Compile Include="Logic\Items\ArmorItem.cs" />
@@ -284,6 +315,5 @@
       <Name>fNbt</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-  </ItemGroup>
+  <ItemGroup />
 </Project>

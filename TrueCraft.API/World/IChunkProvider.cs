@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TrueCraft.API.World
 {
@@ -7,6 +8,7 @@ namespace TrueCraft.API.World
     /// </summary>
     public interface IChunkProvider
     {
+        IList<IChunkDecorator> ChunkDecorators { get; }
         IChunk GenerateChunk(IWorld world, Coordinates2D coordinates);
         Vector3 SpawnPoint { get; }
     }

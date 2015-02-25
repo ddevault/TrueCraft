@@ -14,8 +14,10 @@ namespace TrueCraft.Core.World
         public static readonly int Height = 128;
 
         public string Name { get; set; }
+        public int Seed { get; set; }
         public string BaseDirectory { get; internal set; }
         public IDictionary<Coordinates2D, IRegion> Regions { get; set; }
+        public IBiomeMap BiomeDiagram { get; set; }
         public IChunkProvider ChunkProvider { get; set; }
         public IBlockRepository BlockRepository { get; set; }
         public DateTime BaseTime { get; set; }
@@ -36,8 +38,10 @@ namespace TrueCraft.Core.World
         public World(string name)
         {
             Name = name;
+            Seed = new Random().Next();
             Regions = new Dictionary<Coordinates2D, IRegion>();
             BaseTime = DateTime.Now;
+            BiomeDiagram = new BiomeMap();
         }
 
         public World(string name, IChunkProvider chunkProvider) : this(name)
