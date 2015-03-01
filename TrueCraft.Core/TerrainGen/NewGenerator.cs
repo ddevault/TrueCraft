@@ -9,6 +9,7 @@ using TrueCraft.Core.Logic.Blocks;
 using TrueCraft.Core.TerrainGen.Noise;
 using TrueCraft.Core.TerrainGen.Biomes;
 using TrueCraft.Core.TerrainGen.Decorators;
+using TrueCraft.Core.TerrainGen.Decorations;
 
 namespace TrueCraft.Core.TerrainGen
 {

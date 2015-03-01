@@ -7,6 +7,7 @@ using TrueCraft.Core.World;
 using TrueCraft.Core.TerrainGen.Noise;
 using TrueCraft.API;
 using TrueCraft.Core.Logic.Blocks;
+using TrueCraft.Core.TerrainGen.Decorations;
 
 namespace TrueCraft.Core.TerrainGen.Decorators
 {
@@ -31,55 +32,23 @@ namespace TrueCraft.Core.TerrainGen.Decorators
                         if (Noise.Value2D(BlockX, BlockZ) > 0.65)
                         {
                             Coordinates3D BlockLocation = new Coordinates3D(X, Height, Z);
-                            Coordinates3D StalkStart = BlockLocation + Coordinates3D.Up;
-                            if (chunk.GetBlockID(BlockLocation).Equals(GrassBlock.BlockID) && NeighboursWater(chunk, BlockLocation) || chunk.GetBlockID(BlockLocation).Equals(SandBlock.BlockID) && NeighboursWater(chunk, BlockLocation))
+                            Coordinates3D SugarCaneLocation = BlockLocation + Coordinates3D.Up;
+                            var NeighboursWater = Decoration.NeighboursBlock(chunk, BlockLocation, WaterBlock.BlockID) || Decoration.NeighboursBlock(chunk, BlockLocation, StationaryWaterBlock.BlockID);
+                            if (chunk.GetBlockID(BlockLocation).Equals(GrassBlock.BlockID) && NeighboursWater || chunk.GetBlockID(BlockLocation).Equals(SandBlock.BlockID) && NeighboursWater)
                             {
-                                PlaceStalk(chunk, StalkStart, world.Seed);
+                                Random R = new Random(world.Seed);
+                                double HeightChance = R.NextDouble();
+                                int CaneHeight = 3;
+                                if (HeightChance < 0.05)
+                                    CaneHeight = 4;
+                                else if (HeightChance > 0.1 && Height < 0.25)
+                                    CaneHeight = 2;
+                                Decoration.GenerateColumn(chunk, SugarCaneLocation, CaneHeight, SugarcaneBlock.BlockID);
                             }
                         }
                     }
                 }
             }
-        }
-
-        void PlaceStalk(IChunk chunk, Coordinates3D location, int seed)
-        {
-            Random R = new Random(seed);
-            double HeightChance = R.NextDouble();
-            int Height = 3;
-            if (HeightChance < 0.05)
-            {
-                Height = 4;
-            }
-            else if (HeightChance > 0.1 && Height < 0.25)
-            {
-                Height = 2;
-            }
-            Coordinates3D NewLocation = location;
-            for (int Y = location.Y; Y < location.Y + Height; Y++)
-            {
-                NewLocation.Y = Y;
-                chunk.SetBlockID(NewLocation, SugarcaneBlock.BlockID);
-            }
-        }
-
-        bool NeighboursWater(IChunk chunk, Coordinates3D location)
-        {
-            var Surrounding = new[] {
-                location + Coordinates3D.Left,
-                location + Coordinates3D.Right,
-                location + Coordinates3D.Forwards,
-                location + Coordinates3D.Backwards,
-            };
-            for (int I = 0; I < Surrounding.Length; I++)
-            {
-                Coordinates3D Check = Surrounding[I];
-                if (Check.X < 0 || Check.X >= Chunk.Width || Check.Z < 0 || Check.Z >= Chunk.Depth || Check.Y < 0 || Check.Y >= Chunk.Height)
-                    return false;
-                if (chunk.GetBlockID(Check).Equals(WaterBlock.BlockID) || chunk.GetBlockID(Check).Equals(StationaryWaterBlock.BlockID))
-                    return true;
-            }
-            return false;
         }
     }
 }

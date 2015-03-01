@@ -7,6 +7,7 @@ using TrueCraft.Core.World;
 using TrueCraft.Core.TerrainGen.Noise;
 using TrueCraft.Core.Logic.Blocks;
 using TrueCraft.API;
+using TrueCraft.Core.TerrainGen.Decorations;
 
 namespace TrueCraft.Core.TerrainGen.Decorators
 {
@@ -34,10 +35,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
                         {
                             var HeightChance = ChanceNoise.Value2D(BlockX, BlockZ);
                             var CactusHeight = (HeightChance < 1.4) ? 2 : 3;
-                            for (int Y = CactiPosition.Y; Y < CactiPosition.Y + CactusHeight; Y++)
-                            {
-                                chunk.SetBlockID(new Coordinates3D(CactiPosition.X, Y, CactiPosition.Z), CactusBlock.BlockID);
-                            }
+                            Decoration.GenerateColumn(chunk, CactiPosition, CactusHeight, CactusBlock.BlockID);
                         }
                     }
                 }

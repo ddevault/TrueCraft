@@ -7,6 +7,7 @@ using fNbt;
 using fNbt.Serialization;
 using TrueCraft.API.World;
 using TrueCraft.API;
+using TrueCraft.Core.Logic.Blocks;
 
 namespace TrueCraft.Core.World
 {
@@ -114,8 +115,10 @@ namespace TrueCraft.Core.World
             IsModified = true;
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
             Blocks[index] = value;
+            if (value == AirBlock.BlockID)
+                Metadata[index] = 0x0;
             var oldHeight = GetHeight((byte)coordinates.X, (byte)coordinates.Z);
-            if (value == 0) // Air
+            if (value == AirBlock.BlockID)
             {
                 if (oldHeight <= coordinates.Y)
                 {

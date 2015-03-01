@@ -65,6 +65,7 @@
     <Compile Include="World\IBiomeProvider.cs" />
     <Compile Include="World\IChunkDecorator.cs" />
     <Compile Include="World\INoise.cs" />
+    <Compile Include="World\IDecoration.cs" />
     <Compile Include="World\IWorld.cs" />
     <Compile Include="World\IChunk.cs" />
     <Compile Include="World\IChunkProvider.cs" />

@@ -182,6 +182,13 @@
     <Compile Include="TerrainGen\Biomes\SwamplandBiome.cs" />
     <Compile Include="TerrainGen\Biomes\TaigaBiome.cs" />
     <Compile Include="TerrainGen\Biomes\TundraBiome.cs" />
+    <Compile Include="TerrainGen\Decorations\BalloonOakTree.cs" />
+    <Compile Include="TerrainGen\Decorations\BirchTree.cs" />
+    <Compile Include="TerrainGen\Decorations\ConiferTree.cs" />
+    <Compile Include="TerrainGen\Decorations\Decoration.cs" />
+    <Compile Include="TerrainGen\Decorations\Dungeon.cs" />
+    <Compile Include="TerrainGen\Decorations\OakTree.cs" />
+    <Compile Include="TerrainGen\Decorations\PineTree.cs" />
     <Compile Include="TerrainGen\Decorators\CactusDecorator.cs" />
     <Compile Include="TerrainGen\Decorators\DungeonDecorator.cs" />
     <Compile Include="TerrainGen\Decorators\PlantDecorator.cs" />
