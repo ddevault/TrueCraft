@@ -281,7 +281,6 @@
     <Compile Include="Logic\Blocks\SoulSandBlock.cs" />
     <Compile Include="Logic\Blocks\SpongeBlock.cs" />
     <Compile Include="Logic\Blocks\StoneBlock.cs" />
-    <Compile Include="Logic\Blocks\StoneStairsBlock.cs" />
     <Compile Include="Logic\Blocks\SugarcaneBlock.cs" />
     <Compile Include="Logic\Blocks\TNTBlock.cs" />
     <Compile Include="Logic\Blocks\TorchBlock.cs" />
@@ -289,7 +288,7 @@
     <Compile Include="Logic\Blocks\WaterBlock.cs" />
     <Compile Include="Logic\Blocks\WoodBlock.cs" />
     <Compile Include="Logic\Blocks\WoodenPlanksBlock.cs" />
-    <Compile Include="Logic\Blocks\WoodenStairsBlock.cs" />
+    <Compile Include="Logic\Blocks\StairsBlock.cs" />
     <Compile Include="Logic\Blocks\WoolBlock.cs" />
     <Compile Include="Logic\Blocks\DeadBushBlock.cs" />
     <Compile Include="Logic\Blocks\RedstoneRepeaterBlock.cs" />
