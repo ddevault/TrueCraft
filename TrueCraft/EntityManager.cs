@@ -166,7 +166,7 @@ namespace TrueCraft
 
         private IEntity[] GetEntitiesInRange(IEntity entity, int maxChunks)
         {
-            return Entities.Where(e => e != entity && IsInRange(e.Position, entity.Position, maxChunks)).ToArray();
+            return Entities.Where(e => e.EntityID != entity.EntityID && !e.Despawned && IsInRange(e.Position, entity.Position, maxChunks)).ToArray();
         }
 
         private void SendEntityToClient(RemoteClient client, IEntity entity)
@@ -213,7 +213,7 @@ namespace TrueCraft
 
         public IList<IEntity> EntitiesInRange(Vector3 center, float radius)
         {
-            return Entities.Where(e => e.Position.DistanceTo(center) < radius).ToList();
+            return Entities.Where(e => !e.Despawned && e.Position.DistanceTo(center) < radius).ToList();
         }
 
         public IList<IRemoteClient> ClientsForEntity(IEntity entity)
@@ -247,8 +247,8 @@ namespace TrueCraft
 
         public void DespawnEntity(IEntity entity)
         {
-            PendingDespawns.Add(entity);
             entity.Despawned = true;
+            PendingDespawns.Add(entity);
         }
 
         public void FlushDespawns()
@@ -274,9 +274,7 @@ namespace TrueCraft
                     }
                 }
                 lock (EntityLock)
-                {
                     Entities.Remove(entity);
-                }
             }
         }
 

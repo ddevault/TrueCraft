@@ -39,7 +39,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
                     if (Noise.Value2D(BlockX, BlockZ) > 0.3)
                     {
                         Coordinates3D location = new Coordinates3D(X, Height, Z);
-                        if (chunk.GetBlockID(location).Equals(GrassBlock.BlockID))
+                        if (chunk.GetBlockID(location) == GrassBlock.BlockID || chunk.GetBlockID(location) == SnowfallBlock.BlockID)
                         {
                             var Chance = ChanceNoise.Value2D(BlockX, BlockZ);
                             var OakNoise = ChanceNoise.Value2D(BlockX * 0.6, BlockZ * 0.6);

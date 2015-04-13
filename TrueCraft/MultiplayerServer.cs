@@ -283,7 +283,8 @@ namespace TrueCraft
                     }
                     if (client.Disconnected)
                     {
-                        Clients.RemoveAt(i);
+                        lock (ClientLock)
+                            Clients.RemoveAt(i);
                         break;
                     }
                     const long maxTicks = 100000 * 200; // 200ms

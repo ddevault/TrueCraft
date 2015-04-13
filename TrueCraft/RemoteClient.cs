@@ -152,6 +152,8 @@ namespace TrueCraft
 
         internal void ExpandChunkRadius(IMultiplayerServer server)
         {
+            if (this.Disconnected)
+                return;
             if (ChunkRadius < 16) // TODO: Allow customization of this number
             {
                 ChunkRadius++;
