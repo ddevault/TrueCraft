@@ -14,6 +14,7 @@ namespace TrueCraft.API.World
         int Seed { get; set; }
         IBiomeMap BiomeDiagram { get; set; }
         IChunkProvider ChunkProvider { get; set; }
+        Coordinates3D SpawnPoint { get; set; }
         long Time { get; set; }
 
         event EventHandler<BlockChangeEventArgs> BlockChanged;

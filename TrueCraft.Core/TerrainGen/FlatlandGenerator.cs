@@ -19,7 +19,6 @@ namespace TrueCraft.Core.TerrainGen
         public FlatlandGenerator()
         {
             GeneratorOptions = DefaultGeneratorOptions;
-            SpawnPoint = new Vector3(0, 5, 0);
             ChunkDecorators = new List<IChunkDecorator>();
         }
 
@@ -58,7 +57,6 @@ namespace TrueCraft.Core.TerrainGen
                 Layers.Add(generatorLayer);
             }
             Biome = (Biome)byte.Parse(parts[2]);
-            SpawnPoint = new Vector3(0, y, 0);
         }
 
         public IChunk GenerateChunk(IWorld world, Coordinates2D position)
@@ -97,7 +95,10 @@ namespace TrueCraft.Core.TerrainGen
 
         public IList<IChunkDecorator> ChunkDecorators { get; set; }
 
-        public Vector3 SpawnPoint { get; set; }
+        public Coordinates3D GetSpawn(IWorld world)
+        {
+            return Coordinates3D.Up * 5;
+        }
 
         protected class GeneratorLayer
         {

@@ -26,11 +26,11 @@ namespace TrueCraft
             {
                 // TODO: Save and load levels, with seeds and everything
                 world = World.LoadWorld("world");
-                world.ChunkProvider = new NewGenerator();
+                world.ChunkProvider = new StandardGenerator();
             }
             catch
             {
-                world = new World("default", new NewGenerator());
+                world = new World("default", new StandardGenerator());
                 world.Save("world");
             }
             server.AddWorld(world);

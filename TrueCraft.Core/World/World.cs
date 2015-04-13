@@ -6,6 +6,7 @@ using System.Threading;
 using TrueCraft.API;
 using TrueCraft.API.World;
 using TrueCraft.API.Logic;
+using fNbt;
 
 namespace TrueCraft.Core.World
 {
@@ -15,12 +16,14 @@ namespace TrueCraft.Core.World
 
         public string Name { get; set; }
         public int Seed { get; set; }
+        public Coordinates3D SpawnPoint { get; set; }
         public string BaseDirectory { get; internal set; }
         public IDictionary<Coordinates2D, IRegion> Regions { get; set; }
         public IBiomeMap BiomeDiagram { get; set; }
         public IChunkProvider ChunkProvider { get; set; }
         public IBlockRepository BlockRepository { get; set; }
         public DateTime BaseTime { get; set; }
+
         public long Time
         {
             get
@@ -47,6 +50,7 @@ namespace TrueCraft.Core.World
         public World(string name, IChunkProvider chunkProvider) : this(name)
         {
             ChunkProvider = chunkProvider;
+            SpawnPoint = chunkProvider.GetSpawn(this);
         }
 
         public static World LoadWorld(string baseDirectory)
@@ -55,6 +59,17 @@ namespace TrueCraft.Core.World
                 throw new DirectoryNotFoundException();
             var world = new World(Path.GetFileName(baseDirectory));
             world.BaseDirectory = baseDirectory;
+            if (File.Exists(Path.Combine(baseDirectory, "manifest.nbt")))
+            {
+                var file = new NbtFile(Path.Combine(baseDirectory, "manifest.nbt"));
+                world.SpawnPoint = new Coordinates3D(file.RootTag["SpawnPoint"]["X"].IntValue,
+                    file.RootTag["SpawnPoint"]["Y"].IntValue,
+                    file.RootTag["SpawnPoint"]["Z"].IntValue);
+                world.Seed = file.RootTag["Seed"].IntValue;
+                var providerName = file.RootTag["ChunkProvider"].StringValue;
+                var provider = (IChunkProvider)Activator.CreateInstance(Type.GetType(providerName), world);
+                world.ChunkProvider = provider;
+            }
             return world;
         }
 
@@ -223,6 +238,16 @@ namespace TrueCraft.Core.World
                 foreach (var region in Regions)
                     region.Value.Save(Path.Combine(BaseDirectory, Region.GetRegionFileName(region.Key)));
             }
+            var file = new NbtFile();
+            file.RootTag.Add(new NbtCompound("SpawnPoint", new[]
+            {
+                new NbtInt("X", this.SpawnPoint.X),
+                new NbtInt("Y", this.SpawnPoint.Y),
+                new NbtInt("Z", this.SpawnPoint.Z)
+            }));
+            file.RootTag.Add(new NbtInt("Seed", this.Seed));
+            file.RootTag.Add(new NbtString("ChunkProvider", this.ChunkProvider.GetType().FullName));
+            file.SaveToFile(Path.Combine(this.BaseDirectory, "manifest.nbt"), NbtCompression.ZLib);
         }
 
         public void Save(string path)
@@ -230,11 +255,7 @@ namespace TrueCraft.Core.World
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
             BaseDirectory = path;
-            lock (Regions)
-            {
-                foreach (var region in Regions)
-                    region.Value.Save(Path.Combine(BaseDirectory, Region.GetRegionFileName(region.Key)));
-            }
+            Save();
         }
 
         public Coordinates3D FindBlockPosition(Coordinates3D coordinates, out IChunk chunk)

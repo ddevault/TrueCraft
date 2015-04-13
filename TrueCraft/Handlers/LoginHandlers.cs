@@ -39,7 +39,7 @@ namespace TrueCraft.Handlers
                 client.QueuePacket(new LoginResponsePacket(0, 0, Dimension.Overworld));
                 client.UpdateChunks();
                 client.QueuePacket(new WindowItemsPacket(0, client.Inventory.GetSlots()));
-                client.Entity.Position = client.World.ChunkProvider.SpawnPoint;
+                client.Entity.Position = client.World.SpawnPoint;
                 client.QueuePacket(new SpawnPositionPacket((int)client.Entity.Position.X,
                     (int)client.Entity.Position.Y, (int)client.Entity.Position.Z));
                 client.QueuePacket(new SetPlayerPositionPacket(client.Entity.Position.X, client.Entity.Position.Y,

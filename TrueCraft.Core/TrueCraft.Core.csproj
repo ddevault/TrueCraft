@@ -206,7 +206,6 @@
     <Compile Include="TerrainGen\Noise\Perlin.cs" />
     <Compile Include="TerrainGen\Noise\ScaleNoise.cs" />
     <Compile Include="TerrainGen\Noise\CellNoise.cs" />
-    <Compile Include="TerrainGen\NewGenerator.cs" />
     <Compile Include="World\BiomeMap.cs" />
     <Compile Include="World\Chunk.cs" />
     <Compile Include="World\Region.cs" />
@@ -309,6 +308,7 @@
     <Compile Include="Logic\Blocks\FluidBlock.cs" />
     <Compile Include="Entities\FallingSandEntity.cs" />
     <Compile Include="Logic\Blocks\DoorBlock.cs" />
+    <Compile Include="TerrainGen\StandardGenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
