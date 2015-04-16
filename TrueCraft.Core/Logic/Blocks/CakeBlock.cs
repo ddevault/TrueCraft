@@ -2,6 +2,8 @@ using System;
 using TrueCraft.API;
 using TrueCraft.API.Logic;
 using TrueCraft.Core.Logic.Items;
+using TrueCraft.API.World;
+using TrueCraft.API.Networking;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
@@ -59,6 +61,15 @@ namespace TrueCraft.Core.Logic.Blocks
         public bool SignificantMetadata
         {
             get { return false; }
+        }
+
+        public override bool BlockRightClicked(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            if (descriptor.Metadata == 5)
+                world.SetBlockID(descriptor.Coordinates, AirBlock.BlockID);
+            else
+                world.SetMetadata(descriptor.Coordinates, (byte)(descriptor.Metadata + 1));
+            return false;
         }
     }
 }

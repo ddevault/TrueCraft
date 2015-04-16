@@ -139,6 +139,7 @@ namespace TrueCraft.Handlers
                     client.ItemStaging = held;
                     window[packet.SlotIndex] = ItemStack.EmptyStack;
                 }
+                client.QueuePacket(new WindowItemsPacket(packet.WindowID, window.GetSlots()));
                 return;
             }
             if (client.ItemStaging.Empty) // Picking up something
@@ -209,6 +210,7 @@ namespace TrueCraft.Handlers
                     }
                 }
             }
+            client.QueuePacket(new WindowItemsPacket(packet.WindowID, window.GetSlots()));
         }
 
         public static void HandleCloseWindowPacket(IPacket _packet, IRemoteClient _client, IMultiplayerServer server)

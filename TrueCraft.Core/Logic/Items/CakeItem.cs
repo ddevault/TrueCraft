@@ -1,6 +1,9 @@
 using System;
 using TrueCraft.API.Logic;
 using TrueCraft.API;
+using TrueCraft.API.World;
+using TrueCraft.API.Networking;
+using TrueCraft.Core.Logic.Blocks;
 
 namespace TrueCraft.Core.Logic.Items
 {
@@ -41,6 +44,18 @@ namespace TrueCraft.Core.Logic.Items
             get
             {
                 return false;
+            }
+        }
+
+        public override void ItemUsedOnBlock(Coordinates3D coordinates, ItemStack item, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            coordinates += MathHelper.BlockFaceToCoordinates(face);
+            var old = world.BlockRepository.GetBlockProvider(world.GetBlockID(coordinates));
+            if (old.Hardness == 0)
+            {
+                world.SetBlockID(coordinates, CakeBlock.BlockID);
+                item.Count--;
+                user.Inventory[user.SelectedSlot] = item;
             }
         }
     }
