@@ -24,6 +24,10 @@ can build and explore and fight with your friends. I miss that.
 
 # Updates
 
+So far, the only work done on TrueCraft has been towards the server component.
+All of these screenshots were taken with the official Minecraft beta 1.7.3
+client.
+
 {% for post in site.posts %}
 <h3>
     <a href="{{ post.url }}">{{ post.title }}</a>
