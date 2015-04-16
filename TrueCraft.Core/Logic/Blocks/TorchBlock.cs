@@ -77,7 +77,7 @@ namespace TrueCraft.Core.Logic.Blocks
         {
             get
             {
-                return new ItemStack(TorchBlock.BlockID, 1);
+                return new ItemStack(TorchBlock.BlockID, 4);
             }
         }
 
