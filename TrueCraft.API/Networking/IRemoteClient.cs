@@ -19,6 +19,8 @@ namespace TrueCraft.API.Networking
         IMultiplayerServer Server { get; }
         bool EnableLogging { get; set; }
 
+        bool Load();
+        void Save();
         void QueuePacket(IPacket packet);
         void SendMessage(string message);
         void Log(string message, params object[] parameters);

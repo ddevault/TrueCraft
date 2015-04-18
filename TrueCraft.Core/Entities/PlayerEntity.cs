@@ -14,7 +14,6 @@ namespace TrueCraft.Core.Entities
         public PlayerEntity(string username) : base()
         {
             Username = username;
-            Food = 20;
         }
 
         public const double Width = 0.6;
@@ -97,39 +96,6 @@ namespace TrueCraft.Core.Entities
             {
                 _SpawnPoint = value;
                 OnPropertyChanged("SpawnPoint");
-            }
-        }
-
-        protected short _Food;
-        public short Food
-        {
-            get { return _Food; }
-            set
-            {
-                _Food = value;
-                OnPropertyChanged("Food");
-            }
-        }
-
-        protected float _FoodSaturation;
-        public float FoodSaturation
-        {
-            get { return _FoodSaturation; }
-            set
-            {
-                _FoodSaturation = value;
-                OnPropertyChanged("FoodSaturation");
-            }
-        }
-
-        protected float _FoodExhaustion;
-        public float FoodExhaustion
-        {
-            get { return _FoodExhaustion; }
-            set
-            {
-                _FoodExhaustion = value;
-                OnPropertyChanged("FoodExhaustion");
             }
         }
 

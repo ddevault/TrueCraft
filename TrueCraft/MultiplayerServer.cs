@@ -216,6 +216,7 @@ namespace TrueCraft
                 GetEntityManagerForWorld(client.World).DespawnEntity(client.Entity);
                 GetEntityManagerForWorld(client.World).FlushDespawns();
             }
+            client.Save();
             client.Disconnected = true;
         }
 

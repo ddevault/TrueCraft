@@ -17,6 +17,8 @@ using TrueCraft.Core.Windows;
 using System.Threading.Tasks;
 using System.Threading;
 using TrueCraft.Core.Entities;
+using System.IO;
+using fNbt;
 
 namespace TrueCraft
 {
@@ -25,7 +27,7 @@ namespace TrueCraft
         public RemoteClient(IMultiplayerServer server, NetworkStream stream)
         {
             NetworkStream = stream;
-            MinecraftStream = new MinecraftStream(new BufferedStream(NetworkStream));
+            MinecraftStream = new MinecraftStream(new TrueCraft.Core.Networking.BufferedStream(NetworkStream));
             PacketQueue = new ConcurrentQueue<IPacket>();
             LoadedChunks = new List<Coordinates2D>();
             Server = server;
@@ -115,6 +117,50 @@ namespace TrueCraft
             {
                 return NetworkStream.DataAvailable;
             }
+        }
+
+        public bool Load()
+        {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "players", Username + ".nbt");
+            if (!File.Exists(path))
+                return false;
+            try
+            {
+                var nbt = new NbtFile(path);
+                Entity.Position = new Vector3(
+                    nbt.RootTag["position"][0].DoubleValue,
+                    nbt.RootTag["position"][1].DoubleValue,
+                    nbt.RootTag["position"][2].DoubleValue);
+                Inventory.SetSlots(((NbtList)nbt.RootTag["inventory"]).Select(t => ItemStack.FromNbt(t as NbtCompound)).ToArray());
+                (Entity as PlayerEntity).Health = nbt.RootTag["health"].ShortValue;
+                Entity.Yaw = nbt.RootTag["yaw"].FloatValue;
+                Entity.Pitch = nbt.RootTag["pitch"].FloatValue;
+            }
+            catch { /* Who cares */ }
+            return true;
+        }
+
+        public void Save()
+        {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "players", Username + ".nbt");
+            if (!Directory.Exists(Path.GetDirectoryName(path)))
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+            var nbt = new NbtFile(new NbtCompound("player", new NbtTag[]
+                {
+                    new NbtString("username", Username),
+                    new NbtList("position", new[]
+                    {
+                        new NbtDouble(Entity.Position.X),
+                        new NbtDouble(Entity.Position.Y),
+                        new NbtDouble(Entity.Position.Z)
+                    }),
+                    new NbtList("inventory", Inventory.GetSlots().Select(s => s.ToNbt())),
+                    new NbtShort("health", (Entity as PlayerEntity).Health),
+                    new NbtFloat("yaw", Entity.Yaw),
+                    new NbtFloat("pitch", Entity.Pitch),
+                }
+            ));
+            nbt.SaveToFile(path, NbtCompression.ZLib);
         }
 
         public void OpenWindow(IWindow window)

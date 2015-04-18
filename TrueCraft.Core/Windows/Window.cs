@@ -95,6 +95,12 @@ namespace TrueCraft.Core.Windows
             return slots;
         }
 
+        public virtual void SetSlots(ItemStack[] slots)
+        {
+            foreach (var windowArea in WindowAreas)
+                Array.Copy(slots, windowArea.StartIndex, windowArea.Items, 0, windowArea.Length);
+        }
+
         public virtual ItemStack this[int index]
         {
             get

@@ -35,15 +35,19 @@ namespace TrueCraft.Handlers
                 client.World = server.Worlds[0];
                 client.ChunkRadius = 2;
 
+                if (!client.Load())
+                    client.Entity.Position = client.World.SpawnPoint;
+
                 // Send setup packets
                 client.QueuePacket(new LoginResponsePacket(0, 0, Dimension.Overworld));
                 client.UpdateChunks();
                 client.QueuePacket(new WindowItemsPacket(0, client.Inventory.GetSlots()));
-                client.Entity.Position = client.World.SpawnPoint;
                 client.QueuePacket(new SpawnPositionPacket((int)client.Entity.Position.X,
                     (int)client.Entity.Position.Y, (int)client.Entity.Position.Z));
-                client.QueuePacket(new SetPlayerPositionPacket(client.Entity.Position.X, client.Entity.Position.Y,
-                    client.Entity.Position.Y + client.Entity.Size.Height, client.Entity.Position.Z, 0, 0, true));
+                client.QueuePacket(new SetPlayerPositionPacket(client.Entity.Position.X,
+                    client.Entity.Position.Y + 1,
+                    client.Entity.Position.Y + client.Entity.Size.Height + 1,
+                    client.Entity.Position.Z, client.Entity.Yaw, client.Entity.Pitch, true));
                 client.QueuePacket(new TimeUpdatePacket(client.World.Time));
 
                 // Start housekeeping for this client
