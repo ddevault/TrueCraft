@@ -21,6 +21,8 @@ namespace TrueCraft
 
         public static CommandManager CommandManager;
 
+        public static MultiplayerServer Server;
+
         public static void Main(string[] args)
         {
             if (File.Exists("config.yaml"))
@@ -37,7 +39,7 @@ namespace TrueCraft
                     serializer.Serialize(writer, Configuration);
             }
             // TODO: Make this more flexible
-            var server = new MultiplayerServer();
+            Server = new MultiplayerServer();
             IWorld world;
             try
             {
@@ -50,21 +52,30 @@ namespace TrueCraft
                 world = new World("default", new StandardGenerator());
                 world.Save("world");
             }
-            server.AddWorld(world);
-            server.AddLogProvider(new ConsoleLogProvider(LogCategory.Notice | LogCategory.Warning | LogCategory.Error | LogCategory.Debug));
+            Server.AddWorld(world);
+            Server.AddLogProvider(new ConsoleLogProvider(LogCategory.Notice | LogCategory.Warning | LogCategory.Error | LogCategory.Debug));
             #if DEBUG
-            server.AddLogProvider(new FileLogProvider(new StreamWriter("packets.log", false), LogCategory.Packets));
+            Server.AddLogProvider(new FileLogProvider(new StreamWriter("packets.log", false), LogCategory.Packets));
             #endif
             CommandManager = new CommandManager();
-            server.ChatMessageReceived += HandleChatMessageReceived;
-            server.Start(new IPEndPoint(IPAddress.Any, 25565));
+            Server.ChatMessageReceived += HandleChatMessageReceived;
+            Server.Start(new IPEndPoint(IPAddress.Any, 25565));
+            Console.CancelKeyPress += HandleCancelKeyPress;
             while (true)
             {
                 Thread.Sleep(1000 * 30); // TODO: Allow users to customize world save interval
-                foreach (var w in server.Worlds)
+                foreach (var w in Server.Worlds)
                 {
                     w.Save();
                 }
+            }
+        }
+
+        static void HandleCancelKeyPress(object sender, ConsoleCancelEventArgs e)
+        {
+            foreach (var w in Server.Worlds)
+            {
+                w.Save();
             }
         }
 
