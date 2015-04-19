@@ -33,6 +33,9 @@
     <Reference Include="Ionic.Zip.Reduced">
       <HintPath>..\lib\Ionic.Zip.Reduced.dll</HintPath>
     </Reference>
+    <Reference Include="YamlDotNet">
+      <HintPath>..\packages\YamlDotNet.3.5.1\lib\net35\YamlDotNet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\Command.cs" />
@@ -56,6 +59,7 @@
     <Compile Include="PhysicsEngine.cs" />
     <Compile Include="ItemRepository.cs" />
     <Compile Include="CraftingRepository.cs" />
+    <Compile Include="Configuration.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -75,5 +79,8 @@
   <ItemGroup />
   <ItemGroup>
     <Folder Include="Exceptions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

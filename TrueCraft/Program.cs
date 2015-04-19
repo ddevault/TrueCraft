@@ -11,14 +11,31 @@ using TrueCraft.API.World;
 using System;
 using TrueCraft.Core;
 using TrueCraft.API;
+using YamlDotNet.Serialization;
 
 namespace TrueCraft
 {
-    class MainClass
+    public class Program
     {
+        public static Configuration Configuration;
+
         public static CommandManager CommandManager;
+
         public static void Main(string[] args)
         {
+            if (File.Exists("config.yaml"))
+            {
+                var deserializer = new Deserializer();
+                Configuration = deserializer.Deserialize<Configuration>(File.OpenText("config.yaml"));
+            }
+            else
+            {
+                // Save default configuration
+                Configuration = new Configuration();
+                var serializer = new Serializer();
+                using (var writer = new StreamWriter("config.yaml"))
+                    serializer.Serialize(writer, Configuration);
+            }
             // TODO: Make this more flexible
             var server = new MultiplayerServer();
             IWorld world;

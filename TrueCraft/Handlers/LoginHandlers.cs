@@ -43,11 +43,11 @@ namespace TrueCraft.Handlers
                 client.UpdateChunks();
                 client.QueuePacket(new WindowItemsPacket(0, client.Inventory.GetSlots()));
                 client.QueuePacket(new SpawnPositionPacket((int)client.Entity.Position.X,
-                    (int)client.Entity.Position.Y, (int)client.Entity.Position.Z));
+                        (int)client.Entity.Position.Y, (int)client.Entity.Position.Z));
                 client.QueuePacket(new SetPlayerPositionPacket(client.Entity.Position.X,
-                    client.Entity.Position.Y + 1,
-                    client.Entity.Position.Y + client.Entity.Size.Height + 1,
-                    client.Entity.Position.Z, client.Entity.Yaw, client.Entity.Pitch, true));
+                        client.Entity.Position.Y + 1,
+                        client.Entity.Position.Y + client.Entity.Size.Height + 1,
+                        client.Entity.Position.Z, client.Entity.Yaw, client.Entity.Pitch, true));
                 client.QueuePacket(new TimeUpdatePacket(client.World.Time));
 
                 // Start housekeeping for this client
@@ -56,6 +56,9 @@ namespace TrueCraft.Handlers
                 entityManager.SendEntitiesToClient(client);
                 server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(10), client.SendKeepAlive);
                 server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(1), client.ExpandChunkRadius);
+
+                if (!string.IsNullOrEmpty(Program.Configuration.MOTD))
+                    client.SendMessage(Program.Configuration.MOTD);
                 server.SendMessage(ChatColor.Yellow + "{0} joined the server.", client.Username);
             }
         }
