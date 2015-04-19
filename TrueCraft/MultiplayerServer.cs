@@ -181,8 +181,12 @@ namespace TrueCraft
         public void SendMessage(string message, params object[] parameters)
         {
             var compiled = string.Format(message, parameters);
+            var parts = compiled.Split('\n');
             foreach (var client in Clients)
-                client.SendMessage(compiled);
+            {
+                foreach (var part in parts)
+                    client.SendMessage(part);
+            }
             Log(LogCategory.Notice, ChatColor.RemoveColors(compiled));
         }
 

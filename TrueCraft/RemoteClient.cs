@@ -193,7 +193,9 @@ namespace TrueCraft
 
         public void SendMessage(string message)
         {
-            QueuePacket(new ChatMessagePacket(message));
+            var parts = message.Split('\n');
+            foreach (var part in parts)
+                QueuePacket(new ChatMessagePacket(part));
         }
 
         internal void ExpandChunkRadius(IMultiplayerServer server)
