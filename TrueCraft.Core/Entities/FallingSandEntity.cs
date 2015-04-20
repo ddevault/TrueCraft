@@ -51,7 +51,7 @@ namespace TrueCraft.Core.Entities
         {
             get
             {
-                return new BoundingBox(Vector3.Zero, Vector3.One);
+                return new BoundingBox(Position, Position + Size);
             }
         }
 
@@ -71,7 +71,7 @@ namespace TrueCraft.Core.Entities
         {
             get
             {
-                return 0.4f;
+                return 0.04f;
             }
         }
 
@@ -79,7 +79,7 @@ namespace TrueCraft.Core.Entities
         {
             get
             {
-                return 0.2f;
+                return 0.02f;
             }
         }
 

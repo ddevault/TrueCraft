@@ -54,8 +54,9 @@ namespace TrueCraft
             if (multipler < 0.1) multipler = 0.1;
             lock (EntityLock)
             {
-                foreach (var entity in Entities)
+                for (int i = 0; i < Entities.Count; i++)
                 {
+                    var entity = Entities[i];
                     if (entity.BeginUpdate())
                     {
                         entity.Velocity -= new Vector3(0, entity.AccelerationDueToGravity * multipler, 0);
@@ -145,7 +146,7 @@ namespace TrueCraft
                         var boundingBox = BlockPhysicsProvider.GetBoundingBox(world, position);
                         if (boundingBox == null)
                             continue;
-                        blockBox = boundingBox.Value.OffsetBy(position);
+                        blockBox = boundingBox.Value.OffsetBy(position + new Vector3(0.5));
                         if (TempBoundingBox.Intersects(blockBox))
                         {
                             if (entity.Velocity.X < 0)
@@ -253,7 +254,7 @@ namespace TrueCraft
                         var boundingBox = BlockPhysicsProvider.GetBoundingBox(world, position);
                         if (boundingBox == null)
                             continue;
-                        blockBox = boundingBox.Value.OffsetBy(position);
+                        blockBox = boundingBox.Value.OffsetBy(position + new Vector3(0.5));
                         if (TempBoundingBox.Intersects(blockBox))
                         {
                             if (entity.Velocity.Y < 0)
@@ -351,7 +352,7 @@ namespace TrueCraft
                         var boundingBox = BlockPhysicsProvider.GetBoundingBox(world, position);
                         if (boundingBox == null)
                             continue;
-                        blockBox = boundingBox.Value.OffsetBy(position);
+                        blockBox = boundingBox.Value.OffsetBy(position + new Vector3(0.5));
                         if (TempBoundingBox.Intersects(blockBox))
                         {
                             if (entity.Velocity.Z < 0)

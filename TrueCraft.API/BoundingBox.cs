@@ -146,7 +146,7 @@ namespace TrueCraft.API
 
         public void Intersects(ref BoundingBox box, out bool result)
         {
-            if ((this.Max.X >= box.Min.X) && (this.Min.X <= box.Max.X))
+            if ((this.Max.X > box.Min.X) && (this.Min.X < box.Max.X))
             {
                 if ((this.Max.Y < box.Min.Y) || (this.Min.Y > box.Max.Y))
                 {
@@ -154,7 +154,7 @@ namespace TrueCraft.API
                     return;
                 }
 
-                result = (this.Max.Z >= box.Min.Z) && (this.Min.Z <= box.Max.Z);
+                result = (this.Max.Z > box.Min.Z) && (this.Min.Z < box.Max.Z);
                 return;
             }
 
