@@ -309,6 +309,7 @@
     <Compile Include="Entities\FallingSandEntity.cs" />
     <Compile Include="Logic\Blocks\DoorBlock.cs" />
     <Compile Include="TerrainGen\StandardGenerator.cs" />
+    <Compile Include="Entities\FallingGravelEntity.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

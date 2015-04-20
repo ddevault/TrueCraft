@@ -2,6 +2,10 @@ using System;
 using TrueCraft.API.Logic;
 using TrueCraft.API;
 using TrueCraft.Core.Logic.Items;
+using TrueCraft.API.Networking;
+using TrueCraft.API.World;
+using TrueCraft.API.Server;
+using TrueCraft.Core.Entities;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
@@ -31,6 +35,20 @@ namespace TrueCraft.Core.Logic.Blocks
                 return new[] { new ItemStack(FlintItem.ItemID, 1, descriptor.Metadata) };
             else
                 return new ItemStack[0];
+        }
+
+        public override void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            BlockUpdate(descriptor, descriptor, user.Server, world);
+        }
+
+        public override void BlockUpdate(BlockDescriptor descriptor, BlockDescriptor source, IMultiplayerServer server, IWorld world)
+        {
+            if (world.GetBlockID(descriptor.Coordinates + Coordinates3D.Down) == AirBlock.BlockID)
+            {
+                world.SetBlockID(descriptor.Coordinates, AirBlock.BlockID);
+                server.GetEntityManagerForWorld(world).SpawnEntity(new FallingGravelEntity(descriptor.Coordinates));
+            }
         }
     }
 }

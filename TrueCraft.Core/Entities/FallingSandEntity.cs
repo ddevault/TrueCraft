@@ -40,10 +40,15 @@ namespace TrueCraft.Core.Entities
 
         public void TerrainCollision(Vector3 collisionPoint, Vector3 collisionDirection)
         {
+            if (Despawned)
+                return;
             if (collisionDirection == Vector3.Down)
             {
+                var id = SandBlock.BlockID;
+                if (EntityType == 71)
+                    id = GravelBlock.BlockID;
                 EntityManager.DespawnEntity(this);
-                World.SetBlockID((Coordinates3D)_Position, SandBlock.BlockID);
+                World.SetBlockID((Coordinates3D)_Position, id);
             }
         }
 
