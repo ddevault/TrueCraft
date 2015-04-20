@@ -50,14 +50,14 @@ namespace TrueCraft
             double multipler = (DateTime.Now - LastUpdate).TotalMilliseconds / MillisecondsBetweenUpdates;
             if (LastUpdate == DateTime.MinValue)
                 multipler = 1;
-            multipler *= 0.3; // HACKY FIX
+            if (multipler > 5) multipler = 5;
+            if (multipler < 0.1) multipler = 0.1;
             lock (EntityLock)
             {
                 foreach (var entity in Entities)
                 {
                     if (entity.BeginUpdate())
                     {
-                        entity.Velocity *= entity.Drag * multipler;
                         entity.Velocity -= new Vector3(0, entity.AccelerationDueToGravity * multipler, 0);
                         entity.Velocity.Clamp(entity.TerminalVelocity);
                         if (entity is IAABBEntity)

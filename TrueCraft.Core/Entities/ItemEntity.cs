@@ -8,6 +8,7 @@ using TrueCraft.API.Entities;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.Core;
 using TrueCraft.API.Server;
+using TrueCraft.Core.Logic.Blocks;
 
 namespace TrueCraft.Core.Entities
 {
@@ -19,6 +20,8 @@ namespace TrueCraft.Core.Entities
         {
             Position = position;
             Item = item;
+            if (item.Empty)
+                Despawned = true;
         }
 
         public ItemStack Item { get; set; }
@@ -123,17 +126,19 @@ namespace TrueCraft.Core.Entities
                     OnPropertyChanged("Metadata");
                 }*/
             }
+            if ((DateTime.Now - SpawnTime).TotalMinutes > 5)
+                entityManager.DespawnEntity(this);
             base.Update(entityManager);
         }
 
         public float AccelerationDueToGravity
         {
-            get { return 0.4f; }
+            get { return 0.04f; }
         }
 
         public float Drag
         {
-            get { return 0.2f; }
+            get { return 0.02f; }
         }
 
         public float TerminalVelocity

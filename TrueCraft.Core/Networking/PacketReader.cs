@@ -41,7 +41,7 @@ namespace TrueCraft.Core.Networking
             RegisterPacketType<AnimationPacket>();                                                      // 0x12
             RegisterPacketType<PlayerActionPacket>(serverbound: true, clientbound: false);              // 0x13
             RegisterPacketType<SpawnPlayerPacket>(serverbound: false, clientbound: true);               // 0x14
-            RegisterPacketType<SpawnItemPacket>(serverbound: false, clientbound: true);                 // 0x15
+            RegisterPacketType<SpawnItemPacket>(serverbound: true, clientbound: true);                  // 0x15
             RegisterPacketType<CollectItemPacket>(serverbound: false, clientbound: true);               // 0x16
             RegisterPacketType<SpawnGenericEntityPacket>(serverbound: false, clientbound: true);        // 0x17
             RegisterPacketType<SpawnMobPacket>(serverbound: false, clientbound: true);                  // 0x18

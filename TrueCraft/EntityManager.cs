@@ -223,6 +223,8 @@ namespace TrueCraft
 
         public void SpawnEntity(IEntity entity)
         {
+            if (entity.Despawned)
+                return;
             entity.SpawnTime = DateTime.Now;
             entity.EntityManager = this;
             entity.World = World;

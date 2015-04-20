@@ -24,7 +24,17 @@ namespace TrueCraft.Handlers
             switch (packet.PlayerAction)
             {
                 case PlayerDiggingPacket.Action.DropItem:
-                    // TODO
+                    // Throwing item
+                    if (client.SelectedItem.Empty)
+                        break;
+                    var spawned = client.SelectedItem;
+                    spawned.Count = 1;
+                    var inventory = client.SelectedItem;
+                    inventory.Count--;
+                    var item = new ItemEntity(client.Entity.Position + new Vector3(0, PlayerEntity.Height, 0), spawned);
+                    item.Velocity = MathHelper.FowardVector(client.Entity.Yaw) * 0.3;
+                    client.Inventory[client.SelectedSlot] = inventory;
+                    server.GetEntityManagerForWorld(client.World).SpawnEntity(item);
                     break;
                 case PlayerDiggingPacket.Action.StartDigging:
                     foreach (var nearbyClient in server.Clients) // TODO: Send this repeatedly during the course of the digging
@@ -122,6 +132,28 @@ namespace TrueCraft.Handlers
             var packet = (ClickWindowPacket)_packet;
             var client = (RemoteClient)_client;
             var window = client.CurrentWindow;
+            if (packet.SlotIndex == -999)
+            {
+                // Throwing item
+                ItemEntity item;
+                if (packet.RightClick)
+                {
+                    var spawned = client.ItemStaging;
+                    spawned.Count = 1;
+                    var inventory = client.ItemStaging;
+                    inventory.Count--;
+                    item = new ItemEntity(client.Entity.Position + new Vector3(0, PlayerEntity.Height, 0), spawned);
+                    client.ItemStaging = inventory;
+                }
+                else
+                {
+                    item = new ItemEntity(client.Entity.Position + new Vector3(0, PlayerEntity.Height, 0), client.ItemStaging);
+                    client.ItemStaging = ItemStack.EmptyStack;
+                }
+                item.Velocity = MathHelper.FowardVector(client.Entity.Yaw) * 0.3;
+                server.GetEntityManagerForWorld(client.World).SpawnEntity(item);
+                return;
+            }
             if (packet.SlotIndex >= window.Length || packet.SlotIndex < 0)
                 return;
             ItemStack existing = window[packet.SlotIndex];
