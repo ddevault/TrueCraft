@@ -60,6 +60,7 @@ namespace TrueCraft
         private readonly PacketHandler[] PacketHandlers;
         private IList<ILogProvider> LogProviders;
         internal object ClientLock = new object();
+        private bool ShuttingDown = false;
 
         public MultiplayerServer()
         {
@@ -96,12 +97,23 @@ namespace TrueCraft
 
         public void Start(IPEndPoint endPoint)
         {
+            ShuttingDown = false;
             Listener = new TcpListener(endPoint);
             Listener.Start();
             Listener.BeginAcceptTcpClient(AcceptClient, null);
             Log(LogCategory.Notice, "Running TrueCraft server on {0}", endPoint);
             NetworkWorker.Start();
             EnvironmentWorker.Change(100, 1000 / 20);
+        }
+
+        public void Stop()
+        {
+            ShuttingDown = true;
+            Listener.Stop();
+            foreach (var w in Worlds)
+                w.Save();
+            foreach (var c in Clients)
+                DisconnectClient(c);
         }
 
         public void AddWorld(IWorld world)
@@ -235,6 +247,8 @@ namespace TrueCraft
 
         private void DoEnvironment(object discarded)
         {
+            if (ShuttingDown)
+                return;
             Scheduler.Update();
             foreach (var manager in EntityManagers)
             {
@@ -246,6 +260,8 @@ namespace TrueCraft
         {
             while (true)
             {
+                if (ShuttingDown)
+                    return;
                 bool idle = true;
                 for (int i = 0; i < Clients.Count && i >= 0; i++)
                 {

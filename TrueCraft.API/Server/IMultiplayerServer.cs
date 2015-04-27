@@ -30,6 +30,7 @@ namespace TrueCraft.API.Server
         bool EnableClientLogging { get; set; }
 
         void Start(IPEndPoint endPoint);
+        void Stop();
         void RegisterPacketHandler(byte packetId, PacketHandler handler);
         void AddWorld(IWorld world);
         void AddLogProvider(ILogProvider provider);

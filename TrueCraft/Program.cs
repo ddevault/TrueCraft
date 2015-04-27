@@ -81,10 +81,7 @@ namespace TrueCraft
 
         static void HandleCancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
-            foreach (var w in Server.Worlds)
-            {
-                w.Save();
-            }
+            Server.Stop();
         }
 
         static void HandleChatMessageReceived(object sender, ChatMessageEventArgs e)
