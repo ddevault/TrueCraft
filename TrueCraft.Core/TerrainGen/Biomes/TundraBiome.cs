@@ -34,6 +34,14 @@ namespace TrueCraft.Core.TerrainGen.Biomes
             }
         }
 
+        public override PlantSpecies[] Plants
+        {
+            get
+            {
+                return new PlantSpecies[0];
+            }
+        }
+
         public override double TreeDensity
         {
             get
