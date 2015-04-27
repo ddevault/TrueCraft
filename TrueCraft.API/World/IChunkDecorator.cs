@@ -10,6 +10,6 @@ namespace TrueCraft.API.World
     /// </summary>
     public interface IChunkDecorator
     {
-        void Decorate(IWorld world, IChunk Chunk, IBiomeRepository Biomes);
+        void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes);
     }
 }

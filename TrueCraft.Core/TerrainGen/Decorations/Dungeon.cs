@@ -13,12 +13,15 @@ namespace TrueCraft.Core.TerrainGen.Decorations
     public class Dungeon : Decoration
     {
         Vector3 Size = new Vector3(7, 5, 7);
-        int MaxEntrances = 5;
+
+        const int MaxEntrances = 5;
 
         public override bool ValidLocation(Coordinates3D location)
         {
             var OffsetSize = Size + new Vector3(1, 1, 1);
-            if (location.X + (int)OffsetSize.X >= Chunk.Width || location.Z + (int)OffsetSize.Z >= Chunk.Depth || location.Y + (int)OffsetSize.Y >= Chunk.Height)
+            if (location.X + (int)OffsetSize.X >= Chunk.Width
+                || location.Z + (int)OffsetSize.Z >= Chunk.Depth
+                || location.Y + (int)OffsetSize.Y >= Chunk.Height)
                 return false;
             return true;
         }
@@ -27,74 +30,78 @@ namespace TrueCraft.Core.TerrainGen.Decorations
         {
             if (!ValidLocation(location))
                 return false;
-            Random R = new Random(world.Seed);
+
+            var random = new Random(world.Seed);
 
             //Generate room
             GenerateCuboid(chunk, location, Size, CobblestoneBlock.BlockID, 0x0, 0x2);
 
             //Randomly add mossy cobblestone to floor
-            MossFloor(chunk, location, R);
+            MossFloor(chunk, location, random);
 
             //Place Spawner
             chunk.SetBlockID(new Coordinates3D((int)(location.X + ((Size.X + 1) / 2)), (int)((location + Coordinates3D.Up).Y), (int)(location.Z + ((Size.Z + 1) / 2))), MonsterSpawnerBlock.BlockID);
             
             //Create entrances
-            CreateEntraces(chunk, location, R);
+            CreateEntraces(chunk, location, random);
 
             //Place Chests
-            PlaceChests(chunk, location, R);
+            PlaceChests(chunk, location, random);
+
             return true;
         }
 
-        private void CreateEntraces(IChunk chunk, Coordinates3D location, Random R)
+        private void CreateEntraces(IChunk chunk, Coordinates3D location, Random random)
         {
-            int Entrances = 0;
-            var Above = location + Coordinates3D.Up;
+            int entrances = 0;
+            var above = location + Coordinates3D.Up;
             for (int X = location.X; X < location.X + Size.X; X++)
             {
-                if (Entrances >= MaxEntrances)
+                if (entrances >= MaxEntrances)
                     break;
                 for (int Z = location.Z; Z < location.Z + Size.Z; Z++)
                 {
-                    if (Entrances >= MaxEntrances)
+                    if (entrances >= MaxEntrances)
                         break;
-                    if (R.Next(0, 3) == 0 && IsCuboidWall(new Coordinates2D(X, Z), location, Size) && !IsCuboidCorner(new Coordinates2D(X, Z), location, Size))
+                    if (random.Next(0, 3) == 0 && IsCuboidWall(new Coordinates2D(X, Z), location, Size)
+                        && !IsCuboidCorner(new Coordinates2D(X, Z), location, Size))
                     {
-                        var BlockLocation = new Coordinates3D(X, Above.Y, Z);
-                        chunk.SetBlockID(BlockLocation, AirBlock.BlockID);
-                        chunk.SetBlockID(BlockLocation + Coordinates3D.Up, AirBlock.BlockID);
+                        var blockLocation = new Coordinates3D(X, above.Y, Z);
+                        chunk.SetBlockID(blockLocation, AirBlock.BlockID);
+                        chunk.SetBlockID(blockLocation + Coordinates3D.Up, AirBlock.BlockID);
+                        entrances++;
                     }
                 }
             }
         }
 
-        private void MossFloor(IChunk chunk, Coordinates3D location, Random R)
+        private void MossFloor(IChunk chunk, Coordinates3D location, Random random)
         {
-            for (int X = location.X; X < location.X + Size.X; X++)
+            for (int x = location.X; x < location.X + Size.X; x++)
             {
-                for (int Z = location.Z; Z < location.Z + Size.Z; Z++)
+                for (int z = location.Z; z < location.Z + Size.Z; z++)
                 {
-                    if (R.Next(0, 3) == 0)
-                        chunk.SetBlockID(new Coordinates3D(X, location.Y, Z), MossStoneBlock.BlockID);
+                    if (random.Next(0, 3) == 0)
+                        chunk.SetBlockID(new Coordinates3D(x, location.Y, z), MossStoneBlock.BlockID);
                 }
             }
         }
 
-        private void PlaceChests(IChunk chunk, Coordinates3D location, Random R)
+        private void PlaceChests(IChunk chunk, Coordinates3D location, Random random)
         {
-            var Above = location + Coordinates3D.Up;
-            var chests = R.Next(0, 2);
-            for (int I = 0; I < chests; I++)
+            var above = location + Coordinates3D.Up;
+            var chests = random.Next(0, 2);
+            for (int i = 0; i < chests; i++)
             {
-                for (int Attempts = 0; Attempts < 10; Attempts++)
+                for (int attempts = 0; attempts < 10; attempts++)
                 {
-                    var X = R.Next(location.X, location.X + (int)Size.X);
-                    var Z = R.Next(location.Z, location.Z + (int)Size.Z);
-                    if (!IsCuboidWall(new Coordinates2D(X, Z), location, Size) && !IsCuboidCorner(new Coordinates2D(X, Z), location, Size))
+                    var x = random.Next(location.X, location.X + (int)Size.X);
+                    var z = random.Next(location.Z, location.Z + (int)Size.Z);
+                    if (!IsCuboidWall(new Coordinates2D(x, z), location, Size) && !IsCuboidCorner(new Coordinates2D(x, z), location, Size))
                     {
-                        if (NeighboursBlock(chunk, new Coordinates3D(X, Above.Y, Z), CobblestoneBlock.BlockID))
+                        if (NeighboursBlock(chunk, new Coordinates3D(x, above.Y, z), CobblestoneBlock.BlockID))
                         {
-                            chunk.SetBlockID(new Coordinates3D(X, Above.Y, Z), ChestBlock.BlockID);
+                            chunk.SetBlockID(new Coordinates3D(x, above.Y, z), ChestBlock.BlockID);
                             break;
                         }
                     }

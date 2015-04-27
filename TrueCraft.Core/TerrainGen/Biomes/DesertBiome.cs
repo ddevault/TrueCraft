@@ -38,7 +38,7 @@ namespace TrueCraft.Core.TerrainGen.Biomes
         {
             get
             {
-                return new PlantSpecies[] { PlantSpecies.Deadbush, PlantSpecies.Cactus };
+                return new[] { PlantSpecies.Deadbush, PlantSpecies.Cactus };
             }
         }
 

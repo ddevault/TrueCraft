@@ -30,9 +30,13 @@ namespace TrueCraft.Core.TerrainGen.Noise
         public DistanceType DistanceFunction { get; set; }
         public CombinationFunctions CombinationFunction { get; set; }
 
-        public CellNoise()
+        public CellNoise() : this(new Random().Next())
         {
-            Seed = new Random().Next();
+        }
+
+        public CellNoise(int seed)
+        {
+            Seed = seed;
             DistanceFunction = DistanceType.EUCLIDEAN3D;
             CombinationFunction = CombinationFunctions.D2MINUSD1;
         }

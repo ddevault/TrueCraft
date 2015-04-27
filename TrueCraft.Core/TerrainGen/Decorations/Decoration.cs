@@ -16,30 +16,36 @@ namespace TrueCraft.Core.TerrainGen.Decorations
 
         public static bool IsCuboidWall(Coordinates2D location, Coordinates3D start, Vector3 size)
         {
-            return location.X.Equals(start.X) || location.Z.Equals(start.Z) || location.X.Equals(start.X + (int)size.X - 1) || location.Z.Equals(start.Z + (int)size.Z - 1);
+            return location.X.Equals(start.X)
+                || location.Z.Equals(start.Z)
+                || location.X.Equals(start.X + (int)size.X - 1)
+                || location.Z.Equals(start.Z + (int)size.Z - 1);
         }
 
         public static bool IsCuboidCorner(Coordinates2D location, Coordinates3D start, Vector3 size)
         {
-            return location.X.Equals(start.X) && location.Z.Equals(start.Z) || location.X.Equals(start.X) && location.Z.Equals(start.Z + (int)size.Z - 1) || location.X.Equals(start.X + (int)size.X - 1) && location.Z.Equals(start.Z) || location.X.Equals(start.X + (int)size.X - 1) && location.Z.Equals(start.Z + (int)size.Z - 1);
+            return location.X.Equals(start.X) && location.Z.Equals(start.Z)
+                || location.X.Equals(start.X) && location.Z.Equals(start.Z + (int)size.Z - 1)
+                || location.X.Equals(start.X + (int)size.X - 1) && location.Z.Equals(start.Z)
+                || location.X.Equals(start.X + (int)size.X - 1) && location.Z.Equals(start.Z + (int)size.Z - 1);
         }
 
         public static bool NeighboursBlock(IChunk chunk, Coordinates3D location, byte block, byte meta = 0x0)
         {
-            var Surrounding = new[] {
+            var surrounding = new[] {
                 location + Coordinates3D.Left,
                 location + Coordinates3D.Right,
                 location + Coordinates3D.Forwards,
                 location + Coordinates3D.Backwards,
             };
-            for (int I = 0; I < Surrounding.Length; I++)
+            for (int i = 0; i < surrounding.Length; i++)
             {
-                Coordinates3D Check = Surrounding[I];
-                if (Check.X < 0 || Check.X >= Chunk.Width || Check.Z < 0 || Check.Z >= Chunk.Depth || Check.Y < 0 || Check.Y >= Chunk.Height)
+                var toCheck = surrounding[i];
+                if (toCheck.X < 0 || toCheck.X >= Chunk.Width || toCheck.Z < 0 || toCheck.Z >= Chunk.Depth || toCheck.Y < 0 || toCheck.Y >= Chunk.Height)
                     return false;
-                if (chunk.GetBlockID(Check).Equals(block))
+                if (chunk.GetBlockID(toCheck).Equals(block))
                 {
-                    if (meta != 0x0 && chunk.GetMetadata(Check) != meta)
+                    if (meta != 0x0 && chunk.GetMetadata(toCheck) != meta)
                         return false;
                     return true;
                 }
@@ -51,7 +57,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
         {
             for (int offset = 0; offset < height; offset++)
             {
-                Coordinates3D blockLocation = location + new Coordinates3D(0, offset, 0);
+                var blockLocation = location + new Coordinates3D(0, offset, 0);
                 if (blockLocation.Y >= Chunk.Height)
                     return;
                 chunk.SetBlockID(blockLocation, block);
@@ -74,17 +80,19 @@ namespace TrueCraft.Core.TerrainGen.Decorations
                 mode = 0x1;
             }
 
-            for (int W = location.X; W < location.X + size.X; W++)
+            for (int w = location.X; w < location.X + size.X; w++)
             {
-                for (int L = location.Z; L < location.Z + size.Z; L++)
+                for (int l = location.Z; l < location.Z + size.Z; l++)
                 {
-                    for (int H = location.Y; H < location.Y + size.Y; H++)
+                    for (int h = location.Y; h < location.Y + size.Y; h++)
                     {
 
-                        if (W < 0 || W >= Chunk.Width || L < 0 || L >= Chunk.Depth || H < 0 || H >= Chunk.Height)
+                        if (w < 0 || w >= Chunk.Width || l < 0 || l >= Chunk.Depth || h < 0 || h >= Chunk.Height)
                             continue;
-                        Coordinates3D BlockLocation = new Coordinates3D(W, H, L);
-                        if (!H.Equals(location.Y) && !H.Equals(location.Y + (int)size.Y - 1) && !IsCuboidWall(new Coordinates2D(W, L), location, size) && !IsCuboidCorner(new Coordinates2D(W, L), location, size))
+                        Coordinates3D BlockLocation = new Coordinates3D(w, h, l);
+                        if (!h.Equals(location.Y) && !h.Equals(location.Y + (int)size.Y - 1)
+                            && !IsCuboidWall(new Coordinates2D(w, l), location, size)
+                            && !IsCuboidCorner(new Coordinates2D(w, l), location, size))
                             continue;
 
                         chunk.SetBlockID(BlockLocation, block);
@@ -97,39 +105,42 @@ namespace TrueCraft.Core.TerrainGen.Decorations
 
         protected void GenerateVanillaLeaves(IChunk chunk, Coordinates3D location, int radius, byte block, byte meta = 0x0)
         {
-            int RadiusOffset = radius;
-            for (int YOffset = -radius; YOffset <= radius; YOffset = (YOffset + 1))
+            int radiusOffset = radius;
+            for (int yOffset = -radius; yOffset <= radius; yOffset = (yOffset + 1))
             {
-                int Y = location.Y + YOffset;
-                if (Y > Chunk.Height)
+                int y = location.Y + yOffset;
+                if (y > Chunk.Height)
                     continue;
-                GenerateVanillaCircle(chunk, new Coordinates3D(location.X, Y, location.Z), RadiusOffset, block, meta);
-                if (YOffset != -radius && YOffset % 2 == 0)
-                    RadiusOffset--;
+                GenerateVanillaCircle(chunk, new Coordinates3D(location.X, y, location.Z), radiusOffset, block, meta);
+                if (yOffset != -radius && yOffset % 2 == 0)
+                    radiusOffset--;
             }
         }
 
         protected void GenerateVanillaCircle(IChunk chunk, Coordinates3D location, int radius, byte block, byte meta = 0x0, double corner = 0)
         {
-            for (int I = -radius; I <= radius; I = (I + 1))
+            for (int i = -radius; i <= radius; i = (i + 1))
             {
-                for (int J = -radius; J <= radius; J = (J + 1))
+                for (int j = -radius; j <= radius; j = (j + 1))
                 {
-                    int Max = (int)Math.Sqrt((I * I) + (J * J));
-                    if (Max <= radius)
+                    int max = (int)Math.Sqrt((i * i) + (j * j));
+                    if (max <= radius)
                     {
-                        if (I.Equals(-radius) && J.Equals(-radius) || I.Equals(-radius) && J.Equals(radius) || I.Equals(radius) && J.Equals(-radius) || I.Equals(radius) && J.Equals(radius))
+                        if (i.Equals(-radius) && j.Equals(-radius)
+                            || i.Equals(-radius) && j.Equals(radius)
+                            || i.Equals(radius) && j.Equals(-radius)
+                            || i.Equals(radius) && j.Equals(radius))
                         {
                             if (corner + radius * 0.2 < 0.4 || corner + radius * 0.2 > 0.7 || corner.Equals(0))
                                 continue;
                         }
-                        int X = location.X + I;
-                        int Z = location.Z + J;
-                        Coordinates3D CurrentBlock = new Coordinates3D(X, location.Y, Z);
-                        if (chunk.GetBlockID(CurrentBlock).Equals(0))
+                        int x = location.X + i;
+                        int z = location.Z + j;
+                        var currentBlock = new Coordinates3D(x, location.Y, z);
+                        if (chunk.GetBlockID(currentBlock).Equals(0))
                         {
-                            chunk.SetBlockID(CurrentBlock, block);
-                            chunk.SetMetadata(CurrentBlock, meta);
+                            chunk.SetBlockID(currentBlock, block);
+                            chunk.SetMetadata(currentBlock, meta);
                         }
                     }
                 }
@@ -138,24 +149,24 @@ namespace TrueCraft.Core.TerrainGen.Decorations
 
         protected void GenerateCircle(IChunk chunk, Coordinates3D location, int radius, byte block, byte meta = 0x0)
         {
-            for (int I = -radius; I <= radius; I = (I + 1))
+            for (int i = -radius; i <= radius; i = (i + 1))
             {
-                for (int J = -radius; J <= radius; J = (J + 1))
+                for (int j = -radius; j <= radius; j = (j + 1))
                 {
-                    int Max = (int)Math.Sqrt((I * I) + (J * J));
-                    if (Max <= radius)
+                    int max = (int)Math.Sqrt((i * i) + (j * j));
+                    if (max <= radius)
                     {
-                        int X = location.X + I;
-                        int Z = location.Z + J;
+                        int x = location.X + i;
+                        int z = location.Z + j;
 
-                        if (X < 0 || X >= Chunk.Width || Z < 0 || Z >= Chunk.Depth)
+                        if (x < 0 || x >= Chunk.Width || z < 0 || z >= Chunk.Depth)
                             continue;
 
-                        Coordinates3D CurrentBlock = new Coordinates3D(X, location.Y, Z);
-                        if (chunk.GetBlockID(CurrentBlock).Equals(0))
+                        var currentBlock = new Coordinates3D(x, location.Y, z);
+                        if (chunk.GetBlockID(currentBlock).Equals(0))
                         {
-                            chunk.SetBlockID(CurrentBlock, block);
-                            chunk.SetMetadata(CurrentBlock, meta);
+                            chunk.SetBlockID(currentBlock, block);
+                            chunk.SetMetadata(currentBlock, meta);
                         }
                     }
                 }
@@ -164,27 +175,27 @@ namespace TrueCraft.Core.TerrainGen.Decorations
 
         protected static void GenerateSphere(IChunk chunk, Coordinates3D location, int radius, byte block, byte meta = 0x0)
         {
-            for (int I = -radius; I <= radius; I = (I + 1))
+            for (int i = -radius; i <= radius; i = (i + 1))
             {
-                for (int J = -radius; J <= radius; J = (J + 1))
+                for (int j = -radius; j <= radius; j = (j + 1))
                 {
-                    for (int K = -radius; K <= radius; K = (K + 1))
+                    for (int k = -radius; k <= radius; k = (k + 1))
                     {
-                        int Max = (int)Math.Sqrt((I * I) + (J * J) + (K * K));
-                        if (Max <= radius)
+                        int max = (int)Math.Sqrt((i * i) + (j * j) + (k * k));
+                        if (max <= radius)
                         {
-                            int X = location.X + I;
-                            int Y = location.Y + K;
-                            int Z = location.Z + J;
+                            int x = location.X + i;
+                            int y = location.Y + k;
+                            int z = location.Z + j;
 
-                            if (X < 0 || X >= Chunk.Width || Z < 0 || Z >= Chunk.Depth || Y < 0 || Y >= Chunk.Height)
+                            if (x < 0 || x >= Chunk.Width || z < 0 || z >= Chunk.Depth || y < 0 || y >= Chunk.Height)
                                 continue;
 
-                            Coordinates3D CurrentBlock = new Coordinates3D(X, Y, Z);
-                            if (chunk.GetBlockID(CurrentBlock).Equals(0))
+                            var currentBlock = new Coordinates3D(x, y, z);
+                            if (chunk.GetBlockID(currentBlock).Equals(0))
                             {
-                                chunk.SetBlockID(CurrentBlock, block);
-                                chunk.SetMetadata(CurrentBlock, meta);
+                                chunk.SetBlockID(currentBlock, block);
+                                chunk.SetMetadata(currentBlock, meta);
                             }
                         }
                     }

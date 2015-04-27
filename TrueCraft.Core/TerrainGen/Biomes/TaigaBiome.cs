@@ -30,7 +30,7 @@ namespace TrueCraft.Core.TerrainGen.Biomes
         {
             get
             {
-                return new TreeSpecies[] { TreeSpecies.Spruce };
+                return new[] { TreeSpecies.Spruce };
             }
         }
 

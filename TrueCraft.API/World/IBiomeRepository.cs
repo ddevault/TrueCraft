@@ -7,8 +7,8 @@ namespace TrueCraft.API.World
 {
     public interface IBiomeRepository
     {
-        IBiomeProvider GetBiome(byte ID);
-        IBiomeProvider GetBiome(double Temperature, double RainFall);
-        void RegisterBiomeProvider(IBiomeProvider Provider);
+        IBiomeProvider GetBiome(byte id);
+        IBiomeProvider GetBiome(double temperature, double rainfall);
+        void RegisterBiomeProvider(IBiomeProvider provider);
     }
 }

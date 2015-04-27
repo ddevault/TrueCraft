@@ -14,34 +14,35 @@ namespace TrueCraft.Core.TerrainGen.Decorators
     public class DungeonDecorator : IChunkDecorator
     {
         private int BaseLevel;
-        public DungeonDecorator(int GroundLevel)
+
+        public DungeonDecorator(int groundLevel)
         {
-            this.BaseLevel = GroundLevel;
+            this.BaseLevel = groundLevel;
         }
 
         public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
         {
-            for (int Attemps = 0; Attemps < 8; Attemps++)
+            for (int attempts = 0; attempts < 8; attempts++)
             {
-                Perlin Noise = new Perlin();
-                Noise.Seed = world.Seed - (chunk.Coordinates.X + chunk.Coordinates.Z);
-                ClampNoise OffsetNoise = new ClampNoise(Noise);
-                OffsetNoise.MaxValue = 3;
-                var X = 0;
-                var Z = 0;
-                double Offset = 0;
-                Offset += OffsetNoise.Value2D(X, Z);
-                int FinalX = (int)Math.Floor(X + Offset);
-                int FinalZ = (int)Math.Floor(Z + Offset);
-                var Y = (int)(10 + Offset);
+                var noise = new Perlin();
+                noise.Seed = world.Seed - (chunk.Coordinates.X + chunk.Coordinates.Z);
+                var offsetNoise = new ClampNoise(noise);
+                offsetNoise.MaxValue = 3;
+                var x = 0;
+                var z = 0;
+                var offset = 0.0;
+                offset += offsetNoise.Value2D(x, z);
+                int finalX = (int)Math.Floor(x + offset);
+                int finalZ = (int)Math.Floor(z + offset);
+                var y = (int)(10 + offset);
 
-                var BlockX = MathHelper.ChunkToBlockX(FinalX, chunk.Coordinates.X);
-                var BlockZ = MathHelper.ChunkToBlockZ(FinalZ, chunk.Coordinates.Z);
-                var SpawnValue = OffsetNoise.Value2D(BlockX, BlockZ);
-                if (SpawnValue > 1.95 && SpawnValue < 2.09)
+                var blockX = MathHelper.ChunkToBlockX(finalX, chunk.Coordinates.X);
+                var blockZ = MathHelper.ChunkToBlockZ(finalZ, chunk.Coordinates.Z);
+                var spawnValue = offsetNoise.Value2D(blockX, blockZ);
+                if (spawnValue > 1.95 && spawnValue < 2.09)
                 {
-                    var Generated = new Dungeon().GenerateAt(world, chunk, new Coordinates3D(BlockX, Y, BlockZ));
-                    if (Generated)
+                    var generated = new Dungeon().GenerateAt(world, chunk, new Coordinates3D(blockX, y, blockZ));
+                    if (generated)
                         break;
                 }
             }

@@ -11,16 +11,17 @@ namespace TrueCraft.Core.TerrainGen.Noise
         public INoise Noise { get; set; }
         public double MinValue { get; set; }
         public double MaxValue { get; set; }
-        public ClampNoise(INoise Noise)
+
+        public ClampNoise(INoise noise)
         {
-            this.Noise = Noise;
+            Noise = noise;
             MinValue = 0;
             MaxValue = 1;
         }
     
-        public override double  Value2D(double X, double Y)
+        public override double Value2D(double x, double y)
         {
-            var NoiseValue = Noise.Value2D(X, Y);
+            var NoiseValue = Noise.Value2D(x, y);
             if (NoiseValue < MinValue)
                 NoiseValue = MinValue;
             if (NoiseValue > MaxValue)
@@ -28,9 +29,9 @@ namespace TrueCraft.Core.TerrainGen.Noise
             return NoiseValue;
         }
 
-        public override double  Value3D(double X, double Y, double Z)
+        public override double Value3D(double x, double y, double z)
         {
-            var NoiseValue = Noise.Value3D(X, Y, Z);
+            var NoiseValue = Noise.Value3D(x, y, z);
             if (NoiseValue < MinValue)
                 NoiseValue = MinValue;
             if (NoiseValue > MaxValue)

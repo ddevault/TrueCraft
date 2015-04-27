@@ -11,9 +11,11 @@ namespace TrueCraft.Core.World
     public class BiomeMap : IBiomeMap
     {
         public IList<BiomeCell> BiomeCells { get; private set; }
+
         Perlin TempNoise = new Perlin();
         Perlin RainNoise = new Perlin();
-        public BiomeMap()
+
+        public BiomeMap(int seed)
         {
             BiomeCells = new List<BiomeCell>();
             TempNoise.Persistance = 1.45;
@@ -25,70 +27,69 @@ namespace TrueCraft.Core.World
             RainNoise.Octaves = 2;
             RainNoise.Amplitude = 5;
             RainNoise.Lacunarity = 1.7;
+            TempNoise.Seed = seed;
+            RainNoise.Seed = seed;
         }
 
-        public void AddCell(BiomeCell Cell)
+        public void AddCell(BiomeCell cell)
         {
-            BiomeCells.Add(Cell);
+            BiomeCells.Add(cell);
         }
 
-        public byte GetBiome(Coordinates2D Location)
+        public byte GetBiome(Coordinates2D location)
         {
-            byte BiomeID = (ClosestCell(Location) != null) ? ClosestCell(Location).BiomeID : (byte)Biome.Plains;
+            byte BiomeID = (ClosestCell(location) != null) ? ClosestCell(location).BiomeID : (byte)Biome.Plains;
             return BiomeID;
         }
 
-        public byte GenerateBiome(int Seed, IBiomeRepository Biomes, Coordinates2D Location)
+        public byte GenerateBiome(int seed, IBiomeRepository biomes, Coordinates2D location)
         {
-            TempNoise.Seed = Seed;
-            RainNoise.Seed = Seed;
-
-            double Temperature = Math.Abs(TempNoise.Value2D(Location.X, Location.Z));
-            double Rainfall = Math.Abs(RainNoise.Value2D(Location.X, Location.Z));
-            byte ID = Biomes.GetBiome(Temperature, Rainfall).ID;
+            double temp = Math.Abs(TempNoise.Value2D(location.X, location.Z));
+            double rainfall = Math.Abs(RainNoise.Value2D(location.X, location.Z));
+            byte ID = biomes.GetBiome(temp, rainfall).ID;
             return ID;
         }
 
         /*
          * The closest biome cell to the specified location(uses the Chebyshev distance function).
          */
-        public BiomeCell ClosestCell(Coordinates2D Location)
+        public BiomeCell ClosestCell(Coordinates2D location)
         {
-            BiomeCell Cell = null;
-            var DistanceValue = double.MaxValue;
+            BiomeCell cell = null;
+            var distance = double.MaxValue;
             foreach (BiomeCell C in BiomeCells)
             {
-                var DistanceTo = Distance(Location, C.CellPoint);
-                if (DistanceTo < DistanceValue)
+                var _distance = Distance(location, C.CellPoint);
+                if (_distance < distance)
                 {
-                    DistanceValue = DistanceTo;
-                    Cell = C;
+                    distance = _distance;
+                    cell = C;
                 }
             }
-            return Cell;
+            return cell;
         }
 
         /*
          * The distance to the closest biome cell point to the specified location(uses the Chebyshev distance function).
          */
-        public double ClosestCellPoint(Coordinates2D Location)
+        public double ClosestCellPoint(Coordinates2D location)
         {
-            var DistanceValue = double.MaxValue;
+            var distance = double.MaxValue;
             foreach (BiomeCell C in BiomeCells)
             {
-                var DistanceTo = Distance(Location, C.CellPoint);
-                if (DistanceTo < DistanceValue)
+                var _distance = Distance(location, C.CellPoint);
+                if (_distance < distance)
                 {
-                    DistanceValue = DistanceTo;
+                    distance = _distance;
                 }
             }
-            return DistanceValue;
+            return distance;
         }
 
-        public double Distance(Coordinates2D Location1, Coordinates2D Location2)
+        public double Distance(Coordinates2D a, Coordinates2D b)
         {
-            Coordinates2D Difference = Location1 - Location2;
-            return Math.Max(Math.Abs(Difference.X), Math.Abs(Difference.Z));
+            Coordinates2D diff = a - b;
+            return Math.Max(Math.Abs(diff.X), Math.Abs(diff.Z));
         }
     }
 }

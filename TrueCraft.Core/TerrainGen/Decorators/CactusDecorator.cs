@@ -15,27 +15,27 @@ namespace TrueCraft.Core.TerrainGen.Decorators
     {
         public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
         {
-            Perlin Noise = new Perlin();
-            Noise.Seed = world.Seed;
-            ClampNoise ChanceNoise = new ClampNoise(Noise);
-            ChanceNoise.MaxValue = 2;
-            for (int X = 0; X < 16; X++)
+            var noise = new Perlin();
+            noise.Seed = world.Seed;
+            var chanceNoise = new ClampNoise(noise);
+            chanceNoise.MaxValue = 2;
+            for (int x = 0; x < 16; x++)
             {
-                for (int Z = 0; Z < 16; Z++)
+                for (int z = 0; z < 16; z++)
                 {
-                    IBiomeProvider Biome = biomes.GetBiome(chunk.Biomes[X * Chunk.Width + Z]);
-                    var BlockX = MathHelper.ChunkToBlockX(X, chunk.Coordinates.X);
-                    var BlockZ = MathHelper.ChunkToBlockZ(Z, chunk.Coordinates.Z);
-                    var Height = chunk.HeightMap[X * Chunk.Width + Z];
-                    if (Biome.Plants.Contains(PlantSpecies.Cactus) && ChanceNoise.Value2D(BlockX, BlockZ) > 1.7)
+                    var biome = biomes.GetBiome(chunk.Biomes[x * Chunk.Width + z]);
+                    var blockX = MathHelper.ChunkToBlockX(x, chunk.Coordinates.X);
+                    var blockZ = MathHelper.ChunkToBlockZ(z, chunk.Coordinates.Z);
+                    var height = chunk.HeightMap[x * Chunk.Width + z];
+                    if (biome.Plants.Contains(PlantSpecies.Cactus) && chanceNoise.Value2D(blockX, blockZ) > 1.7)
                     {
-                        Coordinates3D BlockLocation = new Coordinates3D(X, Height, Z);
-                        Coordinates3D CactiPosition = BlockLocation + Coordinates3D.Up;
-                        if (chunk.GetBlockID(BlockLocation).Equals(SandBlock.BlockID))
+                        var blockLocation = new Coordinates3D(x, height, z);
+                        var cactiPosition = blockLocation + Coordinates3D.Up;
+                        if (chunk.GetBlockID(blockLocation).Equals(SandBlock.BlockID))
                         {
-                            var HeightChance = ChanceNoise.Value2D(BlockX, BlockZ);
+                            var HeightChance = chanceNoise.Value2D(blockX, blockZ);
                             var CactusHeight = (HeightChance < 1.4) ? 2 : 3;
-                            Decoration.GenerateColumn(chunk, CactiPosition, CactusHeight, CactusBlock.BlockID);
+                            Decoration.GenerateColumn(chunk, cactiPosition, CactusHeight, CactusBlock.BlockID);
                         }
                     }
                 }

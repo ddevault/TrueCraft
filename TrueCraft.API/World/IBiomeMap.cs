@@ -10,20 +10,20 @@ namespace TrueCraft.API.World
         public byte BiomeID;
         public Coordinates2D CellPoint;
 
-        public BiomeCell(byte BiomeID, Coordinates2D CellPoint)
+        public BiomeCell(byte biomeID, Coordinates2D cellPoint)
         {
-            this.BiomeID = BiomeID;
-            this.CellPoint = CellPoint;
+            this.BiomeID = biomeID;
+            this.CellPoint = cellPoint;
         }
     }
 
     public interface IBiomeMap
     {
         IList<BiomeCell> BiomeCells { get; }
-        void AddCell(BiomeCell Cell);
-        byte GetBiome(Coordinates2D Location);
-        byte GenerateBiome(int Seed, IBiomeRepository Biomes, Coordinates2D Location);
-        BiomeCell ClosestCell(Coordinates2D Location);
-        double ClosestCellPoint(Coordinates2D Location);
+        void AddCell(BiomeCell cell);
+        byte GetBiome(Coordinates2D location);
+        byte GenerateBiome(int seed, IBiomeRepository biomes, Coordinates2D location);
+        BiomeCell ClosestCell(Coordinates2D location);
+        double ClosestCellPoint(Coordinates2D location);
     }
 }

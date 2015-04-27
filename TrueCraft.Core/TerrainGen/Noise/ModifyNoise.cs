@@ -12,46 +12,46 @@ namespace TrueCraft.Core.TerrainGen.Noise
         public INoise SecondaryNoise { get; set; }
         public NoiseModifier Modifier { get; set; }
 
-        public ModifyNoise(INoise PrimaryNoise, INoise SecondaryNoise, NoiseModifier Modifier = NoiseModifier.Add)
+        public ModifyNoise(INoise primaryNoise, INoise secondaryNoise, NoiseModifier modifier = NoiseModifier.Add)
         {
-            this.PrimaryNoise = PrimaryNoise;
-            this.SecondaryNoise = SecondaryNoise;
-            this.Modifier = Modifier;
+            this.PrimaryNoise = primaryNoise;
+            this.SecondaryNoise = secondaryNoise;
+            this.Modifier = modifier;
         }
 
-        public override double Value2D(double X, double Y)
+        public override double Value2D(double x, double y)
         {
             switch (Modifier)
             {
                 case NoiseModifier.Add:
-                    return PrimaryNoise.Value2D(X, Y) + SecondaryNoise.Value2D(X, Y);
+                    return PrimaryNoise.Value2D(x, y) + SecondaryNoise.Value2D(x, y);
                 case NoiseModifier.Multiply:
-                    return PrimaryNoise.Value2D(X, Y) * SecondaryNoise.Value2D(X, Y);
+                    return PrimaryNoise.Value2D(x, y) * SecondaryNoise.Value2D(x, y);
                 case NoiseModifier.Power:
-                    return Math.Pow(PrimaryNoise.Value2D(X, Y), SecondaryNoise.Value2D(X, Y));
+                    return Math.Pow(PrimaryNoise.Value2D(x, y), SecondaryNoise.Value2D(x, y));
                 case NoiseModifier.Subtract:
-                    return PrimaryNoise.Value2D(X, Y) - SecondaryNoise.Value2D(X, Y);
+                    return PrimaryNoise.Value2D(x, y) - SecondaryNoise.Value2D(x, y);
                 default:
                     //This is unreachable.
-                    return PrimaryNoise.Value2D(X, Y) + SecondaryNoise.Value2D(X, Y);
+                    return PrimaryNoise.Value2D(x, y) + SecondaryNoise.Value2D(x, y);
             }
         }
 
-        public override double Value3D(double X, double Y, double Z)
+        public override double Value3D(double x, double y, double z)
         {
             switch (Modifier)
             {
                 case NoiseModifier.Add:
-                    return PrimaryNoise.Value3D(X, Y, Z) + SecondaryNoise.Value3D(X, Y, Z);
+                    return PrimaryNoise.Value3D(x, y, z) + SecondaryNoise.Value3D(x, y, z);
                 case NoiseModifier.Multiply:
-                    return PrimaryNoise.Value3D(X, Y, Z) * SecondaryNoise.Value3D(X, Y, Z);
+                    return PrimaryNoise.Value3D(x, y, z) * SecondaryNoise.Value3D(x, y, z);
                 case NoiseModifier.Power:
-                    return Math.Pow(PrimaryNoise.Value3D(X, Y, Z), SecondaryNoise.Value3D(X, Y, Z));
+                    return Math.Pow(PrimaryNoise.Value3D(x, y, z), SecondaryNoise.Value3D(x, y, z));
                 case NoiseModifier.Subtract:
-                    return PrimaryNoise.Value3D(X, Y, Z) - SecondaryNoise.Value3D(X, Y, Z);
+                    return PrimaryNoise.Value3D(x, y, z) - SecondaryNoise.Value3D(x, y, z);
                 default:
                     //This is unreachable.
-                    return PrimaryNoise.Value3D(X, Y, Z) + SecondaryNoise.Value3D(X, Y, Z);
+                    return PrimaryNoise.Value3D(x, y, z) + SecondaryNoise.Value3D(x, y, z);
             }
         }
     }

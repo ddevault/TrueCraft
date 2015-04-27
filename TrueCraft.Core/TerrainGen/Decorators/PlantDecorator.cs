@@ -14,52 +14,52 @@ namespace TrueCraft.Core.TerrainGen.Decorators
     {
         public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
         {
-            Perlin Noise = new Perlin();
-            Noise.Seed = world.Seed;
-            ClampNoise ChanceNoise = new ClampNoise(Noise);
-            ChanceNoise.MaxValue = 2;
-            for (int X = 0; X < 16; X++)
+            var noise = new Perlin();
+            noise.Seed = world.Seed;
+            var chanceNoise = new ClampNoise(noise);
+            chanceNoise.MaxValue = 2;
+            for (int x = 0; x < 16; x++)
             {
-                for (int Z = 0; Z < 16; Z++)
+                for (int z = 0; z < 16; z++)
                 {
-                    IBiomeProvider Biome = biomes.GetBiome(chunk.Biomes[X * Chunk.Width + Z]);
-                    var BlockX = MathHelper.ChunkToBlockX(X, chunk.Coordinates.X);
-                    var BlockZ = MathHelper.ChunkToBlockZ(Z, chunk.Coordinates.Z);
-                    var Height = chunk.HeightMap[X * Chunk.Width + Z];
-                    if (Noise.Value2D(BlockX, BlockZ) > 0.25)
+                    var biome = biomes.GetBiome(chunk.Biomes[x * Chunk.Width + z]);
+                    var blockX = MathHelper.ChunkToBlockX(x, chunk.Coordinates.X);
+                    var blockZ = MathHelper.ChunkToBlockZ(z, chunk.Coordinates.Z);
+                    var height = chunk.HeightMap[x * Chunk.Width + z];
+                    if (noise.Value2D(blockX, blockZ) > 0)
                     {
-                        Coordinates3D BlockLocation = new Coordinates3D(X, Height, Z);
-                        Coordinates3D PlantPosition = BlockLocation + Coordinates3D.Up;
-                        if (chunk.GetBlockID(BlockLocation).Equals(GrassBlock.BlockID) && PlantPosition.Y < Chunk.Height)
+                        var blockLocation = new Coordinates3D(x, height, z);
+                        var plantPosition = blockLocation + Coordinates3D.Up;
+                        if (chunk.GetBlockID(blockLocation) == biome.SurfaceBlock && plantPosition.Y < Chunk.Height)
                         {
-                            var Chance = ChanceNoise.Value2D(BlockX, BlockZ);
-                            if (Chance < 1.3)
+                            var chance = chanceNoise.Value2D(blockX, blockZ);
+                            if (chance < 1)
                             {
-                                var BushNoise = ChanceNoise.Value2D(BlockX * 0.7, BlockZ * 0.7);
-                                var GrassNoise = ChanceNoise.Value2D(BlockX * 0.3, BlockZ * 0.3);
-                                if (Biome.Plants.Contains(PlantSpecies.Deadbush) && BushNoise > 1.75 && chunk.GetBlockID(BlockLocation).Equals(SandBlock.BlockID))
+                                var bushNoise = chanceNoise.Value2D(blockX * 0.7, blockZ * 0.7);
+                                var grassNoise = chanceNoise.Value2D(blockX * 0.3, blockZ * 0.3);
+                                if (biome.Plants.Contains(PlantSpecies.Deadbush) && bushNoise > 1 && chunk.GetBlockID(blockLocation) == SandBlock.BlockID)
                                 {
-                                    GenerateDeadBush(chunk, PlantPosition);
+                                    GenerateDeadBush(chunk, plantPosition);
                                     continue;
                                 }
                                 
-                                if (Biome.Plants.Contains(PlantSpecies.TallGrass) && GrassNoise > 0.3 && GrassNoise < 0.95)
+                                if (biome.Plants.Contains(PlantSpecies.TallGrass) && grassNoise > 0.3 && grassNoise < 0.95)
                                 {
-                                    byte Meta = (GrassNoise > 0.3 && GrassNoise < 0.45 && Biome.Plants.Contains(PlantSpecies.Fern)) ? (byte)0x2 : (byte)0x1;
-                                    GenerateTallGrass(chunk, PlantPosition, Meta);
+                                    byte meta = (grassNoise > 0.3 && grassNoise < 0.45 && biome.Plants.Contains(PlantSpecies.Fern)) ? (byte)0x2 : (byte)0x1;
+                                    GenerateTallGrass(chunk, plantPosition, meta);
                                     continue;
                                 }
                             }
                             else
                             {
-                                var FlowerTypeNoise = ChanceNoise.Value2D(BlockX * 1.2, BlockZ * 1.2);
-                                if (Biome.Plants.Contains(PlantSpecies.Rose) && FlowerTypeNoise > 0.8 && FlowerTypeNoise < 1.5)
+                                var flowerTypeNoise = chanceNoise.Value2D(blockX * 1.2, blockZ * 1.2);
+                                if (biome.Plants.Contains(PlantSpecies.Rose) && flowerTypeNoise > 0.8 && flowerTypeNoise < 1.5)
                                 {
-                                    GenerateRose(chunk, PlantPosition);
+                                    GenerateRose(chunk, plantPosition);
                                 }
-                                else if (Biome.Plants.Contains(PlantSpecies.Dandelion) && FlowerTypeNoise <= 0.8)
+                                else if (biome.Plants.Contains(PlantSpecies.Dandelion) && flowerTypeNoise <= 0.8)
                                 {
-                                    GenerateDandelion(chunk, PlantPosition);
+                                    GenerateDandelion(chunk, plantPosition);
                                 }
                             }
                         }
@@ -68,25 +68,25 @@ namespace TrueCraft.Core.TerrainGen.Decorators
             }
         }
 
-        void GenerateRose(IChunk chunk, Coordinates3D Location)
+        void GenerateRose(IChunk chunk, Coordinates3D location)
         {
-            chunk.SetBlockID(Location, RoseBlock.BlockID);
+            chunk.SetBlockID(location, RoseBlock.BlockID);
         }
 
-        void GenerateDandelion(IChunk chunk, Coordinates3D Location)
+        void GenerateDandelion(IChunk chunk, Coordinates3D location)
         {
-            chunk.SetBlockID(Location, FlowerBlock.BlockID);
+            chunk.SetBlockID(location, FlowerBlock.BlockID);
         }
 
-        void GenerateTallGrass(IChunk chunk, Coordinates3D Location, byte Meta)
+        void GenerateTallGrass(IChunk chunk, Coordinates3D location, byte meta)
         {
-            chunk.SetBlockID(Location, TallGrassBlock.BlockID);
-            chunk.SetMetadata(Location, Meta);
+            chunk.SetBlockID(location, TallGrassBlock.BlockID);
+            chunk.SetMetadata(location, meta);
         }
 
-        void GenerateDeadBush(IChunk chunk, Coordinates3D Location)
+        void GenerateDeadBush(IChunk chunk, Coordinates3D location)
         {
-            chunk.SetBlockID(Location, DeadBushBlock.BlockID);
+            chunk.SetBlockID(location, DeadBushBlock.BlockID);
         }
     }
 }

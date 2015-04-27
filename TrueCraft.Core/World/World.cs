@@ -16,7 +16,20 @@ namespace TrueCraft.Core.World
 
         public string Name { get; set; }
         public int Seed { get; set; }
-        public Coordinates3D SpawnPoint { get; set; }
+        private Coordinates3D? _SpawnPoint;
+        public Coordinates3D SpawnPoint
+        {
+            get
+            {
+                if (_SpawnPoint == null)
+                    _SpawnPoint = ChunkProvider.GetSpawn(this);
+                return _SpawnPoint.Value;
+            }
+            set
+            {
+                _SpawnPoint = value;
+            }
+        }
         public string BaseDirectory { get; internal set; }
         public IDictionary<Coordinates2D, IRegion> Regions { get; set; }
         public IBiomeMap BiomeDiagram { get; set; }
@@ -38,19 +51,28 @@ namespace TrueCraft.Core.World
 
         public event EventHandler<BlockChangeEventArgs> BlockChanged;
 
-        public World(string name)
+        public World()
+        {
+            Regions = new Dictionary<Coordinates2D, IRegion>();
+            BaseTime = DateTime.Now;
+        }
+
+        public World(string name) : this()
         {
             Name = name;
             Seed = new Random().Next();
-            Regions = new Dictionary<Coordinates2D, IRegion>();
-            BaseTime = DateTime.Now;
-            BiomeDiagram = new BiomeMap();
+            BiomeDiagram = new BiomeMap(Seed);
         }
 
         public World(string name, IChunkProvider chunkProvider) : this(name)
         {
             ChunkProvider = chunkProvider;
-            SpawnPoint = chunkProvider.GetSpawn(this);
+        }
+
+        public World(string name, int seed, IChunkProvider chunkProvider) : this(name, chunkProvider)
+        {
+            Seed = seed;
+            BiomeDiagram = new BiomeMap(Seed);
         }
 
         public static World LoadWorld(string baseDirectory)

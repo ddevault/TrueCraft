@@ -30,68 +30,69 @@ namespace TrueCraft.Core.TerrainGen
             }
         }
 
-        public void RegisterBiomeProvider(IBiomeProvider Provider)
+        public void RegisterBiomeProvider(IBiomeProvider provider)
         {
-            BiomeProviders[Provider.ID] = Provider;
+            BiomeProviders[provider.ID] = provider;
         }
 
-        public IBiomeProvider GetBiome(byte ID)
+        public IBiomeProvider GetBiome(byte id)
         {
-            return BiomeProviders[ID];
+            return BiomeProviders[id];
         }
 
-        public IBiomeProvider GetBiome(double Temperature, double Rainfall)
+        public IBiomeProvider GetBiome(double temperature, double rainfall)
         {
-            List<IBiomeProvider> TemperatureResults = new List<IBiomeProvider>();
-            foreach (IBiomeProvider B in BiomeProviders)
+            List<IBiomeProvider> temperatureResults = new List<IBiomeProvider>();
+            foreach (var biome in BiomeProviders)
             {
-                if (B != null && B.Temperature.Equals(Temperature))
+                if (biome != null && biome.Temperature.Equals(temperature))
                 {
-                    TemperatureResults.Add(B);
+                    temperatureResults.Add(biome);
                 }
             }
 
-            if (TemperatureResults.Count.Equals(0))
+            if (temperatureResults.Count.Equals(0))
             {
-                IBiomeProvider Provider = null;
-                float TemperatureDifference = 100.0f;
-                foreach (IBiomeProvider B in BiomeProviders)
+                IBiomeProvider provider = null;
+                float temperatureDifference = 100.0f;
+                foreach (var biome in BiomeProviders)
                 {
-                    if (B != null)
+                    if (biome != null)
                     {
-                        var Difference = Math.Abs(Temperature - B.Temperature);
-                        if (Provider == null || Difference < TemperatureDifference)
+                        var Difference = Math.Abs(temperature - biome.Temperature);
+                        if (provider == null || Difference < temperatureDifference)
                         {
-                            Provider = B;
-                            TemperatureDifference = (float)Difference;
+                            provider = biome;
+                            temperatureDifference = (float)Difference;
                         }
                     }
                 }
-                TemperatureResults.Add(Provider);
+                temperatureResults.Add(provider);
             }
 
-            foreach (IBiomeProvider B in BiomeProviders)
+            foreach (var biome in BiomeProviders)
             {
-                if (B != null && B.Rainfall.Equals(Rainfall) && TemperatureResults.Contains(B))
+                if (biome != null && biome.Rainfall.Equals(rainfall) && temperatureResults.Contains(biome))
                 {
-                    return B;
+                    return biome;
                 }
             }
-            IBiomeProvider BProvider = null;
-            float RainfallDifference = 100.0f;
-            foreach (IBiomeProvider B in BiomeProviders)
+
+            IBiomeProvider biomeProvider = null;
+            float rainfallDifference = 100.0f;
+            foreach (var biome in BiomeProviders)
             {
-                if (B != null)
+                if (biome != null)
                 {
-                    var Difference = Math.Abs(Temperature - B.Temperature);
-                    if (BProvider == null || Difference < RainfallDifference)
+                    var difference = Math.Abs(temperature - biome.Temperature);
+                    if (biomeProvider == null || difference < rainfallDifference)
                     {
-                        BProvider = B;
-                        RainfallDifference = (float)Difference;
+                        biomeProvider = biome;
+                        rainfallDifference = (float)difference;
                     }
                 }
             }
-            return BProvider;
+            return biomeProvider;
         }
     }
 }

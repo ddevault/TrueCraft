@@ -11,35 +11,36 @@ namespace TrueCraft.Core.TerrainGen.Decorators
 {
     public class WaterDecorator : IChunkDecorator
     {
-        int WaterLevel = 40;
-        public void Decorate(IWorld world, IChunk chunk, IBiomeRepository Biomes)
+        const int WaterLevel = 40;
+
+        public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
         {
-            for (int X = 0; X < Chunk.Width; X++)
+            for (int x = 0; x < Chunk.Width; x++)
             {
-                for (int Z = 0; Z < Chunk.Depth; Z++)
+                for (int z = 0; z < Chunk.Depth; z++)
                 {
-                    IBiomeProvider Biome = Biomes.GetBiome(chunk.Biomes[X * Chunk.Width + Z]);
-                    var Height = chunk.HeightMap[X * Chunk.Width + Z];
-                    for (int Y = Height; Y <= WaterLevel; Y++)
+                    var biome = biomes.GetBiome(chunk.Biomes[x * Chunk.Width + z]);
+                    var height = chunk.HeightMap[x * Chunk.Width + z];
+                    for (int y = height; y <= WaterLevel; y++)
                     {
-                        Coordinates3D BlockLocation = new Coordinates3D(X, Y, Z);
-                        int BlockID = chunk.GetBlockID(BlockLocation);
-                        if (BlockID.Equals(AirBlock.BlockID))
+                        var blockLocation = new Coordinates3D(x, y, z);
+                        int blockId = chunk.GetBlockID(blockLocation);
+                        if (blockId.Equals(AirBlock.BlockID))
                         {
-                            chunk.SetBlockID(BlockLocation, Biome.WaterBlock);
-                            Coordinates3D Below = BlockLocation + Coordinates3D.Down;
-                            if (!chunk.GetBlockID(Below).Equals(AirBlock.BlockID) && !chunk.GetBlockID(Below).Equals(Biome.WaterBlock))
+                            chunk.SetBlockID(blockLocation, biome.WaterBlock);
+                            var below = blockLocation + Coordinates3D.Down;
+                            if (!chunk.GetBlockID(below).Equals(AirBlock.BlockID) && !chunk.GetBlockID(below).Equals(biome.WaterBlock))
                             {
-                                if (!Biome.WaterBlock.Equals(LavaBlock.BlockID) && !Biome.WaterBlock.Equals(StationaryLavaBlock.BlockID))
+                                if (!biome.WaterBlock.Equals(LavaBlock.BlockID) && !biome.WaterBlock.Equals(StationaryLavaBlock.BlockID))
                                 {
-                                    Random R = new Random(world.Seed);
-                                    if (R.Next(100) < 40)
+                                    var random = new Random(world.Seed);
+                                    if (random.Next(100) < 40)
                                     {
-                                        chunk.SetBlockID(Below, ClayBlock.BlockID);
+                                        chunk.SetBlockID(below, ClayBlock.BlockID);
                                     }
                                     else
                                     {
-                                        chunk.SetBlockID(Below, SandBlock.BlockID);
+                                        chunk.SetBlockID(below, SandBlock.BlockID);
                                     }
                                 }
                             }

@@ -10,64 +10,67 @@ namespace TrueCraft.Core.TerrainGen.Noise
 {
     public abstract class NoiseGen : INoise
     {
-        public abstract double Value2D(double X, double Y);
+        public abstract double Value2D(double x, double y);
 
-        public abstract double Value3D(double X, double Y, double Z);
+        public abstract double Value3D(double x, double y, double z);
 
-        public int Floor(double Value)
+        public int Floor(double value)
         {
-            return (Value >= 0.0 ? (int)Value : (int)Value - 1);
+            return (value >= 0.0 ? (int)value : (int)value - 1);
         }
-        public static double Interpolate(double Point0, double Point1, double T, InterpolateType Type)
+        public static double Interpolate(double pointA, double pointB, double t, InterpolateType type)
         {
-            switch (Type)
+            switch (type)
             {
                 //TODO: Incorporate Cubic Interpolation
                 case InterpolateType.COSINE:
-                    return CosineInterpolate(Point0, Point1, T);
+                    return CosineInterpolate(pointA, pointB, t);
                 case InterpolateType.LINEAR:
-                    return LinearInterpolate(Point0, Point1, T);
+                    return LinearInterpolate(pointA, pointB, t);
                 default:
-                    return LinearInterpolate(Point0, Point1, T);
+                    return LinearInterpolate(pointA, pointB, t);
             }
         }
 
-        private static double CosineInterpolate(double Point0, double Point1, double T)
+        private static double CosineInterpolate(double pointA, double pointB, double t)
         {
-            var F = T * Math.PI;
+            var F = t * Math.PI;
             var G = (1 - Math.Cos(F)) * 0.5;
-            return Point0 * (1 - G) + Point1 * G;
+            return pointA * (1 - G) + pointB * G;
         }
 
         //TODO: Implement this into the Interpolate method
-        private static double CubicInterpolate(double Point0, double Point1, double Point2, double Point3, double T)
+        private static double CubicInterpolate(double pointA, double pointB, double pointC, double pointD, double t)
         {
-            var E = (Point3 - Point2) - (Point0 - Point1);
-            var F = (Point0 - Point1) - E;
-            var G = Point2 - Point0;
-            var H = Point1;
-            return E * Math.Pow(T, 3) + F * Math.Pow(T, 2) + G * T + H;
+            var E = (pointD - pointC) - (pointA - pointB);
+            var F = (pointA - pointB) - E;
+            var G = pointC - pointA;
+            var H = pointB;
+            return E * Math.Pow(t, 3) + F * Math.Pow(t, 2) + G * t + H;
         }
 
-        private static double LinearInterpolate(double Point0, double Point1, double T)
+        private static double LinearInterpolate(double pointA, double pointB, double t)
         {
-            return Point0 * (1 - T) + Point1 * T;
+            return pointA * (1 - t) + pointB * t;
         }
 
-        public static double BiLinearInterpolate(double X, double Y, double Point00, double Point01, double Point10, double Point11)
+        public static double BiLinearInterpolate(double x, double y, double point00, double point01, double point10, double point11)
         {
-            double Point0 = LinearInterpolate(Point00, Point10, X);
-            double Point1 = LinearInterpolate(Point01, Point11, X);
+            double Point0 = LinearInterpolate(point00, point10, x);
+            double Point1 = LinearInterpolate(point01, point11, x);
 
-            return LinearInterpolate(Point0, Point1, Y);
+            return LinearInterpolate(Point0, Point1, y);
         }
 
-        public static double TriLinearInterpolate(double X, double Y, double Z, double Point000, double Point001, double Point010, double Point100, double Point011, double Point101, double Point110, double Point111)
+        public static double TriLinearInterpolate(double x, double y, double z,
+            double point000, double point001, double point010,
+            double point100, double point011, double point101,
+            double point110, double point111)
         {
-            double Point0 = BiLinearInterpolate(X, Y, Point000, Point001, Point100, Point101);
-            double Point1 = BiLinearInterpolate(X, Y, Point010, Point011, Point110, Point111);
+            double Point0 = BiLinearInterpolate(x, y, point000, point001, point100, point101);
+            double Point1 = BiLinearInterpolate(x, y, point010, point011, point110, point111);
 
-            return LinearInterpolate(Point0, Point1, Z);
+            return LinearInterpolate(Point0, Point1, z);
         }
     }
 

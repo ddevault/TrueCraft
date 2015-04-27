@@ -13,31 +13,25 @@ namespace TrueCraft.Core.TerrainGen.Decorators
     {
         public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
         {
-            for (int X = 0; X < 16; X++)
+            for (int x = 0; x < 16; x++)
             {
-                for (int Z = 0; Z < 16; Z++)
+                for (int z = 0; z < 16; z++)
                 {
-                    IBiomeProvider Biome = biomes.GetBiome(chunk.Biomes[X * Chunk.Width + Z]);
-                    if (Biome.Temperature < 0.15)
+                    var biome = biomes.GetBiome(chunk.Biomes[x * Chunk.Width + z]);
+                    if (biome.Temperature < 0.15)
                     {
-                        var Height = chunk.HeightMap[X * Chunk.Width + Z];
-                        for (int Y = Height; Y < Chunk.Height; Y++)
+                        var height = chunk.HeightMap[x * Chunk.Width + z];
+                        for (int y = height; y < Chunk.Height; y++)
                         {
-                            Coordinates3D Location = new Coordinates3D(X, Y, Z);
-                            if (chunk.GetBlockID(Location).Equals(StationaryWaterBlock.BlockID) || chunk.GetBlockID(Location).Equals(WaterBlock.BlockID))
-                            {
-                                chunk.SetBlockID(Location, IceBlock.BlockID);
-                            }
+                            var location = new Coordinates3D(x, y, z);
+                            if (chunk.GetBlockID(location).Equals(StationaryWaterBlock.BlockID) || chunk.GetBlockID(location).Equals(WaterBlock.BlockID))
+                                chunk.SetBlockID(location, IceBlock.BlockID);
                             else
                             {
-                                if (chunk.GetBlockID(Location).Equals(IceBlock.BlockID) && CoverIce(chunk, biomes, Location))
-                                {
-                                    chunk.SetBlockID((Location + Coordinates3D.Up), SnowfallBlock.BlockID);
-                                }
-                                else if (!chunk.GetBlockID(Location).Equals(SnowfallBlock.BlockID) && !chunk.GetBlockID(Location).Equals(AirBlock.BlockID))
-                                {
-                                    chunk.SetBlockID((Location + Coordinates3D.Up), SnowfallBlock.BlockID);
-                                }
+                                if (chunk.GetBlockID(location).Equals(IceBlock.BlockID) && CoverIce(chunk, biomes, location))
+                                    chunk.SetBlockID((location + Coordinates3D.Up), SnowfallBlock.BlockID);
+                                else if (!chunk.GetBlockID(location).Equals(SnowfallBlock.BlockID) && !chunk.GetBlockID(location).Equals(AirBlock.BlockID))
+                                    chunk.SetBlockID((location + Coordinates3D.Up), SnowfallBlock.BlockID);
                             }
                         }
                     }
@@ -45,22 +39,22 @@ namespace TrueCraft.Core.TerrainGen.Decorators
             }
         }
 
-        bool CoverIce(IChunk chunk, IBiomeRepository biomes, Coordinates3D Location)
+        bool CoverIce(IChunk chunk, IBiomeRepository biomes, Coordinates3D location)
         {
-            var MaxDistance = 4;
-            var Surrounding = new[] {
-                Location + new Coordinates3D(-MaxDistance, 0, 0),
-                Location + new Coordinates3D(MaxDistance, 0, 0),
-                Location + new Coordinates3D(0, 0, MaxDistance),
-                Location + new Coordinates3D(0, 0, -MaxDistance),
+            const int maxDistance = 4;
+            var adjacent = new[] {
+                location + new Coordinates3D(-maxDistance, 0, 0),
+                location + new Coordinates3D(maxDistance, 0, 0),
+                location + new Coordinates3D(0, 0, maxDistance),
+                location + new Coordinates3D(0, 0, -maxDistance),
             };
-            for (int I = 0; I < Surrounding.Length; I++)
+            for (int i = 0; i < adjacent.Length; i++)
             {
-                Coordinates3D Check = Surrounding[I];
-                if (Check.X < 0 || Check.X >= Chunk.Width || Check.Z < 0 || Check.Z >= Chunk.Depth || Check.Y < 0 || Check.Y >= Chunk.Height)
+                var check = adjacent[i];
+                if (check.X < 0 || check.X >= Chunk.Width || check.Z < 0 || check.Z >= Chunk.Depth || check.Y < 0 || check.Y >= Chunk.Height)
                     return false;
-                IBiomeProvider Biome = biomes.GetBiome(chunk.Biomes[Check.X * Chunk.Width + Check.Z]);
-                if (chunk.GetBlockID(Check).Equals(Biome.SurfaceBlock) || chunk.GetBlockID(Check).Equals(Biome.FillerBlock))
+                var biome = biomes.GetBiome(chunk.Biomes[check.X * Chunk.Width + check.Z]);
+                if (chunk.GetBlockID(check).Equals(biome.SurfaceBlock) || chunk.GetBlockID(check).Equals(biome.FillerBlock))
                     return true;
             }
             return false;

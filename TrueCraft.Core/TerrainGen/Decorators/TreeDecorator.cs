@@ -13,75 +13,76 @@ namespace TrueCraft.Core.TerrainGen.Decorators
 {
     public class TreeDecorator : IChunkDecorator
     {
-        Perlin Noise;
-        ClampNoise ChanceNoise;
+        public Perlin Noise { get; set; }
+        public ClampNoise ChanceNoise { get; set; }
+
         public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
         {
             Noise = new Perlin();
             Noise.Seed = world.Seed;
             ChanceNoise = new ClampNoise(Noise);
             ChanceNoise.MaxValue = 2;
-            Coordinates2D LastTree = new Coordinates2D();
-            for (int X = 0; X < 16; X++)
+            Coordinates2D? lastTree = null;
+            for (int x = 0; x < 16; x++)
             {
-                for (int Z = 0; Z < 16; Z++)
+                for (int z = 0; z < 16; z++)
                 {
-                    IBiomeProvider Biome = biomes.GetBiome(chunk.Biomes[X * Chunk.Width + Z]);
-                    var BlockX = MathHelper.ChunkToBlockX(X, chunk.Coordinates.X);
-                    var BlockZ = MathHelper.ChunkToBlockZ(Z, chunk.Coordinates.Z);
-                    var Height = chunk.HeightMap[X * Chunk.Width + Z];
+                    var biome = biomes.GetBiome(chunk.Biomes[x * Chunk.Width + z]);
+                    var blockX = MathHelper.ChunkToBlockX(x, chunk.Coordinates.X);
+                    var blockZ = MathHelper.ChunkToBlockZ(z, chunk.Coordinates.Z);
+                    var height = chunk.HeightMap[x * Chunk.Width + z];
 
-                    if (!LastTree.Equals(null) && LastTree.DistanceTo(new Coordinates2D(X, Z)) < Biome.TreeDensity)
-                    {
+                    if (lastTree != null && lastTree.Value.DistanceTo(new Coordinates2D(x, z)) < biome.TreeDensity)
                         continue;
-                    }
 
-                    if (Noise.Value2D(BlockX, BlockZ) > 0.3)
+                    if (Noise.Value2D(blockX, blockZ) > 0.3)
                     {
-                        Coordinates3D location = new Coordinates3D(X, Height, Z);
-                        if (chunk.GetBlockID(location) == GrassBlock.BlockID || chunk.GetBlockID(location) == SnowfallBlock.BlockID)
+                        var location = new Coordinates3D(x, height, z);
+                        var id = chunk.GetBlockID(location);
+                        var provider = world.BlockRepository.GetBlockProvider(id);
+                        if (id == DirtBlock.BlockID || id == GrassBlock.BlockID || id == SnowfallBlock.BlockID
+                            || (id != StationaryWaterBlock.BlockID && id != WaterBlock.BlockID
+                                && id != LavaBlock.BlockID && id != StationaryLavaBlock.BlockID
+                                && provider.BoundingBox == null))
                         {
-                            var Chance = ChanceNoise.Value2D(BlockX, BlockZ);
-                            var OakNoise = ChanceNoise.Value2D(BlockX * 0.6, BlockZ * 0.6);
-                            var BirchNoise = ChanceNoise.Value2D(BlockX * 0.2, BlockZ * 0.2);
-                            var SpruceNoise = ChanceNoise.Value2D(BlockX * 0.35, BlockZ * 0.35);
+                            if (provider.BoundingBox == null)
+                                location.Y--;
+                            var oakNoise = ChanceNoise.Value2D(blockX * 0.6, blockZ * 0.6);
+                            var birchNoise = ChanceNoise.Value2D(blockX * 0.2, blockZ * 0.2);
+                            var spruceNoise = ChanceNoise.Value2D(blockX * 0.35, blockZ * 0.35);
 
-                            Coordinates3D Base = location + Coordinates3D.Up;
-                            if (Biome.Trees.Contains(TreeSpecies.Oak) && OakNoise > 1.01 && OakNoise < 1.25)
+                            var baseCoordinates = location + Coordinates3D.Up;
+                            if (biome.Trees.Contains(TreeSpecies.Oak) && oakNoise > 1.01 && oakNoise < 1.25)
                             {
-                                var Oak = new OakTree().GenerateAt(world, chunk, Base);
-                                if (Oak)
+                                var oak = new OakTree().GenerateAt(world, chunk, baseCoordinates);
+                                if (oak)
                                 {
-                                    LastTree = new Coordinates2D(X, Z);
+                                    lastTree = new Coordinates2D(x, z);
                                     continue;
                                 }
                             }
-                            if (Biome.Trees.Contains(TreeSpecies.Birch) && BirchNoise > 0.3 && BirchNoise < 0.95)
+                            if (biome.Trees.Contains(TreeSpecies.Birch) && birchNoise > 0.3 && birchNoise < 0.95)
                             {
-                                var Birch = new BirchTree().GenerateAt(world, chunk, Base);
-                                if (Birch)
+                                var birch = new BirchTree().GenerateAt(world, chunk, baseCoordinates);
+                                if (birch)
                                 {
-                                    LastTree = new Coordinates2D(X, Z);
+                                    lastTree = new Coordinates2D(x, z);
                                     continue;
                                 }
                             }
-                            if (Biome.Trees.Contains(TreeSpecies.Spruce) && SpruceNoise < 0.75)
+                            if (biome.Trees.Contains(TreeSpecies.Spruce) && spruceNoise < 0.75)
                             {
-                                Random R = new Random(world.Seed);
-                                var type = R.Next(1, 2);
-                                var Generated = false;
+                                var random = new Random(world.Seed);
+                                var type = random.Next(1, 2);
+                                var generated = false;
                                 if (type.Equals(1))
-                                {
-                                    Generated = new PineTree().GenerateAt(world, chunk, Base);
-                                }
+                                    generated = new PineTree().GenerateAt(world, chunk, baseCoordinates);
                                 else
-                                {
-                                    Generated = new ConiferTree().GenerateAt(world, chunk, Base);
-                                }
+                                    generated = new ConiferTree().GenerateAt(world, chunk, baseCoordinates);
 
-                                if (Generated)
+                                if (generated)
                                 {
-                                    LastTree = new Coordinates2D(X, Z);
+                                    lastTree = new Coordinates2D(x, z);
                                     continue;
                                 }
                             }

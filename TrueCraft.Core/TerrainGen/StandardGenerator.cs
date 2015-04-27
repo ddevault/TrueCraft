@@ -25,44 +25,52 @@ namespace TrueCraft.Core.TerrainGen
         ClampNoise HighClamp;
         ClampNoise LowClamp;
         ClampNoise BottomClamp;
-        ModifyNoise Modified;
-        private int GroundLevel = 50;
+        ModifyNoise FinalNoise;
+        private const int GroundLevel = 50;
 
-        public StandardGenerator(bool SingleBiome = false, byte GenerateBiome = (byte)Biome.Plains)
+        public StandardGenerator(bool singleBiome = false, byte generateBiome = (byte)Biome.Plains)
         {
-            this.SingleBiome = SingleBiome;
-            this.GenerationBiome = GenerateBiome;
+            SingleBiome = singleBiome;
+            GenerationBiome = generateBiome;
+
             HighNoise.Persistance = 1;
             HighNoise.Frequency = 0.013;
             HighNoise.Amplitude = 10;
             HighNoise.Octaves = 2;
             HighNoise.Lacunarity = 2;
+
             LowNoise.Persistance = 1;
-            LowNoise.Frequency = 0.008;
-            LowNoise.Amplitude = 14;
+            LowNoise.Frequency = 0.004;
+            LowNoise.Amplitude = 35;
             LowNoise.Octaves = 2;
             LowNoise.Lacunarity = 2.5;
+
             BottomNoise.Persistance = 0.5;
             BottomNoise.Frequency = 0.013;
             BottomNoise.Amplitude = 5;
             BottomNoise.Octaves = 2;
             BottomNoise.Lacunarity = 1.5;
+
             HighClamp = new ClampNoise(HighNoise);
-            HighClamp.MinValue = -10;
-            HighClamp.MaxValue = 25;
+            HighClamp.MinValue = -30;
+            HighClamp.MaxValue = 50;
+
             LowClamp = new ClampNoise(LowNoise);
             LowClamp.MinValue = -30;
             LowClamp.MaxValue = 30;
+
             BottomClamp = new ClampNoise(BottomNoise);
             BottomClamp.MinValue = -20;
             BottomClamp.MaxValue = 5;
-            Modified = new ModifyNoise(HighClamp, LowClamp, NoiseModifier.Add);
+
+            FinalNoise = new ModifyNoise(HighClamp, LowClamp, NoiseModifier.Add);
+
             ChunkDecorators = new List<IChunkDecorator>();
             ChunkDecorators.Add(new WaterDecorator());
             ChunkDecorators.Add(new OreDecorator());
+            ChunkDecorators.Add(new PlantDecorator());
             ChunkDecorators.Add(new TreeDecorator());
             ChunkDecorators.Add(new FreezeDecorator());
-            ChunkDecorators.Add(new PlantDecorator());
             ChunkDecorators.Add(new CactusDecorator());
             ChunkDecorators.Add(new SugarCaneDecorator());
             ChunkDecorators.Add(new DungeonDecorator(GroundLevel));
@@ -76,77 +84,78 @@ namespace TrueCraft.Core.TerrainGen
         public IChunk GenerateChunk(IWorld world, Coordinates2D coordinates)
         {
             const int featurePointDistance = 400;
+
+            // TODO: Create a terrain generator initializer function that gets passed the seed etc
             int seed = world.Seed;
-            var worley = new CellNoise();
-            worley.Seed = seed;
+            var worley = new CellNoise(seed);
             HighNoise.Seed = seed;
             LowNoise.Seed = seed;
+
             var chunk = new Chunk(coordinates);
-            for (int X = 0; X < 16; X++)
+
+            for (int x = 0; x < 16; x++)
             {
-                for (int Z = 0; Z < 16; Z++)
+                for (int z = 0; z < 16; z++)
                 {
-                    var blockX = MathHelper.ChunkToBlockX(X, coordinates.X);
-                    var blockZ = MathHelper.ChunkToBlockZ(Z, coordinates.Z);
+                    var blockX = MathHelper.ChunkToBlockX(x, coordinates.X);
+                    var blockZ = MathHelper.ChunkToBlockZ(z, coordinates.Z);
+
                     const double lowClampRange = 5;
                     double lowClampMid = LowClamp.MaxValue - ((LowClamp.MaxValue + LowClamp.MinValue) / 2);
                     double lowClampValue = LowClamp.Value2D(blockX, blockZ);
+
                     if (lowClampValue > lowClampMid - lowClampRange && lowClampValue < lowClampMid + lowClampRange)
                     {
                         InvertNoise NewPrimary = new InvertNoise(HighClamp);
-                        Modified.PrimaryNoise = NewPrimary;
+                        FinalNoise.PrimaryNoise = NewPrimary;
                     }
                     else
                     {
                         //reset it after modifying the values
-                        Modified = new ModifyNoise(HighClamp, LowClamp, NoiseModifier.Add);
+                        FinalNoise = new ModifyNoise(HighClamp, LowClamp, NoiseModifier.Add);
                     }
-                    Modified = new ModifyNoise(Modified, BottomClamp, NoiseModifier.Subtract);
+                    FinalNoise = new ModifyNoise(FinalNoise, BottomClamp, NoiseModifier.Subtract);
+
                     var cellValue = worley.Value2D(blockX, blockZ);
                     var location = new Coordinates2D(blockX, blockZ);
-                    if (world.BiomeDiagram.BiomeCells.Count < 1 || cellValue.Equals(1) && world.BiomeDiagram.ClosestCellPoint(location) >= featurePointDistance)
+                    if (world.BiomeDiagram.BiomeCells.Count < 1
+                        || cellValue.Equals(1)
+                        && world.BiomeDiagram.ClosestCellPoint(location) >= featurePointDistance)
                     {
                         byte id = (SingleBiome) ? GenerationBiome : world.BiomeDiagram.GenerateBiome(seed, Biomes, location);
-                        BiomeCell Cell = new BiomeCell(id, location);
-                        world.BiomeDiagram.AddCell(Cell);
+                        var cell = new BiomeCell(id, location);
+                        world.BiomeDiagram.AddCell(cell);
                     }
 
                     var biomeId = GetBiome(world, location);
-                    IBiomeProvider Biome = Biomes.GetBiome(biomeId);
-                    chunk.Biomes[X * Chunk.Width + Z] = biomeId;
+                    var biome = Biomes.GetBiome(biomeId);
+                    chunk.Biomes[x * Chunk.Width + z] = biomeId;
 
                     var height = GetHeight(blockX, blockZ);
-                    var surfaceHeight = height - Biome.SurfaceDepth;
-                    chunk.HeightMap[X * Chunk.Width + Z] = height;
-                    for (int Y = 0; Y <= height; Y++)
+                    var surfaceHeight = height - biome.SurfaceDepth;
+                    chunk.HeightMap[x * Chunk.Width + z] = height;
+
+                    for (int y = 0; y <= height; y++)
                     {
-                        if (Y == 0)
-                        {
-                            chunk.SetBlockID(new Coordinates3D(X, Y, Z), BedrockBlock.BlockID);
-                        }
+                        if (y == 0)
+                            chunk.SetBlockID(new Coordinates3D(x, y, z), BedrockBlock.BlockID);
                         else
                         {
-                            if (Y.Equals(height) || Y < height && Y > surfaceHeight)
-                            {
-                                chunk.SetBlockID(new Coordinates3D(X, Y, Z), Biome.SurfaceBlock);
-                            }
+                            if (y.Equals(height) || y < height && y > surfaceHeight)
+                                chunk.SetBlockID(new Coordinates3D(x, y, z), biome.SurfaceBlock);
                             else
                             {
-                                if (Y > surfaceHeight - Biome.FillerDepth)
-                                {
-                                    chunk.SetBlockID(new Coordinates3D(X, Y, Z), Biome.FillerBlock);
-                                }
+                                if (y > surfaceHeight - biome.FillerDepth)
+                                    chunk.SetBlockID(new Coordinates3D(x, y, z), biome.FillerBlock);
                                 else
-                                {
-                                    chunk.SetBlockID(new Coordinates3D(X, Y, Z), StoneBlock.BlockID);
-                                }
+                                    chunk.SetBlockID(new Coordinates3D(x, y, z), StoneBlock.BlockID);
                             }
                         }
                     }
                 }
             }
-            foreach (IChunkDecorator ChunkDecorator in ChunkDecorators)
-                ChunkDecorator.Decorate(world, chunk, Biomes);
+            foreach (var decorator in ChunkDecorators)
+                decorator.Decorate(world, chunk, Biomes);
             return chunk;
         }
 
@@ -166,7 +175,7 @@ namespace TrueCraft.Core.TerrainGen
 
         int GetHeight(int x, int z)
         {
-            var NoiseValue = Modified.Value2D(x, z) + GroundLevel;
+            var NoiseValue = FinalNoise.Value2D(x, z) + GroundLevel;
             if (NoiseValue < 0)
                 NoiseValue = GroundLevel;
             if (NoiseValue > Chunk.Height)

@@ -35,7 +35,7 @@ namespace TrueCraft.Core.TerrainGen.Biomes
         {
             get
             {
-                return  new TreeSpecies[] { TreeSpecies.Oak };
+                return  new[] { TreeSpecies.Oak };
             }
         }
 
@@ -46,7 +46,7 @@ namespace TrueCraft.Core.TerrainGen.Biomes
         {
             get
             {
-                return new PlantSpecies[] { PlantSpecies.Dandelion, PlantSpecies.Rose, PlantSpecies.TallGrass, PlantSpecies.Fern };
+                return new[] { PlantSpecies.Dandelion, PlantSpecies.Rose, PlantSpecies.TallGrass, PlantSpecies.Fern };
             }
         }
 
@@ -57,7 +57,7 @@ namespace TrueCraft.Core.TerrainGen.Biomes
         {
             get
             {
-                return new OreTypes[] { OreTypes.Coal, OreTypes.Iron, OreTypes.Lapiz, OreTypes.Redstone, OreTypes.Gold, OreTypes.Diamond };
+                return new[] { OreTypes.Coal, OreTypes.Iron, OreTypes.Lapiz, OreTypes.Redstone, OreTypes.Gold, OreTypes.Diamond };
             }
         }
         /// <summary>

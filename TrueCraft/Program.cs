@@ -27,29 +27,37 @@ namespace TrueCraft
         {
             if (File.Exists("config.yaml"))
             {
-                var deserializer = new Deserializer();
-                Configuration = deserializer.Deserialize<Configuration>(File.OpenText("config.yaml"));
+                var deserializer = new Deserializer(ignoreUnmatched: true);
+                using (var file = File.OpenText("config.yaml"))
+                    Configuration = deserializer.Deserialize<Configuration>(file);
             }
             else
-            {
-                // Save default configuration
                 Configuration = new Configuration();
-                var serializer = new Serializer();
-                using (var writer = new StreamWriter("config.yaml"))
-                    serializer.Serialize(writer, Configuration);
-            }
-            // TODO: Make this more flexible
+            var serializer = new Serializer();
+            using (var writer = new StreamWriter("config.yaml"))
+                serializer.Serialize(writer, Configuration);
+
             Server = new MultiplayerServer();
+            if (Configuration.Debug.DeleteWorldOnStartup)
+            {
+                if (Directory.Exists("world"))
+                    Directory.Delete("world", true);
+            }
+            if (Configuration.Debug.DeletePlayersOnStartup)
+            {
+                if (Directory.Exists("players"))
+                    Directory.Delete("players", true);
+            }
             IWorld world;
             try
             {
-                // TODO: Save and load levels, with seeds and everything
                 world = World.LoadWorld("world");
                 world.ChunkProvider = new StandardGenerator();
             }
             catch
             {
                 world = new World("default", new StandardGenerator());
+                world.BlockRepository = Server.BlockRepository;
                 world.Save("world");
             }
             Server.AddWorld(world);

@@ -11,12 +11,14 @@ namespace TrueCraft.Core.TerrainGen.Decorations
 {
     public class PineTree : Decoration
     {
-        int LeafRadius = 2;
-        int BottomSpace = 2;
+        const int LeafRadius = 2;
 
         public override bool ValidLocation(Coordinates3D location)
         {
-            if (location.X - LeafRadius < 0 || location.X + LeafRadius >= Chunk.Width || location.Z - LeafRadius < 0 || location.Z + LeafRadius >= Chunk.Depth)
+            if (location.X - LeafRadius < 0
+                || location.X + LeafRadius >= Chunk.Width
+                || location.Z - LeafRadius < 0
+                || location.Z + LeafRadius >= Chunk.Depth)
                 return false;
             return true;
         }
@@ -26,20 +28,20 @@ namespace TrueCraft.Core.TerrainGen.Decorations
             if (!ValidLocation(location))
                 return false;
 
-            Random R = new Random(world.Seed);
-            int Height = R.Next(7, 8);
-            GenerateColumn(chunk, location, Height, WoodBlock.BlockID, 0x1);
-            for (int Y = 1; Y < Height; Y++)
+            var random = new Random(world.Seed);
+            int height = random.Next(7, 8);
+            GenerateColumn(chunk, location, height, WoodBlock.BlockID, 0x1);
+            for (int y = 1; y < height; y++)
             {
-                if (Y % 2 == 0)
+                if (y % 2 == 0)
                 {
-                    GenerateVanillaCircle(chunk, location + new Coordinates3D(0, Y + 1, 0), LeafRadius - 1, LeavesBlock.BlockID, 0x1);
+                    GenerateVanillaCircle(chunk, location + new Coordinates3D(0, y + 1, 0), LeafRadius - 1, LeavesBlock.BlockID, 0x1);
                     continue;
                 }
-                GenerateVanillaCircle(chunk, location + new Coordinates3D(0, Y + 1, 0), LeafRadius, LeavesBlock.BlockID, 0x1);
+                GenerateVanillaCircle(chunk, location + new Coordinates3D(0, y + 1, 0), LeafRadius, LeavesBlock.BlockID, 0x1);
             }
 
-            GenerateTopper(chunk, location + new Coordinates3D(0, Height, 0), 0x1);
+            GenerateTopper(chunk, location + new Coordinates3D(0, height, 0), 0x1);
             return true;
         }
 
@@ -51,13 +53,13 @@ namespace TrueCraft.Core.TerrainGen.Decorations
          */
         protected void GenerateTopper(IChunk chunk, Coordinates3D location, byte type = 0x0)
         {
-            int SectionRadius = 1;
-            GenerateCircle(chunk, location, SectionRadius, LeavesBlock.BlockID, 0x1);
-            Coordinates3D top = location + Coordinates3D.Up;
+            const int sectionRadius = 1;
+            GenerateCircle(chunk, location, sectionRadius, LeavesBlock.BlockID, 0x1);
+            var top = location + Coordinates3D.Up;
             chunk.SetBlockID(top, LeavesBlock.BlockID);
             chunk.SetMetadata(top, 0x1);
             if (type == 0x1 && (top + Coordinates3D.Up).Y < Chunk.Height)
-                GenerateVanillaCircle(chunk, top + Coordinates3D.Up, SectionRadius, LeavesBlock.BlockID, 0x1); 
+                GenerateVanillaCircle(chunk, top + Coordinates3D.Up, sectionRadius, LeavesBlock.BlockID, 0x1); 
         }
     }
 }

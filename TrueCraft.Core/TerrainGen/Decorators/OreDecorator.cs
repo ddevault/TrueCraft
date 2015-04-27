@@ -21,116 +21,111 @@ namespace TrueCraft.Core.TerrainGen.Decorators
         public int Abundance;
         public float Rarity;
 
-        public OreData(byte ID, OreTypes Type, int MinY, int MaxY, int Veins, int Abundance, float Rarity)
+        public OreData(byte id, OreTypes type, int minY, int maxY, int viens, int abundance, float rarity)
         {
-            this.ID = ID;
-            this.Type = Type;
-            this.MinY = MinY;
-            this.MaxY = MaxY;
-            this.Veins = Veins;
-            this.Abundance = Abundance;
-            this.Rarity = Rarity;
+            ID = id;
+            Type = type;
+            MinY = minY;
+            MaxY = maxY;
+            Veins = viens;
+            Abundance = abundance;
+            Rarity = rarity;
         }
     }
 
     public class OreDecorator : IChunkDecorator
     {
-        private List<OreData> Ores = new List<OreData>();
+        private readonly List<OreData> Ores = new List<OreData>();
 
         public OreDecorator()
         {
-            OreData Coal = new OreData(CoalOreBlock.BlockID, OreTypes.Coal, 10, 120, 25, 25, 3f);
-            OreData Iron = new OreData(IronOreBlock.BlockID, OreTypes.Iron, 1, 64, 15, 5, 2.3f);
-            OreData Lapis = new OreData(LapisLazuliOreBlock.BlockID, OreTypes.Lapiz, 10, 25, 7, 4, 1.4f);
-            OreData Gold = new OreData(GoldOreBlock.BlockID, OreTypes.Gold, 1, 32, 6, 4, 1.04f);
-            OreData Diamond = new OreData(DiamondOreBlock.BlockID, OreTypes.Diamond, 1, 15, 6, 3, 0.7f);
-            OreData Redstone = new OreData(RedstoneOreBlock.BlockID, OreTypes.Redstone, 1, 16, 4, 6, 1.13f);
-            Ores.Add(Coal);
-            Ores.Add(Iron);
-            Ores.Add(Lapis);
-            Ores.Add(Gold);
-            Ores.Add(Diamond);
-            Ores.Add(Redstone);
+            var coal = new OreData(CoalOreBlock.BlockID, OreTypes.Coal, 10, 120, 25, 25, 3f);
+            var iron = new OreData(IronOreBlock.BlockID, OreTypes.Iron, 1, 64, 15, 5, 2.3f);
+            var lapis = new OreData(LapisLazuliOreBlock.BlockID, OreTypes.Lapiz, 10, 25, 7, 4, 1.4f);
+            var gold = new OreData(GoldOreBlock.BlockID, OreTypes.Gold, 1, 32, 6, 4, 1.04f);
+            var diamond = new OreData(DiamondOreBlock.BlockID, OreTypes.Diamond, 1, 15, 6, 3, 0.7f);
+            var redstone = new OreData(RedstoneOreBlock.BlockID, OreTypes.Redstone, 1, 16, 4, 6, 1.13f);
+            Ores.Add(coal);
+            Ores.Add(iron);
+            Ores.Add(lapis);
+            Ores.Add(gold);
+            Ores.Add(diamond);
+            Ores.Add(redstone);
         }
 
         public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
         {
             //Test Seed: 291887241
-            Perlin Perlin = new Perlin();
-            Perlin.Lacunarity = 1;
-            Perlin.Amplitude = 7;
-            Perlin.Frequency = 0.015;
-            Perlin.Seed = world.Seed;
-            ClampNoise ChanceNoise = new ClampNoise(Perlin);
-            ScaledNoise Noise = new ScaledNoise(Perlin);
-            Random R = new Random(world.Seed);
-            var LowWeightOffset = new int[2] { 2, 3 };
-            var HighWeightOffset = new int[2] { 2, 2 };
-            foreach (OreData Data in Ores)
+            var perlin = new Perlin();
+            perlin.Lacunarity = 1;
+            perlin.Amplitude = 7;
+            perlin.Frequency = 0.015;
+            perlin.Seed = world.Seed;
+            var chanceNoise = new ClampNoise(perlin);
+            var noise = new ScaledNoise(perlin);
+            var random = new Random(world.Seed);
+            var lowWeightOffset = new int[2] { 2, 3 };
+            var highWeightOffset = new int[2] { 2, 2 };
+            foreach (var data in Ores)
             {
-                var Midpoint = (Data.MaxY + Data.MinY) / 2;
-                var WeightOffsets = (Data.MaxY > 30) ? HighWeightOffset : LowWeightOffset;
-                var WeightPasses = 4;
-                for (int I = 0; I < Data.Veins; I++)
+                var midpoint = (data.MaxY + data.MinY) / 2;
+                var weightOffsets = (data.MaxY > 30) ? highWeightOffset : lowWeightOffset;
+                const int weightPasses = 4;
+                for (int i = 0; i < data.Veins; i++)
                 {
-                    double Weight = 0;
-                    for (int J = 0; J < WeightPasses; J++)
+                    double weight = 0;
+                    for (int j = 0; j < weightPasses; j++)
                     {
-                        Weight += R.NextDouble();
+                        weight += random.NextDouble();
                     }
-                    Weight /= Data.Rarity;
-                    Weight = WeightOffsets[0] - Math.Abs(Weight - WeightOffsets[1]);
-                    double X = R.Next(0, Chunk.Width);
-                    double Z = R.Next(0, Chunk.Depth);
-                    double Y = Weight * Midpoint;
+                    weight /= data.Rarity;
+                    weight = weightOffsets[0] - Math.Abs(weight - weightOffsets[1]);
+                    double x = random.Next(0, Chunk.Width);
+                    double z = random.Next(0, Chunk.Depth);
+                    double y = weight * midpoint;
 
-                    double RandomOffX = (float)R.NextDouble() - 1;
-                    double RandomOffY = (float)R.NextDouble() - 1;
-                    double RandomOffZ = (float)R.NextDouble() - 1;
+                    double randomOffsetX = (float)random.NextDouble() - 1;
+                    double randomOffsetY = (float)random.NextDouble() - 1;
+                    double randomOffsetZ = (float)random.NextDouble() - 1;
 
-                    int Abundance = R.Next(0, Data.Abundance);
-                    for (int K = 0; K < Abundance; K++)
+                    int abundance = random.Next(0, data.Abundance);
+                    for (int k = 0; k < abundance; k++)
                     {
-                        X += RandomOffX;
-                        Y += RandomOffY;
-                        Z += RandomOffZ;
-                        if (X >= 0 && Z >= 0 && Y >= Data.MinY && X < Chunk.Width && Y < Data.MaxY && Z < Chunk.Depth)
+                        x += randomOffsetX;
+                        y += randomOffsetY;
+                        z += randomOffsetZ;
+                        if (x >= 0 && z >= 0 && y >= data.MinY && x < Chunk.Width && y < data.MaxY && z < Chunk.Depth)
                         {
-                            IBiomeProvider Biome = biomes.GetBiome(chunk.Biomes[(int)(X * Chunk.Width + Z)]);
-                            if (Biome.Ores.Contains(Data.Type) && chunk.GetBlockID(new Coordinates3D((int)X, (int)Y, (int)Z)).Equals(StoneBlock.BlockID))
-                            {
-                                chunk.SetBlockID(new Coordinates3D((int)X, (int)Y, (int)Z), Data.ID);
-                            }
+                            var biome = biomes.GetBiome(chunk.Biomes[(int)(x * Chunk.Width + z)]);
+                            if (biome.Ores.Contains(data.Type) && chunk.GetBlockID(new Coordinates3D((int)x, (int)y, (int)z)).Equals(StoneBlock.BlockID))
+                                chunk.SetBlockID(new Coordinates3D((int)x, (int)y, (int)z), data.ID);
                         }
-                        var BlockX = MathHelper.ChunkToBlockX((int)(X), chunk.Coordinates.X);
-                        var BlockZ = MathHelper.ChunkToBlockZ((int)(Z), chunk.Coordinates.Z);
+                        var blockX = MathHelper.ChunkToBlockX((int)(x), chunk.Coordinates.X);
+                        var blockZ = MathHelper.ChunkToBlockZ((int)(z), chunk.Coordinates.Z);
 
-                        double OffX = 0;
-                        double OffY = 0;
-                        double OffZ = 0;
-                        int Off = R.Next(0, 3);
-                        double Off2 = R.NextDouble();
-                        if (Off.Equals(0) && Off2 < 0.4)
-                        {
-                            OffX += 1;
-                        }
-                        else if (Off.Equals(1) && Off2 >= 0.4 && Off2 < 0.65)
-                        {
-                            OffY += 1;
-                        }
+                        double offsetX = 0;
+                        double offsetY = 0;
+                        double offsetZ = 0;
+                        int offset = random.Next(0, 3);
+                        double offset2 = random.NextDouble();
+
+                        if (offset.Equals(0) && offset2 < 0.4)
+                            offsetX += 1;
+                        else if (offset.Equals(1) && offset2 >= 0.4 && offset2 < 0.65)
+                            offsetY += 1;
                         else
+                            offsetZ += 1;
+
+                        var newX = (int)(x + offsetX);
+                        var newY = (int)(y + offsetY);
+                        var newZ = (int)(z + offsetZ);
+                        if (newX >= 0 && newZ >= 0 && newY >= data.MinY && newX < Chunk.Width && newY < data.MaxY && newZ < Chunk.Depth)
                         {
-                            OffZ += 1;
-                        }
-                        var NewX = (int)(X + OffX);
-                        var NewY = (int)(Y + OffY);
-                        var NewZ = (int)(Z + OffZ);
-                        if (NewX >= 0 && NewZ >= 0 && NewY >= Data.MinY && NewX < Chunk.Width && NewY < Data.MaxY && NewZ < Chunk.Depth)
-                        {
-                            IBiomeProvider Biome = biomes.GetBiome(chunk.Biomes[NewX * Chunk.Width + NewZ]);
-                            if (Biome.Ores.Contains(Data.Type) && chunk.GetBlockID(new Coordinates3D((int)NewX, (int)NewY, (int)NewZ)).Equals(StoneBlock.BlockID))
+                            IBiomeProvider Biome = biomes.GetBiome(chunk.Biomes[newX * Chunk.Width + newZ]);
+                            var coordinates = new Coordinates3D((int)newX, (int)newY, (int)newZ);
+                            if (Biome.Ores.Contains(data.Type) && chunk.GetBlockID(coordinates).Equals(StoneBlock.BlockID))
                             {
-                                chunk.SetBlockID(new Coordinates3D((int)NewX, (int)NewY, (int)NewZ), Data.ID);
+                                chunk.SetBlockID(coordinates, data.ID);
                             }
                         }
                     }
