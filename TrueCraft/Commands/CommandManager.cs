@@ -38,7 +38,7 @@ namespace TrueCraft.Commands
         /// <param name="arguments"></param>
         public void HandleCommand(IRemoteClient client, string alias, string[] arguments)
         {
-            ICommand foundCommand = FindByName(alias) ?? FindByName(alias);
+            ICommand foundCommand = FindByName(alias) ?? FindByAlias(alias);
             if (foundCommand == null)
             {
                 client.SendMessage("Unable to locate the command \"" + alias + "\". It might be in a different server!");
