@@ -43,7 +43,10 @@ From the root directory of the git repository. Then run:
 
 To compile it and you'll receive binaries in `TrueCraft/bin/Debug/`.
 
-Note: if you have a problem with nuget connecting, run `mozroots --import --sync`.
+Note: if you have a problem with nuget connecting, run `mozroots --import
+--sync`.
+
+Note: TrueCraft requires mono 3.10 or newer.
 
 ## Get Involved
 
