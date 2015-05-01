@@ -30,11 +30,18 @@ that I don't like. I'm tired of Craft.Net. Let's do this instead.
 **Use a recursive git clone.**
 
     git clone --recursive git://github.com/SirCmpwn/TrueCraft.git
-    cd TrueCraft
+
+You need to restore Nuget packages. The easiest way is to open the solution up
+in monodevelop or visual studio or the like and build from there. You can
+alternatively acquire Nuget yourself and run this:
+
+    mono path/to/nuget.exe restore
+
+From the root directory of the git repository. Then run:
+
     xbuild
 
-Now you have binaries in TrueCraft/bin/Debug/. On Windows use Visual Studio or
-SharpDevelop or something equally idiot-proof.
+To compile it and you'll receive binaries in `TrueCraft/bin/Debug/`.
 
 ## Get Involved
 
