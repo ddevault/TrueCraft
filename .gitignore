@@ -10,3 +10,9 @@ TestResults/
 *.psess
 *.vsp
 packages/
+
+config.yaml
+
+packets.log
+
+world/manifest.nbt
