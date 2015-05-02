@@ -25,11 +25,19 @@ namespace TrueCraft
         {
             MOTD = ChatColor.Red + "Welcome to TrueCraft!";
             Debug = new DebugConfiguration();
+            ServerPort = 25565;
+            ServerAddress = "0.0.0.0";
         }
 
         [YamlMember(Alias="motd")]
         public string MOTD { get; set; }
 
+        [YamlMember(Alias="serverPort")]
+        public int ServerPort {get; set; }
+
+        [YamlMember(Alias="serverAddress")]
+        public string ServerAddress{get; set; }
+        
         [YamlMember(Alias="debug")]
         public DebugConfiguration Debug { get; set; }
     }

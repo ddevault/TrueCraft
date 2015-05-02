@@ -67,7 +67,7 @@ namespace TrueCraft
             #endif
             CommandManager = new CommandManager();
             Server.ChatMessageReceived += HandleChatMessageReceived;
-            Server.Start(new IPEndPoint(IPAddress.Any, 25565));
+            Server.Start(new IPEndPoint(IPAddress.Parse(Configuration.ServerAddress), Configuration.ServerPort));
             Console.CancelKeyPress += HandleCancelKeyPress;
             while (true)
             {
