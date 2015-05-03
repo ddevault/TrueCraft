@@ -32,13 +32,23 @@ namespace TrueCraft.Commands
                 Help(Client, Alias, Arguments);
                 return;
             }
-            // TODO: Send items to the client mentioned in the command, not the client issuing the command
-            // TODO: Check to make sure an item with that ID actually exists
+            
+            IRemoteClient receiver = Client.Server.Clients.SingleOrDefault(c => c.Username == Arguments[1]);
             short id;
             sbyte count;
             if (short.TryParse(Arguments[2], out id) && sbyte.TryParse(Arguments[3], out count))
             {
-                var inventory = Client.Inventory as InventoryWindow;
+                if (receiver == null) {
+                    Client.SendMessage("No client with the username \"" + Arguments[1] + "\" was found.");
+                    return;
+                }
+
+                if (Client.Server.ItemRepository.GetItemProvider(id) == null) {
+                    Client.SendMessage("Invalid item id \"" + id + "\".");
+                    return;
+                }
+
+                var inventory = receiver.Inventory as InventoryWindow;
                 inventory.PickUpStack(new ItemStack(id, count));
             }
         }

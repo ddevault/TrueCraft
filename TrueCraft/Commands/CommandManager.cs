@@ -41,7 +41,7 @@ namespace TrueCraft.Commands
             ICommand foundCommand = FindByName(alias) ?? FindByAlias(alias);
             if (foundCommand == null)
             {
-                client.SendMessage("Unable to locate the command \"" + alias + "\". It might be in a different server!");
+                client.SendMessage("Invalid command \"" + alias + "\".");
                 return;
             }
             foundCommand.Handle(client, alias, arguments);
