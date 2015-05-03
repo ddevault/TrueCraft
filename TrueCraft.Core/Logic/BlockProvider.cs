@@ -6,6 +6,8 @@ using TrueCraft.API.Networking;
 using TrueCraft.Core.Entities;
 using TrueCraft.API.Entities;
 using TrueCraft.API.Server;
+using TrueCraft.Core.Logic.Blocks;
+using System.Linq;
 
 namespace TrueCraft.Core.Logic
 {
@@ -75,7 +77,10 @@ namespace TrueCraft.Core.Logic
 
         protected virtual ItemStack[] GetDrop(BlockDescriptor descriptor) // TODO: Include tools
         {
-            return new[] { new ItemStack(descriptor.ID, 1, descriptor.Metadata) };
+            short meta = 0;
+            if (this is ICraftingRecipe)
+                meta = (short)((this as ICraftingRecipe).SignificantMetadata ? descriptor.Metadata : 0);
+            return new[] { new ItemStack(descriptor.ID, 1, meta) };
         }
 
         public virtual void ItemUsedOnEntity(ItemStack item, IEntity usedOn, IWorld world, IRemoteClient user)
@@ -91,11 +96,30 @@ namespace TrueCraft.Core.Logic
         public virtual void ItemUsedOnBlock(Coordinates3D coordinates, ItemStack item, BlockFace face, IWorld world, IRemoteClient user)
         {
             coordinates += MathHelper.BlockFaceToCoordinates(face);
-            world.SetBlockID(coordinates, (byte)item.ID);
-            world.SetMetadata(coordinates, (byte)item.Metadata);
-            item.Count--;
-            user.Inventory[user.SelectedSlot] = item;
-            BlockPlaced(world.GetBlockData(coordinates), face, world, user);
+            var old = world.GetBlockData(coordinates);
+            byte[] overwritable =
+                {
+                AirBlock.BlockID,
+                WaterBlock.BlockID,
+                StationaryWaterBlock.BlockID,
+                LavaBlock.BlockID,
+                StationaryLavaBlock.BlockID
+            };
+            if (overwritable.Any(b => b == old.ID))
+            {
+                world.SetBlockID(coordinates, (byte)item.ID);
+                world.SetMetadata(coordinates, (byte)item.Metadata);
+
+                BlockPlaced(world.GetBlockData(coordinates), face, world, user);
+
+                if (!IsSupported(world.GetBlockData(coordinates), user.Server, world))
+                    world.SetBlockData(coordinates, old);
+                else
+                {
+                    item.Count--;
+                    user.Inventory[user.SelectedSlot] = item;
+                }
+            }
         }
 
         short IItemProvider.ID

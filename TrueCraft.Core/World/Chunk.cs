@@ -229,9 +229,11 @@ namespace TrueCraft.Core.World
 
         public NbtTag Serialize(string tagName)
         {
-            var chunk = (NbtCompound)Serializer.Serialize(this, tagName, true);
+            var chunk = new NbtCompound(tagName);
             var entities = new NbtList("Entities", NbtTagType.Compound);
             chunk.Add(entities);
+            chunk.Add(new NbtInt("X", X));
+            chunk.Add(new NbtInt("Z", Z));
             chunk.Add(new NbtByteArray("Blocks", Blocks));
             chunk.Add(new NbtByteArray("Data", Metadata.Data));
             chunk.Add(new NbtByteArray("SkyLight", SkyLight.Data));
@@ -257,7 +259,7 @@ namespace TrueCraft.Core.World
 
         public void Deserialize(NbtTag value)
         {
-            var chunk = (Chunk)Serializer.Deserialize(value, true);
+            var chunk = new Chunk();
             var tag = (NbtCompound)value;
 
             Biomes = chunk.Biomes;

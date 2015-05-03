@@ -11,10 +11,10 @@ namespace TrueCraft.Core.Logic.Blocks
     {
         public enum TorchDirection
         {
-            South = 0x01, // Positive Z
-            North = 0x02,
-            West = 0x03,
-            East = 0x04,
+            West = 0x01, // West
+            East = 0x02, // East
+            South = 0x03, // South
+            North = 0x04, // North
             Ground = 0x05
         }
 
@@ -34,26 +34,57 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
+            TorchDirection[] preferredDirections =
+            {
+                TorchDirection.West, TorchDirection.East,
+                TorchDirection.North, TorchDirection.South,
+                TorchDirection.Ground
+            };
             TorchDirection direction;
             switch (face)
             {
                 case BlockFace.PositiveZ:
-                    direction = TorchDirection.West;
-                    break;
-                case BlockFace.NegativeZ:
-                    direction = TorchDirection.East;
-                    break;
-                case BlockFace.PositiveX:
                     direction = TorchDirection.South;
                     break;
-                case BlockFace.NegativeX:
+                case BlockFace.NegativeZ:
                     direction = TorchDirection.North;
+                    break;
+                case BlockFace.PositiveX:
+                    direction = TorchDirection.East;
+                    break;
+                case BlockFace.NegativeX:
+                    direction = TorchDirection.West;
                     break;
                 default:
                     direction = TorchDirection.Ground;
                     break;
             }
+            int i = 0;
+            descriptor.Metadata = (byte)direction;
+            while (!IsSupported(descriptor, user.Server, world) && i < preferredDirections.Length)
+            {
+                direction = preferredDirections[i++];
+                descriptor.Metadata = (byte)direction;
+            }
             world.SetMetadata(descriptor.Coordinates, (byte)direction);
+        }
+
+        public override Coordinates3D GetSupportDirection(BlockDescriptor descriptor)
+        {
+            switch ((TorchDirection)descriptor.Metadata)
+            {
+                case TorchDirection.Ground:
+                    return Coordinates3D.Down;
+                case TorchDirection.East:
+                    return Coordinates3D.West;
+                case TorchDirection.West:
+                    return Coordinates3D.East;
+                case TorchDirection.North:
+                    return Coordinates3D.South;
+                case TorchDirection.South:
+                    return Coordinates3D.North;
+            }
+            return Coordinates3D.Zero;
         }
 
         public override Tuple<int, int> GetTextureMap(byte metadata)
