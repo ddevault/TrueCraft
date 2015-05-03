@@ -28,10 +28,21 @@ namespace TrueCraft.Core.TerrainGen.Decorators
                                 chunk.SetBlockID(location, IceBlock.BlockID);
                             else
                             {
-                                if (chunk.GetBlockID(location).Equals(IceBlock.BlockID) && CoverIce(chunk, biomes, location))
-                                    chunk.SetBlockID((location + Coordinates3D.Up), SnowfallBlock.BlockID);
-                                else if (!chunk.GetBlockID(location).Equals(SnowfallBlock.BlockID) && !chunk.GetBlockID(location).Equals(AirBlock.BlockID))
-                                    chunk.SetBlockID((location + Coordinates3D.Up), SnowfallBlock.BlockID);
+                                var below = chunk.GetBlockID(location);
+                                byte[] whitelist =
+                                {
+                                    DirtBlock.BlockID,
+                                    GrassBlock.BlockID,
+                                    IceBlock.BlockID,
+                                    LeavesBlock.BlockID
+                                };
+                                if (y == height && whitelist.Any(w => w == below))
+                                {
+                                    if (chunk.GetBlockID(location).Equals(IceBlock.BlockID) && CoverIce(chunk, biomes, location))
+                                        chunk.SetBlockID((location + Coordinates3D.Up), SnowfallBlock.BlockID);
+                                    else if (!chunk.GetBlockID(location).Equals(SnowfallBlock.BlockID) && !chunk.GetBlockID(location).Equals(AirBlock.BlockID))
+                                        chunk.SetBlockID((location + Coordinates3D.Up), SnowfallBlock.BlockID);
+                                }
                             }
                         }
                     }
