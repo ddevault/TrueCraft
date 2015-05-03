@@ -8,6 +8,7 @@ using TrueCraft.API.Entities;
 using TrueCraft.API.Server;
 using TrueCraft.Core.Logic.Blocks;
 using System.Linq;
+using fNbt;
 
 namespace TrueCraft.Core.Logic
 {
@@ -107,7 +108,7 @@ namespace TrueCraft.Core.Logic
             };
             if (overwritable.Any(b => b == old.ID))
             {
-                world.SetBlockID(coordinates, (byte)item.ID);
+                world.SetBlockID(coordinates, ID);
                 world.SetMetadata(coordinates, (byte)item.Metadata);
 
                 BlockPlaced(world.GetBlockData(coordinates), face, world, user);
@@ -120,6 +121,16 @@ namespace TrueCraft.Core.Logic
                     user.Inventory[user.SelectedSlot] = item;
                 }
             }
+        }
+
+        public virtual void BlockLoadedFromChunk(BlockDescriptor descriptor, IWorld world)
+        {
+            // This space intentionally left blank
+        }
+
+        public virtual void TileEntityLoadedForClient(BlockDescriptor descriptor, IWorld world, NbtCompound entity, IRemoteClient client)
+        {
+            // This space intentionally left blank
         }
 
         short IItemProvider.ID

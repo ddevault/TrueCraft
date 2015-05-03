@@ -19,6 +19,7 @@ using System.Threading;
 using TrueCraft.Core.Entities;
 using System.IO;
 using fNbt;
+using TrueCraft.API.Logic;
 
 namespace TrueCraft
 {
@@ -266,6 +267,20 @@ namespace TrueCraft
             QueuePacket(new ChunkPreamblePacket(chunk.Coordinates.X, chunk.Coordinates.Z));
             QueuePacket(CreatePacket(chunk));
             LoadedChunks.Add(position);
+            foreach (var kvp in chunk.TileEntities)
+            {
+                var coords = kvp.Key;
+                var descriptor = new BlockDescriptor
+                {
+                    Coordinates = coords + new Coordinates3D(chunk.X, 0, chunk.Z),
+                    Metadata = chunk.GetMetadata(coords),
+                    ID = chunk.GetBlockID(coords),
+                    BlockLight = chunk.GetBlockLight(coords),
+                    SkyLight = chunk.GetSkyLight(coords)
+                };
+                var provider = Server.BlockRepository.GetBlockProvider(descriptor.ID);
+                provider.TileEntityLoadedForClient(descriptor, World, kvp.Value, this);
+            }
         }
 
         internal void UnloadChunk(Coordinates2D position)

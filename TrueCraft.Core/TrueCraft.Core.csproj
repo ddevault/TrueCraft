@@ -272,7 +272,6 @@
     <Compile Include="Logic\Blocks\SandBlock.cs" />
     <Compile Include="Logic\Blocks\SandstoneBlock.cs" />
     <Compile Include="Logic\Blocks\SaplingBlock.cs" />
-    <Compile Include="Logic\Blocks\SignBlock.cs" />
     <Compile Include="Logic\Blocks\SnowBlock.cs" />
     <Compile Include="Logic\Blocks\SoulSandBlock.cs" />
     <Compile Include="Logic\Blocks\SpongeBlock.cs" />
@@ -307,6 +306,8 @@
     <Compile Include="Logic\Blocks\DoorBlock.cs" />
     <Compile Include="TerrainGen\StandardGenerator.cs" />
     <Compile Include="Entities\FallingGravelEntity.cs" />
+    <Compile Include="Logic\Blocks\WallSignBlock.cs" />
+    <Compile Include="Logic\Blocks\UprightSignBlock.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

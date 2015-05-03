@@ -184,6 +184,13 @@ namespace TrueCraft.Core.World
             return chunk.GetBlockLight(coordinates);
         }
 
+        public NbtCompound GetTileEntity(Coordinates3D coordinates)
+        {
+            IChunk chunk;
+            coordinates = FindBlockPosition(coordinates, out chunk);
+            return chunk.GetTileEntity(coordinates);
+        }
+
         public BlockDescriptor GetBlockData(Coordinates3D coordinates)
         {
             IChunk chunk;
@@ -251,6 +258,13 @@ namespace TrueCraft.Core.World
             IChunk chunk;
             coordinates = FindBlockPosition(coordinates, out chunk);
             chunk.SetBlockLight(coordinates, value);
+        }
+
+        public void SetTileEntity(Coordinates3D coordinates, NbtCompound value)
+        {
+            IChunk chunk;
+            coordinates = FindBlockPosition(coordinates, out chunk);
+            chunk.SetTileEntity(coordinates, value);
         }
 
         public void Save()
