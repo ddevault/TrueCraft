@@ -1,8 +1,5 @@
 using System;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.Collections.Generic;
-using System.Reflection;
 using fNbt;
 using fNbt.Serialization;
 using TrueCraft.API.World;
@@ -35,6 +32,7 @@ namespace TrueCraft.Core.World
         public int X { get; set; }
         [TagName("zPos")]
         public int Z { get; set; }
+        public Dictionary<Coordinates3D, NbtCompound> TileEntities { get; set; }
 
         public Coordinates2D Coordinates
         {
@@ -62,6 +60,7 @@ namespace TrueCraft.Core.World
             Biomes = new byte[Width * Depth];
             HeightMap = new int[Width * Depth];
             LastAccessed = DateTime.Now;
+            TileEntities = new Dictionary<Coordinates3D, NbtCompound>();
         }
 
         public Chunk(Coordinates2D coordinates) : this()
@@ -173,6 +172,27 @@ namespace TrueCraft.Core.World
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
             BlockLight[index] = value;
         }
+        
+        /// <summary>
+        /// Gets the tile entity for the given coordinates. May return null.
+        /// </summary>
+        public NbtCompound GetTileEntity(Coordinates3D coordinates)
+        {
+            LastAccessed = DateTime.Now;
+            if (TileEntities.ContainsKey(coordinates))
+                return TileEntities[coordinates];
+            return null;
+        }
+        
+        /// <summary>
+        /// Sets the tile entity at the given coordinates to the given value.
+        /// </summary>
+        public void SetTileEntity(Coordinates3D coordinates, NbtCompound value)
+        {
+            LastAccessed = DateTime.Now;
+            TileEntities[coordinates] = value;
+            IsModified = true;
+        }
 
         /// <summary>
         /// Gets the height of the specified column.
@@ -216,7 +236,22 @@ namespace TrueCraft.Core.World
             chunk.Add(new NbtByteArray("Data", Metadata.Data));
             chunk.Add(new NbtByteArray("SkyLight", SkyLight.Data));
             chunk.Add(new NbtByteArray("BlockLight", BlockLight.Data));
-            // TODO: Tile entities, entities
+            
+            var tiles = new NbtList("TileEntities", NbtTagType.Compound);
+            foreach (var kvp in TileEntities)
+            {
+                var c = new NbtCompound();
+                c.Add(new NbtList("coordinates", new[] { 
+                    new NbtInt(kvp.Key.X),
+                    new NbtInt(kvp.Key.Y),
+                    new NbtInt(kvp.Key.Z)
+                 }));
+                 c.Add(new NbtList("value", new[] { kvp.Value }));
+                 tiles.Add(c);
+            }
+            chunk.Add(tiles);
+            
+            // TODO: Entities
             return chunk;
         }
 
@@ -238,6 +273,16 @@ namespace TrueCraft.Core.World
             BlockLight.Data = tag["BlockLight"].ByteArrayValue;
             SkyLight = new NibbleArray();
             SkyLight.Data = tag["SkyLight"].ByteArrayValue;
+            
+            if (tag.Contains("TileEntities"))
+            {
+                foreach (var entity in tag["TileEntities"] as NbtList)
+                {
+                    TileEntities[new Coordinates3D(entity["coordinates"][0].IntValue,
+                        entity["coordinates"][1].IntValue,
+                        entity["coordinates"][2].IntValue)] = entity["value"][0] as NbtCompound;
+                }
+            }
 
             // TODO: Tile entities, entities
         }
