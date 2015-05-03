@@ -171,8 +171,6 @@
     <Compile Include="TerrainGen\Biomes\BiomeProvider.cs" />
     <Compile Include="TerrainGen\Biomes\DesertBiome.cs" />
     <Compile Include="TerrainGen\Biomes\ForestBiome.cs" />
-    <Compile Include="TerrainGen\Biomes\FrozenOceanBiome.cs" />
-    <Compile Include="TerrainGen\Biomes\OceanBiome.cs" />
     <Compile Include="TerrainGen\Biomes\PlainsBiome.cs" />
     <Compile Include="TerrainGen\Biomes\RainforestBiome.cs" />
     <Compile Include="TerrainGen\Biomes\SavannaBiome.cs" />
