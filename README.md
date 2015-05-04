@@ -58,6 +58,10 @@ To get started, sign the [Contributor License
 Agreement](https://www.clahub.com/agreements/SirCmpwn/TrueCraft) to establish
 that you have not, in fact, ever read decompiled Minecraft code.
 
+If you *have* read the Minecraft source, you can contribute to the TrueCraft
+wiki [here](https://github.com/SirCmpwn/TrueCraft/wiki). *Under no
+circumstances should you expose clean devs to source code*.
+
 ## Roadmap
 
 1. Implement server (in progress)

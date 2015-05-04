@@ -8,6 +8,7 @@ using TrueCraft.Core;
 using TrueCraft.Core.Windows;
 using TrueCraft.API.Logic;
 using TrueCraft.Core.Entities;
+using fNbt;
 
 namespace TrueCraft.Handlers
 {
@@ -275,6 +276,24 @@ namespace TrueCraft.Handlers
                 case PlayerActionPacket.PlayerAction.Uncrouch:
                     entity.EntityFlags &= ~EntityFlags.Crouched;
                     break;
+            }
+        }
+
+        public static void HandleUpdateSignPacket(IPacket _packet, IRemoteClient _client, IMultiplayerServer server)
+        {
+            var packet = (UpdateSignPacket)_packet;
+            var client = (RemoteClient)_client;
+            var coords = new Coordinates3D(packet.X, packet.Y, packet.Z);
+            if (client.Entity.Position.DistanceTo(coords) < 10) // TODO: Reach
+            {
+                client.World.SetTileEntity(coords, new NbtCompound(new[]
+                {
+                    new NbtString("Text1", packet.Text[0]),
+                    new NbtString("Text2", packet.Text[1]),
+                    new NbtString("Text3", packet.Text[2]),
+                    new NbtString("Text4", packet.Text[3]),
+                }));
+                client.QueuePacket(packet);
             }
         }
     }

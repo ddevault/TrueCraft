@@ -7,6 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>TrueCraft.Core</RootNamespace>
     <AssemblyName>TrueCraft.Core</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -17,7 +18,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -26,7 +26,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -172,8 +171,6 @@
     <Compile Include="TerrainGen\Biomes\BiomeProvider.cs" />
     <Compile Include="TerrainGen\Biomes\DesertBiome.cs" />
     <Compile Include="TerrainGen\Biomes\ForestBiome.cs" />
-    <Compile Include="TerrainGen\Biomes\FrozenOceanBiome.cs" />
-    <Compile Include="TerrainGen\Biomes\OceanBiome.cs" />
     <Compile Include="TerrainGen\Biomes\PlainsBiome.cs" />
     <Compile Include="TerrainGen\Biomes\RainforestBiome.cs" />
     <Compile Include="TerrainGen\Biomes\SavannaBiome.cs" />
@@ -275,7 +272,6 @@
     <Compile Include="Logic\Blocks\SandBlock.cs" />
     <Compile Include="Logic\Blocks\SandstoneBlock.cs" />
     <Compile Include="Logic\Blocks\SaplingBlock.cs" />
-    <Compile Include="Logic\Blocks\SignBlock.cs" />
     <Compile Include="Logic\Blocks\SnowBlock.cs" />
     <Compile Include="Logic\Blocks\SoulSandBlock.cs" />
     <Compile Include="Logic\Blocks\SpongeBlock.cs" />
@@ -310,6 +306,8 @@
     <Compile Include="Logic\Blocks\DoorBlock.cs" />
     <Compile Include="TerrainGen\StandardGenerator.cs" />
     <Compile Include="Entities\FallingGravelEntity.cs" />
+    <Compile Include="Logic\Blocks\WallSignBlock.cs" />
+    <Compile Include="Logic\Blocks\UprightSignBlock.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

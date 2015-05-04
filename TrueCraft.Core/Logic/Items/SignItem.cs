@@ -2,6 +2,8 @@ using System;
 using TrueCraft.API.Logic;
 using TrueCraft.API;
 using TrueCraft.Core.Logic.Blocks;
+using TrueCraft.API.World;
+using TrueCraft.API.Networking;
 
 namespace TrueCraft.Core.Logic.Items
 {
@@ -41,6 +43,20 @@ namespace TrueCraft.Core.Logic.Items
             get
             {
                 return true;
+            }
+        }
+
+        public override void ItemUsedOnBlock(Coordinates3D coordinates, ItemStack item, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            if (face == BlockFace.PositiveY)
+            {
+                var provider = user.Server.BlockRepository.GetBlockProvider(UprightSignBlock.BlockID);
+                (provider as IItemProvider).ItemUsedOnBlock(coordinates, item, face, world, user);
+            }
+            else
+            {
+                var provider = user.Server.BlockRepository.GetBlockProvider(WallSignBlock.BlockID);
+                (provider as IItemProvider).ItemUsedOnBlock(coordinates, item, face, world, user);
             }
         }
     }
