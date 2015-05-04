@@ -184,6 +184,16 @@ namespace TrueCraft.Core
             return (int)Math.Floor((double)BlockCoord / Chunk.Depth);
         }
 
+        public static int BlockToChunkBlockX(int BlockX)
+        {
+            return BlockX % Chunk.Width;
+        }
+
+        public static int BlockToChunkBlockZ(int BlockZ)
+        {
+            return BlockZ % Chunk.Depth;
+        }
+
         /// <summary>
         /// Returns a value indicating the most extreme value of the
         /// provided Vector.
