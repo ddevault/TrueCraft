@@ -33,17 +33,19 @@ namespace TrueCraft.Commands
                 return;
             }
             
-            IRemoteClient receiver = Client.Server.Clients.SingleOrDefault(c => c.Username == Arguments[1]);
+            var receiver = Client.Server.Clients.SingleOrDefault(c => c.Username == Arguments[1]);
             short id;
             sbyte count;
             if (short.TryParse(Arguments[2], out id) && sbyte.TryParse(Arguments[3], out count))
             {
-                if (receiver == null) {
+                if (receiver == null)
+                {
                     Client.SendMessage("No client with the username \"" + Arguments[1] + "\" was found.");
                     return;
                 }
 
-                if (Client.Server.ItemRepository.GetItemProvider(id) == null) {
+                if (Client.Server.ItemRepository.GetItemProvider(id) == null)
+                {
                     Client.SendMessage("Invalid item id \"" + id + "\".");
                     return;
                 }
