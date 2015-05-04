@@ -266,8 +266,8 @@ namespace TrueCraft.Core.World
             HeightMap = chunk.HeightMap;
             LastUpdate = chunk.LastUpdate;
             TerrainPopulated = chunk.TerrainPopulated;
-            X = tag["xPos"].IntValue;
-            Z = tag["zPos"].IntValue;
+            X = tag["X"].IntValue;
+            Z = tag["Z"].IntValue;
             Blocks = tag["Blocks"].ByteArrayValue;
             Metadata = new NibbleArray();
             Metadata.Data = tag["Data"].ByteArrayValue;
