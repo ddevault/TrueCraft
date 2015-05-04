@@ -304,9 +304,9 @@ namespace TrueCraft.Core.World
 
             chunk = GetChunk(new Coordinates2D(chunkX, chunkZ));
             return new Coordinates3D(
-                (coordinates.X - chunkX * Chunk.Width) % Chunk.Width,
+                MathHelper.BlockToChunkBlockX(coordinates.X),
                 coordinates.Y,
-                (coordinates.Z - chunkZ * Chunk.Depth) % Chunk.Depth);
+                MathHelper.BlockToChunkBlockZ(coordinates.Z));
         }
 
         public bool IsValidPosition(Coordinates3D position)
