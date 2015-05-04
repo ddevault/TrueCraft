@@ -299,8 +299,8 @@ namespace TrueCraft.Core.World
             if (coordinates.Y < 0 || coordinates.Y >= Chunk.Height)
                 throw new ArgumentOutOfRangeException("coordinates", "Coordinates are out of range");
 
-            var chunkX = MathHelper.BlockToChunkX(coordinates.X);
-            var chunkZ = MathHelper.BlockToChunkZ(coordinates.Z);
+            var chunkX = (int)Math.Floor((double)coordinates.X / Chunk.Width);
+            var chunkZ = (int)Math.Floor((double)coordinates.Z / Chunk.Depth);
 
             chunk = GetChunk(new Coordinates2D(chunkX, chunkZ));
             return new Coordinates3D(
