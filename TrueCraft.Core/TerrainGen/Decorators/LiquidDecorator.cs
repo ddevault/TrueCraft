@@ -6,10 +6,11 @@ using TrueCraft.API.World;
 using TrueCraft.API;
 using TrueCraft.Core.World;
 using TrueCraft.Core.Logic.Blocks;
+using TrueCraft.Core.TerrainGen.Noise;
 
 namespace TrueCraft.Core.TerrainGen.Decorators
 {
-    public class WaterDecorator : IChunkDecorator
+    public class LiquidDecorator : IChunkDecorator
     {
         const int WaterLevel = 40;
 
@@ -44,6 +45,15 @@ namespace TrueCraft.Core.TerrainGen.Decorators
                                     }
                                 }
                             }
+                        }
+                    }
+                    for (int y = 4; y < height / 8; y++)
+                    {
+                        var blockLocation = new Coordinates3D(x, y, z);
+                        int blockId = chunk.GetBlockID(blockLocation);
+                        if (blockId.Equals(AirBlock.BlockID))
+                        {
+                            chunk.SetBlockID(blockLocation, LavaBlock.BlockID);
                         }
                     }
                 }

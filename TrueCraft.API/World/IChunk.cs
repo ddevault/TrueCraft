@@ -18,6 +18,7 @@ namespace TrueCraft.API.World
         NibbleArray Metadata { get; }
         NibbleArray BlockLight { get; }
         NibbleArray SkyLight { get; }
+        int GetHeight(byte x, byte z);
         byte GetBlockID(Coordinates3D coordinates);
         byte GetMetadata(Coordinates3D coordinates);
         byte GetSkyLight(Coordinates3D coordinates);

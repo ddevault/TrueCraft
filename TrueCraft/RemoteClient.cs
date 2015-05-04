@@ -205,12 +205,15 @@ namespace TrueCraft
         {
             if (this.Disconnected)
                 return;
-            if (ChunkRadius < 16) // TODO: Allow customization of this number
+            Task.Factory.StartNew(() =>
             {
-                ChunkRadius++;
-                UpdateChunks();
-                server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(1), ExpandChunkRadius);
-            }
+                if (ChunkRadius < 8) // TODO: Allow customization of this number
+                {
+                    ChunkRadius++;
+                    UpdateChunks();
+                    server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(1), ExpandChunkRadius);
+                }
+            });
         }
 
         internal void SendKeepAlive(IMultiplayerServer server)

@@ -38,6 +38,10 @@ namespace TrueCraft
                 serializer.Serialize(writer, Configuration);
 
             Server = new MultiplayerServer();
+            Server.AddLogProvider(new ConsoleLogProvider(LogCategory.Notice | LogCategory.Warning | LogCategory.Error | LogCategory.Debug));
+            #if DEBUG
+            Server.AddLogProvider(new FileLogProvider(new StreamWriter("packets.log", false), LogCategory.Packets));
+            #endif
             if (Configuration.Debug.DeleteWorldOnStartup)
             {
                 if (Directory.Exists("world"))
@@ -52,19 +56,48 @@ namespace TrueCraft
             try
             {
                 world = World.LoadWorld("world");
-                world.ChunkProvider = new StandardGenerator();
+                Server.AddWorld(world);
             }
             catch
             {
-                world = new World("default", new StandardGenerator());
+                world = new World("default", 1922464833, new StandardGenerator());
                 world.BlockRepository = Server.BlockRepository;
                 world.Save("world");
+                Server.AddWorld(world);
+                Server.Log(LogCategory.Notice, "Generating world around spawn point...");
+                for (int x = -5; x < 5; x++)
+                {
+                    for (int z = -5; z < 5; z++)
+                        world.GetChunk(new Coordinates2D(x, z));
+                    int progress = (int)(((x + 5) / 10.0) * 100);
+                    if (progress % 10 == 0)
+                        Server.Log(LogCategory.Notice, "{0}% complete", progress + 10);
+                }
+                Server.Log(LogCategory.Notice, "Simulating the world for a moment...");
+                for (int x = -5; x < 5; x++)
+                {
+                    for (int z = -5; z < 5; z++)
+                    {
+                        var chunk = world.GetChunk(new Coordinates2D(x, z));
+                        for (byte _x = 0; _x < Chunk.Width; _x++)
+                        {
+                            for (byte _z = 0; _z < Chunk.Depth; _z++)
+                            {
+                                for (int _y = 0; _y < chunk.GetHeight(_x, _z); _y++)
+                                {
+                                    var coords = new Coordinates3D(x + _x, _y, z + _z);
+                                    var data = world.GetBlockData(coords);
+                                    var provider = world.BlockRepository.GetBlockProvider(data.ID);
+                                    provider.BlockUpdate(data, data, Server, world);
+                                }
+                            }
+                        }
+                    }
+                    int progress = (int)(((x + 5) / 10.0) * 100);
+                    if (progress % 10 == 0)
+                        Server.Log(LogCategory.Notice, "{0}% complete", progress + 10);
+                }
             }
-            Server.AddWorld(world);
-            Server.AddLogProvider(new ConsoleLogProvider(LogCategory.Notice | LogCategory.Warning | LogCategory.Error | LogCategory.Debug));
-            #if DEBUG
-            Server.AddLogProvider(new FileLogProvider(new StreamWriter("packets.log", false), LogCategory.Packets));
-            #endif
             CommandManager = new CommandManager();
             Server.ChatMessageReceived += HandleChatMessageReceived;
             Server.Start(new IPEndPoint(IPAddress.Parse(Configuration.ServerAddress), Configuration.ServerPort));

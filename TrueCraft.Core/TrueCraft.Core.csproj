@@ -193,7 +193,6 @@
     <Compile Include="TerrainGen\Decorators\OreDecorator.cs" />
     <Compile Include="TerrainGen\Decorators\SugarCaneDecorator.cs" />
     <Compile Include="TerrainGen\Decorators\TreeDecorator.cs" />
-    <Compile Include="TerrainGen\Decorators\WaterDecorator.cs" />
     <Compile Include="TerrainGen\Noise\ClampNoise.cs" />
     <Compile Include="TerrainGen\Noise\FractalBrownianMotion.cs" />
     <Compile Include="TerrainGen\Noise\InvertNoise.cs" />
@@ -308,6 +307,7 @@
     <Compile Include="Entities\FallingGravelEntity.cs" />
     <Compile Include="Logic\Blocks\WallSignBlock.cs" />
     <Compile Include="Logic\Blocks\UprightSignBlock.cs" />
+    <Compile Include="TerrainGen\Decorators\LiquidDecorator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

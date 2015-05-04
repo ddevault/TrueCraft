@@ -22,16 +22,25 @@ namespace TrueCraft.Core.TerrainGen
         Perlin HighNoise = new Perlin();
         Perlin LowNoise = new Perlin();
         Perlin BottomNoise = new Perlin();
+        Perlin CaveNoise = new Perlin();
         ClampNoise HighClamp;
         ClampNoise LowClamp;
         ClampNoise BottomClamp;
         ModifyNoise FinalNoise;
+        bool EnableCaves;
         private const int GroundLevel = 50;
 
-        public StandardGenerator(bool singleBiome = false, byte generateBiome = (byte)Biome.Plains)
+        public StandardGenerator(bool singleBiome = false, bool enableCaves = true, byte generateBiome = (byte)Biome.Plains)
         {
             SingleBiome = singleBiome;
             GenerationBiome = generateBiome;
+            EnableCaves = enableCaves;
+
+            CaveNoise.Octaves = 3;
+            CaveNoise.Amplitude = 0.05;
+            CaveNoise.Persistance = 2;
+            CaveNoise.Frequency = 0.05;
+            CaveNoise.Lacunarity = 2;
 
             HighNoise.Persistance = 1;
             HighNoise.Frequency = 0.013;
@@ -66,7 +75,7 @@ namespace TrueCraft.Core.TerrainGen
             FinalNoise = new ModifyNoise(HighClamp, LowClamp, NoiseModifier.Add);
 
             ChunkDecorators = new List<IChunkDecorator>();
-            ChunkDecorators.Add(new WaterDecorator());
+            ChunkDecorators.Add(new LiquidDecorator());
             ChunkDecorators.Add(new OreDecorator());
             ChunkDecorators.Add(new PlantDecorator());
             ChunkDecorators.Add(new TreeDecorator());
@@ -90,6 +99,7 @@ namespace TrueCraft.Core.TerrainGen
             var worley = new CellNoise(seed);
             HighNoise.Seed = seed;
             LowNoise.Seed = seed;
+            CaveNoise.Seed = seed;
 
             var chunk = new Chunk(coordinates);
 
@@ -135,20 +145,37 @@ namespace TrueCraft.Core.TerrainGen
                     var surfaceHeight = height - biome.SurfaceDepth;
                     chunk.HeightMap[x * Chunk.Width + z] = height;
 
+                    // TODO: Do not overwrite blocks if they are already set from adjacent chunks
                     for (int y = 0; y <= height; y++)
                     {
-                        if (y == 0)
-                            chunk.SetBlockID(new Coordinates3D(x, y, z), BedrockBlock.BlockID);
+                        double cave = 0;
+                        if (!EnableCaves)
+                            cave = double.MaxValue;
+                        else
+                            cave = CaveNoise.Value3D((blockX + x) / 2, y / 2, (blockZ + z) / 2);
+                        double threshold = 0.05;
+                        if (y < 4)
+                            threshold = double.MaxValue;
                         else
                         {
-                            if (y.Equals(height) || y < height && y > surfaceHeight)
-                                chunk.SetBlockID(new Coordinates3D(x, y, z), biome.SurfaceBlock);
+                            if (y > height - 8)
+                                threshold = 8;
+                        }
+                        if (cave < threshold)
+                        {
+                            if (y == 0)
+                                chunk.SetBlockID(new Coordinates3D(x, y, z), BedrockBlock.BlockID);
                             else
                             {
-                                if (y > surfaceHeight - biome.FillerDepth)
-                                    chunk.SetBlockID(new Coordinates3D(x, y, z), biome.FillerBlock);
+                                if (y.Equals(height) || y < height && y > surfaceHeight)
+                                    chunk.SetBlockID(new Coordinates3D(x, y, z), biome.SurfaceBlock);
                                 else
-                                    chunk.SetBlockID(new Coordinates3D(x, y, z), StoneBlock.BlockID);
+                                {
+                                    if (y > surfaceHeight - biome.FillerDepth)
+                                        chunk.SetBlockID(new Coordinates3D(x, y, z), biome.FillerBlock);
+                                    else
+                                        chunk.SetBlockID(new Coordinates3D(x, y, z), StoneBlock.BlockID);
+                                }
                             }
                         }
                     }
