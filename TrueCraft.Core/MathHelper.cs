@@ -174,6 +174,16 @@ namespace TrueCraft.Core
             return ChunkZ * Chunk.Depth + BlockCoord;
         }
 
+        public static int BlockToChunkX(int BlockCoord)
+        {
+            return (int)Math.Floor((double)BlockCoord / Chunk.Width);
+        }
+
+        public static int BlockToChunkZ(int BlockCoord)
+        {
+            return (int)Math.Floor((double)BlockCoord / Chunk.Depth);
+        }
+
         /// <summary>
         /// Returns a value indicating the most extreme value of the
         /// provided Vector.
