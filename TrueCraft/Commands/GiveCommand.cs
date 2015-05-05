@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
 using TrueCraft.Core.Windows;
 using TrueCraft.API;
 using TrueCraft.API.Networking;
@@ -25,39 +24,66 @@ namespace TrueCraft.Commands
             get { return new string[1]{ "i" }; }
         }
 
-        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
-            if (Arguments.Length != 4)
+            var regexMatch = GetValuesFromArguments(arguments);
+            if (regexMatch == null)
             {
-                Help(Client, Alias, Arguments);
+                Help(client, alias, arguments);
                 return;
             }
+
+            string  username    = regexMatch.Groups[1].ToString(),
+                    itemid      = regexMatch.Groups[2].ToString(),
+                    amount      = regexMatch.Groups[4].ToString(); // match 3 is the amount with the leading space
+
+            if (String.IsNullOrEmpty(amount)) amount = "1"; // default to 1 when amount is omitted
             
-            var receiver = Client.Server.Clients.SingleOrDefault(c => String.Equals(c.Username, Arguments[1], StringComparison.CurrentCultureIgnoreCase));
+            var receivingPlayer =
+                client.Server.Clients.FirstOrDefault(c => String.Equals(c.Username, username, StringComparison.CurrentCultureIgnoreCase));
+
+#if DEBUG
+            client.SendMessage(string.Format("username: {0}, item: {1}, amount: {2}", username, itemid, amount));
+#endif
+
             short id;
             sbyte count;
-            if (short.TryParse(Arguments[2], out id) && sbyte.TryParse(Arguments[3], out count))
+
+            if (short.TryParse(itemid, out id) && sbyte.TryParse(amount, out count))
             {
-                if (receiver == null)
+                if (receivingPlayer == null)
                 {
-                    Client.SendMessage("No client with the username \"" + Arguments[1] + "\" was found.");
+                    client.SendMessage("No client with the username \"" + username + "\" was found.");
                     return;
                 }
 
-                if (Client.Server.ItemRepository.GetItemProvider(id) == null)
+                if (client.Server.ItemRepository.GetItemProvider(id) == null)
                 {
-                    Client.SendMessage("Invalid item id \"" + id + "\".");
+                    client.SendMessage("Invalid item id \"" + id + "\".");
                     return;
                 }
 
-                var inventory = receiver.Inventory as InventoryWindow;
+                var inventory = receivingPlayer.Inventory as InventoryWindow;
                 if (inventory != null) inventory.PickUpStack(new ItemStack(id, count));
             }
         }
 
-        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        private Match GetValuesFromArguments(string[] arguments)
         {
-            Client.SendMessage("Correct usage is /" + Alias + " <User> <Item ID> <Amount>");
+            try
+            {
+                var myRegex = new Regex(@"^give ([a-zA-Z0-9_\.]+) ([0-9]+)( ([0-9]+))?$", RegexOptions.IgnoreCase);
+                return myRegex.Matches(String.Join(" ", arguments)).Cast<Match>().First(myMatch => myMatch.Success);
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+        }
+
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
+        {
+            client.SendMessage("Correct usage is /" + alias + " <User> <Item ID> [Amount]");
         }
     }
 }
