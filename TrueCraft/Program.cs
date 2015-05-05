@@ -119,14 +119,16 @@ namespace TrueCraft
 
         static void HandleChatMessageReceived(object sender, ChatMessageEventArgs e)
         {
-            if (e.Message.StartsWith("/"))
-            {
-                e.PreventDefault = true;
-                var messageArray = e.Message.TrimStart('/')
-                    .Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-                CommandManager.HandleCommand(e.Client, messageArray[0], messageArray);
-                return;
-            }
+            if (!e.Message.StartsWith("/")) return;
+
+            var commandWithoutSlash = e.Message.TrimStart('/');
+            var messageArray = commandWithoutSlash
+                .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (messageArray.Length <= 0) return;
+
+            CommandManager.HandleCommand(e.Client, messageArray[0], messageArray);
+            e.PreventDefault = true;
         }
     }
 }
