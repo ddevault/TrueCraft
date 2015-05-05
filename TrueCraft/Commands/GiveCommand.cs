@@ -26,18 +26,18 @@ namespace TrueCraft.Commands
 
         public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
-            var regexMatch = GetValuesFromArguments(arguments);
-            if (regexMatch == null)
+            if (arguments.Length < 3)
             {
                 Help(client, alias, arguments);
                 return;
             }
 
-            string  username    = regexMatch.Groups[1].ToString(),
-                    itemid      = regexMatch.Groups[2].ToString(),
-                    amount      = regexMatch.Groups[4].ToString(); // match 3 is the amount with the leading space
+            string  username    = arguments[1],
+                    itemid      = arguments[2],
+                    amount      = "1";
 
-            if (String.IsNullOrEmpty(amount)) amount = "1"; // default to 1 when amount is omitted
+            if(arguments.Length >= 4)
+                    amount = arguments[3];
             
             var receivingPlayer =
                 client.Server.Clients.FirstOrDefault(c => String.Equals(c.Username, username, StringComparison.CurrentCultureIgnoreCase));
@@ -75,19 +75,6 @@ namespace TrueCraft.Commands
                         inventory.PickUpStack(new ItemStack(id, toAdd));
                     }
                 }
-            }
-        }
-
-        private Match GetValuesFromArguments(string[] arguments)
-        {
-            try
-            {
-                var myRegex = new Regex(@"^give ([a-zA-Z0-9_\.]+) ([0-9]+)( ([0-9]+))?$", RegexOptions.IgnoreCase);
-                return myRegex.Matches(String.Join(" ", arguments)).Cast<Match>().First(myMatch => myMatch.Success);
-            }
-            catch (InvalidOperationException)
-            {
-                return null;
             }
         }
 
