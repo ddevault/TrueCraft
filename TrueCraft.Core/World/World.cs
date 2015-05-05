@@ -45,7 +45,7 @@ namespace TrueCraft.Core.World
             }
             set
             {
-                // TODO
+                BaseTime = DateTime.Now.AddSeconds(-value/20);
             }
         }
 
