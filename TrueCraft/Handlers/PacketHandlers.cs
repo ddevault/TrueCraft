@@ -46,8 +46,6 @@ namespace TrueCraft.Handlers
             var server = (MultiplayerServer)_server;
             var args = new ChatMessageEventArgs(_client, packet.Message);
             server.OnChatMessageReceived(args);
-            if (!args.PreventDefault)
-                server.SendMessage("<{0}> {1}", _client.Username, packet.Message);
         }
 
         internal static void HandleDisconnect(IPacket _packet, IRemoteClient _client, IMultiplayerServer server)
