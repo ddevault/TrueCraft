@@ -26,19 +26,19 @@ namespace TrueCraft.Commands
             get { return new string[0]; }
         }
 
-        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Handle(IRemoteClient Client, string alias, string[] arguments)
         {
-            if (Arguments.Length != 0)
+            if (arguments.Length != 0)
             {
-                Help(Client, Alias, Arguments);
+                Help(Client, alias, arguments);
                 return;
             }
             Client.SendMessage(Client.Entity.Position.ToString());
         }
 
-        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
         {
-            Client.SendMessage("/pos: Shows your position.");
+            client.SendMessage("/pos: Shows your position.");
         }
     }
 
@@ -59,19 +59,19 @@ namespace TrueCraft.Commands
             get { return new string[0]; }
         }
 
-        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Handle(IRemoteClient Client, string alias, string[] arguments)
         {
-            if (Arguments.Length != 0)
+            if (arguments.Length != 0)
             {
-                Help(Client, Alias, Arguments);
+                Help(Client, alias, arguments);
                 return;
             }
             Client.EnableLogging = !Client.EnableLogging;
         }
 
-        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
         {
-            Client.SendMessage("/pos: Toggles client logging.");
+            client.SendMessage("/pos: Toggles client logging.");
         }
     }
 
@@ -92,39 +92,39 @@ namespace TrueCraft.Commands
             get { return new string[0]; }
         }
 
-        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Handle(IRemoteClient Client, string alias, string[] arguments)
         {
-            switch (Arguments.Length)
+            switch (arguments.Length)
             {
                 case 1:
                     Client.SendMessage(Client.World.Time.ToString());
                     break;
                 case 3:
-                    if (!Arguments[1].Equals("set"))
-                        Help(Client, Alias, Arguments);
+                    if (!arguments[1].Equals("set"))
+                        Help(Client, alias, arguments);
 
                     int newTime;
 
-                    if(!Int32.TryParse(Arguments[2], out newTime))
-                        Help(Client, Alias, Arguments);
+                    if(!Int32.TryParse(arguments[2], out newTime))
+                        Help(Client, alias, arguments);
 
                     Client.World.Time = newTime;
 
-                    Client.SendMessage(string.Format("Setting time to {0}", Arguments[2]));
+                    Client.SendMessage(string.Format("Setting time to {0}", arguments[2]));
 
                     foreach (var client in Client.Server.Clients.Where(c => c.World.Equals(Client.World)))
                         client.QueuePacket(new TimeUpdatePacket(newTime));
                     
                     break;
                 default:
-                    Help(Client, Alias, Arguments);
+                    Help(Client, alias, arguments);
                     break;
             }
         }
 
-        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
         {
-            Client.SendMessage("/time: Shows the current time.");
+            client.SendMessage("/time: Shows the current time.");
         }
     }
 
@@ -145,19 +145,19 @@ namespace TrueCraft.Commands
             get { return new string[0]; }
         }
 
-        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Handle(IRemoteClient Client, string alias, string[] arguments)
         {
-            if (Arguments.Length != 1)
+            if (arguments.Length != 1)
             {
-                Help(Client, Alias, Arguments);
+                Help(Client, alias, arguments);
                 return;
             }
             Client.QueuePacket(new WindowItemsPacket(0, Client.Inventory.GetSlots()));
         }
 
-        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
         {
-            Client.SendMessage("/reinv: Resends your inventory.");
+            client.SendMessage("/reinv: Resends your inventory.");
         }
     }
 }
