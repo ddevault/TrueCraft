@@ -50,6 +50,12 @@ namespace TrueCraft.Handlers
                         client.Entity.Position.Z, client.Entity.Yaw, client.Entity.Pitch, true));
                 client.QueuePacket(new TimeUpdatePacket(client.World.Time));
 
+                // update the client time whenever the server time changes
+                client.World.TimeChanged += delegate
+                {
+                    client.QueuePacket(new TimeUpdatePacket(client.World.Time));
+                };
+
                 // Start housekeeping for this client
                 var entityManager = server.GetEntityManagerForWorld(client.World);
                 entityManager.SpawnEntity(client.Entity);
