@@ -60,7 +60,7 @@ namespace TrueCraft
             }
             catch
             {
-                world = new World("default", 1922464833, new StandardGenerator());
+                world = new World("default", new StandardGenerator());
                 world.BlockRepository = Server.BlockRepository;
                 world.Save("world");
                 Server.AddWorld(world);
