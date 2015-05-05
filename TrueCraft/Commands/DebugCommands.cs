@@ -112,7 +112,7 @@ namespace TrueCraft.Commands
 
                     Client.SendMessage(string.Format("Setting time to {0}", Arguments[2]));
 
-                    foreach (var client in Client.Server.Clients)
+                    foreach (var client in Client.Server.Clients.Where(c => c.World.Equals(Client.World)))
                         client.QueuePacket(new TimeUpdatePacket(newTime));
                     
                     break;
