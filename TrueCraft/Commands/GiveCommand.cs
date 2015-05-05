@@ -42,10 +42,6 @@ namespace TrueCraft.Commands
             var receivingPlayer =
                 client.Server.Clients.FirstOrDefault(c => String.Equals(c.Username, username, StringComparison.CurrentCultureIgnoreCase));
 
-#if DEBUG
-            client.SendMessage(string.Format("username: {0}, item: {1}, amount: {2}", username, itemid, amount));
-#endif
-
             short id;
             int count;
 
