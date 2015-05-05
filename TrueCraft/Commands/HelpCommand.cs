@@ -19,15 +19,15 @@ namespace TrueCraft.Commands
             get { return "Command help menu."; }
         }
 
-        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Handle(IRemoteClient Client, string alias, string[] arguments)
         {
-            if (Arguments.Length < 1)
+            if (arguments.Length < 1)
             {
-                Help(Client, Alias, Arguments);
+                Help(Client, alias, arguments);
                 return;
             }
 
-            string Identifier = Arguments[0];
+            string Identifier = arguments[0];
             ICommand Found = null;
             if ((Found = Program.CommandManager.FindByName(Identifier)) != null)
             {
@@ -46,7 +46,7 @@ namespace TrueCraft.Commands
                 HelpPage(Client, PageNumber);
                 return;
             }
-            Help(Client, Alias, Arguments);
+            Help(Client, alias, arguments);
         }
 
         public void HelpPage(IRemoteClient Client, int Page)
@@ -73,9 +73,9 @@ namespace TrueCraft.Commands
             }
         }
 
-        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
         {
-            Client.SendMessage("Correct usage is /" + Alias + " <page#/command> [command arguments]");
+            client.SendMessage("Correct usage is /" + alias + " <page#/command> [command arguments]");
         }
     }
 }

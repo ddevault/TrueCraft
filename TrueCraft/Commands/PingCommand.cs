@@ -18,14 +18,14 @@ namespace TrueCraft.Commands
             get { return "Ping pong"; }
         }
 
-        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Handle(IRemoteClient Client, string alias, string[] arguments)
         {
             Client.SendMessage("Pong!");
         }
 
-        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
         {
-            Client.SendMessage("Correct usage is /" + Alias);
+            client.SendMessage("Correct usage is /" + alias);
         }
     }
 }
