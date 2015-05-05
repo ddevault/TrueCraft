@@ -51,7 +51,7 @@ namespace TrueCraft.Commands
                 }
 
                 var inventory = receiver.Inventory as InventoryWindow;
-                inventory.PickUpStack(new ItemStack(id, count));
+                if (inventory != null) inventory.PickUpStack(new ItemStack(id, count));
             }
         }
 
