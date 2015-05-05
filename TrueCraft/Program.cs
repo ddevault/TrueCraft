@@ -119,16 +119,36 @@ namespace TrueCraft
 
         static void HandleChatMessageReceived(object sender, ChatMessageEventArgs e)
         {
-            if (!e.Message.StartsWith("/")) return;
+            var message = e.Message;
 
+            if (!message.StartsWith("/") || message.StartsWith("//"))
+            {
+                if (message.StartsWith("//"))
+                    message = message.Substring(1);
+            
+                Server.SendMessage("<{0}> {1}", e.Client.Username, message);
+                return;
+            }
+
+            e.PreventDefault = ProcessChatCommand(e);
+        }
+
+        /// <summary>
+        /// Parse sent message as chat command
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns>true if the command was successfully executed</returns>
+        private static bool ProcessChatCommand(ChatMessageEventArgs e)
+        {
             var commandWithoutSlash = e.Message.TrimStart('/');
             var messageArray = commandWithoutSlash
                 .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-            if (messageArray.Length <= 0) return;
+            if (messageArray.Length <= 0) return false; // command not found
 
             CommandManager.HandleCommand(e.Client, messageArray[0], messageArray);
-            e.PreventDefault = true;
+
+            return true;
         }
     }
 }
