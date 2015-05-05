@@ -122,15 +122,17 @@ namespace TrueCraft
             var message = e.Message;
 
             if (!message.StartsWith("/") || message.StartsWith("//"))
-            {
-                if (message.StartsWith("//"))
-                    message = message.Substring(1);
-            
-                Server.SendMessage("<{0}> {1}", e.Client.Username, message);
-                return;
-            }
+                SendChatMessage(e.Client.Username, message);
+            else
+                e.PreventDefault = ProcessChatCommand(e);
+        }
 
-            e.PreventDefault = ProcessChatCommand(e);
+        private static void SendChatMessage(string username, string message)
+        {
+            if (message.StartsWith("//"))
+                message = message.Substring(1);
+
+            Server.SendMessage("<{0}> {1}", username, message);
         }
 
         /// <summary>
