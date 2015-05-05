@@ -11,7 +11,6 @@ namespace TrueCraft.API.World
     public interface IWorld
     {
         string Name { get; set; }
-        event TimeChangedEventHandler TimeChanged;
         IBlockRepository BlockRepository { get; set; }
         int Seed { get; set; }
         IBiomeMap BiomeDiagram { get; set; }

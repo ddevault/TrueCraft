@@ -15,7 +15,6 @@ namespace TrueCraft.Core.World
         public static readonly int Height = 128;
 
         public string Name { get; set; }
-        public event TimeChangedEventHandler TimeChanged;
         public int Seed { get; set; }
         private Coordinates3D? _SpawnPoint;
         public Coordinates3D SpawnPoint
@@ -47,7 +46,6 @@ namespace TrueCraft.Core.World
             set
             {
                 BaseTime = DateTime.Now.AddSeconds(-value/20);
-                if(TimeChanged != null) TimeChanged.Invoke(this, new TimeChangedEventArgs{ Time = value });
             }
         }
 
