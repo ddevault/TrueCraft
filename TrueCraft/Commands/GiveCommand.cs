@@ -47,9 +47,9 @@ namespace TrueCraft.Commands
 #endif
 
             short id;
-            sbyte count;
+            int count;
 
-            if (short.TryParse(itemid, out id) && sbyte.TryParse(amount, out count))
+            if (short.TryParse(itemid, out id) && Int32.TryParse(amount, out count))
             {
                 if (receivingPlayer == null)
                 {
@@ -64,7 +64,21 @@ namespace TrueCraft.Commands
                 }
 
                 var inventory = receivingPlayer.Inventory as InventoryWindow;
-                if (inventory != null) inventory.PickUpStack(new ItemStack(id, count));
+                if (inventory != null)
+                {
+                    sbyte toAdd;
+                    while (count > 0)
+                    {
+                        if (count >= 64)
+                            toAdd = 64;
+                        else
+                            toAdd = (sbyte)count;
+
+                        count -= toAdd;
+
+                        inventory.PickUpStack(new ItemStack(id, toAdd));
+                    }
+                }
             }
         }
 
