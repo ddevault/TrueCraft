@@ -75,7 +75,11 @@ namespace TrueCraft.Commands
                         inventory.PickUpStack(new ItemStack(id, toAdd));
                     }
                 }
+
+                return;
             }
+
+            Help(client, alias, arguments);
         }
 
         public override void Help(IRemoteClient client, string alias, string[] arguments)
