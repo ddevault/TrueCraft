@@ -33,7 +33,7 @@ namespace TrueCraft.Commands
                 return;
             }
             
-            var receiver = Client.Server.Clients.SingleOrDefault(c => c.Username == Arguments[1]);
+            var receiver = Client.Server.Clients.SingleOrDefault(c => String.Equals(c.Username, Arguments[1], StringComparison.CurrentCultureIgnoreCase));
             short id;
             sbyte count;
             if (short.TryParse(Arguments[2], out id) && sbyte.TryParse(Arguments[3], out count))
