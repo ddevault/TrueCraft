@@ -28,7 +28,7 @@ namespace TrueCraft.Commands
 
         public override void Handle(IRemoteClient Client, string alias, string[] arguments)
         {
-            if (arguments.Length != 0)
+            if (arguments.Length != 1)
             {
                 Help(Client, alias, arguments);
                 return;
@@ -61,7 +61,7 @@ namespace TrueCraft.Commands
 
         public override void Handle(IRemoteClient Client, string alias, string[] arguments)
         {
-            if (arguments.Length != 0)
+            if (arguments.Length != 1)
             {
                 Help(Client, alias, arguments);
                 return;
