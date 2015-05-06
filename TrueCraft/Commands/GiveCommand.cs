@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Text.RegularExpressions;
 using TrueCraft.Core.Windows;
 using TrueCraft.API;
 using TrueCraft.API.Networking;
