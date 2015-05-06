@@ -38,47 +38,59 @@ namespace TrueCraft.Commands
             if(arguments.Length >= 4)
                     amount = arguments[3];
             
-            var receivingPlayer =
-                client.Server.Clients.FirstOrDefault(c => String.Equals(c.Username, username, StringComparison.CurrentCultureIgnoreCase));
+            var receivingPlayer = GetPlayerByName(client, username);
 
+            if (!GiveItem(receivingPlayer, itemid, amount, client))
+            {
+                Help(client, alias, arguments);
+            }
+        }
+
+        protected static IRemoteClient GetPlayerByName(IRemoteClient client, string username)
+        {
+            var receivingPlayer =
+                client.Server.Clients.FirstOrDefault(
+                    c => String.Equals(c.Username, username, StringComparison.CurrentCultureIgnoreCase));
+            return receivingPlayer;
+        }
+
+        protected static bool GiveItem(IRemoteClient receivingPlayer, string itemid, string amount, IRemoteClient client)
+        {
             short id;
             int count;
+            string username = receivingPlayer.Username;
 
-            if (short.TryParse(itemid, out id) && Int32.TryParse(amount, out count))
+            if (!short.TryParse(itemid, out id) || !Int32.TryParse(amount, out count)) return false;
+            
+            if (receivingPlayer == null)
             {
-                if (receivingPlayer == null)
-                {
-                    client.SendMessage("No client with the username \"" + username + "\" was found.");
-                    return;
-                }
-
-                if (client.Server.ItemRepository.GetItemProvider(id) == null)
-                {
-                    client.SendMessage("Invalid item id \"" + id + "\".");
-                    return;
-                }
-
-                var inventory = receivingPlayer.Inventory as InventoryWindow;
-                if (inventory != null)
-                {
-                    sbyte toAdd;
-                    while (count > 0)
-                    {
-                        if (count >= 64)
-                            toAdd = 64;
-                        else
-                            toAdd = (sbyte)count;
-
-                        count -= toAdd;
-
-                        inventory.PickUpStack(new ItemStack(id, toAdd));
-                    }
-                }
-
-                return;
+                client.SendMessage("No client with the username \"" + username + "\" was found.");
+                return true;
             }
 
-            Help(client, alias, arguments);
+            if (client.Server.ItemRepository.GetItemProvider(id) == null)
+            {
+                client.SendMessage("Invalid item id \"" + id + "\".");
+                return true;
+            }
+
+            var inventory = receivingPlayer.Inventory as InventoryWindow;
+            if (inventory == null) return false;
+
+            while (count > 0)
+            {
+                sbyte amountToGive;
+                if (count >= 64)
+                    amountToGive = 64;
+                else
+                    amountToGive = (sbyte) count;
+
+                count -= amountToGive;
+
+                inventory.PickUpStack(new ItemStack(id, amountToGive));
+            }
+
+            return true;
         }
 
         public override void Help(IRemoteClient client, string alias, string[] arguments)

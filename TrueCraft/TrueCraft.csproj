@@ -41,6 +41,7 @@
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandManager.cs" />
     <Compile Include="Commands\GiveCommand.cs" />
+    <Compile Include="Commands\GiveMeCommand.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Commands\PingCommand.cs" />
     <Compile Include="Program.cs" />

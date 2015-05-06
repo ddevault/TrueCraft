@@ -21,6 +21,7 @@ namespace TrueCraft.Commands
         {
             Commands.Add(new PingCommand());
             Commands.Add(new GiveCommand());
+            Commands.Add(new GiveMeCommand());
             Commands.Add(new HelpCommand());
             Commands.Add(new ResendInvCommand());
             Commands.Add(new PositionCommand());
