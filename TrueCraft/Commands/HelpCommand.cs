@@ -27,7 +27,13 @@ namespace TrueCraft.Commands
                 return;
             }
 
-            string Identifier = arguments[0];
+            string Identifier;
+
+            if (arguments.Length > 1)
+                Identifier = arguments[1];
+            else
+                Identifier = "0";
+
             ICommand Found = null;
             if ((Found = Program.CommandManager.FindByName(Identifier)) != null)
             {
