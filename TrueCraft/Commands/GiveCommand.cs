@@ -40,6 +40,12 @@ namespace TrueCraft.Commands
             
             var receivingPlayer = GetPlayerByName(client, username);
 
+            if (receivingPlayer == null)
+            {
+                client.SendMessage("No client with the username \"" + username + "\" was found.");
+                return;
+            }
+
             if (!GiveItem(receivingPlayer, itemid, amount, client))
             {
                 Help(client, alias, arguments);
@@ -58,15 +64,8 @@ namespace TrueCraft.Commands
         {
             short id;
             int count;
-            string username = receivingPlayer.Username;
 
             if (!short.TryParse(itemid, out id) || !Int32.TryParse(amount, out count)) return false;
-            
-            if (receivingPlayer == null)
-            {
-                client.SendMessage("No client with the username \"" + username + "\" was found.");
-                return true;
-            }
 
             if (client.Server.ItemRepository.GetItemProvider(id) == null)
             {
@@ -74,6 +73,7 @@ namespace TrueCraft.Commands
                 return true;
             }
 
+            string username = receivingPlayer.Username;
             var inventory = receivingPlayer.Inventory as InventoryWindow;
             if (inventory == null) return false;
 
