@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Text.RegularExpressions;
 using TrueCraft.Core.Windows;
 using TrueCraft.API;
 using TrueCraft.API.Networking;
@@ -39,47 +38,59 @@ namespace TrueCraft.Commands
             if(arguments.Length >= 4)
                     amount = arguments[3];
             
-            var receivingPlayer =
-                client.Server.Clients.FirstOrDefault(c => String.Equals(c.Username, username, StringComparison.CurrentCultureIgnoreCase));
+            var receivingPlayer = GetPlayerByName(client, username);
 
-            short id;
-            int count;
-
-            if (short.TryParse(itemid, out id) && Int32.TryParse(amount, out count))
+            if (receivingPlayer == null)
             {
-                if (receivingPlayer == null)
-                {
-                    client.SendMessage("No client with the username \"" + username + "\" was found.");
-                    return;
-                }
-
-                if (client.Server.ItemRepository.GetItemProvider(id) == null)
-                {
-                    client.SendMessage("Invalid item id \"" + id + "\".");
-                    return;
-                }
-
-                var inventory = receivingPlayer.Inventory as InventoryWindow;
-                if (inventory != null)
-                {
-                    sbyte toAdd;
-                    while (count > 0)
-                    {
-                        if (count >= 64)
-                            toAdd = 64;
-                        else
-                            toAdd = (sbyte)count;
-
-                        count -= toAdd;
-
-                        inventory.PickUpStack(new ItemStack(id, toAdd));
-                    }
-                }
-
+                client.SendMessage("No client with the username \"" + username + "\" was found.");
                 return;
             }
 
-            Help(client, alias, arguments);
+            if (!GiveItem(receivingPlayer, itemid, amount, client))
+            {
+                Help(client, alias, arguments);
+            }
+        }
+
+        protected static IRemoteClient GetPlayerByName(IRemoteClient client, string username)
+        {
+            var receivingPlayer =
+                client.Server.Clients.FirstOrDefault(
+                    c => String.Equals(c.Username, username, StringComparison.CurrentCultureIgnoreCase));
+            return receivingPlayer;
+        }
+
+        protected static bool GiveItem(IRemoteClient receivingPlayer, string itemid, string amount, IRemoteClient client)
+        {
+            short id;
+            int count;
+
+            if (!short.TryParse(itemid, out id) || !Int32.TryParse(amount, out count)) return false;
+
+            if (client.Server.ItemRepository.GetItemProvider(id) == null)
+            {
+                client.SendMessage("Invalid item id \"" + id + "\".");
+                return true;
+            }
+
+            string username = receivingPlayer.Username;
+            var inventory = receivingPlayer.Inventory as InventoryWindow;
+            if (inventory == null) return false;
+
+            while (count > 0)
+            {
+                sbyte amountToGive;
+                if (count >= 64)
+                    amountToGive = 64;
+                else
+                    amountToGive = (sbyte) count;
+
+                count -= amountToGive;
+
+                inventory.PickUpStack(new ItemStack(id, amountToGive));
+            }
+
+            return true;
         }
 
         public override void Help(IRemoteClient client, string alias, string[] arguments)
