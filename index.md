@@ -20,6 +20,8 @@ original spirit of Minecraft, before there were things like the End, or
 all-in-one redstone devices, or village gift shops. A simple sandbox where you
 can build and explore and fight with your friends. I miss that.
 
+[**Roadmap »**](/roadmap.html)
+
 <a class="rss" href="/rss.xml"><img src="/images/rss.png" /></a>
 
 # Updates

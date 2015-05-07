@@ -1,0 +1,18 @@
+<tr {% if include.comments %}title="{{ include.comments }}"{% endif %}>
+    {% if include.indent %}
+    <td style="padding-left: 50px;">
+    {% else %}
+    <td>
+    {% endif %}
+        {{ include.name }}
+    </td>
+    {% if include.progress == "done" %}
+    <td class="success">Complete</td>
+    {% elsif include.progress == "in-progress" %}
+    <td class="warning">In progress</td>
+    {% elsif include.progress == "meta" %}
+    <td></td>
+    {% else %}
+    <td class="danger">Not started</td>
+    {% endif %}
+</tr>

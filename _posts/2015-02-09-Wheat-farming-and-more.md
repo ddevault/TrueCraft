@@ -1,7 +1,7 @@
 ---
 # vim: tw=80
 layout: post
-title: Wheat farming, torch placement, and sugar canes
+title: Wheat farming and more
 blurb: |
     Wheat farming, torch placement and sugar canes are now implemented.
 ---
