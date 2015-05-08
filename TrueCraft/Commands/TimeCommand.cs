@@ -22,32 +22,32 @@ namespace TrueCraft.Commands
             get { return new string[0]; }
         }
 
-        public override void Handle(IRemoteClient Client, string alias, string[] arguments)
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
             switch (arguments.Length)
             {
                 case 0:
-                    Client.SendMessage(Client.World.Time.ToString());
+                    client.SendMessage(client.World.Time.ToString());
                     break;
                 case 2:
                     if (!arguments[0].Equals("set"))
-                        Help(Client, alias, arguments);
+                        Help(client, alias, arguments);
 
                     int newTime;
 
                     if(!Int32.TryParse(arguments[1], out newTime))
-                        Help(Client, alias, arguments);
+                        Help(client, alias, arguments);
 
-                    Client.World.Time = newTime;
+                    client.World.Time = newTime;
 
-                    Client.SendMessage(string.Format("Setting time to {0}", arguments[1]));
+                    client.SendMessage(string.Format("Setting time to {0}", arguments[1]));
 
-                    foreach (var client in Client.Server.Clients.Where(c => c.World.Equals(Client.World)))
-                        client.QueuePacket(new TimeUpdatePacket(newTime));
+                    foreach (var remoteClient in client.Server.Clients.Where(c => c.World.Equals(client.World)))
+                        remoteClient.QueuePacket(new TimeUpdatePacket(newTime));
                     
                     break;
                 default:
-                    Help(Client, alias, arguments);
+                    Help(client, alias, arguments);
                     break;
             }
         }

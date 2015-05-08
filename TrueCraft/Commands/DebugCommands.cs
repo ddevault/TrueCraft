@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using TrueCraft.Core.Windows;
-using TrueCraft.API;
-using TrueCraft.API.Networking;
+﻿using TrueCraft.API.Networking;
 using TrueCraft.Core.Networking.Packets;
 
 namespace TrueCraft.Commands
@@ -24,14 +20,14 @@ namespace TrueCraft.Commands
             get { return new string[0]; }
         }
 
-        public override void Handle(IRemoteClient Client, string alias, string[] arguments)
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
             if (arguments.Length != 0)
             {
-                Help(Client, alias, arguments);
+                Help(client, alias, arguments);
                 return;
             }
-            Client.SendMessage(Client.Entity.Position.ToString());
+            client.SendMessage(client.Entity.Position.ToString());
         }
 
         public override void Help(IRemoteClient client, string alias, string[] arguments)
@@ -57,14 +53,14 @@ namespace TrueCraft.Commands
             get { return new string[0]; }
         }
 
-        public override void Handle(IRemoteClient Client, string alias, string[] arguments)
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
             if (arguments.Length != 0)
             {
-                Help(Client, alias, arguments);
+                Help(client, alias, arguments);
                 return;
             }
-            Client.EnableLogging = !Client.EnableLogging;
+            client.EnableLogging = !client.EnableLogging;
         }
 
         public override void Help(IRemoteClient client, string alias, string[] arguments)
@@ -90,14 +86,14 @@ namespace TrueCraft.Commands
             get { return new string[0]; }
         }
 
-        public override void Handle(IRemoteClient Client, string alias, string[] arguments)
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
             if (arguments.Length != 0)
             {
-                Help(Client, alias, arguments);
+                Help(client, alias, arguments);
                 return;
             }
-            Client.QueuePacket(new WindowItemsPacket(0, Client.Inventory.GetSlots()));
+            client.QueuePacket(new WindowItemsPacket(0, client.Inventory.GetSlots()));
         }
 
         public override void Help(IRemoteClient client, string alias, string[] arguments)

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TrueCraft.API.Networking;
+﻿using TrueCraft.API.Networking;
 
 namespace TrueCraft.Commands
 {
@@ -18,9 +14,9 @@ namespace TrueCraft.Commands
             get { return "Ping pong"; }
         }
 
-        public override void Handle(IRemoteClient Client, string alias, string[] arguments)
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
-            Client.SendMessage("Pong!");
+            client.SendMessage("Pong!");
         }
 
         public override void Help(IRemoteClient client, string alias, string[] arguments)
