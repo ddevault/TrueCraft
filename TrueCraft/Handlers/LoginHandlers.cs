@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using TrueCraft.API.Server;
 using TrueCraft.API.Networking;
 using TrueCraft.Core.Networking.Packets;
@@ -28,6 +30,8 @@ namespace TrueCraft.Handlers
                 client.QueuePacket(new DisconnectPacket("Server outdated! Use beta 1.7.3."));
             else if (server.Worlds.Count == 0)
                 client.QueuePacket(new DisconnectPacket("Server has no worlds configured."));
+            else if (!PlayerIsWhitelisted(client, server) && PlayerIsBlacklisted(client, server))
+                client.QueuePacket(new DisconnectPacket("You're banned from this server"));
             else
             {
                 client.LoggedIn = true;
@@ -61,6 +65,32 @@ namespace TrueCraft.Handlers
                     client.SendMessage(Program.Configuration.MOTD);
                 server.SendMessage(ChatColor.Yellow + "{0} joined the server.", client.Username);
             }
+        }
+
+        private static IList<string> _blacklistedPlayers, _whitelistedPlayers;
+        private static bool _blacklistLoaded, _whitelistLoaded;
+        private static bool PlayerIsWhitelisted(IRemoteClient client, IMultiplayerServer server)
+        {
+            if (!_whitelistLoaded)
+            {
+                var whitelist = new PlayerWhiteList(server);
+                _whitelistedPlayers = whitelist.Players;
+                _whitelistLoaded = true;
+            }
+
+            return _whitelistedPlayers != null && _whitelistedPlayers.Contains(client.Username, StringComparer.CurrentCultureIgnoreCase);
+        }
+
+        private static bool PlayerIsBlacklisted(IRemoteClient client, IMultiplayerServer server)
+        {
+            if (!_blacklistLoaded)
+            {
+                var blacklist = new PlayerBlackList(server);
+                _blacklistedPlayers = blacklist.Players;
+                _blacklistLoaded = true;
+            }
+
+            return _blacklistedPlayers != null && _blacklistedPlayers.Contains(client.Username, StringComparer.CurrentCultureIgnoreCase);
         }
     }
 }
