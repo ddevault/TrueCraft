@@ -9,7 +9,6 @@ using System.IO;
 using TrueCraft.Commands;
 using TrueCraft.API.World;
 using System;
-using TrueCraft.Core;
 using TrueCraft.API;
 using YamlDotNet.Serialization;
 
@@ -104,7 +103,7 @@ namespace TrueCraft
             Console.CancelKeyPress += HandleCancelKeyPress;
             while (true)
             {
-                Thread.Sleep(1000 * 30); // TODO: Allow users to customize world save interval
+                Thread.Sleep(1000 * Configuration.WorldSaveInterval);
                 foreach (var w in Server.Worlds)
                 {
                     w.Save();
