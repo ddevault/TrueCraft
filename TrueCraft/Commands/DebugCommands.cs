@@ -28,7 +28,7 @@ namespace TrueCraft.Commands
 
         public override void Handle(IRemoteClient Client, string alias, string[] arguments)
         {
-            if (arguments.Length != 1)
+            if (arguments.Length != 0)
             {
                 Help(Client, alias, arguments);
                 return;
@@ -61,7 +61,7 @@ namespace TrueCraft.Commands
 
         public override void Handle(IRemoteClient Client, string alias, string[] arguments)
         {
-            if (arguments.Length != 1)
+            if (arguments.Length != 0)
             {
                 Help(Client, alias, arguments);
                 return;
@@ -96,21 +96,21 @@ namespace TrueCraft.Commands
         {
             switch (arguments.Length)
             {
-                case 1:
+                case 0:
                     Client.SendMessage(Client.World.Time.ToString());
                     break;
-                case 3:
-                    if (!arguments[1].Equals("set"))
+                case 2:
+                    if (!arguments[0].Equals("set"))
                         Help(Client, alias, arguments);
 
                     int newTime;
 
-                    if(!Int32.TryParse(arguments[2], out newTime))
+                    if(!Int32.TryParse(arguments[1], out newTime))
                         Help(Client, alias, arguments);
 
                     Client.World.Time = newTime;
 
-                    Client.SendMessage(string.Format("Setting time to {0}", arguments[2]));
+                    Client.SendMessage(string.Format("Setting time to {0}", arguments[1]));
 
                     foreach (var client in Client.Server.Clients.Where(c => c.World.Equals(Client.World)))
                         client.QueuePacket(new TimeUpdatePacket(newTime));
@@ -147,7 +147,7 @@ namespace TrueCraft.Commands
 
         public override void Handle(IRemoteClient Client, string alias, string[] arguments)
         {
-            if (arguments.Length != 1)
+            if (arguments.Length != 0)
             {
                 Help(Client, alias, arguments);
                 return;

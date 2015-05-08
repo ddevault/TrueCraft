@@ -21,17 +21,17 @@ namespace TrueCraft.Commands
 
         public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
-            if (arguments.Length < 2)
+            if (arguments.Length < 1)
             {
                 Help(client, alias, arguments);
                 return;
             }
 
-            string itemid = arguments[1],
+            string itemid = arguments[0],
                 amount = "1";
 
-            if (arguments.Length >= 3)
-                amount = arguments[2];
+            if (arguments.Length >= 2)
+                amount = arguments[1];
 
             var receivingPlayer = client;
 
