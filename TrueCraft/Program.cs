@@ -9,7 +9,6 @@ using System.IO;
 using TrueCraft.Commands;
 using TrueCraft.API.World;
 using System;
-using TrueCraft.Core;
 using TrueCraft.API;
 using YamlDotNet.Serialization;
 
@@ -60,7 +59,7 @@ namespace TrueCraft
             }
             catch
             {
-                world = new World("default", 1922464833, new StandardGenerator());
+                world = new World("default", new StandardGenerator());
                 world.BlockRepository = Server.BlockRepository;
                 world.Save("world");
                 Server.AddWorld(world);
@@ -104,7 +103,7 @@ namespace TrueCraft
             Console.CancelKeyPress += HandleCancelKeyPress;
             while (true)
             {
-                Thread.Sleep(1000 * 30); // TODO: Allow users to customize world save interval
+                Thread.Sleep(1000 * Configuration.WorldSaveInterval);
                 foreach (var w in Server.Worlds)
                 {
                     w.Save();
@@ -119,14 +118,43 @@ namespace TrueCraft
 
         static void HandleChatMessageReceived(object sender, ChatMessageEventArgs e)
         {
-            if (e.Message.StartsWith("/"))
-            {
-                e.PreventDefault = true;
-                var messageArray = e.Message.TrimStart('/')
-                    .Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-                CommandManager.HandleCommand(e.Client, messageArray[0], messageArray);
-                return;
-            }
+            var message = e.Message;
+
+            if (!message.StartsWith("/") || message.StartsWith("//"))
+                SendChatMessage(e.Client.Username, message);
+            else
+                e.PreventDefault = ProcessChatCommand(e);
+        }
+
+        private static void SendChatMessage(string username, string message)
+        {
+            if (message.StartsWith("//"))
+                message = message.Substring(1);
+
+            Server.SendMessage("<{0}> {1}", username, message);
+        }
+
+        /// <summary>
+        /// Parse sent message as chat command
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns>true if the command was successfully executed</returns>
+        private static bool ProcessChatCommand(ChatMessageEventArgs e)
+        {
+            var commandWithoutSlash = e.Message.TrimStart('/');
+            var messageArray = commandWithoutSlash
+                .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (messageArray.Length <= 0) return false; // command not found
+
+            var alias = messageArray[0];
+            var trimmedMessageArray = new string[messageArray.Length - 1];
+            if (trimmedMessageArray.Length != 0)
+                Array.Copy(messageArray, 1, trimmedMessageArray, 0, messageArray.Length - 1);
+
+            CommandManager.HandleCommand(e.Client, alias, trimmedMessageArray);
+
+            return true;
         }
     }
 }

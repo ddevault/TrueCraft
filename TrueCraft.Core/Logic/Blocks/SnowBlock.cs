@@ -73,5 +73,10 @@ namespace TrueCraft.Core.Logic.Blocks
         {
             return new Tuple<int, int>(3, 4);
         }
+
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        {
+            return new[] { new ItemStack(SnowballItem.ItemID) };
+        }
     }
 }

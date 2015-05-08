@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using TrueCraft.API.Networking;
 using TrueCraft.API.Server;
 
@@ -19,63 +16,64 @@ namespace TrueCraft.Commands
             get { return "Command help menu."; }
         }
 
-        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
-            if (Arguments.Length < 1)
+            if (arguments.Length < 1)
             {
-                Help(Client, Alias, Arguments);
+                Help(client, alias, arguments);
                 return;
             }
 
-            string Identifier = Arguments[0];
-            ICommand Found = null;
-            if ((Found = Program.CommandManager.FindByName(Identifier)) != null)
+            var identifier = arguments.Length >= 1 ? arguments[0] : "0";
+
+            ICommand found;
+            if ((found = Program.CommandManager.FindByName(identifier)) != null)
             {
-                Found.Handle(Client, Identifier, new string[0]);
+                found.Handle(client, identifier, new string[0]);
                 return;
             }
-            else if ((Found = Program.CommandManager.FindByAlias(Identifier)) != null)
+            else if ((found = Program.CommandManager.FindByAlias(identifier)) != null)
             {
-                Found.Help(Client, Identifier, new string[0]);
+                found.Help(client, identifier, new string[0]);
                 return;
             }
 
-            int PageNumber = 0;
-            if (int.TryParse(Identifier, out PageNumber))
+            int pageNumber;
+            if (int.TryParse(identifier, out pageNumber))
             {
-                HelpPage(Client, PageNumber);
+                HelpPage(client, pageNumber);
                 return;
             }
-            Help(Client, Alias, Arguments);
+            Help(client, alias, arguments);
         }
 
-        public void HelpPage(IRemoteClient Client, int Page)
+        public void HelpPage(IRemoteClient client, int page)
         {
-            int PerPage = 5;
-            int Pages = (int)Math.Floor((double)(Program.CommandManager.Commands.Count / PerPage));
-            if ((Program.CommandManager.Commands.Count % PerPage) > 0)
-                Pages++;
+            const int perPage = 5;
+            int numPages = (int)Math.Floor(((double)Program.CommandManager.Commands.Count / perPage));
+            if ((Program.CommandManager.Commands.Count % perPage) > 0)
+                numPages++;
 
-            if (Page < 1 || Page > Pages)
-                Page = 1;
+            if (page < 1 || page > numPages)
+                page = 1;
 
-            int StartingIndex = (Page - 1) * PerPage;
-            Client.SendMessage("--Help Page " + Page + " of " + Pages + "--");
-            for (int i = 0; i < PerPage; i++)
+            int startingIndex = (page - 1) * perPage;
+            client.SendMessage("--Help page " + page + " of " + numPages + "--");
+            for (int i = 0; i < perPage; i++)
             {
-                int Index = StartingIndex + i;
-                if (Index > Program.CommandManager.Commands.Count - 1)
+                int index = startingIndex + i;
+                if (index > Program.CommandManager.Commands.Count - 1)
                 {
                     break;
                 }
-                ICommand C = Program.CommandManager.Commands[Index];
-                Client.SendMessage("/" + C.Name + " - " + C.Description);
+                var command = Program.CommandManager.Commands[index];
+                client.SendMessage("/" + command.Name + " - " + command.Description);
             }
         }
 
-        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
         {
-            Client.SendMessage("Correct usage is /" + Alias + " <page#/command> [command arguments]");
+            client.SendMessage("Correct usage is /" + alias + " <page#/command> [command arguments]");
         }
     }
 }

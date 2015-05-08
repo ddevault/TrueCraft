@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TrueCraft.Core.Windows;
-using TrueCraft.API;
-using TrueCraft.API.Networking;
+﻿using TrueCraft.API.Networking;
 using TrueCraft.Core.Networking.Packets;
 
 namespace TrueCraft.Commands
@@ -26,19 +20,19 @@ namespace TrueCraft.Commands
             get { return new string[0]; }
         }
 
-        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
-            if (Arguments.Length != 0)
+            if (arguments.Length != 0)
             {
-                Help(Client, Alias, Arguments);
+                Help(client, alias, arguments);
                 return;
             }
-            Client.SendMessage(Client.Entity.Position.ToString());
+            client.SendMessage(client.Entity.Position.ToString());
         }
 
-        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
         {
-            Client.SendMessage("/pos: Shows your position.");
+            client.SendMessage("/pos: Shows your position.");
         }
     }
 
@@ -59,55 +53,22 @@ namespace TrueCraft.Commands
             get { return new string[0]; }
         }
 
-        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
-            if (Arguments.Length != 0)
+            if (arguments.Length != 0)
             {
-                Help(Client, Alias, Arguments);
+                Help(client, alias, arguments);
                 return;
             }
-            Client.EnableLogging = !Client.EnableLogging;
+            client.EnableLogging = !client.EnableLogging;
         }
 
-        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
         {
-            Client.SendMessage("/pos: Toggles client logging.");
+            client.SendMessage("/pos: Toggles client logging.");
         }
     }
-
-    public class TimeCommand : Command
-    {
-        public override string Name
-        {
-            get { return "time"; }
-        }
-
-        public override string Description
-        {
-            get { return "Shows the current time."; }
-        }
-
-        public override string[] Aliases
-        {
-            get { return new string[0]; }
-        }
-
-        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
-        {
-            if (Arguments.Length != 0)
-            {
-                Help(Client, Alias, Arguments);
-                return;
-            }
-            Client.SendMessage(Client.World.Time.ToString());
-        }
-
-        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
-        {
-            Client.SendMessage("/time: Shows the current time.");
-        }
-    }
-
+    
     public class ResendInvCommand : Command
     {
         public override string Name
@@ -125,19 +86,19 @@ namespace TrueCraft.Commands
             get { return new string[0]; }
         }
 
-        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
-            if (Arguments.Length != 1)
+            if (arguments.Length != 0)
             {
-                Help(Client, Alias, Arguments);
+                Help(client, alias, arguments);
                 return;
             }
-            Client.QueuePacket(new WindowItemsPacket(0, Client.Inventory.GetSlots()));
+            client.QueuePacket(new WindowItemsPacket(0, client.Inventory.GetSlots()));
         }
 
-        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
         {
-            Client.SendMessage("/reinv: Resends your inventory.");
+            client.SendMessage("/reinv: Resends your inventory.");
         }
     }
 }

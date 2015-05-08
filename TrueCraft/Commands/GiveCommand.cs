@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using TrueCraft.Core.Windows;
 using TrueCraft.API;
 using TrueCraft.API.Networking;
@@ -25,39 +23,79 @@ namespace TrueCraft.Commands
             get { return new string[1]{ "i" }; }
         }
 
-        public override void Handle(IRemoteClient Client, string Alias, string[] Arguments)
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
-            if (Arguments.Length != 4)
+            if (arguments.Length < 2)
             {
-                Help(Client, Alias, Arguments);
+                Help(client, alias, arguments);
                 return;
             }
+
+            string  username    = arguments[0],
+                    itemid      = arguments[1],
+                    amount      = "1";
+
+            if(arguments.Length >= 3)
+                    amount = arguments[2];
             
-            var receiver = Client.Server.Clients.SingleOrDefault(c => c.Username == Arguments[1]);
-            short id;
-            sbyte count;
-            if (short.TryParse(Arguments[2], out id) && sbyte.TryParse(Arguments[3], out count))
+            var receivingPlayer = GetPlayerByName(client, username);
+
+            if (receivingPlayer == null)
             {
-                if (receiver == null)
-                {
-                    Client.SendMessage("No client with the username \"" + Arguments[1] + "\" was found.");
-                    return;
-                }
+                client.SendMessage("No client with the username \"" + username + "\" was found.");
+                return;
+            }
 
-                if (Client.Server.ItemRepository.GetItemProvider(id) == null)
-                {
-                    Client.SendMessage("Invalid item id \"" + id + "\".");
-                    return;
-                }
-
-                var inventory = receiver.Inventory as InventoryWindow;
-                inventory.PickUpStack(new ItemStack(id, count));
+            if (!GiveItem(receivingPlayer, itemid, amount, client))
+            {
+                Help(client, alias, arguments);
             }
         }
 
-        public override void Help(IRemoteClient Client, string Alias, string[] Arguments)
+        protected static IRemoteClient GetPlayerByName(IRemoteClient client, string username)
         {
-            Client.SendMessage("Correct usage is /" + Alias + " <User> <Item ID> <Amount>");
+            var receivingPlayer =
+                client.Server.Clients.FirstOrDefault(
+                    c => String.Equals(c.Username, username, StringComparison.CurrentCultureIgnoreCase));
+            return receivingPlayer;
+        }
+
+        protected static bool GiveItem(IRemoteClient receivingPlayer, string itemid, string amount, IRemoteClient client)
+        {
+            short id;
+            int count;
+
+            if (!short.TryParse(itemid, out id) || !Int32.TryParse(amount, out count)) return false;
+
+            if (client.Server.ItemRepository.GetItemProvider(id) == null)
+            {
+                client.SendMessage("Invalid item id \"" + id + "\".");
+                return true;
+            }
+
+            string username = receivingPlayer.Username;
+            var inventory = receivingPlayer.Inventory as InventoryWindow;
+            if (inventory == null) return false;
+
+            while (count > 0)
+            {
+                sbyte amountToGive;
+                if (count >= 64)
+                    amountToGive = 64;
+                else
+                    amountToGive = (sbyte) count;
+
+                count -= amountToGive;
+
+                inventory.PickUpStack(new ItemStack(id, amountToGive));
+            }
+
+            return true;
+        }
+
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
+        {
+            client.SendMessage("Correct usage is /" + alias + " <User> <Item ID> [Amount]");
         }
     }
 }
