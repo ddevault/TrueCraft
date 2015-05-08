@@ -30,5 +30,10 @@ namespace TrueCraft.Core.Logic.Blocks
         {
             return new[] { new ItemStack(RedstoneItem.ItemID, 1, descriptor.Metadata) };
         }
+
+        public override Coordinates3D GetSupportDirection(BlockDescriptor descriptor)
+        {
+            return Coordinates3D.Down;
+        }
     }
 }
