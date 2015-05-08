@@ -148,7 +148,12 @@ namespace TrueCraft
 
             if (messageArray.Length <= 0) return false; // command not found
 
-            CommandManager.HandleCommand(e.Client, messageArray[0], messageArray);
+            var alias = messageArray[0];
+            var trimmedMessageArray = new string[messageArray.Length - 1];
+            if (trimmedMessageArray.Length != 0)
+                Array.Copy(messageArray, 1, trimmedMessageArray, 0, messageArray.Length - 1);
+
+            CommandManager.HandleCommand(e.Client, alias, trimmedMessageArray);
 
             return true;
         }

@@ -29,8 +29,8 @@ namespace TrueCraft.Commands
 
             string Identifier;
 
-            if (arguments.Length > 1)
-                Identifier = arguments[1];
+            if (arguments.Length >= 1)
+                Identifier = arguments[0];
             else
                 Identifier = "0";
 
