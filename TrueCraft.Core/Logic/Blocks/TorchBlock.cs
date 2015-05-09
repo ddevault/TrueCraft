@@ -4,6 +4,7 @@ using TrueCraft.API;
 using TrueCraft.Core.Logic.Items;
 using TrueCraft.API.World;
 using TrueCraft.API.Networking;
+using System.Linq;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
@@ -11,10 +12,10 @@ namespace TrueCraft.Core.Logic.Blocks
     {
         public enum TorchDirection
         {
-            West = 0x01, // West
-            East = 0x02, // East
-            South = 0x03, // South
-            North = 0x04, // North
+            East = 0x01,
+            West = 0x02,
+            South = 0x03,
+            North = 0x04,
             Ground = 0x05
         }
 
@@ -66,7 +67,37 @@ namespace TrueCraft.Core.Logic.Blocks
                 direction = preferredDirections[i++];
                 descriptor.Metadata = (byte)direction;
             }
-            world.SetMetadata(descriptor.Coordinates, (byte)direction);
+            world.SetBlockData(descriptor.Coordinates, descriptor);
+        }
+
+        public override void ItemUsedOnBlock(Coordinates3D coordinates, ItemStack item, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            coordinates += MathHelper.BlockFaceToCoordinates(face);
+            var old = world.GetBlockData(coordinates);
+            byte[] overwritable =
+            {
+                AirBlock.BlockID,
+                WaterBlock.BlockID,
+                StationaryWaterBlock.BlockID,
+                LavaBlock.BlockID,
+                StationaryLavaBlock.BlockID
+            };
+            if (overwritable.Any(b => b == old.ID))
+            {
+                var data = world.GetBlockData(coordinates);
+                data.ID = ID;
+                data.Metadata = (byte)item.Metadata;
+
+                BlockPlaced(data, face, world, user);
+
+                if (!IsSupported(world.GetBlockData(coordinates), user.Server, world))
+                    world.SetBlockData(coordinates, old);
+                else
+                {
+                    item.Count--;
+                    user.Inventory[user.SelectedSlot] = item;
+                }
+            }
         }
 
         public override Coordinates3D GetSupportDirection(BlockDescriptor descriptor)
