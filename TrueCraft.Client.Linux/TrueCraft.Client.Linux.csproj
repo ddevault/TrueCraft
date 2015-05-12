@@ -60,6 +60,7 @@
     <Compile Include="TrueCraftGame.cs" />
     <Compile Include="MultiplayerClient.cs" />
     <Compile Include="Handlers\PacketHandlers.cs" />
+    <Compile Include="Interface\IGameInterface.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -93,5 +94,6 @@
   </ProjectExtensions>
   <ItemGroup>
     <Folder Include="Handlers\" />
+    <Folder Include="Interface\" />
   </ItemGroup>
 </Project>
