@@ -50,7 +50,7 @@ namespace TrueCraft.Commands
                 return;
             }
 
-            receivingPlayer.SendMessage(ChatColor.Gray + client.Username + " whispers to you: " + message);
+            receivingPlayer.SendMessage(ChatColor.Gray + "<"+ client.Username + " -> You> " + message);
         }
         
         protected static IRemoteClient GetPlayerByName(IRemoteClient client, string username)
