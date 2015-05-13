@@ -73,6 +73,7 @@
     <Compile Include="Events\ChunkEventArgs.cs" />
     <Compile Include="ChunkConverter.cs" />
     <Compile Include="PhysicsEngine.cs" />
+    <Compile Include="Rendering\Mesh.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -105,6 +106,7 @@
     <Folder Include="Interface\" />
     <Folder Include="Events\" />
     <Folder Include="Content\" />
+    <Folder Include="Rendering\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenTK.dll.config" />
