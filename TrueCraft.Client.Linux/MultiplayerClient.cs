@@ -19,6 +19,10 @@ namespace TrueCraft.Client.Linux
     public class MultiplayerClient
     {
         public event EventHandler<ChatMessageEventArgs> ChatMessage;
+        public event EventHandler<ChunkEventArgs> ChunkLoaded;
+        public event EventHandler<ChunkEventArgs> ChunkUnloaded;
+
+        public ReadOnlyWorld World { get; private set; }
 
         private TcpClient Client { get; set; }
         private IMinecraftStream Stream { get; set; }
@@ -36,6 +40,7 @@ namespace TrueCraft.Client.Linux
             NetworkWorker = new Thread(new ThreadStart(DoNetwork));
             PacketHandlers = new PacketHandler[0x100];
             Handlers.PacketHandlers.RegisterHandlers(this);
+            World = new ReadOnlyWorld();
         }
 
         public void RegisterPacketHandler(byte packetId, PacketHandler handler)
@@ -67,14 +72,16 @@ namespace TrueCraft.Client.Linux
             while (true)
             {
                 IPacket packet;
-                while (Client.Available != 0)
+                DateTime limit = DateTime.Now.AddMilliseconds(500);
+                while (Client.Available != 0 && DateTime.Now < limit)
                 {
                     idle = false;
                     packet = PacketReader.ReadPacket(Stream, false);
                     if (PacketHandlers[packet.ID] != null)
                         PacketHandlers[packet.ID](packet, this);
                 }
-                while (PacketQueue.Any())
+                limit = DateTime.Now.AddMilliseconds(500);
+                while (PacketQueue.Any() && DateTime.Now < limit)
                 {
                     idle = false;
                     while (!PacketQueue.TryDequeue(out packet)) { }
@@ -89,6 +96,16 @@ namespace TrueCraft.Client.Linux
         protected internal void OnChatMessage(ChatMessageEventArgs e)
         {
             if (ChatMessage != null) ChatMessage(this, e);
+        }
+
+        protected internal void OnChunkLoaded(ChunkEventArgs e)
+        {
+            if (ChunkLoaded != null) ChunkLoaded(this, e);
+        }
+
+        protected internal void OnChunkUnloaded(ChunkEventArgs e)
+        {
+            if (ChunkUnloaded != null) ChunkUnloaded(this, e);
         }
     }
 }

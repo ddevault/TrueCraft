@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using TrueCraft.Client.Linux.Interface;
 using System.IO;
+using System.Net;
 
 namespace TrueCraft.Client.Linux
 {
@@ -15,8 +16,10 @@ namespace TrueCraft.Client.Linux
         private List<IGameInterface> Interfaces { get; set; }
         private FontRenderer DejaVu { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
+        private IPEndPoint EndPoint { get; set; }
+        private ChunkConverter ChunkConverter { get; set; }
 
-        public TrueCraftGame(MultiplayerClient client)
+        public TrueCraftGame(MultiplayerClient client, IPEndPoint endPoint)
         {
             Window.Title = "TrueCraft";
             Content.RootDirectory = "Content";
@@ -25,13 +28,18 @@ namespace TrueCraft.Client.Linux
             Graphics.PreferredBackBufferWidth = 1280;
             Graphics.PreferredBackBufferHeight = 720;
             Client = client;
+            EndPoint = endPoint;
+            ChunkConverter = new ChunkConverter();
+            Client.ChunkLoaded += (sender, e) => ChunkConverter.QueueChunk(e.Chunk);
         }
 
         protected override void Initialize()
         {
             Interfaces = new List<IGameInterface>();
             SpriteBatch = new SpriteBatch(GraphicsDevice);
-            base.Initialize();
+            base.Initialize(); // (calls LoadContent)
+            ChunkConverter.Start();
+            Client.Connect(EndPoint);
         }
 
         protected override void LoadContent()

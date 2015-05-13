@@ -12,6 +12,9 @@ namespace TrueCraft.Client.Linux.Handlers
         {
             client.RegisterPacketHandler(new HandshakeResponsePacket().ID, HandleHandshake);
             client.RegisterPacketHandler(new ChatMessagePacket().ID, HandleChatMessage);
+
+            client.RegisterPacketHandler(new ChunkPreamblePacket().ID, ChunkHandler.HandleChunkPreamble);
+            client.RegisterPacketHandler(new ChunkDataPacket().ID, ChunkHandler.HandleChunkData);
         }
 
         public static void HandleChatMessage(IPacket _packet, MultiplayerClient client)

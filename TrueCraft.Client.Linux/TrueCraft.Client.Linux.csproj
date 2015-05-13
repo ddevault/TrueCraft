@@ -67,6 +67,10 @@
     <Compile Include="Interface\IGameInterface.cs" />
     <Compile Include="BMFont.cs" />
     <Compile Include="FontRenderer.cs" />
+    <Compile Include="Handlers\ChunkHandler.cs" />
+    <Compile Include="ReadOnlyWorld.cs" />
+    <Compile Include="Events\ChunkEventArgs.cs" />
+    <Compile Include="ChunkConverter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
