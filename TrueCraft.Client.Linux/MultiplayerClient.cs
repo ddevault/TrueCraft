@@ -7,22 +7,23 @@ using System.Threading;
 using TrueCraft.Core.Networking;
 using System.Linq;
 using TrueCraft.Core.Networking.Packets;
-
-// TODO: Make IMultiplayerClient and so on
 using TrueCraft.Client.Linux.Events;
-
+using TrueCraft.Core.Logic;
+using TrueCraft.API.Entities;
+using TrueCraft.API;
 
 namespace TrueCraft.Client.Linux
 {
     public delegate void PacketHandler(IPacket packet, MultiplayerClient client);
 
-    public class MultiplayerClient
+    public class MultiplayerClient : IAABBEntity // TODO: Make IMultiplayerClient and so on
     {
         public event EventHandler<ChatMessageEventArgs> ChatMessage;
         public event EventHandler<ChunkEventArgs> ChunkLoaded;
         public event EventHandler<ChunkEventArgs> ChunkUnloaded;
 
         public ReadOnlyWorld World { get; private set; }
+        public PhysicsEngine Physics { get; set; }
 
         private TcpClient Client { get; set; }
         private IMinecraftStream Stream { get; set; }
@@ -41,6 +42,10 @@ namespace TrueCraft.Client.Linux
             PacketHandlers = new PacketHandler[0x100];
             Handlers.PacketHandlers.RegisterHandlers(this);
             World = new ReadOnlyWorld();
+            var repo = new BlockRepository();
+            repo.DiscoverBlockProviders();
+            World.World.BlockRepository = repo;
+            Physics = new PhysicsEngine(World, repo);
         }
 
         public void RegisterPacketHandler(byte packetId, PacketHandler handler)
@@ -53,6 +58,14 @@ namespace TrueCraft.Client.Linux
             Client.BeginConnect(endPoint.Address, endPoint.Port, ConnectionComplete, null);
         }
 
+        public void Disconnect()
+        {
+            NetworkWorker.Abort();
+            new DisconnectPacket("Disconnecting").WritePacket(Stream);
+            Stream.BaseStream.Flush();
+            Client.Close();
+        }
+
         public void QueuePacket(IPacket packet)
         {
             PacketQueue.Enqueue(packet);
@@ -63,6 +76,7 @@ namespace TrueCraft.Client.Linux
             Client.EndConnect(result);
             Stream = new MinecraftStream(new BufferedStream(Client.GetStream()));
             NetworkWorker.Start();
+            Physics.AddEntity(this);
             QueuePacket(new HandshakePacket("TestUser")); // TODO: Get username from somewhere else
         }
 
@@ -107,5 +121,86 @@ namespace TrueCraft.Client.Linux
         {
             if (ChunkUnloaded != null) ChunkUnloaded(this, e);
         }
+
+        #region IAABBEntity implementation
+
+        public const double Width = 0.6;
+        public const double Height = 1.62;
+        public const double Depth = 0.6;
+
+        public void TerrainCollision(Vector3 collisionPoint, Vector3 collisionDirection)
+        {
+            // This space intentionally left blank
+        }
+
+        public BoundingBox BoundingBox
+        {
+            get
+            {
+                return new BoundingBox(Position, Position + Size);
+            }
+        }
+
+        public Size Size
+        {
+            get { return new Size(Width, Height, Depth); }
+        }
+
+        #endregion
+
+        #region IPhysicsEntity implementation
+
+        public bool BeginUpdate()
+        {
+            return true;
+        }
+
+        public void EndUpdate(Vector3 newPosition)
+        {
+            Position = newPosition;
+        }
+
+        internal Vector3 _Position;
+        public Vector3 Position
+        {
+            get
+            {
+                return _Position;
+            }
+            set
+            {
+                if (_Position != value)
+                    QueuePacket(new PlayerPositionAndLookPacket(value.X, value.Y, value.Y + Height, value.Z, 0, 0, false));
+                _Position = value;
+            }
+        }
+
+        public Vector3 Velocity { get; set; }
+
+        public float AccelerationDueToGravity
+        {
+            get
+            {
+                return 0.08f;
+            }
+        }
+
+        public float Drag
+        {
+            get
+            {
+                return 0.02f;
+            }
+        }
+
+        public float TerminalVelocity
+        {
+            get
+            {
+                return 3.92f;
+            }
+        }
+
+        #endregion
     }
 }

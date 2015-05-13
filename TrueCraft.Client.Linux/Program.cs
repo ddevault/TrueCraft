@@ -13,6 +13,7 @@ namespace TrueCraft.Client.Linux
             var client = new MultiplayerClient();
             var game = new TrueCraftGame(client, ParseEndPoint(args[0]));
             game.Run();
+            client.Disconnect();
         }
 
         private static IPEndPoint ParseEndPoint(string arg)

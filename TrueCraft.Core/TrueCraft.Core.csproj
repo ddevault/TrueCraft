@@ -320,6 +320,7 @@
     <Compile Include="Logic\Blocks\WallSignBlock.cs" />
     <Compile Include="Logic\Blocks\UprightSignBlock.cs" />
     <Compile Include="TerrainGen\Decorators\LiquidDecorator.cs" />
+    <Compile Include="Logic\BlockRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

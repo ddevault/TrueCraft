@@ -6,7 +6,7 @@ using TrueCraft.API.Entities;
 using TrueCraft.API;
 using TrueCraft.API.World;
 
-namespace TrueCraft
+namespace TrueCraft.Core.Logic
 {
     public class BlockRepository : IBlockRepository, IBlockPhysicsProvider
     {
@@ -22,7 +22,7 @@ namespace TrueCraft
             BlockProviders[provider.ID] = provider;
         }
 
-        internal void DiscoverBlockProviders()
+        public void DiscoverBlockProviders()
         {
             var providerTypes = new List<Type>();
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())

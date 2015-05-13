@@ -3,6 +3,7 @@ using TrueCraft.API.Networking;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.Core.Networking;
 using TrueCraft.Client.Linux.Events;
+using TrueCraft.API;
 
 namespace TrueCraft.Client.Linux.Handlers
 {
@@ -12,6 +13,7 @@ namespace TrueCraft.Client.Linux.Handlers
         {
             client.RegisterPacketHandler(new HandshakeResponsePacket().ID, HandleHandshake);
             client.RegisterPacketHandler(new ChatMessagePacket().ID, HandleChatMessage);
+            client.RegisterPacketHandler(new SetPlayerPositionPacket().ID, HandlePositionAndLook);
 
             client.RegisterPacketHandler(new ChunkPreamblePacket().ID, ChunkHandler.HandleChunkPreamble);
             client.RegisterPacketHandler(new ChunkDataPacket().ID, ChunkHandler.HandleChunkData);
@@ -28,6 +30,13 @@ namespace TrueCraft.Client.Linux.Handlers
             var packet = (HandshakeResponsePacket)_packet;
             Console.WriteLine("Got handshake with {0}", packet.ConnectionHash); // TODO: Authenticate?
             client.QueuePacket(new LoginRequestPacket(PacketReader.Version, "TestUser"));
+        }
+
+        public static void HandlePositionAndLook(IPacket _packet, MultiplayerClient client)
+        {
+            var packet = (SetPlayerPositionPacket)_packet;
+            client._Position = new Vector3(packet.X, packet.Y, packet.Z);
+            // TODO: Pitch and yaw
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using TrueCraft.Client.Linux.Interface;
 using System.IO;
 using System.Net;
+using TrueCraft.API;
 
 namespace TrueCraft.Client.Linux
 {
@@ -18,6 +19,7 @@ namespace TrueCraft.Client.Linux
         private SpriteBatch SpriteBatch { get; set; }
         private IPEndPoint EndPoint { get; set; }
         private ChunkConverter ChunkConverter { get; set; }
+        private DateTime NextPhysicsUpdate { get; set; }
 
         public TrueCraftGame(MultiplayerClient client, IPEndPoint endPoint)
         {
@@ -31,6 +33,7 @@ namespace TrueCraft.Client.Linux
             EndPoint = endPoint;
             ChunkConverter = new ChunkConverter();
             Client.ChunkLoaded += (sender, e) => ChunkConverter.QueueChunk(e.Chunk);
+            NextPhysicsUpdate = DateTime.MinValue;
         }
 
         protected override void Initialize()
@@ -53,14 +56,44 @@ namespace TrueCraft.Client.Linux
             base.LoadContent();
         }
 
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            ChunkConverter.Stop();
+            base.OnExiting(sender, args);
+        }
+
+        protected virtual void UpdateKeyboard(GameTime gameTime, KeyboardState state)
+        {
+            if (state.IsKeyDown(Keys.Escape))
+                Exit();
+            // TODO: Handle rotation
+            // TODO: Rebindable keys
+            // TODO: Horizontal terrain collisions
+            TrueCraft.API.Vector3 delta = TrueCraft.API.Vector3.Zero;
+            if (state.IsKeyDown(Keys.Left) || state.IsKeyDown(Keys.A))
+                delta = TrueCraft.API.Vector3.Left;
+            if (state.IsKeyDown(Keys.Right) || state.IsKeyDown(Keys.D))
+                delta = TrueCraft.API.Vector3.Right;
+            if (state.IsKeyDown(Keys.Up) || state.IsKeyDown(Keys.W))
+                delta = TrueCraft.API.Vector3.Forwards;
+            if (state.IsKeyDown(Keys.Down) || state.IsKeyDown(Keys.S))
+                delta = TrueCraft.API.Vector3.Backwards;
+            Client.Position += delta * (gameTime.ElapsedGameTime.TotalSeconds * 4.3717); // Note: 4.3717 is the speed of a Minecraft player in m/s
+        }
+
         protected override void Update(GameTime gameTime)
         {
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
             foreach (var i in Interfaces)
             {
                 i.Update(gameTime);
             }
+            if (NextPhysicsUpdate < DateTime.Now)
+            {
+                if (Client.World.FindChunk(new Coordinates2D((int)Client.Position.X, (int)Client.Position.Z)) != null)
+                    Client.Physics.Update();
+                NextPhysicsUpdate = DateTime.Now.AddMilliseconds(1000 / 20);
+            }
+            UpdateKeyboard(gameTime, Keyboard.GetState());
             base.Update(gameTime);
         }
 

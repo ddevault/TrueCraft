@@ -48,7 +48,14 @@ namespace TrueCraft.Client.Linux
 
         internal IChunk FindChunk(Coordinates2D coordinates)
         {
-            return World.FindChunk(new Coordinates3D(coordinates.X, 0, coordinates.Z));
+            try
+            {
+                return World.FindChunk(new Coordinates3D(coordinates.X, 0, coordinates.Z));
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public ReadOnlyChunk GetChunk(Coordinates2D coordinates)
@@ -65,6 +72,11 @@ namespace TrueCraft.Client.Linux
         {
             if (UnloadChunks)
                 World.UnloadChunk(coordinates);
+        }
+
+        public bool IsValidPosition(Coordinates3D coords)
+        {
+            return World.IsValidPosition(coords);
         }
     }
 

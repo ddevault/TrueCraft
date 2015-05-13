@@ -69,12 +69,11 @@
     <Compile Include="Handlers\EntityHandlers.cs" />
     <Compile Include="Handlers\InteractionHandlers.cs" />
     <Compile Include="Commands\DebugCommands.cs" />
-    <Compile Include="BlockRepository.cs" />
     <Compile Include="Exceptions\PlayerDisconnectException.cs" />
-    <Compile Include="PhysicsEngine.cs" />
     <Compile Include="ItemRepository.cs" />
     <Compile Include="CraftingRepository.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="PhysicsEngine.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

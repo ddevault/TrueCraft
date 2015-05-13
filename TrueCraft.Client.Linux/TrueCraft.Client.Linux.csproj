@@ -37,6 +37,7 @@
     <OutputPath>bin\Client</OutputPath>
     <WarningLevel>4</WarningLevel>
     <Commandlineparameters>127.0.0.1:25565</Commandlineparameters>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Server|AnyCPU' ">
     <Optimize>false</Optimize>
@@ -71,6 +72,7 @@
     <Compile Include="ReadOnlyWorld.cs" />
     <Compile Include="Events\ChunkEventArgs.cs" />
     <Compile Include="ChunkConverter.cs" />
+    <Compile Include="PhysicsEngine.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
