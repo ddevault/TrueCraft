@@ -9,12 +9,17 @@ using System.Linq;
 using TrueCraft.Core.Networking.Packets;
 
 // TODO: Make IMultiplayerClient and so on
+using TrueCraft.Client.Linux.Events;
+
+
 namespace TrueCraft.Client.Linux
 {
     public delegate void PacketHandler(IPacket packet, MultiplayerClient client);
 
     public class MultiplayerClient
     {
+        public event EventHandler<ChatMessageEventArgs> ChatMessage;
+
         private TcpClient Client { get; set; }
         private IMinecraftStream Stream { get; set; }
         private PacketReader PacketReader { get; set; }
@@ -79,6 +84,11 @@ namespace TrueCraft.Client.Linux
                 if (idle)
                     Thread.Sleep(100);
             }
+        }
+
+        protected internal void OnChatMessage(ChatMessageEventArgs e)
+        {
+            if (ChatMessage != null) ChatMessage(this, e);
         }
     }
 }

@@ -2,6 +2,7 @@
 using TrueCraft.API.Networking;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.Core.Networking;
+using TrueCraft.Client.Linux.Events;
 
 namespace TrueCraft.Client.Linux.Handlers
 {
@@ -10,6 +11,13 @@ namespace TrueCraft.Client.Linux.Handlers
         public static void RegisterHandlers(MultiplayerClient client)
         {
             client.RegisterPacketHandler(new HandshakeResponsePacket().ID, HandleHandshake);
+            client.RegisterPacketHandler(new ChatMessagePacket().ID, HandleChatMessage);
+        }
+
+        public static void HandleChatMessage(IPacket _packet, MultiplayerClient client)
+        {
+            var packet = (ChatMessagePacket)_packet;
+            client.OnChatMessage(new ChatMessageEventArgs(packet.Message));
         }
 
         public static void HandleHandshake(IPacket _packet, MultiplayerClient client)

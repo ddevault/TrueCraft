@@ -11,7 +11,7 @@ namespace TrueCraft.Client.Linux
         public static void Main(string[] args)
         {
             var client = new MultiplayerClient();
-            client.Connect(ParseEndPoint(args[0]));
+            client.Connect(ParseEndPoint(args[0])); // TODO: Connect after starting up the MonoGame instance
             var game = new TrueCraftGame(client);
             game.Run();
         }

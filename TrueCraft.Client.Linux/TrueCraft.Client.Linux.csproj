@@ -36,6 +36,7 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\Client</OutputPath>
     <WarningLevel>4</WarningLevel>
+    <Commandlineparameters>127.0.0.1:25565</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Server|AnyCPU' ">
     <Optimize>false</Optimize>
@@ -45,14 +46,15 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="MonoGame.Framework">
-      <HintPath>..\packages\MonoGame.Framework.Linux.3.3.0.0\lib\net40\MonoGame.Framework.dll</HintPath>
+      <HintPath>..\packages\MonoGame.Framework.Linux.3.4.0.459\lib\net40\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK">
-      <HintPath>..\packages\MonoGame.Framework.Linux.3.3.0.0\lib\net40\OpenTK.dll</HintPath>
+      <HintPath>..\packages\MonoGame.Framework.Linux.3.4.0.459\lib\net40\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="Tao.Sdl">
-      <HintPath>..\packages\MonoGame.Framework.Linux.3.3.0.0\lib\net40\Tao.Sdl.dll</HintPath>
+      <HintPath>..\packages\MonoGame.Framework.Linux.3.4.0.459\lib\net40\Tao.Sdl.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -60,14 +62,13 @@
     <Compile Include="TrueCraftGame.cs" />
     <Compile Include="MultiplayerClient.cs" />
     <Compile Include="Handlers\PacketHandlers.cs" />
+    <Compile Include="Events\ChatMessageEventArgs.cs" />
+    <Compile Include="Interface\ChatInterface.cs" />
     <Compile Include="Interface\IGameInterface.cs" />
+    <Compile Include="BMFont.cs" />
+    <Compile Include="FontRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <None Include="OpenTK.dll.config" />
-    <None Include="Tao.Sdl.dll.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\externals\fNbt\fNbt\fNbt.csproj">
       <Project>{4488498D-976D-4DA3-BF72-109531AF0488}</Project>
@@ -88,6 +89,7 @@
         <Policies>
           <TextStylePolicy inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/x-csharp" />
           <CSharpFormattingPolicy IndentSwitchBody="True" IndentBlocksInsideExpressions="True" AnonymousMethodBraceStyle="NextLine" PropertyBraceStyle="NextLine" PropertyGetBraceStyle="NextLine" PropertySetBraceStyle="NextLine" EventBraceStyle="NextLine" EventAddBraceStyle="NextLine" EventRemoveBraceStyle="NextLine" StatementBraceStyle="NextLine" ElseNewLinePlacement="NewLine" CatchNewLinePlacement="NewLine" FinallyNewLinePlacement="NewLine" WhileNewLinePlacement="DoNotCare" ArrayInitializerWrapping="DoNotChange" ArrayInitializerBraceStyle="NextLine" BeforeMethodDeclarationParentheses="False" BeforeMethodCallParentheses="False" BeforeConstructorDeclarationParentheses="False" NewLineBeforeConstructorInitializerColon="NewLine" NewLineAfterConstructorInitializerColon="SameLine" BeforeDelegateDeclarationParentheses="False" NewParentheses="False" SpacesBeforeBrackets="False" inheritsSet="Mono" inheritsScope="text/x-csharp" scope="text/x-csharp" />
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
         </Policies>
       </Properties>
     </MonoDevelop>
@@ -95,5 +97,18 @@
   <ItemGroup>
     <Folder Include="Handlers\" />
     <Folder Include="Interface\" />
+    <Folder Include="Events\" />
+    <Folder Include="Content\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="OpenTK.dll.config" />
+    <None Include="Tao.Sdl.dll.config" />
+    <None Include="packages.config" />
+    <None Include="Content\dejavu_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\dejavu.fnt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
