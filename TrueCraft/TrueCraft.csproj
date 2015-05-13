@@ -44,6 +44,7 @@
     <Compile Include="Commands\GiveMeCommand.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Commands\PingCommand.cs" />
+    <Compile Include="Commands\TellCommand.cs" />
     <Compile Include="Commands\TimeCommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
