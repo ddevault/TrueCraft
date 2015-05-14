@@ -33,6 +33,7 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\Client</OutputPath>
     <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Server|AnyCPU' ">
     <Optimize>false</Optimize>

@@ -40,9 +40,9 @@ namespace TrueCraft.Client.Linux.Rendering
 
         public static VertexPositionNormalTexture[] CreateQuad(CubeFace face, Vector3 offset, Vector2[] texture, int indiciesOffset, out int[] indicies)
         {
-            indicies = new[] { 1, 0, 3, 1, 3, 2 };
+            indicies = new[] { 0, 1, 3, 1, 2, 3 };
             for (int i = 0; i < indicies.Length; i++)
-                indicies[i] += ((int)face * 6) + indiciesOffset;
+                indicies[i] += ((int)face * 4) + indiciesOffset;
             var quad = new VertexPositionNormalTexture[4];
             var unit = CubeMesh[(int)face];
             var normal = CubeNormals[(int)face];
@@ -81,50 +81,50 @@ namespace TrueCraft.Client.Linux.Rendering
 
             CubeMesh[0] = new[] // Positive Z face
             {
-                new Vector3(0.5f, 0.5f, 0.5f),
-                new Vector3(-0.5f, 0.5f, 0.5f),
+                new Vector3(0.5f, -0.5f, 0.5f),
                 new Vector3(-0.5f, -0.5f, 0.5f),
-                new Vector3(0.5f, -0.5f, 0.5f)
+                new Vector3(-0.5f, 0.5f, 0.5f),
+                new Vector3(0.5f, 0.5f, 0.5f)
             };
 
             CubeMesh[1] = new[] // Negative Z face
             {
-                new Vector3(-0.5f, 0.5f, -0.5f),
-                new Vector3(0.5f, 0.5f, -0.5f),
+                new Vector3(-0.5f, -0.5f, -0.5f),
                 new Vector3(0.5f, -0.5f, -0.5f),
-                new Vector3(-0.5f, -0.5f, -0.5f)
+                new Vector3(0.5f, 0.5f, -0.5f),
+                new Vector3(-0.5f, 0.5f, -0.5f)
             };
 
             CubeMesh[2] = new[] // Positive X face
             {
-                new Vector3(0.5f, 0.5f, -0.5f),
-                new Vector3(0.5f, 0.5f, 0.5f),
+                new Vector3(0.5f, -0.5f, -0.5f),
                 new Vector3(0.5f, -0.5f, 0.5f),
-                new Vector3(0.5f, -0.5f, -0.5f)
+                new Vector3(0.5f, 0.5f, 0.5f),
+                new Vector3(0.5f, 0.5f, -0.5f)
             };
 
             CubeMesh[3] = new[] // Negative X face
             {
-                new Vector3(-0.5f, 0.5f, 0.5f),
-                new Vector3(-0.5f, 0.5f, -0.5f),
+                new Vector3(-0.5f, -0.5f, 0.5f),
                 new Vector3(-0.5f, -0.5f, -0.5f),
-                new Vector3(-0.5f, -0.5f, 0.5f)
+                new Vector3(-0.5f, 0.5f, -0.5f),
+                new Vector3(-0.5f, 0.5f, 0.5f)
             };
 
             CubeMesh[4] = new[] // Positive Y face
             {
-                new Vector3(-0.5f, 0.5f, -0.5f),
-                new Vector3(-0.5f, 0.5f, 0.5f),
                 new Vector3(0.5f, 0.5f, 0.5f),
+                new Vector3(-0.5f, 0.5f, 0.5f),
+                new Vector3(-0.5f, 0.5f, -0.5f),
                 new Vector3(0.5f, 0.5f, -0.5f)
             };
 
             CubeMesh[5] = new[] // Negative Y face
             {
                 new Vector3(0.5f, -0.5f, -0.5f),
-                new Vector3(0.5f, -0.5f, 0.5f),
+                new Vector3(-0.5f, -0.5f, -0.5f),
                 new Vector3(-0.5f, -0.5f, 0.5f),
-                new Vector3(-0.5f, -0.5f, -0.5f)
+                new Vector3(0.5f, -0.5f, 0.5f)
             };
         }
 

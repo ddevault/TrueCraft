@@ -23,6 +23,8 @@ namespace TrueCraft.Client.Linux
         private DateTime NextPhysicsUpdate { get; set; }
         private List<Mesh> ChunkMeshes { get; set; }
         private object ChunkMeshesLock = new object();
+        private float rotationX = 0;
+        private float rotationY = 0;
 
         private BasicEffect effect;
 
@@ -148,10 +150,11 @@ namespace TrueCraft.Client.Linux
             GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
             GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            //GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 
             effect.View = cameraMatrix;
             effect.Projection = projectionMatrix;
-            effect.World = Matrix.CreateTranslation(Microsoft.Xna.Framework.Vector3.Zero);
+            effect.World = Matrix.Identity;
             lock (ChunkMeshesLock)
             {
                 foreach (var chunk in ChunkMeshes)

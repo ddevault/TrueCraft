@@ -97,18 +97,17 @@ namespace TrueCraft.Client.Linux
                         {
                             int[] i;
                             var v = CreateUniformCube(new Vector3(chunk.X * Chunk.Width + x, y, chunk.Z * Chunk.Depth + z),
-                                textureMap, indicies.Count, out i);
+                                textureMap, verticies.Count, out i);
                             verticies.AddRange(v);
                             indicies.AddRange(i);
                         }
                     }
                 }
             }
-            Console.WriteLine("Created mesh for {0}, {0}", chunk.X, chunk.Z);
             return new Mesh(Graphics, verticies.ToArray(), indicies.ToArray());
         }
 
-        private VertexPositionNormalTexture[] CreateUniformCube(Vector3 offset, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
+        public VertexPositionNormalTexture[] CreateUniformCube(Vector3 offset, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
             var texCoords = new Vector2(textureMap.Item1, textureMap.Item2);
             var texture = new[]

@@ -127,7 +127,6 @@ namespace TrueCraft.Core.World
             if (!Chunks.ContainsKey(position))
                 Chunks.Add(position, chunk);
             chunk.IsModified = true;
-            chunk.Coordinates = position;
             chunk.LastAccessed = DateTime.Now;
             Chunks[position] = chunk;
         }
