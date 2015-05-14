@@ -23,6 +23,7 @@ namespace TrueCraft.Commands
 
             var types = truecraftAssembly.GetTypes()
                 .Where(t => typeof (ICommand).IsAssignableFrom(t))
+                .Where(t => !t.IsDefined(typeof(DoNotAutoLoadAttribute), true))
                 .Where(t => !t.IsAbstract);
 
             foreach (var command in types.Select(type => (ICommand)Activator.CreateInstance(type)))
@@ -60,5 +61,8 @@ namespace TrueCraft.Commands
             // uncomment below if alias searching should be case-insensitive
             return Commands.FirstOrDefault(c => c.Aliases.Contains(alias /*, StringComparer.OrdinalIgnoreCase*/));
         }
+    }
+    public class DoNotAutoLoadAttribute : Attribute
+    {
     }
 }
