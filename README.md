@@ -88,6 +88,12 @@ smaller changes like lighting improvements and bow usage mechanics.
 Finally, if we've got a nice mature project and a good community going, modding
 support would be great.
 
+## Textures
+
+TrueCraft currently distributes
+[ProgrammerArt](https://github.com/deathcap/ProgrammerArt) as the default
+texture pack.
+
 ## Blah blah blah
 
 TrueCraft is not associated with Mojang or Minecraft in any sort of official

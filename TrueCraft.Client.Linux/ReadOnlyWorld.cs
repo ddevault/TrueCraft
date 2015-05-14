@@ -21,7 +21,7 @@ namespace TrueCraft.Client.Linux
             UnloadChunks = true;
         }
 
-        public short GetBlockID(Coordinates3D coordinates)
+        public byte GetBlockID(Coordinates3D coordinates)
         {
             return World.GetBlockID(coordinates);
         }
@@ -89,7 +89,7 @@ namespace TrueCraft.Client.Linux
             Chunk = chunk;
         }
 
-        public short GetBlockId(Coordinates3D coordinates)
+        public byte GetBlockId(Coordinates3D coordinates)
         {
             return Chunk.GetBlockID(coordinates);
         }

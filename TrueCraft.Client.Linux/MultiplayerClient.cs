@@ -160,6 +160,9 @@ namespace TrueCraft.Client.Linux
             Position = newPosition;
         }
 
+        public float Yaw { get; set; }
+        public float Pitch { get; set; }
+
         internal Vector3 _Position;
         public Vector3 Position
         {
@@ -170,7 +173,7 @@ namespace TrueCraft.Client.Linux
             set
             {
                 if (_Position != value)
-                    QueuePacket(new PlayerPositionAndLookPacket(value.X, value.Y, value.Y + Height, value.Z, 0, 0, false));
+                    QueuePacket(new PlayerPositionAndLookPacket(value.X, value.Y, value.Y + Height, value.Z, Yaw, Pitch, false));
                 _Position = value;
             }
         }
