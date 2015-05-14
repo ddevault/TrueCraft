@@ -59,7 +59,8 @@ namespace TrueCraft
             }
             catch
             {
-                world = new World("default", new StandardGenerator()) {BlockRepository = Server.BlockRepository};
+                world = new World("default", new StandardGenerator());
+                world.BlockRepository = Server.BlockRepository;
                 world.Save("world");
                 Server.AddWorld(world);
                 Server.Log(LogCategory.Notice, "Generating world around spawn point...");
