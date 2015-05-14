@@ -56,14 +56,14 @@ namespace TrueCraft.Client.Linux.Rendering
         public enum CubeFace
         {
             PositiveZ = 0,
-            NegativeZ,
-            PositiveX,
-            NegativeX,
-            PositiveY,
-            NegativeY
+            NegativeZ = 1,
+            PositiveX = 2,
+            NegativeX = 3,
+            PositiveY = 4,
+            NegativeY = 5
         }
 
-        private static Vector3[][] CubeMesh;
+        private static readonly Vector3[][] CubeMesh;
 
         private static readonly Vector3[] CubeNormals =
         {

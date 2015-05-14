@@ -84,16 +84,20 @@ namespace TrueCraft.Client.Linux
                 Exit();
             // TODO: Rebindable keys
             // TODO: Horizontal terrain collisions
-            TrueCraft.API.Vector3 delta = TrueCraft.API.Vector3.Zero;
+            Microsoft.Xna.Framework.Vector3 delta = Microsoft.Xna.Framework.Vector3.Zero;
             if (state.IsKeyDown(Keys.Left) || state.IsKeyDown(Keys.A))
-                delta = TrueCraft.API.Vector3.Left;
+                delta += Microsoft.Xna.Framework.Vector3.Left;
             if (state.IsKeyDown(Keys.Right) || state.IsKeyDown(Keys.D))
-                delta = TrueCraft.API.Vector3.Right;
+                delta += Microsoft.Xna.Framework.Vector3.Right;
             if (state.IsKeyDown(Keys.Up) || state.IsKeyDown(Keys.W))
-                delta = TrueCraft.API.Vector3.Forwards;
+                delta += Microsoft.Xna.Framework.Vector3.Forward;
             if (state.IsKeyDown(Keys.Down) || state.IsKeyDown(Keys.S))
-                delta = TrueCraft.API.Vector3.Backwards;
-            Client.Position += delta * (gameTime.ElapsedGameTime.TotalSeconds * 4.3717); // Note: 4.3717 is the speed of a Minecraft player in m/s
+                delta += Microsoft.Xna.Framework.Vector3.Backward;
+
+            var lookAt = Microsoft.Xna.Framework.Vector3.Transform(
+                delta, Matrix.CreateRotationY(MathHelper.ToRadians(Client.Yaw)));
+
+            Client.Position += new TrueCraft.API.Vector3(lookAt.X, lookAt.Y, lookAt.Z) * (gameTime.ElapsedGameTime.TotalSeconds * 4.3717);
 
             var centerX = GraphicsDevice.Viewport.Width / 2;
             var centerY = GraphicsDevice.Viewport.Height / 2;
@@ -127,7 +131,7 @@ namespace TrueCraft.Client.Linux
             // TODO: Move camera logic elsewhere
             var player = new Microsoft.Xna.Framework.Vector3(
                 (float)Client.Position.X,
-                (float)Client.Position.Y,
+                (float)(Client.Position.Y + Client.Size.Height),
                 (float)Client.Position.Z);
 
             var lookAt = Microsoft.Xna.Framework.Vector3.Transform(
@@ -141,7 +145,9 @@ namespace TrueCraft.Client.Linux
             var projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(60f), GraphicsDevice.Viewport.AspectRatio, 0.3f, 10000f);
 
             Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
-            Graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+            GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+            GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             effect.View = cameraMatrix;
             effect.Projection = projectionMatrix;

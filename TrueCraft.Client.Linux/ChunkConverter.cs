@@ -32,6 +32,8 @@ namespace TrueCraft.Client.Linux
         {
             ChunkQueue = new ConcurrentQueue<ReadOnlyChunk>();
             ChunkWorker = new Thread(new ThreadStart(DoChunks));
+            ChunkWorker.IsBackground = true;
+            ChunkWorker.Priority = ThreadPriority.Lowest;
             BlockRepository = blockRepository;
             Graphics = graphics;
         }
