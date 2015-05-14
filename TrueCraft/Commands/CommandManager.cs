@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using TrueCraft.API.Server;
 using TrueCraft.API.Networking;
@@ -19,15 +20,16 @@ namespace TrueCraft.Commands
 
         private void LoadCommands()
         {
-            Commands.Add(new PingCommand());
-            Commands.Add(new GiveCommand());
-            Commands.Add(new GiveMeCommand());
-            Commands.Add(new HelpCommand());
-            Commands.Add(new ResendInvCommand());
-            Commands.Add(new PositionCommand());
-            Commands.Add(new TimeCommand());
-            Commands.Add(new LogCommand());
-            Commands.Add(new TellCommand());
+            var truecraftAssembly = Assembly.GetExecutingAssembly();
+
+            var types = truecraftAssembly.GetTypes()
+                .Where(t => typeof (ICommand).IsAssignableFrom(t))
+                .Where(t => !t.IsAbstract);
+
+            foreach (var command in types.Select(type => (ICommand)Activator.CreateInstance(type)))
+            {
+                Commands.Add(command);
+            }
         }
 
         /// <summary>
