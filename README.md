@@ -7,6 +7,8 @@ A completely
 Minecraft beta 1.7.3 (circa September 2011). No decompiled code has been used in
 the development of this software.
 
+![](https://a.pomf.se/vebvrs.png)
+
 I miss the old days of Minecraft, when it was a simple game. It was nearly
 perfect. Most of what Mojang has added since beta 1.7.3 is fluff, life support
 for a game that was "done" years ago. This is my attempt to get back to the
@@ -65,14 +67,13 @@ circumstances should you expose clean devs to source code*.
 ## Roadmap
 
 1. Implement server (in progress)
-1. Implement client
+1. Implement client (in progress)
 1. New authentication
 1. Backport the good
 1. Modding support
 
-First order of business is building a server, which I've started on. Then we'll
-have to build a client, and for that I want community help because I have next
-to no experience writing actual games.
+The client and server are pretty straightforward but will require *loads* of
+work.
 
 Mojang has shut off the old authentication servers, which means that it's no
 longer possible to use beta 1.7.3 in online mode. We'll have to build our own.
