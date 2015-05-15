@@ -5,7 +5,8 @@ http://truecraft.io - blog and such
 A completely
 [clean-room](https://en.wikipedia.org/wiki/Clean_room_design) implementation of
 Minecraft beta 1.7.3 (circa September 2011). No decompiled code has been used in
-the development of this software.
+the development of this software. This is an **implementation** - not a clone.
+TrueCraft is compatible with Minecraft beta 1.7.3 clients and servers.
 
 ![](https://a.pomf.se/vebvrs.png)
 
