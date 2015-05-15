@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using System.Linq;
 
 namespace TrueCraft.Client.Linux.Rendering
 {
@@ -10,8 +11,9 @@ namespace TrueCraft.Client.Linux.Rendering
         public object Data { get; set; }
         public VertexBuffer Verticies { get; set; }
         public IndexBuffer Indicies { get; set; }
+        public BoundingBox BoundingBox { get; set; }
 
-        public Mesh(GraphicsDevice device, VertexPositionNormalTexture[] verticies, int[] indicies)
+        public Mesh(GraphicsDevice device, VertexPositionNormalTexture[] verticies, int[] indicies, bool calculateBounds = true)
         {
             Empty = verticies.Length == 0 || indicies.Length == 0;
             if (!Empty)
@@ -21,6 +23,12 @@ namespace TrueCraft.Client.Linux.Rendering
                 Verticies.SetData(verticies);
                 Indicies = new IndexBuffer(device, typeof(int), indicies.Length, BufferUsage.WriteOnly);
                 Indicies.SetData(indicies);
+                if (calculateBounds)
+                {
+                    BoundingBox = new BoundingBox(
+                        verticies.Select(v => v.Position).OrderBy(v => v.Length()).First(),
+                        verticies.Select(v => v.Position).OrderByDescending(v => v.Length()).First());
+                }
             }
         }
 

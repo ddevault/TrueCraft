@@ -28,6 +28,7 @@ namespace TrueCraft.Client.Linux
         private readonly object ChunkMeshesLock = new object();
         private Matrix Camera;
         private Matrix Perspective;
+        private BoundingFrustum CameraView;
 
         private BasicEffect OpaqueEffect, TransparentEffect;
 
@@ -99,6 +100,10 @@ namespace TrueCraft.Client.Linux
             OpaqueEffect.DirectionalLight2.SpecularColor = Color.Black.ToVector3();
             OpaqueEffect.TextureEnabled = true;
             OpaqueEffect.Texture = Texture2D.FromStream(GraphicsDevice, File.OpenRead("Content/terrain.png"));
+            OpaqueEffect.FogEnabled = true;
+            OpaqueEffect.FogStart = 512f;
+            OpaqueEffect.FogEnd = 1000f;
+            OpaqueEffect.FogColor = Color.CornflowerBlue.ToVector3();
 
             TransparentEffect = new BasicEffect(GraphicsDevice);
             TransparentEffect.TextureEnabled = true;
@@ -180,7 +185,9 @@ namespace TrueCraft.Client.Linux
                 player, player + lookAt,
                 Microsoft.Xna.Framework.Vector3.Up);
 
-            Perspective = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(70f), GraphicsDevice.Viewport.AspectRatio, 0.3f, 10000f);
+            Perspective = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(70f), GraphicsDevice.Viewport.AspectRatio, 0.01f, 1000f);
+
+            CameraView = new BoundingFrustum(Camera * Perspective);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -193,14 +200,29 @@ namespace TrueCraft.Client.Linux
             OpaqueEffect.View = TransparentEffect.View = Camera;
             OpaqueEffect.Projection = TransparentEffect.Projection = Perspective;
             OpaqueEffect.World = TransparentEffect.World = Matrix.Identity;
+            int verticies = 0, chunks = 0;
             lock (ChunkMeshesLock)
             {
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                 foreach (var chunk in ChunkMeshes)
-                    chunk.Draw(OpaqueEffect);
+                {
+                    if (CameraView.Intersects(chunk.BoundingBox))
+                    {
+                        verticies += chunk.Verticies.VertexCount;
+                        chunks++;
+                        chunk.Draw(OpaqueEffect);
+                    }
+                }
                 GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
                 foreach (var chunk in TransparentChunkMeshes)
-                    chunk.Draw(TransparentEffect);
+                {
+                    if (CameraView.Intersects(chunk.BoundingBox))
+                    {
+                        if (chunk.Verticies != null)
+                            verticies += chunk.Verticies.VertexCount;
+                        chunk.Draw(TransparentEffect);
+                    }
+                }
             }
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
@@ -214,8 +236,8 @@ namespace TrueCraft.Client.Linux
 
             DejaVu.DrawText(SpriteBatch, 0, 500, string.Format("X: {0}, Y: {1}, Z: {2}", Client.Position.X, Client.Position.Y, Client.Position.Z));
             DejaVu.DrawText(SpriteBatch, 0, 530, string.Format("Yaw: {0}, Pitch: {1}", Client.Yaw, Client.Pitch));
-            DejaVu.DrawText(SpriteBatch, GraphicsDevice.Viewport.Height - 30, 0,
-                string.Format("{0} FPS", fps));
+            DejaVu.DrawText(SpriteBatch, 0, GraphicsDevice.Viewport.Height - 30,
+                string.Format("{0} FPS, {1} verticies, {1} chunks", fps, verticies, chunks));
             SpriteBatch.End();
             base.Draw(gameTime);
         }
