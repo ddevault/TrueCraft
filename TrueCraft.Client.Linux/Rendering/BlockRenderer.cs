@@ -7,6 +7,7 @@ namespace TrueCraft.Client.Linux.Rendering
     public class BlockRenderer
     {
         private static BlockRenderer DefaultRenderer = new BlockRenderer();
+        private static BlockRenderer[] Renderers = new BlockRenderer[0x100];
 
         public static VertexPositionNormalTexture[] RenderBlock(Vector3 offset, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
