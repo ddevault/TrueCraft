@@ -26,9 +26,10 @@ can build and explore and fight with your friends. I miss that.
 
 # Updates
 
-So far, the only work done on TrueCraft has been towards the server component.
-All of these screenshots were taken with the official Minecraft beta 1.7.3
-client.
+Some of these screenshots are of the official Minecraft client connecting to a
+TrueCraft server, and some are of the TrueCraft client connecting to a TrueCraft
+server. You can tell the difference by the texture packs - the official assets
+are screenshots of the official Minecraft client.
 
 {% for post in site.posts %}
 <h3>
