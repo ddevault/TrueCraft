@@ -11,16 +11,18 @@ using TrueCraft.Client.Linux.Events;
 using TrueCraft.Core.Logic;
 using TrueCraft.API.Entities;
 using TrueCraft.API;
+using System.ComponentModel;
 
 namespace TrueCraft.Client.Linux
 {
     public delegate void PacketHandler(IPacket packet, MultiplayerClient client);
 
-    public class MultiplayerClient : IAABBEntity // TODO: Make IMultiplayerClient and so on
+    public class MultiplayerClient : IAABBEntity, INotifyPropertyChanged // TODO: Make IMultiplayerClient and so on
     {
         public event EventHandler<ChatMessageEventArgs> ChatMessage;
         public event EventHandler<ChunkEventArgs> ChunkLoaded;
         public event EventHandler<ChunkEventArgs> ChunkUnloaded;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public ReadOnlyWorld World { get; private set; }
         public PhysicsEngine Physics { get; set; }
@@ -173,7 +175,11 @@ namespace TrueCraft.Client.Linux
             set
             {
                 if (_Position != value)
+                {
                     QueuePacket(new PlayerPositionAndLookPacket(value.X, value.Y, value.Y + Height, value.Z, Yaw, Pitch, false));
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("Position"));
+                }
                 _Position = value;
             }
         }

@@ -8,6 +8,8 @@ using System.IO;
 using System.Net;
 using TrueCraft.API;
 using TrueCraft.Client.Linux.Rendering;
+using System.Linq;
+using System.ComponentModel;
 
 namespace TrueCraft.Client.Linux
 {
@@ -22,11 +24,12 @@ namespace TrueCraft.Client.Linux
         private ChunkConverter ChunkConverter { get; set; }
         private DateTime NextPhysicsUpdate { get; set; }
         private List<Mesh> ChunkMeshes { get; set; }
-        private object ChunkMeshesLock = new object();
-        private float rotationX = 0;
-        private float rotationY = 0;
+        private List<Mesh> TransparentChunkMeshes { get; set; }
+        private readonly object ChunkMeshesLock = new object();
+        private Matrix Camera;
+        private Matrix Perspective;
 
-        private BasicEffect effect;
+        private BasicEffect OpaqueEffect, TransparentEffect;
 
         public TrueCraftGame(MultiplayerClient client, IPEndPoint endPoint)
         {
@@ -40,6 +43,7 @@ namespace TrueCraft.Client.Linux
             EndPoint = endPoint;
             NextPhysicsUpdate = DateTime.MinValue;
             ChunkMeshes = new List<Mesh>();
+            TransparentChunkMeshes = new List<Mesh>();
         }
 
         protected override void Initialize()
@@ -49,15 +53,34 @@ namespace TrueCraft.Client.Linux
             base.Initialize(); // (calls LoadContent)
             ChunkConverter = new ChunkConverter(Graphics.GraphicsDevice, Client.World.World.BlockRepository);
             Client.ChunkLoaded += (sender, e) => ChunkConverter.QueueChunk(e.Chunk);
-            ChunkConverter.Start(mesh =>
+            ChunkConverter.Start((opaque, transparent) =>
             {
                 lock (ChunkMeshesLock)
-                    ChunkMeshes.Add(mesh);
+                {
+                    ChunkMeshes.Add(opaque);
+                    TransparentChunkMeshes.Add(transparent);
+                }
             });
+            Client.PropertyChanged += HandleClientPropertyChanged;
             Client.Connect(EndPoint);
             var centerX = GraphicsDevice.Viewport.Width / 2;
             var centerY = GraphicsDevice.Viewport.Height / 2;
             Mouse.SetPosition(centerX, centerY);
+            UpdateMatricies();
+        }
+
+        void HandleClientPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "Position":
+                    UpdateMatricies();
+                    var sorter = new ChunkConverter.ChunkSorter(new Coordinates3D(
+                        (int)Client.Position.X, 0, (int)Client.Position.Z));
+                    lock (ChunkMeshesLock)
+                        TransparentChunkMeshes.Sort(sorter);
+                    break;
+            }
         }
 
         protected override void LoadContent()
@@ -68,9 +91,19 @@ namespace TrueCraft.Client.Linux
             var fontTexture = Content.Load<Texture2D>("dejavu_0.png");
             DejaVu = new FontRenderer(fontFile, fontTexture);
             Interfaces.Add(new ChatInterface(Client, DejaVu));
-            effect = new BasicEffect(GraphicsDevice);
-            effect.TextureEnabled = true;
-            effect.Texture = Texture2D.FromStream(GraphicsDevice, File.OpenRead("Content/terrain.png"));
+
+            OpaqueEffect = new BasicEffect(GraphicsDevice);
+            OpaqueEffect.EnableDefaultLighting();
+            OpaqueEffect.DirectionalLight0.SpecularColor = Color.Black.ToVector3();
+            OpaqueEffect.DirectionalLight1.SpecularColor = Color.Black.ToVector3();
+            OpaqueEffect.DirectionalLight2.SpecularColor = Color.Black.ToVector3();
+            OpaqueEffect.TextureEnabled = true;
+            OpaqueEffect.Texture = Texture2D.FromStream(GraphicsDevice, File.OpenRead("Content/terrain.png"));
+
+            TransparentEffect = new BasicEffect(GraphicsDevice);
+            TransparentEffect.TextureEnabled = true;
+            TransparentEffect.Texture = Texture2D.FromStream(GraphicsDevice, File.OpenRead("Content/terrain.png"));
+
             base.LoadContent();
         }
 
@@ -104,12 +137,16 @@ namespace TrueCraft.Client.Linux
             var centerX = GraphicsDevice.Viewport.Width / 2;
             var centerY = GraphicsDevice.Viewport.Height / 2;
             var mouse = Mouse.GetState();
-            var look = new Vector2(centerX - mouse.Position.X, centerY - mouse.Position.Y) * 0.2f; // TODO: fewer magic numbers
+            var look = new Vector2(centerX - mouse.Position.X, centerY - mouse.Position.Y) 
+                * (float)(gameTime.ElapsedGameTime.TotalSeconds * 70);
             Mouse.SetPosition(centerX, centerY);
             Client.Yaw += look.X;
             Client.Pitch += look.Y;
             Client.Yaw %= 360;
-            Client.Pitch %= 360;
+            Client.Pitch = MathHelper.Clamp(Client.Pitch, -90, 90);
+
+            if (look != Vector2.Zero)
+                UpdateMatricies();
         }
 
         protected override void Update(GameTime gameTime)
@@ -128,9 +165,8 @@ namespace TrueCraft.Client.Linux
             base.Update(gameTime);
         }
 
-        protected override void Draw(GameTime gameTime)
+        private void UpdateMatricies()
         {
-            // TODO: Move camera logic elsewhere
             var player = new Microsoft.Xna.Framework.Vector3(
                 (float)Client.Position.X,
                 (float)(Client.Position.Y + Client.Size.Height),
@@ -140,26 +176,33 @@ namespace TrueCraft.Client.Linux
                 new Microsoft.Xna.Framework.Vector3(0, 0, -1),
                 Matrix.CreateRotationX(MathHelper.ToRadians(Client.Pitch)) * Matrix.CreateRotationY(MathHelper.ToRadians(Client.Yaw)));
 
-            var cameraMatrix = Matrix.CreateLookAt(
+            Camera = Matrix.CreateLookAt(
                 player, player + lookAt,
                 Microsoft.Xna.Framework.Vector3.Up);
 
-            var projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(60f), GraphicsDevice.Viewport.AspectRatio, 0.3f, 10000f);
+            Perspective = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(70f), GraphicsDevice.Viewport.AspectRatio, 0.3f, 10000f);
+        }
 
+        protected override void Draw(GameTime gameTime)
+        {
             Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
             GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
             GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            //GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+            GraphicsDevice.BlendState = BlendState.NonPremultiplied;
 
-            effect.View = cameraMatrix;
-            effect.Projection = projectionMatrix;
-            effect.World = Matrix.Identity;
+            OpaqueEffect.View = TransparentEffect.View = Camera;
+            OpaqueEffect.Projection = TransparentEffect.Projection = Perspective;
+            OpaqueEffect.World = TransparentEffect.World = Matrix.Identity;
             lock (ChunkMeshesLock)
             {
+                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                 foreach (var chunk in ChunkMeshes)
-                    chunk.Draw(effect);
+                    chunk.Draw(OpaqueEffect);
+                GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
+                foreach (var chunk in TransparentChunkMeshes)
+                    chunk.Draw(TransparentEffect);
             }
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             SpriteBatch.Begin();
             foreach (var i in Interfaces)

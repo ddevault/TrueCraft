@@ -20,7 +20,25 @@ namespace TrueCraft.Client.Linux
     /// </summary>
     public class ChunkConverter
     {
-        public delegate void ChunkConsumer(Mesh mesh);
+        public class ChunkSorter : Comparer<Mesh>
+        {
+            public Coordinates3D Camera { get; set; }
+
+            public ChunkSorter(Coordinates3D camera)
+            {
+                Camera = camera;
+            }
+
+            public override int Compare(Mesh _x, Mesh _y)
+            {
+                var x = (ReadOnlyChunk)_x.Data;
+                var y = (ReadOnlyChunk)_y.Data;
+                return (int)(new Coordinates3D(y.X * Chunk.Width, 0, y.Z * Chunk.Depth).DistanceTo(Camera) - 
+                    new Coordinates3D(x.X * Chunk.Width, 0, x.Z * Chunk.Depth).DistanceTo(Camera));
+            }
+        }
+
+        public delegate void ChunkConsumer(Mesh opaqueMesh, Mesh transparentMesh);
 
         private ConcurrentQueue<ReadOnlyChunk> ChunkQueue { get; set; }
         private Thread ChunkWorker { get; set; }
@@ -62,21 +80,25 @@ namespace TrueCraft.Client.Linux
                 ReadOnlyChunk chunk;
                 if (ChunkQueue.Any())
                 {
-                    while (!ChunkQueue.TryDequeue(out chunk))
-                    {
-                    }
+                    while (!ChunkQueue.TryDequeue(out chunk)) { }
                     var mesh = ProcessChunk(chunk);
-                    Consumer(mesh);
+                    mesh.Item1.Data = chunk;
+                    mesh.Item2.Data = chunk;
+                    Consumer(mesh.Item1, mesh.Item2);
                 }
                 if (idle)
                     Thread.Sleep(100);
             }
         }
 
-        private Mesh ProcessChunk(ReadOnlyChunk chunk)
+        private Tuple<Mesh, Mesh> ProcessChunk(ReadOnlyChunk chunk)
         {
-            var verticies = new List<VertexPositionNormalTexture>();
-            var indicies = new List<int>();
+            var opaqueVerticies = new List<VertexPositionNormalTexture>();
+            var opaqueIndicies = new List<int>();
+
+            var transparentVerticies = new List<VertexPositionNormalTexture>();
+            var transparentIndicies = new List<int>();
+
             for (byte x = 0; x < Chunk.Width; x++)
             {
                 for (byte z = 0; z < Chunk.Depth; z++)
@@ -95,41 +117,29 @@ namespace TrueCraft.Client.Linux
                         }
                         if (id != 0)
                         {
-                            int[] i;
-                            var v = CreateUniformCube(new Vector3(chunk.X * Chunk.Width + x, y, chunk.Z * Chunk.Depth + z),
-                                textureMap, verticies.Count, out i);
-                            verticies.AddRange(v);
-                            indicies.AddRange(i);
+                            if (provider.Opaque)
+                            {
+                                int[] i;
+                                var v = BlockRenderer.RenderBlock(new Vector3(chunk.X * Chunk.Width + x, y, chunk.Z * Chunk.Depth + z),
+                                            textureMap, opaqueVerticies.Count, out i);
+                                opaqueVerticies.AddRange(v);
+                                opaqueIndicies.AddRange(i);
+                            }
+                            else
+                            {
+                                int[] i;
+                                var v = BlockRenderer.RenderBlock(new Vector3(chunk.X * Chunk.Width + x, y, chunk.Z * Chunk.Depth + z),
+                                            textureMap, transparentVerticies.Count, out i);
+                                transparentVerticies.AddRange(v);
+                                transparentIndicies.AddRange(i);
+                            }
                         }
                     }
                 }
             }
-            return new Mesh(Graphics, verticies.ToArray(), indicies.ToArray());
-        }
-
-        public VertexPositionNormalTexture[] CreateUniformCube(Vector3 offset, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
-        {
-            var texCoords = new Vector2(textureMap.Item1, textureMap.Item2);
-            var texture = new[]
-            {
-                texCoords + Vector2.UnitX + Vector2.UnitY,
-                texCoords + Vector2.UnitY,
-                texCoords,
-                texCoords + Vector2.UnitX
-            };
-            for (int i = 0; i < texture.Length; i++)
-                texture[i] *= new Vector2(16f / 256f);
-            indicies = new int[6 * 6];
-            var verticies = new VertexPositionNormalTexture[4 * 6];
-            int[] _indicies;
-            for (int _side = 0; _side < 6; _side++)
-            {
-                var side = (Mesh.CubeFace)_side;
-                var quad = Mesh.CreateQuad(side, offset, texture, indiciesOffset, out _indicies);
-                Array.Copy(quad, 0, verticies, _side * 4, 4);
-                Array.Copy(_indicies, 0, indicies, _side * 6, 6);
-            }
-            return verticies;
+            return new Tuple<Mesh, Mesh>(
+                new Mesh(Graphics, opaqueVerticies.ToArray(), opaqueIndicies.ToArray()),
+                new Mesh(Graphics, transparentVerticies.ToArray(), transparentIndicies.ToArray()));
         }
     }
 }

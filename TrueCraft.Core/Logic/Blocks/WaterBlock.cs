@@ -34,6 +34,11 @@ namespace TrueCraft.Core.Logic.Blocks
         protected override byte FlowingID { get { return BlockID; } }
 
         protected override byte StillID { get { return StationaryWaterBlock.BlockID; } }
+
+        public override Tuple<int, int> GetTextureMap(byte metadata)
+        {
+            return new Tuple<int, int>(13, 12);
+        }
     }
 
     public class StationaryWaterBlock : WaterBlock
