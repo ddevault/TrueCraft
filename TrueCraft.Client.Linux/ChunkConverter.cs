@@ -74,7 +74,6 @@ namespace TrueCraft.Client.Linux
 
         private void DoChunks()
         {
-            bool idle = true;
             while (true)
             {
                 ReadOnlyChunk chunk;
@@ -86,8 +85,7 @@ namespace TrueCraft.Client.Linux
                     mesh.Item2.Data = chunk;
                     Consumer(mesh.Item1, mesh.Item2);
                 }
-                if (idle)
-                    Thread.Sleep(100);
+                Thread.Yield();
             }
         }
 
