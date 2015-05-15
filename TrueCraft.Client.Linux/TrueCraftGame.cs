@@ -209,8 +209,13 @@ namespace TrueCraft.Client.Linux
             {
                 i.DrawSprites(gameTime, SpriteBatch);
             }
+
+            int fps = (int)(1 / gameTime.ElapsedGameTime.TotalSeconds);
+
             DejaVu.DrawText(SpriteBatch, 0, 500, string.Format("X: {0}, Y: {1}, Z: {2}", Client.Position.X, Client.Position.Y, Client.Position.Z));
             DejaVu.DrawText(SpriteBatch, 0, 530, string.Format("Yaw: {0}, Pitch: {1}", Client.Yaw, Client.Pitch));
+            DejaVu.DrawText(SpriteBatch, GraphicsDevice.Viewport.Height - 30, 0,
+                string.Format("{0} FPS", fps));
             SpriteBatch.End();
             base.Draw(gameTime);
         }

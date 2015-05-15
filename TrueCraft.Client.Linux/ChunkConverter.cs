@@ -89,6 +89,16 @@ namespace TrueCraft.Client.Linux
             }
         }
 
+        private static readonly Coordinates3D[] AdjacentCoordinates =
+        {
+            Coordinates3D.Up,
+            Coordinates3D.Down,
+            Coordinates3D.North,
+            Coordinates3D.South,
+            Coordinates3D.East,
+            Coordinates3D.West
+        };
+
         private Tuple<Mesh, Mesh> ProcessChunk(ReadOnlyChunk chunk)
         {
             var opaqueVerticies = new List<VertexPositionNormalTexture>();
@@ -97,46 +107,66 @@ namespace TrueCraft.Client.Linux
             var transparentVerticies = new List<VertexPositionNormalTexture>();
             var transparentIndicies = new List<int>();
 
+            var drawableCoordinates = new HashSet<Coordinates3D>();
+
             for (byte x = 0; x < Chunk.Width; x++)
             {
                 for (byte z = 0; z < Chunk.Depth; z++)
                 {
-                    //var height = chunk.Chunk.GetHeight(x, z);
                     for (byte y = 0; y < Chunk.Height; y++)
                     {
                         var coords = new Coordinates3D(x, y, z);
                         var id = chunk.GetBlockId(coords);
+                        var provider = BlockRepository.GetBlockProvider(id);
                         if (id != 0)
+                            drawableCoordinates.Add(coords);
+                        if (!provider.Opaque)
                         {
-                            var descriptor = new BlockDescriptor
+                            // Add adjacent blocks
+                            foreach (var a in AdjacentCoordinates)
                             {
-                                ID = id,
-                                Metadata = chunk.GetMetadata(coords),
-                                BlockLight = chunk.GetBlockLight(coords),
-                                SkyLight = chunk.GetSkyLight(coords),
-                                Coordinates = coords
-                            };
-                            var provider = BlockRepository.GetBlockProvider(id);
-                            if (provider.RenderOpaque)
-                            {
-                                int[] i;
-                                var v = BlockRenderer.RenderBlock(provider, descriptor,
-                                    new Vector3(chunk.X * Chunk.Width + x, y, chunk.Z * Chunk.Depth + z),
-                                    opaqueVerticies.Count, out i);
-                                opaqueVerticies.AddRange(v);
-                                opaqueIndicies.AddRange(i);
-                            }
-                            else
-                            {
-                                int[] i;
-                                var v = BlockRenderer.RenderBlock(provider, descriptor,
-                                    new Vector3(chunk.X * Chunk.Width + x, y, chunk.Z * Chunk.Depth + z),
-                                    transparentVerticies.Count, out i);
-                                transparentVerticies.AddRange(v);
-                                transparentIndicies.AddRange(i);
+                                var next = coords + a;
+                                if (next.X < 0 || next.X >= Chunk.Width
+                                    || next.Y < 0 || next.Y >= Chunk.Height
+                                    || next.Z < 0 || next.Z >= Chunk.Depth)
+                                {
+                                    continue;
+                                }
+                                if (chunk.GetBlockId(next) != 0)
+                                    drawableCoordinates.Add(next);
                             }
                         }
                     }
+                }
+            }
+            foreach (var coords in drawableCoordinates)
+            {
+                var descriptor = new BlockDescriptor
+                {
+                    ID = chunk.GetBlockId(coords),
+                    Metadata = chunk.GetMetadata(coords),
+                    BlockLight = chunk.GetBlockLight(coords),
+                    SkyLight = chunk.GetSkyLight(coords),
+                    Coordinates = coords
+                };
+                var provider = BlockRepository.GetBlockProvider(descriptor.ID);
+                if (provider.RenderOpaque)
+                {
+                    int[] i;
+                    var v = BlockRenderer.RenderBlock(provider, descriptor,
+                        new Vector3(chunk.X * Chunk.Width + coords.X, coords.Y, chunk.Z * Chunk.Depth + coords.Z),
+                        opaqueVerticies.Count, out i);
+                    opaqueVerticies.AddRange(v);
+                    opaqueIndicies.AddRange(i);
+                }
+                else
+                {
+                    int[] i;
+                    var v = BlockRenderer.RenderBlock(provider, descriptor,
+                        new Vector3(chunk.X * Chunk.Width + coords.X, coords.Y, chunk.Z * Chunk.Depth + coords.Z),
+                        transparentVerticies.Count, out i);
+                    transparentVerticies.AddRange(v);
+                    transparentIndicies.AddRange(i);
                 }
             }
             return new Tuple<Mesh, Mesh>(
@@ -145,3 +175,35 @@ namespace TrueCraft.Client.Linux
         }
     }
 }
+    /*
+    if (id != 0)
+    {
+        var descriptor = new BlockDescriptor
+        {
+            ID = id,
+            Metadata = chunk.GetMetadata(coords),
+            BlockLight = chunk.GetBlockLight(coords),
+            SkyLight = chunk.GetSkyLight(coords),
+            Coordinates = coords
+        };
+        var provider = BlockRepository.GetBlockProvider(id);
+        if (provider.RenderOpaque)
+        {
+            int[] i;
+            var v = BlockRenderer.RenderBlock(provider, descriptor,
+                new Vector3(chunk.X * Chunk.Width + x, y, chunk.Z * Chunk.Depth + z),
+                opaqueVerticies.Count, out i);
+            opaqueVerticies.AddRange(v);
+            opaqueIndicies.AddRange(i);
+        }
+        else
+        {
+            int[] i;
+            var v = BlockRenderer.RenderBlock(provider, descriptor,
+                new Vector3(chunk.X * Chunk.Width + x, y, chunk.Z * Chunk.Depth + z),
+                transparentVerticies.Count, out i);
+            transparentVerticies.AddRange(v);
+            transparentIndicies.AddRange(i);
+        }
+    }
+    */
