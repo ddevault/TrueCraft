@@ -39,12 +39,12 @@ namespace TrueCraft.Client.Linux.Rendering.Blocks
             SideTexture + Vector2.UnitY,
             SideTexture,
             SideTexture + Vector2.UnitX,
-            // Negative X
+            // Positive Y
             TopTexture + Vector2.UnitX + Vector2.UnitY,
             TopTexture + Vector2.UnitY,
             TopTexture,
             TopTexture + Vector2.UnitX,
-            // Negative X
+            // Negative Y
             BottomTexture + Vector2.UnitX + Vector2.UnitY,
             BottomTexture + Vector2.UnitY,
             BottomTexture,
