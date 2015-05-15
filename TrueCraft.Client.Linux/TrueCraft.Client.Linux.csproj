@@ -75,6 +75,7 @@
     <Compile Include="PhysicsEngine.cs" />
     <Compile Include="Rendering\Mesh.cs" />
     <Compile Include="Rendering\BlockRenderer.cs" />
+    <Compile Include="Rendering\Blocks\GrassRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

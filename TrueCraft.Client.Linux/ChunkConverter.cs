@@ -106,28 +106,32 @@ namespace TrueCraft.Client.Linux
                     {
                         var coords = new Coordinates3D(x, y, z);
                         var id = chunk.GetBlockId(coords);
-                        var provider = BlockRepository.GetBlockProvider(id);
-                        var textureMap = provider.GetTextureMap(chunk.GetMetadata(coords));
-                        if (textureMap == null)
-                        {
-                            // TODO: handle this better
-                            textureMap = new Tuple<int, int>(0, 0);
-                        }
                         if (id != 0)
                         {
+                            var descriptor = new BlockDescriptor
+                            {
+                                ID = id,
+                                Metadata = chunk.GetMetadata(coords),
+                                BlockLight = chunk.GetBlockLight(coords),
+                                SkyLight = chunk.GetSkyLight(coords),
+                                Coordinates = coords
+                            };
+                            var provider = BlockRepository.GetBlockProvider(id);
                             if (provider.Opaque)
                             {
                                 int[] i;
-                                var v = BlockRenderer.RenderBlock(new Vector3(chunk.X * Chunk.Width + x, y, chunk.Z * Chunk.Depth + z),
-                                            textureMap, opaqueVerticies.Count, out i);
+                                var v = BlockRenderer.RenderBlock(provider, descriptor,
+                                    new Vector3(chunk.X * Chunk.Width + x, y, chunk.Z * Chunk.Depth + z),
+                                    opaqueVerticies.Count, out i);
                                 opaqueVerticies.AddRange(v);
                                 opaqueIndicies.AddRange(i);
                             }
                             else
                             {
                                 int[] i;
-                                var v = BlockRenderer.RenderBlock(new Vector3(chunk.X * Chunk.Width + x, y, chunk.Z * Chunk.Depth + z),
-                                            textureMap, transparentVerticies.Count, out i);
+                                var v = BlockRenderer.RenderBlock(provider, descriptor,
+                                    new Vector3(chunk.X * Chunk.Width + x, y, chunk.Z * Chunk.Depth + z),
+                                    transparentVerticies.Count, out i);
                                 transparentVerticies.AddRange(v);
                                 transparentIndicies.AddRange(i);
                             }
