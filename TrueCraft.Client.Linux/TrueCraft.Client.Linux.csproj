@@ -111,8 +111,12 @@
     <Folder Include="Rendering\Blocks\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="OpenTK.dll.config" />
-    <None Include="Tao.Sdl.dll.config" />
+    <None Include="OpenTK.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Tao.Sdl.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Content\dejavu_0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
