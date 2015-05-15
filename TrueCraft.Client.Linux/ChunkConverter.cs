@@ -117,7 +117,7 @@ namespace TrueCraft.Client.Linux
                                 Coordinates = coords
                             };
                             var provider = BlockRepository.GetBlockProvider(id);
-                            if (provider.Opaque)
+                            if (provider.RenderOpaque)
                             {
                                 int[] i;
                                 var v = BlockRenderer.RenderBlock(provider, descriptor,

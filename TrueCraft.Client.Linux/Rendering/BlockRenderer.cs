@@ -23,10 +23,11 @@ namespace TrueCraft.Client.Linux.Rendering
             var textureMap = provider.GetTextureMap(descriptor.Metadata);
             if (textureMap == null)
                 textureMap = new Tuple<int, int>(0, 0); // TODO: handle this better
-            return Renderers[descriptor.ID].Render(offset, textureMap, indiciesOffset, out indicies);
+            return Renderers[descriptor.ID].Render(descriptor, offset, textureMap, indiciesOffset, out indicies);
         }
 
-        public virtual VertexPositionNormalTexture[] Render(Vector3 offset, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
+        public virtual VertexPositionNormalTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
+            Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
             var texCoords = new Vector2(textureMap.Item1, textureMap.Item2);
             var texture = new[]

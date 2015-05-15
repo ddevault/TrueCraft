@@ -177,6 +177,11 @@ namespace TrueCraft.Core.Logic
         public virtual bool Opaque { get { return true; } }
 
         /// <summary>
+        /// Whether or not the block is rendered opaque
+        /// </summary>
+        public virtual bool RenderOpaque { get { return Opaque; } }
+
+        /// <summary>
         /// The amount removed from the light level as it passes through this block.
         /// 255 - Let no light pass through(this may change)
         /// Notes:

@@ -13,6 +13,7 @@ namespace TrueCraft.API.Logic
         double Hardness { get; }
         byte Luminance { get; }
         bool Opaque { get; }
+        bool RenderOpaque { get; }
         byte LightModifier { get; }
         string DisplayName { get; }
         BoundingBox? BoundingBox { get; } // NOTE: Will this eventually need to be metadata-aware?

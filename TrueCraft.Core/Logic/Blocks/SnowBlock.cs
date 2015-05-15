@@ -65,13 +65,15 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override byte Luminance { get { return 0; } }
 
+        public override bool RenderOpaque { get { return true; } }
+
         public override bool Opaque { get { return false; } }
 
         public override string DisplayName { get { return "Snow"; } }
 
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
-            return new Tuple<int, int>(3, 4);
+            return new Tuple<int, int>(2, 4);
         }
 
         protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
