@@ -22,7 +22,7 @@ grass, etc). Here's a similar screenshot with the official assets:
 
 You can probably guess from the new FPS counter that performance is still pretty
 hit-and-miss, but I have made some improvements that make it *usually* hang out
-at 60 FPS. This includes frustrum culling and only rendering blocks that are
+at 60 FPS. This includes frustum culling and only rendering blocks that are
 visible into meshes. There are more improvements to come.
 
 Also, RobinKanters has shared with me a screenshot of his port of the client to
