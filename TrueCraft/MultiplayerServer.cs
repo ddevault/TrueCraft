@@ -367,19 +367,19 @@ namespace TrueCraft
             }
         }
 
-        public bool PlayerIsWhitelisted(IRemoteClient client)
+        public bool PlayerIsWhitelisted(string client)
         {
-            return AccessConfiguration.Whitelist.Contains(client.Username, StringComparer.CurrentCultureIgnoreCase);
+            return AccessConfiguration.Whitelist.Contains(client, StringComparer.CurrentCultureIgnoreCase);
         }
 
-        public bool PlayerIsBlacklisted(IRemoteClient client)
+        public bool PlayerIsBlacklisted(string client)
         {
-            return AccessConfiguration.Blacklist.Contains(client.Username, StringComparer.CurrentCultureIgnoreCase);
+            return AccessConfiguration.Blacklist.Contains(client, StringComparer.CurrentCultureIgnoreCase);
         }
 
-        public bool PlayerIsOp(IRemoteClient client)
+        public bool PlayerIsOp(string client)
         {
-            return AccessConfiguration.Oplist.Contains(client.Username, StringComparer.CurrentCultureIgnoreCase);
+            return AccessConfiguration.Oplist.Contains(client, StringComparer.CurrentCultureIgnoreCase);
         }
     }
 }
