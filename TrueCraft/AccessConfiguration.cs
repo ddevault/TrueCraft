@@ -1,40 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using TrueCraft.API;
-using TrueCraft.API.Networking;
-using TrueCraft.API.Server;
 using YamlDotNet.Serialization;
 
 namespace TrueCraft
 {
     public class AccessConfiguration : IAccessConfiguration
     {
-        private IList<string> _blacklist, _whitelist, _oplist; 
-
         public AccessConfiguration()
         {
-            _blacklist = new List<string>();
-            _whitelist = new List<string>();
-            _oplist = new List<string>();
+            Blacklist = new List<string>();
+            Whitelist = new List<string>();
+            Oplist = new List<string>();
         }
 
         [YamlMember(Alias = "blacklist")]
-        public IList<string> Blacklist
-        {
-            get { return _blacklist; }
-        }
+        public IList<string> Blacklist { get; private set; }
 
         [YamlMember(Alias = "whitelist")]
-        public IList<string> Whitelist
-        {
-            get { return _whitelist; }
-        }
+        public IList<string> Whitelist { get; private set; }
         
         [YamlMember(Alias = "ops")]
-        public IList<string> Oplist
-        {
-            get { return _oplist; }
-        }
+        public IList<string> Oplist { get; private set; }
     }
 }
