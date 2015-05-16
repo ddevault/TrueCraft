@@ -33,6 +33,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Coordinates3D.cs" />
+    <Compile Include="IAccessConfiguration.cs" />
     <Compile Include="IPlayerList.cs" />
     <Compile Include="PlantSpecies.cs" />
     <Compile Include="OreTypes.cs" />

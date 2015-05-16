@@ -17,6 +17,7 @@ namespace TrueCraft
     public class Program
     {
         public static Configuration Configuration;
+        public static AccessConfiguration AccessConfiguration;
 
         public static CommandManager CommandManager;
 
@@ -24,17 +25,8 @@ namespace TrueCraft
 
         public static void Main(string[] args)
         {
-            if (File.Exists("config.yaml"))
-            {
-                var deserializer = new Deserializer(ignoreUnmatched: true);
-                using (var file = File.OpenText("config.yaml"))
-                    Configuration = deserializer.Deserialize<Configuration>(file);
-            }
-            else
-                Configuration = new Configuration();
-            var serializer = new Serializer();
-            using (var writer = new StreamWriter("config.yaml"))
-                serializer.Serialize(writer, Configuration);
+            Configuration = LoadConfiguration<Configuration>("config.yaml");
+            AccessConfiguration = LoadConfiguration<AccessConfiguration>("access.yaml");
 
             Server = new MultiplayerServer();
             Server.AddLogProvider(new ConsoleLogProvider(LogCategory.Notice | LogCategory.Warning | LogCategory.Error | LogCategory.Debug));
@@ -109,6 +101,25 @@ namespace TrueCraft
                     w.Save();
                 }
             }
+        }
+
+        private static T LoadConfiguration<T>(string configFileName) where T : new()
+        {
+            T config;
+
+            if (File.Exists(configFileName))
+            {
+                var deserializer = new Deserializer(ignoreUnmatched: true);
+                using (var file = File.OpenText("config.yaml"))
+                    config = deserializer.Deserialize<T>(file);
+            }
+            else
+                config = new T();
+            var serializer = new Serializer();
+            using (var writer = new StreamWriter("config.yaml"))
+                serializer.Serialize(writer, config);
+
+            return config;
         }
 
         static void HandleCancelKeyPress(object sender, ConsoleCancelEventArgs e)
