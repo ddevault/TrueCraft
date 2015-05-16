@@ -26,13 +26,14 @@ namespace TrueCraft
         {
             Server = new MultiplayerServer();
 
-            Configuration = LoadConfiguration<Configuration>("config.yaml");
-            Server.AccessConfiguration = LoadConfiguration<AccessConfiguration>("access.yaml");
-
             Server.AddLogProvider(new ConsoleLogProvider(LogCategory.Notice | LogCategory.Warning | LogCategory.Error | LogCategory.Debug));
             #if DEBUG
             Server.AddLogProvider(new FileLogProvider(new StreamWriter("packets.log", false), LogCategory.Packets));
             #endif
+
+            Configuration = LoadConfiguration<Configuration>("config.yaml");
+            Server.AccessConfiguration = LoadConfiguration<AccessConfiguration>("access.yaml");
+
             if (Configuration.Debug.DeleteWorldOnStartup)
             {
                 if (Directory.Exists("world"))
@@ -109,12 +110,17 @@ namespace TrueCraft
 
             if (File.Exists(configFileName))
             {
+                Server.Log(LogCategory.Warning, configFileName + @" already exists, reading it right now...");
                 var deserializer = new Deserializer(ignoreUnmatched: true);
                 using (var file = File.OpenText(configFileName))
                     config = deserializer.Deserialize<T>(file);
             }
             else
+            {
+                Server.Log(LogCategory.Warning, configFileName + @" didn't exist yet, creating new one");
                 config = new T();
+            }
+
             var serializer = new Serializer();
             using (var writer = new StreamWriter(configFileName))
                 serializer.Serialize(writer, config);
