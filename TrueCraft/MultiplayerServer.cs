@@ -22,6 +22,8 @@ namespace TrueCraft
         public event EventHandler<ChatMessageEventArgs> ChatMessageReceived;
         public event EventHandler<PlayerJoinedEventArgs> PlayerJoined;
 
+        public IAccessConfiguration AccessConfiguration { get; internal set; }
+
         public IPacketReader PacketReader { get; private set; }
         public IList<IRemoteClient> Clients { get; private set; }
         public IList<IWorld> Worlds { get; private set; }

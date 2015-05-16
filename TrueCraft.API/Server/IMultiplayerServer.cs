@@ -19,6 +19,7 @@ namespace TrueCraft.API.Server
         event EventHandler<ChatMessageEventArgs> ChatMessageReceived;
         event EventHandler<PlayerJoinedEventArgs> PlayerJoined;
 
+        IAccessConfiguration AccessConfiguration { get; }
         IPacketReader PacketReader { get; }
         IList<IRemoteClient> Clients { get; }
         IList<IWorld> Worlds { get; }

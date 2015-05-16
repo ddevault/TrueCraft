@@ -17,7 +17,6 @@ namespace TrueCraft
     public class Program
     {
         public static Configuration Configuration;
-        public static AccessConfiguration AccessConfiguration;
 
         public static CommandManager CommandManager;
 
@@ -25,10 +24,11 @@ namespace TrueCraft
 
         public static void Main(string[] args)
         {
-            Configuration = LoadConfiguration<Configuration>("config.yaml");
-            AccessConfiguration = LoadConfiguration<AccessConfiguration>("access.yaml");
-
             Server = new MultiplayerServer();
+
+            Configuration = LoadConfiguration<Configuration>("config.yaml");
+            Server.AccessConfiguration = LoadConfiguration<AccessConfiguration>("access.yaml");
+
             Server.AddLogProvider(new ConsoleLogProvider(LogCategory.Notice | LogCategory.Warning | LogCategory.Error | LogCategory.Debug));
             #if DEBUG
             Server.AddLogProvider(new FileLogProvider(new StreamWriter("packets.log", false), LogCategory.Packets));
