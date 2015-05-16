@@ -13,10 +13,10 @@ namespace TrueCraft
                 DeletePlayersOnStartup = false;
             }
 
-            [YamlMember(Alias="deleteWorldOnStartup")]
+            [YamlMember(Alias = "deleteWorldOnStartup")]
             public bool DeleteWorldOnStartup { get; set; }
 
-            [YamlMember(Alias="deletePlayersOnStartup")]
+            [YamlMember(Alias = "deletePlayersOnStartup")]
             public bool DeletePlayersOnStartup { get; set; }
         }
 
@@ -29,13 +29,13 @@ namespace TrueCraft
             WorldSaveInterval = 30;
         }
 
-        [YamlMember(Alias="motd")]
+        [YamlMember(Alias = "motd")]
         public string MOTD { get; set; }
 
-        [YamlMember(Alias="serverPort")]
+        [YamlMember(Alias = "serverPort")]
         public int ServerPort {get; set; }
 
-        [YamlMember(Alias="serverAddress")]
+        [YamlMember(Alias = "serverAddress")]
         public string ServerAddress { get; set; }
 
         [YamlMember(Alias = "debug")]
