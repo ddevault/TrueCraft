@@ -50,6 +50,7 @@ namespace TrueCraft.Launcher
                 process.StartInfo = new ProcessStartInfo("mono", "TrueCraft.Client.Linux.exe " + ServerIPText.Text);
             else
                 process.StartInfo = new ProcessStartInfo("TrueCraft.Client.Linux.exe", ServerIPText.Text);
+            process.EnableRaisingEvents = true;
             process.Exited += (s, a) => Application.Invoke(ClientExited);
             process.Start();
             this.ShowInTaskbar = false;
