@@ -27,7 +27,7 @@ namespace TrueCraft.Handlers
                 remoteClient.QueuePacket(new DisconnectPacket("Server outdated! Use beta 1.7.3."));
             else if (server.Worlds.Count == 0)
                 remoteClient.QueuePacket(new DisconnectPacket("Server has no worlds configured."));
-            else if (!server.PlayerIsWhitelisted(remoteClient) && server.PlayerIsBlacklisted(remoteClient))
+            else if (!server.PlayerIsWhitelisted(remoteClient.Username) && server.PlayerIsBlacklisted(remoteClient.Username))
                 remoteClient.QueuePacket(new DisconnectPacket("You're banned from this server"));
             else
             {
