@@ -30,16 +30,6 @@
     <Externalconsole>true</Externalconsole>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Client|AnyCPU' ">
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Client</OutputPath>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Server|AnyCPU' ">
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Server</OutputPath>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Ionic.Zip.Reduced">
