@@ -4,7 +4,7 @@ using YamlDotNet.Serialization;
 
 namespace TrueCraft
 {
-    public class AccessConfiguration : IAccessConfiguration
+    public class AccessConfiguration : Configuration, IAccessConfiguration
     {
         public AccessConfiguration()
         {

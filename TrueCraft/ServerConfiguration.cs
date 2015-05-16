@@ -3,7 +3,7 @@ using YamlDotNet.Serialization;
 
 namespace TrueCraft
 {
-    public class Configuration
+    public class ServerConfiguration : Configuration
     {
         public class DebugConfiguration
         {
@@ -20,7 +20,7 @@ namespace TrueCraft
             public bool DeletePlayersOnStartup { get; set; }
         }
 
-        public Configuration()
+        public ServerConfiguration()
         {
             MOTD = ChatColor.Red + "Welcome to TrueCraft!";
             Debug = new DebugConfiguration();

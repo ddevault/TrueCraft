@@ -16,7 +16,7 @@ namespace TrueCraft
 {
     public class Program
     {
-        public static Configuration Configuration;
+        public static ServerConfiguration ServerConfiguration;
 
         public static CommandManager CommandManager;
 
@@ -31,15 +31,14 @@ namespace TrueCraft
             Server.AddLogProvider(new FileLogProvider(new StreamWriter("packets.log", false), LogCategory.Packets));
             #endif
 
-            Configuration = LoadConfiguration<Configuration>("config.yaml");
-            Server.AccessConfiguration = LoadConfiguration<AccessConfiguration>("access.yaml");
+            ServerConfiguration = Configuration.LoadConfiguration<ServerConfiguration>("config.yaml");
 
-            if (Configuration.Debug.DeleteWorldOnStartup)
+            if (ServerConfiguration.Debug.DeleteWorldOnStartup)
             {
                 if (Directory.Exists("world"))
                     Directory.Delete("world", true);
             }
-            if (Configuration.Debug.DeletePlayersOnStartup)
+            if (ServerConfiguration.Debug.DeletePlayersOnStartup)
             {
                 if (Directory.Exists("players"))
                     Directory.Delete("players", true);
@@ -92,40 +91,16 @@ namespace TrueCraft
             }
             CommandManager = new CommandManager();
             Server.ChatMessageReceived += HandleChatMessageReceived;
-            Server.Start(new IPEndPoint(IPAddress.Parse(Configuration.ServerAddress), Configuration.ServerPort));
+            Server.Start(new IPEndPoint(IPAddress.Parse(ServerConfiguration.ServerAddress), ServerConfiguration.ServerPort));
             Console.CancelKeyPress += HandleCancelKeyPress;
             while (true)
             {
-                Thread.Sleep(1000 * Configuration.WorldSaveInterval);
+                Thread.Sleep(1000 * ServerConfiguration.WorldSaveInterval);
                 foreach (var w in Server.Worlds)
                 {
                     w.Save();
                 }
             }
-        }
-
-        private static T LoadConfiguration<T>(string configFileName) where T : new()
-        {
-            T config;
-
-            if (File.Exists(configFileName))
-            {
-                Server.Log(LogCategory.Warning, configFileName + @" already exists, reading it right now...");
-                var deserializer = new Deserializer(ignoreUnmatched: true);
-                using (var file = File.OpenText(configFileName))
-                    config = deserializer.Deserialize<T>(file);
-            }
-            else
-            {
-                Server.Log(LogCategory.Warning, configFileName + @" didn't exist yet, creating new one");
-                config = new T();
-            }
-
-            var serializer = new Serializer();
-            using (var writer = new StreamWriter(configFileName))
-                serializer.Serialize(writer, config);
-
-            return config;
         }
 
         static void HandleCancelKeyPress(object sender, ConsoleCancelEventArgs e)

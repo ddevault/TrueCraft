@@ -58,8 +58,8 @@ namespace TrueCraft.Handlers
                 server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(10), remoteClient.SendKeepAlive);
                 server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(1), remoteClient.ExpandChunkRadius);
 
-                if (!string.IsNullOrEmpty(Program.Configuration.MOTD))
-                    remoteClient.SendMessage(Program.Configuration.MOTD);
+                if (!string.IsNullOrEmpty(Program.ServerConfiguration.MOTD))
+                    remoteClient.SendMessage(Program.ServerConfiguration.MOTD);
                 server.SendMessage(ChatColor.Yellow + "{0} joined the server.", remoteClient.Username);
             }
         }

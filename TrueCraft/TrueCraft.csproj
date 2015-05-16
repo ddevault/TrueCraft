@@ -63,7 +63,7 @@
     <Compile Include="Exceptions\PlayerDisconnectException.cs" />
     <Compile Include="ItemRepository.cs" />
     <Compile Include="CraftingRepository.cs" />
-    <Compile Include="Configuration.cs" />
+    <Compile Include="ServerConfiguration.cs" />
     <Compile Include="PhysicsEngine.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

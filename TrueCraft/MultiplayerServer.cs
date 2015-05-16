@@ -90,6 +90,8 @@ namespace TrueCraft
             PendingBlockUpdates = new Queue<BlockUpdate>();
             EnableClientLogging = false;
 
+            AccessConfiguration = Configuration.LoadConfiguration<AccessConfiguration>("access.yaml");
+
             reader.RegisterCorePackets();
             Handlers.PacketHandlers.RegisterHandlers(this);
         }
