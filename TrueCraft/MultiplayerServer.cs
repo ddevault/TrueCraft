@@ -6,6 +6,7 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Net;
 using System.Collections.Generic;
+using System.Linq;
 using TrueCraft.API.World;
 using TrueCraft.API.Logging;
 using TrueCraft.Core.Networking.Packets;
@@ -195,7 +196,7 @@ namespace TrueCraft
 
         public void SendMessage(string message, params object[] parameters)
         {
-            var compiled = string.Format(message, parameters);
+            var compiled = String.Format(message, parameters);
             var parts = compiled.Split('\n');
             foreach (var client in Clients)
             {
@@ -362,6 +363,21 @@ namespace TrueCraft
                     }
                 }
             }
+        }
+
+        public bool PlayerIsWhitelisted(IRemoteClient client)
+        {
+            return AccessConfiguration.Whitelist.Contains(client.Username, StringComparer.CurrentCultureIgnoreCase);
+        }
+
+        public bool PlayerIsBlacklisted(IRemoteClient client)
+        {
+            return AccessConfiguration.Blacklist.Contains(client.Username, StringComparer.CurrentCultureIgnoreCase);
+        }
+
+        public bool PlayerIsOp(IRemoteClient client)
+        {
+            return AccessConfiguration.Oplist.Contains(client.Username, StringComparer.CurrentCultureIgnoreCase);
         }
     }
 }

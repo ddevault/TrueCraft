@@ -29,7 +29,7 @@ namespace TrueCraft.Handlers
                 remoteClient.QueuePacket(new DisconnectPacket("Server outdated! Use beta 1.7.3."));
             else if (server.Worlds.Count == 0)
                 remoteClient.QueuePacket(new DisconnectPacket("Server has no worlds configured."));
-            else if (!PlayerIsWhitelisted(remoteClient, server) && PlayerIsBlacklisted(remoteClient, server))
+            else if (!server.PlayerIsWhitelisted(remoteClient) && server.PlayerIsBlacklisted(remoteClient))
                 remoteClient.QueuePacket(new DisconnectPacket("You're banned from this server"));
             else
             {
@@ -64,16 +64,6 @@ namespace TrueCraft.Handlers
                     remoteClient.SendMessage(Program.Configuration.MOTD);
                 server.SendMessage(ChatColor.Yellow + "{0} joined the server.", remoteClient.Username);
             }
-        }
-
-        private static bool PlayerIsWhitelisted(IRemoteClient client, IMultiplayerServer server)
-        {
-            return server.AccessConfiguration.Whitelist.Contains(client.Username, StringComparer.CurrentCultureIgnoreCase);
-        }
-
-        private static bool PlayerIsBlacklisted(IRemoteClient client, IMultiplayerServer server)
-        {
-            return server.AccessConfiguration.Blacklist.Contains(client.Username, StringComparer.CurrentCultureIgnoreCase);
         }
     }
 }

@@ -38,5 +38,9 @@ namespace TrueCraft.API.Server
         void Log(LogCategory category, string text, params object[] parameters);
         IEntityManager GetEntityManagerForWorld(IWorld world);
         void SendMessage(string message, params object[] parameters);
+
+        bool PlayerIsWhitelisted(IRemoteClient client);
+        bool PlayerIsBlacklisted(IRemoteClient client);
+        bool PlayerIsOp(IRemoteClient client);
     }
 }
