@@ -174,7 +174,7 @@ namespace TrueCraft.Client.Linux
         {
             var player = new Microsoft.Xna.Framework.Vector3(
                 (float)Client.Position.X,
-                (float)(Client.Position.Y + Client.Size.Height),
+                (float)(Client.Position.Y + (Client.Size.Height / 2)),
                 (float)Client.Position.Z);
 
             var lookAt = Microsoft.Xna.Framework.Vector3.Transform(

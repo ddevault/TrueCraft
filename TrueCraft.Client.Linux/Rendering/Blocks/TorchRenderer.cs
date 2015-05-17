@@ -44,10 +44,10 @@ namespace TrueCraft.Client.Linux.Rendering.Blocks
             TextureMap,
             TextureMap + new Vector2(2, 0),
             // Negative Y
-            TextureMap + new Vector2(0, 9),
-            TextureMap + new Vector2(0, 9),
-            TextureMap,
-            TextureMap + new Vector2(2, 0),
+            TextureMap + new Vector2(2, 4),
+            TextureMap + new Vector2(0, 4),
+            TextureMap + new Vector2(0, 2),
+            TextureMap + new Vector2(2, 2),
         };
 
         public override VertexPositionNormalTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
