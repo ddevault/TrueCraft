@@ -12,6 +12,7 @@ using System.Linq;
 using System.ComponentModel;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.API.World;
+using System.Collections.Concurrent;
 
 namespace TrueCraft.Client
 {
@@ -26,8 +27,10 @@ namespace TrueCraft.Client
         private ChunkConverter ChunkConverter { get; set; }
         private DateTime NextPhysicsUpdate { get; set; }
         private List<Mesh> ChunkMeshes { get; set; }
+        private ConcurrentBag<Action> PendingMainThreadActions { get; set; }
+        private ConcurrentBag<Mesh> IncomingChunks { get; set; }
+        private ConcurrentBag<Mesh> IncomingTransparentChunks { get; set; }
         private List<Mesh> TransparentChunkMeshes { get; set; }
-        private readonly object ChunkMeshesLock = new object();
         private Matrix Camera;
         private Matrix Perspective;
         private BoundingFrustum CameraView;
@@ -49,6 +52,9 @@ namespace TrueCraft.Client
             NextPhysicsUpdate = DateTime.MinValue;
             ChunkMeshes = new List<Mesh>();
             TransparentChunkMeshes = new List<Mesh>();
+            IncomingChunks = new ConcurrentBag<Mesh>();
+            IncomingTransparentChunks = new ConcurrentBag<Mesh>();
+            PendingMainThreadActions = new ConcurrentBag<Action>();
             MouseCaptured = true;
         }
 
@@ -61,11 +67,8 @@ namespace TrueCraft.Client
             Client.ChunkLoaded += (sender, e) => ChunkConverter.QueueChunk(e.Chunk);
             ChunkConverter.Start((opaque, transparent) =>
             {
-                lock (ChunkMeshesLock)
-                {
-                    ChunkMeshes.Add(opaque);
-                    TransparentChunkMeshes.Add(transparent);
-                }
+                IncomingChunks.Add(opaque);
+                IncomingTransparentChunks.Add(transparent);
             });
             Client.PropertyChanged += HandleClientPropertyChanged;
             Client.Connect(EndPoint);
@@ -84,8 +87,7 @@ namespace TrueCraft.Client
                     UpdateMatricies();
                     var sorter = new ChunkConverter.ChunkSorter(new Coordinates3D(
                         (int)Client.Position.X, 0, (int)Client.Position.Z));
-                    lock (ChunkMeshesLock)
-                        TransparentChunkMeshes.Sort(sorter);
+                    PendingMainThreadActions.Add(() => TransparentChunkMeshes.Sort(sorter));
                     break;
             }
         }
@@ -128,9 +130,12 @@ namespace TrueCraft.Client
         {
             if (state.IsKeyDown(Keys.Escape))
                 Exit();
+
             // TODO: Rebindable keys
             // TODO: Horizontal terrain collisions
+
             Microsoft.Xna.Framework.Vector3 delta = Microsoft.Xna.Framework.Vector3.Zero;
+
             if (state.IsKeyDown(Keys.Left) || state.IsKeyDown(Keys.A))
                 delta += Microsoft.Xna.Framework.Vector3.Left;
             if (state.IsKeyDown(Keys.Right) || state.IsKeyDown(Keys.D))
@@ -140,14 +145,16 @@ namespace TrueCraft.Client
             if (state.IsKeyDown(Keys.Down) || state.IsKeyDown(Keys.S))
                 delta += Microsoft.Xna.Framework.Vector3.Backward;
             
+            if (delta != Microsoft.Xna.Framework.Vector3.Zero)
+            {
+                var lookAt = Microsoft.Xna.Framework.Vector3.Transform(
+                             delta, Matrix.CreateRotationY(MathHelper.ToRadians(Client.Yaw)));
+
+                Client.Position += new TrueCraft.API.Vector3(lookAt.X, lookAt.Y, lookAt.Z) * (gameTime.ElapsedGameTime.TotalSeconds * 4.3717);
+            }
+
             if (state.IsKeyUp(Keys.Tab) && oldState.IsKeyDown(Keys.Tab))
                 MouseCaptured = !MouseCaptured;
-
-            var lookAt = Microsoft.Xna.Framework.Vector3.Transform(
-                 delta, Matrix.CreateRotationY(MathHelper.ToRadians(Client.Yaw)));
-
-            Client.Position += new TrueCraft.API.Vector3(lookAt.X, lookAt.Y, lookAt.Z) * (gameTime.ElapsedGameTime.TotalSeconds * 4.3717);
-
             if (MouseCaptured)
             {
                 var centerX = GraphicsDevice.Viewport.Width / 2;
@@ -172,25 +179,31 @@ namespace TrueCraft.Client
             {
                 i.Update(gameTime);
             }
-            if (NextPhysicsUpdate < DateTime.Now)
+
+            Mesh mesh;
+            if (IncomingChunks.TryTake(out mesh))
+                ChunkMeshes.Add(mesh);
+            if (IncomingTransparentChunks.TryTake(out mesh))
+                TransparentChunkMeshes.Add(mesh);
+            Action action;
+            if (PendingMainThreadActions.TryTake(out action))
+                action();
+
+            if (NextPhysicsUpdate < DateTime.Now && Client.LoggedIn)
             {
                 IChunk chunk;
                 var adjusted = Client.World.World.FindBlockPosition(new Coordinates3D((int)Client.Position.X, 0, (int)Client.Position.Z), out chunk);
-                if (Client.LoggedIn && chunk != null)
+                if (chunk != null)
                 {
                     if (chunk.GetHeight((byte)adjusted.X, (byte)adjusted.Z) != 0)
                         Client.Physics.Update();
                 }
-                if (Client.LoggedIn)
-                {
-                    // NOTE: This is to make the vanilla server send us chunk packets
-                    // We should eventually make some means of detecing that we're on a vanilla server to enable this
-                    // It's a waste of bandwidth to do it on a TrueCraft server
-                    Console.WriteLine("Sending position packet");
-                    Client.QueuePacket(new PlayerGroundedPacket { OnGround = true });
-                    Client.QueuePacket(new PlayerPositionAndLookPacket(Client.Position.X, Client.Position.Y,
-                        Client.Position.Y + MultiplayerClient.Height, Client.Position.Z, Client.Yaw, Client.Pitch, false));
-                }
+                // NOTE: This is to make the vanilla server send us chunk packets
+                // We should eventually make some means of detecing that we're on a vanilla server to enable this
+                // It's a waste of bandwidth to do it on a TrueCraft server
+                Client.QueuePacket(new PlayerGroundedPacket { OnGround = true });
+                Client.QueuePacket(new PlayerPositionAndLookPacket(Client.Position.X, Client.Position.Y,
+                    Client.Position.Y + MultiplayerClient.Height, Client.Position.Z, Client.Yaw, Client.Pitch, false));
                 NextPhysicsUpdate = DateTime.Now.AddMilliseconds(1000 / 20);
             }
             var state = Keyboard.GetState();
@@ -217,6 +230,10 @@ namespace TrueCraft.Client
             Perspective = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(70f), GraphicsDevice.Viewport.AspectRatio, 0.01f, 1000f);
 
             CameraView = new BoundingFrustum(Camera * Perspective);
+
+            OpaqueEffect.View = TransparentEffect.View = Camera;
+            OpaqueEffect.Projection = TransparentEffect.Projection = Perspective;
+            OpaqueEffect.World = TransparentEffect.World = Matrix.Identity;
         }
 
         protected override void Draw(GameTime gameTime)
@@ -226,45 +243,40 @@ namespace TrueCraft.Client
             GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
 
-            OpaqueEffect.View = TransparentEffect.View = Camera;
-            OpaqueEffect.Projection = TransparentEffect.Projection = Perspective;
-            OpaqueEffect.World = TransparentEffect.World = Matrix.Identity;
             int verticies = 0, chunks = 0;
-            lock (ChunkMeshesLock)
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            for (int i = 0; i < ChunkMeshes.Count; i++)
             {
-                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-                foreach (var chunk in ChunkMeshes)
+                if (CameraView.Intersects(ChunkMeshes[i].BoundingBox))
                 {
-                    if (CameraView.Intersects(chunk.BoundingBox))
-                    {
-                        verticies += chunk.Verticies.VertexCount;
-                        chunks++;
-                        chunk.Draw(OpaqueEffect);
-                    }
+                    verticies += ChunkMeshes[i].Verticies.VertexCount;
+                    chunks++;
+                    ChunkMeshes[i].Draw(OpaqueEffect);
                 }
-                GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
-                foreach (var chunk in TransparentChunkMeshes)
+            }
+            GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
+            for (int i = 0; i < TransparentChunkMeshes.Count; i++)
+            {
+                if (CameraView.Intersects(TransparentChunkMeshes[i].BoundingBox))
                 {
-                    if (CameraView.Intersects(chunk.BoundingBox))
-                    {
-                        if (chunk.Verticies != null)
-                            verticies += chunk.Verticies.VertexCount;
-                        chunk.Draw(TransparentEffect);
-                    }
+                    if (TransparentChunkMeshes[i].Verticies != null)
+                        verticies += TransparentChunkMeshes[i].Verticies.VertexCount;
+                    TransparentChunkMeshes[i].Draw(TransparentEffect);
                 }
             }
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             SpriteBatch.Begin();
-            foreach (var i in Interfaces)
+            for (int i = 0; i < Interfaces.Count; i++)
             {
-                i.DrawSprites(gameTime, SpriteBatch);
+                Interfaces[i].DrawSprites(gameTime, SpriteBatch);
             }
 
             int fps = (int)(1 / gameTime.ElapsedGameTime.TotalSeconds);
             DejaVu.DrawText(SpriteBatch, 0, GraphicsDevice.Viewport.Height - 30,
                 string.Format("{0} FPS, {1} verticies, {2} chunks", fps + 1, verticies, chunks));
             SpriteBatch.End();
+
             base.Draw(gameTime);
         }
     }

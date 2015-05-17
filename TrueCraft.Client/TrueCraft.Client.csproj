@@ -87,6 +87,7 @@
     <Compile Include="Rendering\Blocks\TNTRenderer.cs" />
     <Compile Include="Rendering\Blocks\SnowRenderer.cs" />
     <Compile Include="Rendering\Blocks\TorchRenderer.cs" />
+    <Compile Include="Rendering\Blocks\LogRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

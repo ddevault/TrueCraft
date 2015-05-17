@@ -15,7 +15,7 @@ namespace TrueCraft.Client.Rendering
 
         public Mesh(GraphicsDevice device, VertexPositionNormalTexture[] verticies, int[] indicies, bool calculateBounds = true)
         {
-            Empty = verticies.Length == 0 || indicies.Length == 0;
+            Empty = verticies.Length == 0 && indicies.Length == 0;
             if (!Empty)
             {
                 Verticies = new VertexBuffer(device, VertexPositionNormalTexture.VertexDeclaration,

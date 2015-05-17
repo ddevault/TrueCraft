@@ -99,15 +99,19 @@ namespace TrueCraft.Client
             Coordinates3D.West
         };
 
+        private readonly List<VertexPositionNormalTexture> OpaqueVerticies = new List<VertexPositionNormalTexture>();
+        private readonly List<int> OpaqueIndicies = new List<int>();
+        private readonly List<VertexPositionNormalTexture> TransparentVerticies = new List<VertexPositionNormalTexture>();
+        private readonly List<int> TransparentIndicies = new List<int>();
+        private readonly HashSet<Coordinates3D> DrawableCoordinates = new HashSet<Coordinates3D>();
+
         private Tuple<Mesh, Mesh> ProcessChunk(ReadOnlyChunk chunk)
         {
-            var opaqueVerticies = new List<VertexPositionNormalTexture>();
-            var opaqueIndicies = new List<int>();
-
-            var transparentVerticies = new List<VertexPositionNormalTexture>();
-            var transparentIndicies = new List<int>();
-
-            var drawableCoordinates = new HashSet<Coordinates3D>();
+            OpaqueVerticies.Clear();
+            OpaqueIndicies.Clear();
+            TransparentVerticies.Clear();
+            TransparentIndicies.Clear();
+            DrawableCoordinates.Clear();
 
             var boundingBox = new Microsoft.Xna.Framework.BoundingBox(
                 new Vector3(chunk.X * Chunk.Width, 0, chunk.Z * Chunk.Depth),
@@ -123,7 +127,7 @@ namespace TrueCraft.Client
                         var id = chunk.GetBlockId(coords);
                         var provider = BlockRepository.GetBlockProvider(id);
                         if (id != 0)
-                            drawableCoordinates.Add(coords);
+                            DrawableCoordinates.Add(coords);
                         if (!provider.Opaque)
                         {
                             // Add adjacent blocks
@@ -137,14 +141,17 @@ namespace TrueCraft.Client
                                     continue;
                                 }
                                 if (chunk.GetBlockId(next) != 0)
-                                    drawableCoordinates.Add(next);
+                                    DrawableCoordinates.Add(next);
                             }
                         }
                     }
                 }
             }
-            foreach (var coords in drawableCoordinates)
+            var enumerator = DrawableCoordinates.GetEnumerator();
+            for (int j = 0; j < DrawableCoordinates.Count; j++)
             {
+                var coords = enumerator.Current;
+                enumerator.MoveNext();
                 var descriptor = new BlockDescriptor
                 {
                     ID = chunk.GetBlockId(coords),
@@ -159,23 +166,23 @@ namespace TrueCraft.Client
                     int[] i;
                     var v = BlockRenderer.RenderBlock(provider, descriptor,
                         new Vector3(chunk.X * Chunk.Width + coords.X, coords.Y, chunk.Z * Chunk.Depth + coords.Z),
-                        opaqueVerticies.Count, out i);
-                    opaqueVerticies.AddRange(v);
-                    opaqueIndicies.AddRange(i);
+                        OpaqueVerticies.Count, out i);
+                    OpaqueVerticies.AddRange(v);
+                    OpaqueIndicies.AddRange(i);
                 }
                 else
                 {
                     int[] i;
                     var v = BlockRenderer.RenderBlock(provider, descriptor,
                         new Vector3(chunk.X * Chunk.Width + coords.X, coords.Y, chunk.Z * Chunk.Depth + coords.Z),
-                        transparentVerticies.Count, out i);
-                    transparentVerticies.AddRange(v);
-                    transparentIndicies.AddRange(i);
+                        TransparentVerticies.Count, out i);
+                    TransparentVerticies.AddRange(v);
+                    TransparentIndicies.AddRange(i);
                 }
             }
             var meshes = new Tuple<Mesh, Mesh>(
-                new Mesh(Graphics, opaqueVerticies.ToArray(), opaqueIndicies.ToArray(), false),
-                new Mesh(Graphics, transparentVerticies.ToArray(), transparentIndicies.ToArray(), false));
+                new Mesh(Graphics, OpaqueVerticies.ToArray(), OpaqueIndicies.ToArray(), false),
+                new Mesh(Graphics, TransparentVerticies.ToArray(), TransparentIndicies.ToArray(), false));
             meshes.Item1.BoundingBox = boundingBox;
             meshes.Item2.BoundingBox = boundingBox;
             return meshes;

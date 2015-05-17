@@ -4,6 +4,7 @@ using TrueCraft.Core.Networking.Packets;
 using TrueCraft.Core.Networking;
 using TrueCraft.Client.Events;
 using TrueCraft.API;
+using System.Diagnostics;
 
 namespace TrueCraft.Client.Handlers
 {
@@ -29,7 +30,12 @@ namespace TrueCraft.Client.Handlers
         public static void HandleHandshake(IPacket _packet, MultiplayerClient client)
         {
             var packet = (HandshakeResponsePacket)_packet;
-            Console.WriteLine("Got handshake with {0}", packet.ConnectionHash); // TODO: Authenticate?
+            if (packet.ConnectionHash != "-")
+            {
+                Console.WriteLine("Online mode is not supported");
+                Process.GetCurrentProcess().Kill();
+            }
+            // TODO: Authentication
             client.QueuePacket(new LoginRequestPacket(PacketReader.Version, "TestUser"));
         }
 
@@ -44,7 +50,6 @@ namespace TrueCraft.Client.Handlers
             client._Position = new Vector3(packet.X, packet.Y, packet.Z);
             client.QueuePacket(packet);
             client.LoggedIn = true;
-            Console.WriteLine("Got P+L: {0}", client._Position);
             // TODO: Pitch and yaw
         }
     }

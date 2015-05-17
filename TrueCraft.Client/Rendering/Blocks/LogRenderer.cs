@@ -6,18 +6,17 @@ using TrueCraft.API.Logic;
 
 namespace TrueCraft.Client.Rendering.Blocks
 {
-    public class GrassRenderer : BlockRenderer
+    public class LogRenderer : BlockRenderer
     {
-        static GrassRenderer()
+        static LogRenderer()
         {
-            BlockRenderer.RegisterRenderer(GrassBlock.BlockID, new GrassRenderer());
+            BlockRenderer.RegisterRenderer(WoodBlock.BlockID, new LogRenderer());
             for (int i = 0; i < Texture.Length; i++)
                 Texture[i] *= new Vector2(16f / 256f);
         }
 
-        private static Vector2 TextureMap = new Vector2(0, 0);
-        private static Vector2 EndsTexture = new Vector2(2, 0);
-        private static Vector2 SideTexture = new Vector2(3, 0);
+        private static Vector2 EndsTexture = new Vector2(5, 1);
+        private static Vector2 SideTexture = new Vector2(4, 1);
         private static Vector2[] Texture =
         {
             // Positive Z
@@ -41,10 +40,10 @@ namespace TrueCraft.Client.Rendering.Blocks
             SideTexture,
             SideTexture + Vector2.UnitX,
             // Positive Y
-            TextureMap + Vector2.UnitX + Vector2.UnitY,
-            TextureMap + Vector2.UnitY,
-            TextureMap,
-            TextureMap + Vector2.UnitX,
+            EndsTexture + Vector2.UnitX + Vector2.UnitY,
+            EndsTexture + Vector2.UnitY,
+            EndsTexture,
+            EndsTexture + Vector2.UnitX,
             // Negative Y
             EndsTexture + Vector2.UnitX + Vector2.UnitY,
             EndsTexture + Vector2.UnitY,
