@@ -19,28 +19,28 @@ namespace TrueCraft.Client.Linux.Rendering.Blocks
         private static Vector2[] Texture =
         {
             // Positive Z
-            TextureMap + new Vector2(2, 9),
-            TextureMap + new Vector2(0, 9),
+            TextureMap + new Vector2(2, 10),
+            TextureMap + new Vector2(0, 10),
             TextureMap,
             TextureMap + new Vector2(2, 0),
             // Negative Z
-            TextureMap + new Vector2(2, 9),
-            TextureMap + new Vector2(0, 9),
+            TextureMap + new Vector2(2, 10),
+            TextureMap + new Vector2(0, 10),
             TextureMap,
             TextureMap + new Vector2(2, 0),
             // Positive X
-            TextureMap + new Vector2(2, 9),
-            TextureMap + new Vector2(0, 9),
+            TextureMap + new Vector2(2, 10),
+            TextureMap + new Vector2(0, 10),
             TextureMap,
             TextureMap + new Vector2(2, 0),
             // Negative X
-            TextureMap + new Vector2(2, 9),
-            TextureMap + new Vector2(0, 9),
+            TextureMap + new Vector2(2, 10),
+            TextureMap + new Vector2(0, 10),
             TextureMap,
             TextureMap + new Vector2(2, 0),
             // Positive Y
-            TextureMap + new Vector2(2, 2),
-            TextureMap + new Vector2(0, 2),
+            TextureMap + new Vector2(2, 10),
+            TextureMap + new Vector2(0, 10),
             TextureMap,
             TextureMap + new Vector2(2, 0),
             // Negative Y
