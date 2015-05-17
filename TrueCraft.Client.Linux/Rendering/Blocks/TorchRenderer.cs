@@ -15,27 +15,27 @@ namespace TrueCraft.Client.Linux.Rendering.Blocks
                 Texture[i] /= 256f;
         }
 
-        private static Vector2 TextureMap = new Vector2(7, 85); // Note: this is in pixels (torch texture is not a full block)
+        private static Vector2 TextureMap = new Vector2(7, 86); // Note: this is in pixels (torch texture is not a full block)
         private static Vector2[] Texture =
         {
             // Positive Z
-            TextureMap + new Vector2(2, 10),
-            TextureMap + new Vector2(0, 10),
+            TextureMap + new Vector2(2, 9),
+            TextureMap + new Vector2(0, 9),
             TextureMap,
             TextureMap + new Vector2(2, 0),
             // Negative Z
-            TextureMap + new Vector2(2, 10),
-            TextureMap + new Vector2(0, 10),
+            TextureMap + new Vector2(2, 9),
+            TextureMap + new Vector2(0, 9),
             TextureMap,
             TextureMap + new Vector2(2, 0),
             // Positive X
-            TextureMap + new Vector2(2, 10),
-            TextureMap + new Vector2(0, 10),
+            TextureMap + new Vector2(2, 9),
+            TextureMap + new Vector2(0, 9),
             TextureMap,
             TextureMap + new Vector2(2, 0),
             // Negative X
-            TextureMap + new Vector2(2, 10),
-            TextureMap + new Vector2(0, 10),
+            TextureMap + new Vector2(2, 9),
+            TextureMap + new Vector2(0, 9),
             TextureMap,
             TextureMap + new Vector2(2, 0),
             // Positive Y
@@ -44,8 +44,8 @@ namespace TrueCraft.Client.Linux.Rendering.Blocks
             TextureMap,
             TextureMap + new Vector2(2, 0),
             // Negative Y
-            TextureMap + new Vector2(0, 10),
-            TextureMap + new Vector2(0, 10),
+            TextureMap + new Vector2(0, 9),
+            TextureMap + new Vector2(0, 9),
             TextureMap,
             TextureMap + new Vector2(2, 0),
         };
