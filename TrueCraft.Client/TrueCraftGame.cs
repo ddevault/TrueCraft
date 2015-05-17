@@ -10,6 +10,8 @@ using TrueCraft.API;
 using TrueCraft.Client.Rendering;
 using System.Linq;
 using System.ComponentModel;
+using TrueCraft.Core.Networking.Packets;
+using TrueCraft.API.World;
 
 namespace TrueCraft.Client
 {
@@ -29,6 +31,8 @@ namespace TrueCraft.Client
         private Matrix Camera;
         private Matrix Perspective;
         private BoundingFrustum CameraView;
+        private bool MouseCaptured;
+        private KeyboardState PreviousKeyboardState;
 
         private BasicEffect OpaqueEffect, TransparentEffect;
 
@@ -45,6 +49,7 @@ namespace TrueCraft.Client
             NextPhysicsUpdate = DateTime.MinValue;
             ChunkMeshes = new List<Mesh>();
             TransparentChunkMeshes = new List<Mesh>();
+            MouseCaptured = true;
         }
 
         protected override void Initialize()
@@ -68,6 +73,7 @@ namespace TrueCraft.Client
             var centerY = GraphicsDevice.Viewport.Height / 2;
             Mouse.SetPosition(centerX, centerY);
             UpdateMatricies();
+            PreviousKeyboardState = Keyboard.GetState();
         }
 
         void HandleClientPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -118,7 +124,7 @@ namespace TrueCraft.Client
             base.OnExiting(sender, args);
         }
 
-        protected virtual void UpdateKeyboard(GameTime gameTime, KeyboardState state)
+        protected virtual void UpdateKeyboard(GameTime gameTime, KeyboardState state, KeyboardState oldState)
         {
             if (state.IsKeyDown(Keys.Escape))
                 Exit();
@@ -133,25 +139,31 @@ namespace TrueCraft.Client
                 delta += Microsoft.Xna.Framework.Vector3.Forward;
             if (state.IsKeyDown(Keys.Down) || state.IsKeyDown(Keys.S))
                 delta += Microsoft.Xna.Framework.Vector3.Backward;
+            
+            if (state.IsKeyUp(Keys.Tab) && oldState.IsKeyDown(Keys.Tab))
+                MouseCaptured = !MouseCaptured;
 
             var lookAt = Microsoft.Xna.Framework.Vector3.Transform(
-                delta, Matrix.CreateRotationY(MathHelper.ToRadians(Client.Yaw)));
+                 delta, Matrix.CreateRotationY(MathHelper.ToRadians(Client.Yaw)));
 
             Client.Position += new TrueCraft.API.Vector3(lookAt.X, lookAt.Y, lookAt.Z) * (gameTime.ElapsedGameTime.TotalSeconds * 4.3717);
 
-            var centerX = GraphicsDevice.Viewport.Width / 2;
-            var centerY = GraphicsDevice.Viewport.Height / 2;
-            var mouse = Mouse.GetState();
-            var look = new Vector2(centerX - mouse.Position.X, centerY - mouse.Position.Y) 
-                * (float)(gameTime.ElapsedGameTime.TotalSeconds * 70);
-            Mouse.SetPosition(centerX, centerY);
-            Client.Yaw += look.X;
-            Client.Pitch += look.Y;
-            Client.Yaw %= 360;
-            Client.Pitch = MathHelper.Clamp(Client.Pitch, -90, 90);
+            if (MouseCaptured)
+            {
+                var centerX = GraphicsDevice.Viewport.Width / 2;
+                var centerY = GraphicsDevice.Viewport.Height / 2;
+                var mouse = Mouse.GetState();
+                var look = new Vector2(centerX - mouse.Position.X, centerY - mouse.Position.Y)
+                       * (float)(gameTime.ElapsedGameTime.TotalSeconds * 70);
+                Mouse.SetPosition(centerX, centerY);
+                Client.Yaw += look.X;
+                Client.Pitch += look.Y;
+                Client.Yaw %= 360;
+                Client.Pitch = MathHelper.Clamp(Client.Pitch, -90, 90);
 
-            if (look != Vector2.Zero)
-                UpdateMatricies();
+                if (look != Vector2.Zero)
+                    UpdateMatricies();
+            }
         }
 
         protected override void Update(GameTime gameTime)
@@ -162,11 +174,28 @@ namespace TrueCraft.Client
             }
             if (NextPhysicsUpdate < DateTime.Now)
             {
-                if (Client.World.FindChunk(new Coordinates2D((int)Client.Position.X, (int)Client.Position.Z)) != null)
-                    Client.Physics.Update();
+                IChunk chunk;
+                var adjusted = Client.World.World.FindBlockPosition(new Coordinates3D((int)Client.Position.X, 0, (int)Client.Position.Z), out chunk);
+                if (Client.LoggedIn && chunk != null)
+                {
+                    if (chunk.GetHeight((byte)adjusted.X, (byte)adjusted.Z) != 0)
+                        Client.Physics.Update();
+                }
+                if (Client.LoggedIn)
+                {
+                    // NOTE: This is to make the vanilla server send us chunk packets
+                    // We should eventually make some means of detecing that we're on a vanilla server to enable this
+                    // It's a waste of bandwidth to do it on a TrueCraft server
+                    Console.WriteLine("Sending position packet");
+                    Client.QueuePacket(new PlayerGroundedPacket { OnGround = true });
+                    Client.QueuePacket(new PlayerPositionAndLookPacket(Client.Position.X, Client.Position.Y,
+                        Client.Position.Y + MultiplayerClient.Height, Client.Position.Z, Client.Yaw, Client.Pitch, false));
+                }
                 NextPhysicsUpdate = DateTime.Now.AddMilliseconds(1000 / 20);
             }
-            UpdateKeyboard(gameTime, Keyboard.GetState());
+            var state = Keyboard.GetState();
+            UpdateKeyboard(gameTime, state, PreviousKeyboardState);
+            PreviousKeyboardState = state;
             base.Update(gameTime);
         }
 
@@ -195,7 +224,7 @@ namespace TrueCraft.Client
             Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
             GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
             GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-            GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+            GraphicsDevice.BlendState = BlendState.AlphaBlend;
 
             OpaqueEffect.View = TransparentEffect.View = Camera;
             OpaqueEffect.Projection = TransparentEffect.Projection = Perspective;

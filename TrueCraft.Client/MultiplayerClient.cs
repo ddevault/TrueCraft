@@ -26,6 +26,7 @@ namespace TrueCraft.Client
 
         public ReadOnlyWorld World { get; private set; }
         public PhysicsEngine Physics { get; set; }
+        public bool LoggedIn { get; internal set; }
 
         private TcpClient Client { get; set; }
         private IMinecraftStream Stream { get; set; }

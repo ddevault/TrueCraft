@@ -14,6 +14,7 @@ namespace TrueCraft.Client.Handlers
             client.RegisterPacketHandler(new HandshakeResponsePacket().ID, HandleHandshake);
             client.RegisterPacketHandler(new ChatMessagePacket().ID, HandleChatMessage);
             client.RegisterPacketHandler(new SetPlayerPositionPacket().ID, HandlePositionAndLook);
+            client.RegisterPacketHandler(new LoginResponsePacket().ID, HandleLoginResponse);
 
             client.RegisterPacketHandler(new ChunkPreamblePacket().ID, ChunkHandler.HandleChunkPreamble);
             client.RegisterPacketHandler(new ChunkDataPacket().ID, ChunkHandler.HandleChunkData);
@@ -32,10 +33,18 @@ namespace TrueCraft.Client.Handlers
             client.QueuePacket(new LoginRequestPacket(PacketReader.Version, "TestUser"));
         }
 
+        public static void HandleLoginResponse(IPacket _packet, MultiplayerClient client)
+        {
+            client.QueuePacket(new PlayerGroundedPacket());
+        }
+
         public static void HandlePositionAndLook(IPacket _packet, MultiplayerClient client)
         {
             var packet = (SetPlayerPositionPacket)_packet;
             client._Position = new Vector3(packet.X, packet.Y, packet.Z);
+            client.QueuePacket(packet);
+            client.LoggedIn = true;
+            Console.WriteLine("Got P+L: {0}", client._Position);
             // TODO: Pitch and yaw
         }
     }

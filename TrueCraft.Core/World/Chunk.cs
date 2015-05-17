@@ -210,6 +210,28 @@ namespace TrueCraft.Core.World
             HeightMap[(byte)(x * Width) + z] = value;
         }
 
+        public void UpdateHeightMap()
+        {
+            for (byte x = 0; x < Chunk.Width; x++)
+            {
+                for (byte z = 0; z < Chunk.Depth; z++)
+                {
+                    int y;
+                    for (y = Chunk.Height - 1; y >= 0; y--)
+                    {
+                        int index = y + (z * Height) + (x * Height * Width);
+                        if (Blocks[index] != 0)
+                        {
+                            SetHeight(x, z, y);
+                            break;
+                        }
+                    }
+                    if (y == 0)
+                        SetHeight(x, z, 0);
+                }
+            }
+        }
+
         public NbtFile ToNbt()
         {
             LastAccessed = DateTime.Now;
