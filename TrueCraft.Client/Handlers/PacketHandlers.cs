@@ -2,10 +2,10 @@
 using TrueCraft.API.Networking;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.Core.Networking;
-using TrueCraft.Client.Linux.Events;
+using TrueCraft.Client.Events;
 using TrueCraft.API;
 
-namespace TrueCraft.Client.Linux.Handlers
+namespace TrueCraft.Client.Handlers
 {
     internal static class PacketHandlers
     {

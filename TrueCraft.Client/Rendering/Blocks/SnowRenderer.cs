@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using TrueCraft.Core.Logic.Blocks;
 using TrueCraft.API.Logic;
 
-namespace TrueCraft.Client.Linux.Rendering.Blocks
+namespace TrueCraft.Client.Rendering.Blocks
 {
     public class SnowRenderer : BlockRenderer
     {

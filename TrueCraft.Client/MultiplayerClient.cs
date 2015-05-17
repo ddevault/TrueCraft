@@ -7,13 +7,13 @@ using System.Threading;
 using TrueCraft.Core.Networking;
 using System.Linq;
 using TrueCraft.Core.Networking.Packets;
-using TrueCraft.Client.Linux.Events;
+using TrueCraft.Client.Events;
 using TrueCraft.Core.Logic;
 using TrueCraft.API.Entities;
 using TrueCraft.API;
 using System.ComponentModel;
 
-namespace TrueCraft.Client.Linux
+namespace TrueCraft.Client
 {
     public delegate void PacketHandler(IPacket packet, MultiplayerClient client);
 

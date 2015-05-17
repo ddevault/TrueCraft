@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Linq;
 
-namespace TrueCraft.Client.Linux.Rendering
+namespace TrueCraft.Client.Rendering
 {
     public class Mesh
     {

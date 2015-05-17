@@ -3,7 +3,7 @@ using System.Net;
 using System.Linq;
 using System.Net.Sockets;
 
-namespace TrueCraft.Client.Linux
+namespace TrueCraft.Client
 {
     public static class Program
     {

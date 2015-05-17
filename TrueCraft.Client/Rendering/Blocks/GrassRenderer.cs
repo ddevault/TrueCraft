@@ -1,23 +1,23 @@
 ﻿using System;
-using TrueCraft.Core.Logic.Blocks;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
+using TrueCraft.Core.Logic.Blocks;
 using TrueCraft.API.Logic;
 
-namespace TrueCraft.Client.Linux.Rendering.Blocks
+namespace TrueCraft.Client.Rendering.Blocks
 {
-    public class TNTRenderer : BlockRenderer
+    public class GrassRenderer : BlockRenderer
     {
-        static TNTRenderer()
+        static GrassRenderer()
         {
-            BlockRenderer.RegisterRenderer(TNTBlock.BlockID, new TNTRenderer());
+            BlockRenderer.RegisterRenderer(GrassBlock.BlockID, new GrassRenderer());
             for (int i = 0; i < Texture.Length; i++)
                 Texture[i] *= new Vector2(16f / 256f);
         }
 
-        private static Vector2 TopTexture = new Vector2(9, 0);
-        private static Vector2 BottomTexture = new Vector2(10, 0);
-        private static Vector2 SideTexture = new Vector2(8, 0);
+        private static Vector2 TextureMap = new Vector2(0, 0);
+        private static Vector2 BottomTexture = new Vector2(2, 0);
+        private static Vector2 SideTexture = new Vector2(3, 0);
         private static Vector2[] Texture =
         {
             // Positive Z
@@ -40,11 +40,11 @@ namespace TrueCraft.Client.Linux.Rendering.Blocks
             SideTexture + Vector2.UnitY,
             SideTexture,
             SideTexture + Vector2.UnitX,
-            // Negative Y
-            TopTexture + Vector2.UnitX + Vector2.UnitY,
-            TopTexture + Vector2.UnitY,
-            TopTexture,
-            TopTexture + Vector2.UnitX,
+            // Positive Y
+            TextureMap + Vector2.UnitX + Vector2.UnitY,
+            TextureMap + Vector2.UnitY,
+            TextureMap,
+            TextureMap + Vector2.UnitX,
             // Negative Y
             BottomTexture + Vector2.UnitX + Vector2.UnitY,
             BottomTexture + Vector2.UnitY,

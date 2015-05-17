@@ -3,15 +3,15 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using TrueCraft.Client.Linux.Interface;
+using TrueCraft.Client.Interface;
 using System.IO;
 using System.Net;
 using TrueCraft.API;
-using TrueCraft.Client.Linux.Rendering;
+using TrueCraft.Client.Rendering;
 using System.Linq;
 using System.ComponentModel;
 
-namespace TrueCraft.Client.Linux
+namespace TrueCraft.Client
 {
     public class TrueCraftGame : Game
     {

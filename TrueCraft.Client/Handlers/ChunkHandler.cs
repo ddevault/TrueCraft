@@ -4,9 +4,9 @@ using TrueCraft.Core.Networking.Packets;
 using TrueCraft.API;
 using TrueCraft.Core.World;
 using MonoGame.Utilities;
-using TrueCraft.Client.Linux.Events;
+using TrueCraft.Client.Events;
 
-namespace TrueCraft.Client.Linux.Handlers
+namespace TrueCraft.Client.Handlers
 {
     internal static class ChunkHandler
     {

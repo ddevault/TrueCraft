@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using TrueCraft.Client.Linux.Events;
+using TrueCraft.Client.Events;
 using System.Collections.Generic;
 
-namespace TrueCraft.Client.Linux.Interface
+namespace TrueCraft.Client.Interface
 {
     public class ChatInterface : IGameInterface
     {

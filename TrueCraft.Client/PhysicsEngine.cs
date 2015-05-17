@@ -6,9 +6,8 @@ using TrueCraft.Core.World;
 using TrueCraft.API.Entities;
 using TrueCraft.API.World;
 using TrueCraft.API;
-using TrueCraft.Client.Linux;
 
-namespace TrueCraft
+namespace TrueCraft.Client
 {
     // This is a stripped down version of the physics engine that the server uses
     // The only thing we use it for is our own movement

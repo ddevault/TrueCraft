@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace TrueCraft.Client.Linux
+namespace TrueCraft.Client
 {
     [Serializable]
     [XmlRoot ( "font" )]

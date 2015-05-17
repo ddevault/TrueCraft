@@ -5,7 +5,7 @@ using TrueCraft.Core.Logic;
 using TrueCraft.API.Logic;
 using System.Linq;
 
-namespace TrueCraft.Client.Linux.Rendering
+namespace TrueCraft.Client.Rendering
 {
     public class BlockRenderer
     {

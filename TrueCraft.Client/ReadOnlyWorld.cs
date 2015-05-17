@@ -7,7 +7,7 @@ using TrueCraft.API.World;
 using TrueCraft.Core.World;
 using TrueCraft.API;
 
-namespace TrueCraft.Client.Linux
+namespace TrueCraft.Client
 {
     public class ReadOnlyWorld
     {

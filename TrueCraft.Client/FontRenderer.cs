@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace TrueCraft.Client.Linux
+namespace TrueCraft.Client
 {
     public class FontRenderer
     {

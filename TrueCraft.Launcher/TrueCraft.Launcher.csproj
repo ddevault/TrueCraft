@@ -58,10 +58,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TrueCraft.Client.Linux\TrueCraft.Client.Linux.csproj">
-      <Project>{A6516869-A2FB-4E31-85C8-2285490CB32C}</Project>
-      <Name>TrueCraft.Client.Linux</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TrueCraft.API\TrueCraft.API.csproj">
       <Project>{FEE55B54-91B0-4325-A2C3-D576C0B7A81F}</Project>
       <Name>TrueCraft.API</Name>
@@ -77,6 +73,10 @@
     <ProjectReference Include="..\externals\fNbt\fNbt\fNbt.csproj">
       <Project>{4488498D-976D-4DA3-BF72-109531AF0488}</Project>
       <Name>fNbt</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TrueCraft.Client\TrueCraft.Client.csproj">
+      <Project>{A6516869-A2FB-4E31-85C8-2285490CB32C}</Project>
+      <Name>TrueCraft.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

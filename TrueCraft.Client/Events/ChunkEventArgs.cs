@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TrueCraft.Client.Linux.Events
+namespace TrueCraft.Client.Events
 {
     public class ChunkEventArgs
     {

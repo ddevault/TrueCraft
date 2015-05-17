@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Linq;
-using TrueCraft.Client.Linux.Rendering;
+using TrueCraft.Client.Rendering;
 using TrueCraft.Core.World;
 using TrueCraft.API;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 using TrueCraft.API.Logic;
 
-namespace TrueCraft.Client.Linux
+namespace TrueCraft.Client
 {
     /// <summary>
     /// A daemon of sorts that creates meshes from chunks.

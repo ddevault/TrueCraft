@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace TrueCraft.Client.Linux.Interface
+namespace TrueCraft.Client.Interface
 {
     public interface IGameInterface
     {
