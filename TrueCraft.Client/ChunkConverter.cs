@@ -104,7 +104,7 @@ namespace TrueCraft.Client
             Coordinates3D.West
         };
 
-        private struct RenderThreadState
+        private class RenderThreadState
         {
             public readonly List<VertexPositionNormalTexture> OpaqueVerticies;
             public readonly List<int> OpaqueIndicies;
