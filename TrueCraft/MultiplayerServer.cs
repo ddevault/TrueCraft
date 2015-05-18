@@ -198,7 +198,7 @@ namespace TrueCraft
 
         public void SendMessage(string message, params object[] parameters)
         {
-            var compiled = String.Format(message, parameters);
+            var compiled = string.Format(message, parameters);
             var parts = compiled.Split('\n');
             foreach (var client in Clients)
             {
