@@ -27,9 +27,9 @@ namespace TrueCraft.Client
         private ChunkConverter ChunkConverter { get; set; }
         private DateTime NextPhysicsUpdate { get; set; }
         private List<Mesh> ChunkMeshes { get; set; }
-        private ConcurrentBag<Action> PendingMainThreadActions { get; set; }
-        private ConcurrentBag<Mesh> IncomingChunks { get; set; }
-        private ConcurrentBag<Mesh> IncomingTransparentChunks { get; set; }
+        private ConcurrentQueue<Action> PendingMainThreadActions { get; set; }
+        private ConcurrentQueue<Mesh> IncomingChunks { get; set; }
+        private ConcurrentQueue<Mesh> IncomingTransparentChunks { get; set; }
         private List<Mesh> TransparentChunkMeshes { get; set; }
         private Matrix Camera;
         private Matrix Perspective;
@@ -52,9 +52,9 @@ namespace TrueCraft.Client
             NextPhysicsUpdate = DateTime.MinValue;
             ChunkMeshes = new List<Mesh>();
             TransparentChunkMeshes = new List<Mesh>();
-            IncomingChunks = new ConcurrentBag<Mesh>();
-            IncomingTransparentChunks = new ConcurrentBag<Mesh>();
-            PendingMainThreadActions = new ConcurrentBag<Action>();
+            IncomingChunks = new ConcurrentQueue<Mesh>();
+            IncomingTransparentChunks = new ConcurrentQueue<Mesh>();
+            PendingMainThreadActions = new ConcurrentQueue<Action>();
             MouseCaptured = true;
         }
 
@@ -67,8 +67,8 @@ namespace TrueCraft.Client
             Client.ChunkLoaded += (sender, e) => ChunkConverter.QueueChunk(e.Chunk);
             ChunkConverter.Start((opaque, transparent) =>
             {
-                IncomingChunks.Add(opaque);
-                IncomingTransparentChunks.Add(transparent);
+                IncomingChunks.Enqueue(opaque);
+                IncomingTransparentChunks.Enqueue(transparent);
             });
             Client.PropertyChanged += HandleClientPropertyChanged;
             Client.Connect(EndPoint);
@@ -87,7 +87,7 @@ namespace TrueCraft.Client
                     UpdateMatricies();
                     var sorter = new ChunkConverter.ChunkSorter(new Coordinates3D(
                         (int)Client.Position.X, 0, (int)Client.Position.Z));
-                    PendingMainThreadActions.Add(() => TransparentChunkMeshes.Sort(sorter));
+                    PendingMainThreadActions.Enqueue(() => TransparentChunkMeshes.Sort(sorter));
                     break;
             }
         }
@@ -181,12 +181,12 @@ namespace TrueCraft.Client
             }
 
             Mesh mesh;
-            if (IncomingChunks.TryTake(out mesh))
+            if (!IncomingChunks.IsEmpty && IncomingChunks.TryDequeue(out mesh))
                 ChunkMeshes.Add(mesh);
-            if (IncomingTransparentChunks.TryTake(out mesh))
+            if (!IncomingTransparentChunks.IsEmpty && IncomingTransparentChunks.TryDequeue(out mesh))
                 TransparentChunkMeshes.Add(mesh);
             Action action;
-            if (PendingMainThreadActions.TryTake(out action))
+            if (!PendingMainThreadActions.IsEmpty && PendingMainThreadActions.TryDequeue(out action))
                 action();
 
             if (NextPhysicsUpdate < DateTime.Now && Client.LoggedIn)
@@ -274,7 +274,7 @@ namespace TrueCraft.Client
 
             int fps = (int)(1 / gameTime.ElapsedGameTime.TotalSeconds);
             DejaVu.DrawText(SpriteBatch, 0, GraphicsDevice.Viewport.Height - 30,
-                string.Format("{0} FPS, {1} verticies, {2} chunks", fps + 1, verticies, chunks));
+                string.Format("{0} FPS, {1} verticies, {2} chunks, {3}/{4}", fps + 1, verticies, chunks, Client.Yaw, Client.Pitch));
             SpriteBatch.End();
 
             base.Draw(gameTime);

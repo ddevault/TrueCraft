@@ -23,8 +23,9 @@ namespace TrueCraft.Client.Handlers
             var packet = (ChunkDataPacket)_packet;
             var data = ZlibStream.UncompressBuffer(packet.CompressedData);
             IChunk chunk;
+            client.World.FindChunk(new Coordinates2D(packet.X, packet.Z));
             var adjustedCoords = client.World.World.FindBlockPosition(
-                                     new Coordinates3D(packet.X, packet.Y, packet.Z), out chunk);
+                new Coordinates3D(packet.X, packet.Y, packet.Z), out chunk);
 
             if (packet.Width == Chunk.Width
                 && packet.Height == Chunk.Height
