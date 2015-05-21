@@ -41,11 +41,13 @@
   <PropertyGroup Condition=" '$(OS)' == 'OSX' ">
     <DefineConstants>$(DefineConstants);OSX</DefineConstants>
   </PropertyGroup>
-  <ItemGroup>
+  <ItemGroup Condition=" '$(OS)' == 'Unix' ">
     <Reference Include="MonoGame.Framework, Version=3.4.0.459, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MonoGame.Framework.Linux.3.4.0.459\lib\net40\MonoGame.Framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\MonoGame.Framework.Linux.3.4.0.459\lib\net40\OpenTK.dll</HintPath>
       <Private>True</Private>
