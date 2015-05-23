@@ -18,18 +18,18 @@ namespace TrueCraft.Commands
 
         public override void Handle(IRemoteClient client, string alias, string[] arguments)
         {
-            if (arguments.Length < 1)
+            if (arguments.Length > 1)
             {
                 Help(client, alias, arguments);
                 return;
             }
 
-            var identifier = arguments.Length >= 1 ? arguments[0] : "0";
+            var identifier = arguments.Length == 1 ? arguments[0] : "1";
 
             ICommand found;
             if ((found = Program.CommandManager.FindByName(identifier)) != null)
             {
-                found.Handle(client, identifier, new string[0]);
+                found.Help(client, identifier, new string[0]);
                 return;
             }
             else if ((found = Program.CommandManager.FindByAlias(identifier)) != null)
