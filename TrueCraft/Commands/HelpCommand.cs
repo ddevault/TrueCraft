@@ -29,7 +29,7 @@ namespace TrueCraft.Commands
             ICommand found;
             if ((found = Program.CommandManager.FindByName(identifier)) != null)
             {
-                found.Handle(client, identifier, new string[0]);
+                found.Help(client, identifier, new string[0]);
                 return;
             }
             else if ((found = Program.CommandManager.FindByAlias(identifier)) != null)
