@@ -51,7 +51,6 @@ namespace TrueCraft.Client
             ChunkQueue = new ConcurrentQueue<ReadOnlyChunk>();
             ChunkWorker = new Thread(new ThreadStart(DoChunks));
             ChunkWorker.IsBackground = true;
-            ChunkWorker.Priority = ThreadPriority.Lowest;
             BlockRepository = blockRepository;
             Graphics = graphics;
         }
@@ -77,15 +76,14 @@ namespace TrueCraft.Client
             while (true)
             {
                 ReadOnlyChunk chunk;
-                if (ChunkQueue.Any())
+                if (ChunkQueue.TryDequeue(out chunk))
                 {
-                    while (!ChunkQueue.TryDequeue(out chunk)) { }
                     var mesh = ProcessChunk(chunk);
                     mesh.Item1.Data = chunk;
                     mesh.Item2.Data = chunk;
                     Consumer(mesh.Item1, mesh.Item2);
                 }
-                Thread.Yield();
+                Thread.Sleep(1);
             }
         }
 
