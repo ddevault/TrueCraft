@@ -11,16 +11,4 @@ before_deploy:
 - "(cd ./TrueCraft.Client/bin/Release && tar -czvf ../../../artifacts/TrueCraft.Client.tar.gz *)"
 - "(cd ./TrueCraft/bin/Release && tar -czvf ../../../artifacts/TrueCraft.Server.tar.gz *)"
 - "(cd ./TrueCraft.Launcher/bin/Release && tar -czvf ../../../artifacts/TrueCraft.Launcher.tar.gz *)"
-deploy:
-  provider: s3
-  skip_cleanup: true
-  access_key_id: AKIAJXYVPWRXZH3IE5KQ
-  secret_access_key:
-    secure: "IHbglAq8tD29pMFK8/4MjTPE3VemmLJk54oWIL1y+DDKwS0Syf35mB31+wqm0vsU4oODq94CF6F0EPgzpqMmTcNTtOShgguiV3Xm4gpB8amowybFsEjuWcl7Grwu8cs1ew89qglbNe0/xsp57Nre0jz8Mm+GGF/IOZq8uMDDiSPuI0Tt00MxiogOZ153tUZNC4CPK4mtVfYYENFdgsqKhy0r8U1wNMTv7Nyybr3VqnjPhoeNHCP/vQcyksNNWiiDapC7eyMu1Nkat/tbDPW/VQtzq/NU0f6Smtjg6E5ilj0cAWpJefVPEvl7GNE1fBacE8VVh/LPsf4fWerVRaWRXxnDuzzMfnlUb9QB66rgE4U7slwQUvbolydiCiAsUP/7ixRt3jmaNFHzW6aky4DS6zqzR/WPlqENusrUrKLj4LV+j2KfvA3oNYOSufb1hjaCT0RLNnBaM/5YUmS/Sk6aFYBWjifVJ7nCRl0rypH7JZc3o37NpnFffluA23qEqaJyj2rf1Sxv+Fm6zhVUWrkkh5hnxZFUMwh5R37JewJpZNP1CmwXIwpd8YjBYzUMQx5t8z/3RehW/x4gBCjS/EF58OlWpiIPL2ucGbfB7yWwocrK5vAxzk1ps07rf7HxkXomZWcTdUllwiBdQQGAm+9loTUrSHU/TDd40X06jgxtDqA="
-  bucket: truecraft
-  local-dir: /home/travis/build/Mitch528/TrueCraft/artifacts
-  upload-dir: linux
-  acl: public_read
-  on:
-    branch: travis-ci
-    repo: Mitch528/TrueCraft
+#TODO: Configure Deployment
