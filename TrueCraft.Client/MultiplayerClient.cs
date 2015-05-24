@@ -89,16 +89,16 @@ namespace TrueCraft.Client
             while (true)
             {
                 IPacket packet;
-                DateTime limit = DateTime.UtcNow.AddMilliseconds(500);
-                while (Client.Available != 0 && DateTime.UtcNow < limit)
+                DateTime limit = DateTime.Now.AddMilliseconds(500);
+                while (Client.Available != 0 && DateTime.Now < limit)
                 {
                     idle = false;
                     packet = PacketReader.ReadPacket(Stream, false);
                     if (PacketHandlers[packet.ID] != null)
                         PacketHandlers[packet.ID](packet, this);
                 }
-                limit = DateTime.UtcNow.AddMilliseconds(500);
-                while (!PacketQueue.IsEmpty && DateTime.UtcNow < limit)
+                limit = DateTime.Now.AddMilliseconds(500);
+                while (PacketQueue.Any() && DateTime.Now < limit)
                 {
                     idle = false;
                     while (!PacketQueue.TryDequeue(out packet)) { }
