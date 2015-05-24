@@ -1,0 +1,12 @@
+language: csharp
+solution: TrueCraft.sln
+mono:
+- latest
+before_install:
+- git submodule update --init --recursive
+script:
+- xbuild /p:Configuration=Release TrueCraft.sln
+before_deploy:
+- mkdir artifacts
+- "(cd ./TrueCraft.Launcher/bin/Release && tar -czvf ../../../artifacts/TrueCraft.tar.gz *)"
+#TODO: Configure Deployment
