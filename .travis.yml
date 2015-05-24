@@ -8,7 +8,5 @@ script:
 - xbuild /p:Configuration=Release TrueCraft.sln
 before_deploy:
 - mkdir artifacts
-- "(cd ./TrueCraft.Client/bin/Release && tar -czvf ../../../artifacts/TrueCraft.Client.tar.gz *)"
-- "(cd ./TrueCraft/bin/Release && tar -czvf ../../../artifacts/TrueCraft.Server.tar.gz *)"
-- "(cd ./TrueCraft.Launcher/bin/Release && tar -czvf ../../../artifacts/TrueCraft.Launcher.tar.gz *)"
+- "(cd ./TrueCraft.Launcher/bin/Release && tar -czvf ../../../artifacts/TrueCraft.tar.gz *)"
 #TODO: Configure Deployment
