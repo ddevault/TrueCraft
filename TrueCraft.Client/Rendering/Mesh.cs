@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace TrueCraft.Client.Rendering
 {
-    public class Mesh
+    public class Mesh : IDisposable
     {
         private bool Empty { get; set; }
         public object Data { get; set; }
@@ -34,10 +34,28 @@ namespace TrueCraft.Client.Rendering
 
         ~Mesh()
         {
-            if (Verticies != null)
-                Verticies.Dispose();
-            if (Indicies != null)
-                Indicies.Dispose();
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (Verticies != null)
+                    Verticies.Dispose();
+                if (Indicies != null)
+                    Indicies.Dispose();
+            }
+
+            Verticies = null;
+            Indicies = null;
         }
 
         public void Draw(Effect effect)

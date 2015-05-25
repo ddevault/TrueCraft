@@ -33,7 +33,7 @@ namespace TrueCraft.Client
             {
                 var x = (ReadOnlyChunk)_x.Data;
                 var y = (ReadOnlyChunk)_y.Data;
-                return (int)(new Coordinates3D(y.X * Chunk.Width, 0, y.Z * Chunk.Depth).DistanceTo(Camera) - 
+                return (int)(new Coordinates3D(y.X * Chunk.Width, 0, y.Z * Chunk.Depth).DistanceTo(Camera) -
                     new Coordinates3D(x.X * Chunk.Width, 0, x.Z * Chunk.Depth).DistanceTo(Camera));
             }
         }
@@ -46,11 +46,14 @@ namespace TrueCraft.Client
         private IBlockRepository BlockRepository { get; set; }
         private ChunkConsumer Consumer { get; set; }
 
+        private CancellationTokenSource ChunksCts { get; set; }
+
         public ChunkConverter(GraphicsDevice graphics, IBlockRepository blockRepository)
         {
             ChunkQueue = new ConcurrentQueue<ReadOnlyChunk>();
-            ChunkWorker = new Thread(new ThreadStart(DoChunks));
+            ChunkWorker = new Thread(DoChunks);
             ChunkWorker.IsBackground = true;
+            ChunksCts = new CancellationTokenSource();
             BlockRepository = blockRepository;
             Graphics = graphics;
         }
@@ -68,13 +71,16 @@ namespace TrueCraft.Client
 
         public void Stop()
         {
-            ChunkWorker.Abort();
+            ChunksCts.Cancel();
         }
 
         private void DoChunks()
         {
             while (true)
             {
+                if (ChunksCts.Token.IsCancellationRequested)
+                    return;
+
                 ReadOnlyChunk chunk;
                 if (ChunkQueue.TryDequeue(out chunk))
                 {
