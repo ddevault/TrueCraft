@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using TrueCraft.API.Networking;
 using TrueCraft.Core.Networking.Packets;
 
@@ -9,8 +10,8 @@ namespace TrueCraft.Core.Networking
         public static readonly int Version = 14;
         public int ProtocolVersion { get { return Version; } }
 
-        private Type[] ClientboundPackets = new Type[0x100];
-        private Type[] ServerboundPackets = new Type[0x100];
+        private Func<IPacket>[] ClientboundPackets = new Func<IPacket>[0x100];
+        private Func<IPacket>[] ServerboundPackets = new Func<IPacket>[0x100];
 
         /// <summary>
         /// Registers TrueCraft.Core implementations of all packets used by vanilla Minecraft.
@@ -89,24 +90,26 @@ namespace TrueCraft.Core.Networking
 
         public void RegisterPacketType<T>(bool clientbound = true, bool serverbound = true) where T : IPacket
         {
-            var packet = (IPacket)Activator.CreateInstance(typeof(T));
+            var func = Expression.Lambda<Func<IPacket>>(Expression.Convert(Expression.New(typeof(T)), typeof(IPacket))).Compile();
+            var packet = func();
+
             if (clientbound)
-                ClientboundPackets[packet.ID] = typeof(T);
+                ClientboundPackets[packet.ID] = func;
             if (serverbound)
-                ServerboundPackets[packet.ID] = typeof(T);
+                ServerboundPackets[packet.ID] = func;
         }
 
         public IPacket ReadPacket(IMinecraftStream stream, bool serverbound = true)
         {
             var id = stream.ReadUInt8();
-            Type type;
+            Func<IPacket> createPacket;
             if (serverbound)
-                type = ServerboundPackets[id];
+                createPacket = ServerboundPackets[id];
             else
-                type = ClientboundPackets[id];
-            if (type == null)
+                createPacket = ClientboundPackets[id];
+            if (createPacket == null)
                 throw new NotSupportedException("Unable to read packet type 0x" + id.ToString("X2"));
-            var instance = (IPacket)Activator.CreateInstance(type);
+            var instance = createPacket();
             instance.ReadPacket(stream);
             return instance;
         }

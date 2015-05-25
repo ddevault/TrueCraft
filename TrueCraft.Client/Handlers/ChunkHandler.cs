@@ -31,14 +31,14 @@ namespace TrueCraft.Client.Handlers
                 && packet.Depth == Chunk.Depth) // Fast path
             {
                 // Block IDs
-                Array.Copy(data, 0, chunk.Blocks, 0, chunk.Blocks.Length);
+                Buffer.BlockCopy(data, 0, chunk.Blocks, 0, chunk.Blocks.Length);
                 // Block metadata
-                Array.Copy(data, chunk.Blocks.Length, chunk.Metadata.Data, 0, chunk.Metadata.Data.Length);
+                Buffer.BlockCopy(data, chunk.Blocks.Length, chunk.Metadata.Data, 0, chunk.Metadata.Data.Length);
                 // Block light
-                Array.Copy(data, chunk.Blocks.Length + chunk.Metadata.Data.Length,
+                Buffer.BlockCopy(data, chunk.Blocks.Length + chunk.Metadata.Data.Length,
                     chunk.BlockLight.Data, 0, chunk.BlockLight.Data.Length);
                 // Sky light
-                Array.Copy(data, chunk.Blocks.Length + chunk.Metadata.Data.Length + chunk.BlockLight.Data.Length,
+                Buffer.BlockCopy(data, chunk.Blocks.Length + chunk.Metadata.Data.Length + chunk.BlockLight.Data.Length,
                     chunk.SkyLight.Data, 0, chunk.SkyLight.Data.Length);
             }
             else // Slow path

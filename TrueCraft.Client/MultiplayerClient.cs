@@ -31,14 +31,14 @@ namespace TrueCraft.Client
         private TcpClient Client { get; set; }
         private IMinecraftStream Stream { get; set; }
         private PacketReader PacketReader { get; set; }
-        private ConcurrentQueue<IPacket> PacketQueue { get; set; }
+        private BlockingCollection<IPacket> PacketQueue { get; set; }
         private Thread NetworkWorker { get; set; }
         private readonly PacketHandler[] PacketHandlers;
 
         public MultiplayerClient()
         {
             Client = new TcpClient();
-            PacketQueue = new ConcurrentQueue<IPacket>();
+            PacketQueue = new BlockingCollection<IPacket>(new ConcurrentQueue<IPacket>());
             PacketReader = new PacketReader();
             PacketReader.RegisterCorePackets();
             NetworkWorker = new Thread(new ThreadStart(DoNetwork));
@@ -71,7 +71,7 @@ namespace TrueCraft.Client
 
         public void QueuePacket(IPacket packet)
         {
-            PacketQueue.Enqueue(packet);
+            PacketQueue.Add(packet);
         }
 
         private void ConnectionComplete(IAsyncResult result)
@@ -101,9 +101,12 @@ namespace TrueCraft.Client
                 while (PacketQueue.Any() && DateTime.Now < limit)
                 {
                     idle = false;
-                    while (!PacketQueue.TryDequeue(out packet)) { }
-                    PacketReader.WritePacket(Stream, packet);
-                    Stream.BaseStream.Flush();
+
+                    if (PacketQueue.TryTake(out packet, 100))
+                    {
+                        PacketReader.WritePacket(Stream, packet);
+                        Stream.BaseStream.Flush();
+                    }
                 }
                 if (idle)
                     Thread.Sleep(100);

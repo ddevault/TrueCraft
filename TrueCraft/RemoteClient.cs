@@ -29,7 +29,7 @@ namespace TrueCraft
         {
             NetworkStream = stream;
             MinecraftStream = new MinecraftStream(new TrueCraft.Core.Networking.BufferedStream(NetworkStream));
-            PacketQueue = new ConcurrentQueue<IPacket>();
+            PacketQueue = new BlockingCollection<IPacket>(new ConcurrentQueue<IPacket>());
             LoadedChunks = new List<Coordinates2D>();
             Server = server;
             Inventory = new InventoryWindow(server.CraftingRepository);
@@ -52,7 +52,7 @@ namespace TrueCraft
 
         public NetworkStream NetworkStream { get; set; }
         public IMinecraftStream MinecraftStream { get; internal set; }
-        public ConcurrentQueue<IPacket> PacketQueue { get; private set; }
+        public BlockingCollection<IPacket> PacketQueue { get; private set; }
         public string Username { get; internal set; }
         public bool LoggedIn { get; internal set; }
         public IMultiplayerServer Server { get; set; }
@@ -191,7 +191,7 @@ namespace TrueCraft
 
         public void QueuePacket(IPacket packet)
         {
-            PacketQueue.Enqueue(packet);
+            PacketQueue.Add(packet);
         }
 
         public void SendMessage(string message)
@@ -321,10 +321,10 @@ namespace TrueCraft
 
             byte[] data = new byte[bytesPerChunk];
 
-            Array.Copy(chunk.Blocks, 0, data, 0, chunk.Blocks.Length);
-            Array.Copy(chunk.Metadata.Data, 0, data, chunk.Blocks.Length, chunk.Metadata.Data.Length);
-            Array.Copy(chunk.BlockLight.Data, 0, data, chunk.Blocks.Length + chunk.Metadata.Data.Length, chunk.BlockLight.Data.Length);
-            Array.Copy(chunk.SkyLight.Data, 0, data, chunk.Blocks.Length + chunk.Metadata.Data.Length 
+            Buffer.BlockCopy(chunk.Blocks, 0, data, 0, chunk.Blocks.Length);
+            Buffer.BlockCopy(chunk.Metadata.Data, 0, data, chunk.Blocks.Length, chunk.Metadata.Data.Length);
+            Buffer.BlockCopy(chunk.BlockLight.Data, 0, data, chunk.Blocks.Length + chunk.Metadata.Data.Length, chunk.BlockLight.Data.Length);
+            Buffer.BlockCopy(chunk.SkyLight.Data, 0, data, chunk.Blocks.Length + chunk.Metadata.Data.Length 
                 + chunk.BlockLight.Data.Length, chunk.SkyLight.Data.Length);
 
             var result = ZlibStream.CompressBuffer(data);
