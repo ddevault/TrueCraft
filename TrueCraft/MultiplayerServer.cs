@@ -274,21 +274,26 @@ namespace TrueCraft
                     RemoteClient client;
                     lock (ClientLock)
                         client = Clients[i] as RemoteClient;
+
+                    if (client == null)
+                        continue;
+
                     while (client.PacketQueue.Count != 0)
                     {
                         idle = false;
                         try
                         {
                             IPacket packet;
-                            while (!client.PacketQueue.TryDequeue(out packet))
-                                ;
-                            LogPacket(packet, false);
-                            PacketReader.WritePacket(client.MinecraftStream, packet);
-                            client.MinecraftStream.BaseStream.Flush();
-                            if (packet is DisconnectPacket)
+                            if (client.PacketQueue.TryTake(out packet))
                             {
-                                DisconnectClient(client);
-                                break;
+                                LogPacket(packet, false);
+                                PacketReader.WritePacket(client.MinecraftStream, packet);
+                                client.MinecraftStream.BaseStream.Flush();
+                                if (packet is DisconnectPacket)
+                                {
+                                    DisconnectClient(client);
+                                    break;
+                                }
                             }
                         }
                         catch (SocketException e)
