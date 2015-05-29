@@ -53,19 +53,27 @@ namespace TrueCraft.Client.Rendering
         public event EventHandler<MeshGeneratedEventArgs> MeshGenerated;
 
         private ConcurrentQueue<ReadOnlyChunk> ChunkQueue { get; set; }
-        private Thread ChunkWorker { get; set; }
-        private GraphicsDevice Graphics { get; set; }
+        private GraphicsDevice GraphicsDevice { get; set; }
         private IBlockRepository BlockRepository { get; set; }
-        private CancellationTokenSource ThreadCancellationToken { get; set; }
+        private List<Tuple<Thread, CancellationTokenSource>> RenderThreads { get; set; }
 
         public ChunkConverter(GraphicsDevice graphics, IBlockRepository blockRepository)
         {
             ChunkQueue = new ConcurrentQueue<ReadOnlyChunk>();
-            ChunkWorker = new Thread(DoChunks);
-            ChunkWorker.IsBackground = true;
-            ThreadCancellationToken = new CancellationTokenSource();
+            RenderThreads = new List<Tuple<Thread, CancellationTokenSource>>();
+            var threads = Environment.ProcessorCount - 2;
+            if (threads < 1)
+                threads = 1;
+            for (int i = 0; i < threads; i++)
+            {
+                var token = new CancellationTokenSource();
+                var worker = new Thread(() => DoChunks(token));
+                worker.IsBackground = true;
+                RenderThreads.Add(new Tuple<Thread, CancellationTokenSource>(worker, token));
+            }
+
             BlockRepository = blockRepository;
-            Graphics = graphics;
+            GraphicsDevice = graphics;
         }
 
         public void QueueChunk(ReadOnlyChunk chunk)
@@ -75,25 +83,26 @@ namespace TrueCraft.Client.Rendering
 
         public void Start()
         {
-            ChunkWorker.Start();
+            RenderThreads.ForEach(t => t.Item1.Start());
         }
 
         public void Stop()
         {
-            ThreadCancellationToken.Cancel();
+            RenderThreads.ForEach(t => t.Item2.Cancel());
         }
 
-        private void DoChunks()
+        private void DoChunks(CancellationTokenSource token)
         {
+            var state = new RenderState();
             while (true)
             {
-                if (ThreadCancellationToken.Token.IsCancellationRequested)
+                if (token.Token.IsCancellationRequested)
                     return;
 
                 ReadOnlyChunk chunk;
                 if (ChunkQueue.TryDequeue(out chunk))
                 {
-                    ProcessChunk(chunk);
+                    ProcessChunk(chunk, state);
                 }
                 Thread.Sleep(1);
             }
@@ -109,19 +118,22 @@ namespace TrueCraft.Client.Rendering
             Coordinates3D.West
         };
 
-        private readonly List<VertexPositionNormalTexture> OpaqueVerticies = new List<VertexPositionNormalTexture>();
-        private readonly List<int> OpaqueIndicies = new List<int>();
-        private readonly List<VertexPositionNormalTexture> TransparentVerticies = new List<VertexPositionNormalTexture>();
-        private readonly List<int> TransparentIndicies = new List<int>();
-        private readonly HashSet<Coordinates3D> DrawableCoordinates = new HashSet<Coordinates3D>();
-
-        private void ProcessChunk(ReadOnlyChunk chunk)
+        private class RenderState
         {
-            OpaqueVerticies.Clear();
-            OpaqueIndicies.Clear();
-            TransparentVerticies.Clear();
-            TransparentIndicies.Clear();
-            DrawableCoordinates.Clear();
+            public readonly List<VertexPositionNormalTexture> OpaqueVerticies = new List<VertexPositionNormalTexture>();
+            public readonly List<int> OpaqueIndicies = new List<int>();
+            public readonly List<VertexPositionNormalTexture> TransparentVerticies = new List<VertexPositionNormalTexture>();
+            public readonly List<int> TransparentIndicies = new List<int>();
+            public readonly HashSet<Coordinates3D> DrawableCoordinates = new HashSet<Coordinates3D>();
+        }
+
+        private void ProcessChunk(ReadOnlyChunk chunk, RenderState state)
+        {
+            state.OpaqueVerticies.Clear();
+            state.OpaqueIndicies.Clear();
+            state.TransparentVerticies.Clear();
+            state.TransparentIndicies.Clear();
+            state.DrawableCoordinates.Clear();
 
             for (byte x = 0; x < Chunk.Width; x++)
             {
@@ -136,7 +148,7 @@ namespace TrueCraft.Client.Rendering
                             || coords.Y == 0 || coords.Y == Chunk.Height - 1
                             || coords.Z == 0 || coords.Z == Chunk.Depth - 1))
                         {
-                            DrawableCoordinates.Add(coords);
+                            state.DrawableCoordinates.Add(coords);
                         }
                         if (!provider.Opaque)
                         {
@@ -151,14 +163,14 @@ namespace TrueCraft.Client.Rendering
                                     continue;
                                 }
                                 if (chunk.GetBlockId(next) != 0)
-                                    DrawableCoordinates.Add(next);
+                                    state.DrawableCoordinates.Add(next);
                             }
                         }
                     }
                 }
             }
-            var enumerator = DrawableCoordinates.GetEnumerator();
-            for (int j = 0; j < DrawableCoordinates.Count; j++)
+            var enumerator = state.DrawableCoordinates.GetEnumerator();
+            for (int j = 0; j < state.DrawableCoordinates.Count; j++)
             {
                 var coords = enumerator.Current;
                 enumerator.MoveNext();
@@ -175,23 +187,23 @@ namespace TrueCraft.Client.Rendering
                 {
                     int[] i;
                     var v = BlockRenderer.RenderBlock(provider, descriptor,
-                                new Vector3(chunk.X * Chunk.Width + coords.X, coords.Y, chunk.Z * Chunk.Depth + coords.Z),
-                                OpaqueVerticies.Count, out i);
-                    OpaqueVerticies.AddRange(v);
-                    OpaqueIndicies.AddRange(i);
+                        new Vector3(chunk.X * Chunk.Width + coords.X, coords.Y, chunk.Z * Chunk.Depth + coords.Z),
+                        state.OpaqueVerticies.Count, out i);
+                    state.OpaqueVerticies.AddRange(v);
+                    state.OpaqueIndicies.AddRange(i);
                 }
                 else
                 {
                     int[] i;
                     var v = BlockRenderer.RenderBlock(provider, descriptor,
-                                new Vector3(chunk.X * Chunk.Width + coords.X, coords.Y, chunk.Z * Chunk.Depth + coords.Z),
-                                TransparentVerticies.Count, out i);
-                    TransparentVerticies.AddRange(v);
-                    TransparentIndicies.AddRange(i);
+                        new Vector3(chunk.X * Chunk.Width + coords.X, coords.Y, chunk.Z * Chunk.Depth + coords.Z),
+                        state.TransparentVerticies.Count, out i);
+                    state.TransparentVerticies.AddRange(v);
+                    state.TransparentIndicies.AddRange(i);
                 }
             }
-            var opaque = new ChunkMesh(chunk, Graphics, OpaqueVerticies.ToArray(), OpaqueIndicies.ToArray());
-            var transparent = new ChunkMesh(chunk, Graphics, TransparentVerticies.ToArray(), TransparentIndicies.ToArray());
+            var opaque = new ChunkMesh(chunk, GraphicsDevice, state.OpaqueVerticies.ToArray(), state.OpaqueIndicies.ToArray());
+            var transparent = new ChunkMesh(chunk, GraphicsDevice, state.TransparentVerticies.ToArray(), state.TransparentIndicies.ToArray());
             if (MeshGenerated != null)
             {
                 MeshGenerated(this, new MeshGeneratedEventArgs(opaque, false));
