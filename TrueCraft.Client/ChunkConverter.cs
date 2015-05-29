@@ -118,8 +118,8 @@ namespace TrueCraft.Client
             DrawableCoordinates.Clear();
 
             var boundingBox = new Microsoft.Xna.Framework.BoundingBox(
-                new Vector3(chunk.X * Chunk.Width, 0, chunk.Z * Chunk.Depth),
-                new Vector3(chunk.X * Chunk.Width + Chunk.Width, Chunk.Height, chunk.Z * Chunk.Depth + Chunk.Depth));
+              new Vector3(chunk.X * Chunk.Width, 0, chunk.Z * Chunk.Depth),
+              new Vector3(chunk.X * Chunk.Width + Chunk.Width, Chunk.Height, chunk.Z * Chunk.Depth + Chunk.Depth));
 
             for (byte x = 0; x < Chunk.Width; x++)
             {
@@ -130,8 +130,12 @@ namespace TrueCraft.Client
                         var coords = new Coordinates3D(x, y, z);
                         var id = chunk.GetBlockId(coords);
                         var provider = BlockRepository.GetBlockProvider(id);
-                        if (id != 0)
+                        if (id != 0 && (coords.X == 0 || coords.X == Chunk.Width - 1
+                            || coords.Y == 0 || coords.Y == Chunk.Height - 1
+                            || coords.Z == 0 || coords.Z == Chunk.Depth - 1))
+                        {
                             DrawableCoordinates.Add(coords);
+                        }
                         if (!provider.Opaque)
                         {
                             // Add adjacent blocks
