@@ -95,7 +95,6 @@
     <Compile Include="Handlers\ChunkHandler.cs" />
     <Compile Include="ReadOnlyWorld.cs" />
     <Compile Include="Events\ChunkEventArgs.cs" />
-    <Compile Include="ChunkConverter.cs" />
     <Compile Include="PhysicsEngine.cs" />
     <Compile Include="Rendering\Mesh.cs" />
     <Compile Include="Rendering\BlockRenderer.cs" />
@@ -105,6 +104,8 @@
     <Compile Include="Rendering\Blocks\SnowRenderer.cs" />
     <Compile Include="Rendering\Blocks\TorchRenderer.cs" />
     <Compile Include="Rendering\Blocks\LogRenderer.cs" />
+    <Compile Include="Rendering\ChunkMesh.cs" />
+    <Compile Include="Rendering\ChunkConverter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

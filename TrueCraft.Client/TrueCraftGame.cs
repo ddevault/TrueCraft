@@ -65,11 +65,8 @@ namespace TrueCraft.Client
             base.Initialize(); // (calls LoadContent)
             ChunkConverter = new ChunkConverter(Graphics.GraphicsDevice, Client.World.World.BlockRepository);
             Client.ChunkLoaded += (sender, e) => ChunkConverter.QueueChunk(e.Chunk);
-            ChunkConverter.Start((opaque, transparent) =>
-            {
-                IncomingChunks.Add(opaque);
-                IncomingTransparentChunks.Add(transparent);
-            });
+            ChunkConverter.MeshGenerated += ChunkConverter_MeshGenerated;
+            ChunkConverter.Start();
             Client.PropertyChanged += HandleClientPropertyChanged;
             Client.Connect(EndPoint);
             var centerX = GraphicsDevice.Viewport.Width / 2;
@@ -77,6 +74,14 @@ namespace TrueCraft.Client
             Mouse.SetPosition(centerX, centerY);
             UpdateMatricies();
             PreviousKeyboardState = Keyboard.GetState();
+        }
+
+        void ChunkConverter_MeshGenerated(object sender, ChunkConverter.MeshGeneratedEventArgs e)
+        {
+            if (e.Transparent)
+                IncomingTransparentChunks.Add(e.Mesh);
+            else
+                IncomingChunks.Add(e.Mesh);
         }
 
         void HandleClientPropertyChanged(object sender, PropertyChangedEventArgs e)

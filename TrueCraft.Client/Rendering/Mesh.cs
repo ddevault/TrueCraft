@@ -8,7 +8,6 @@ namespace TrueCraft.Client.Rendering
     public class Mesh : IDisposable
     {
         private bool Empty { get; set; }
-        public object Data { get; set; }
         public VertexBuffer Verticies { get; set; }
         public IndexBuffer Indicies { get; set; }
         public BoundingBox BoundingBox { get; set; }

@@ -12,7 +12,7 @@ using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 using TrueCraft.API.Logic;
 
-namespace TrueCraft.Client
+namespace TrueCraft.Client.Rendering
 {
     /// <summary>
     /// A daemon of sorts that creates meshes from chunks.
@@ -31,29 +31,39 @@ namespace TrueCraft.Client
 
             public override int Compare(Mesh _x, Mesh _y)
             {
-                var x = (ReadOnlyChunk)_x.Data;
-                var y = (ReadOnlyChunk)_y.Data;
+                var x = ((ChunkMesh)_x).Chunk;
+                var y = ((ChunkMesh)_y).Chunk;
                 return (int)(new Coordinates3D(y.X * Chunk.Width, 0, y.Z * Chunk.Depth).DistanceTo(Camera) -
                     new Coordinates3D(x.X * Chunk.Width, 0, x.Z * Chunk.Depth).DistanceTo(Camera));
             }
         }
 
-        public delegate void ChunkConsumer(Mesh opaqueMesh, Mesh transparentMesh);
+        public class MeshGeneratedEventArgs : EventArgs
+        {
+            public bool Transparent { get; set; }
+            public Mesh Mesh { get; set; }
+
+            public MeshGeneratedEventArgs(Mesh mesh, bool transparent)
+            {
+                Transparent = transparent;
+                Mesh = mesh;
+            }
+        }
+
+        public event EventHandler<MeshGeneratedEventArgs> MeshGenerated;
 
         private ConcurrentQueue<ReadOnlyChunk> ChunkQueue { get; set; }
         private Thread ChunkWorker { get; set; }
         private GraphicsDevice Graphics { get; set; }
         private IBlockRepository BlockRepository { get; set; }
-        private ChunkConsumer Consumer { get; set; }
-
-        private CancellationTokenSource ChunksCts { get; set; }
+        private CancellationTokenSource ThreadCancellationToken { get; set; }
 
         public ChunkConverter(GraphicsDevice graphics, IBlockRepository blockRepository)
         {
             ChunkQueue = new ConcurrentQueue<ReadOnlyChunk>();
             ChunkWorker = new Thread(DoChunks);
             ChunkWorker.IsBackground = true;
-            ChunksCts = new CancellationTokenSource();
+            ThreadCancellationToken = new CancellationTokenSource();
             BlockRepository = blockRepository;
             Graphics = graphics;
         }
@@ -63,31 +73,27 @@ namespace TrueCraft.Client
             ChunkQueue.Enqueue(chunk);
         }
 
-        public void Start(ChunkConsumer consumer)
+        public void Start()
         {
-            Consumer = consumer;
             ChunkWorker.Start();
         }
 
         public void Stop()
         {
-            ChunksCts.Cancel();
+            ThreadCancellationToken.Cancel();
         }
 
         private void DoChunks()
         {
             while (true)
             {
-                if (ChunksCts.Token.IsCancellationRequested)
+                if (ThreadCancellationToken.Token.IsCancellationRequested)
                     return;
 
                 ReadOnlyChunk chunk;
                 if (ChunkQueue.TryDequeue(out chunk))
                 {
-                    var mesh = ProcessChunk(chunk);
-                    mesh.Item1.Data = chunk;
-                    mesh.Item2.Data = chunk;
-                    Consumer(mesh.Item1, mesh.Item2);
+                    ProcessChunk(chunk);
                 }
                 Thread.Sleep(1);
             }
@@ -109,17 +115,13 @@ namespace TrueCraft.Client
         private readonly List<int> TransparentIndicies = new List<int>();
         private readonly HashSet<Coordinates3D> DrawableCoordinates = new HashSet<Coordinates3D>();
 
-        private Tuple<Mesh, Mesh> ProcessChunk(ReadOnlyChunk chunk)
+        private void ProcessChunk(ReadOnlyChunk chunk)
         {
             OpaqueVerticies.Clear();
             OpaqueIndicies.Clear();
             TransparentVerticies.Clear();
             TransparentIndicies.Clear();
             DrawableCoordinates.Clear();
-
-            var boundingBox = new Microsoft.Xna.Framework.BoundingBox(
-              new Vector3(chunk.X * Chunk.Width, 0, chunk.Z * Chunk.Depth),
-              new Vector3(chunk.X * Chunk.Width + Chunk.Width, Chunk.Height, chunk.Z * Chunk.Depth + Chunk.Depth));
 
             for (byte x = 0; x < Chunk.Width; x++)
             {
@@ -173,8 +175,8 @@ namespace TrueCraft.Client
                 {
                     int[] i;
                     var v = BlockRenderer.RenderBlock(provider, descriptor,
-                        new Vector3(chunk.X * Chunk.Width + coords.X, coords.Y, chunk.Z * Chunk.Depth + coords.Z),
-                        OpaqueVerticies.Count, out i);
+                                new Vector3(chunk.X * Chunk.Width + coords.X, coords.Y, chunk.Z * Chunk.Depth + coords.Z),
+                                OpaqueVerticies.Count, out i);
                     OpaqueVerticies.AddRange(v);
                     OpaqueIndicies.AddRange(i);
                 }
@@ -182,18 +184,19 @@ namespace TrueCraft.Client
                 {
                     int[] i;
                     var v = BlockRenderer.RenderBlock(provider, descriptor,
-                        new Vector3(chunk.X * Chunk.Width + coords.X, coords.Y, chunk.Z * Chunk.Depth + coords.Z),
-                        TransparentVerticies.Count, out i);
+                                new Vector3(chunk.X * Chunk.Width + coords.X, coords.Y, chunk.Z * Chunk.Depth + coords.Z),
+                                TransparentVerticies.Count, out i);
                     TransparentVerticies.AddRange(v);
                     TransparentIndicies.AddRange(i);
                 }
             }
-            var meshes = new Tuple<Mesh, Mesh>(
-                new Mesh(Graphics, OpaqueVerticies.ToArray(), OpaqueIndicies.ToArray(), false),
-                new Mesh(Graphics, TransparentVerticies.ToArray(), TransparentIndicies.ToArray(), false));
-            meshes.Item1.BoundingBox = boundingBox;
-            meshes.Item2.BoundingBox = boundingBox;
-            return meshes;
+            var opaque = new ChunkMesh(chunk, Graphics, OpaqueVerticies.ToArray(), OpaqueIndicies.ToArray());
+            var transparent = new ChunkMesh(chunk, Graphics, TransparentVerticies.ToArray(), TransparentIndicies.ToArray());
+            if (MeshGenerated != null)
+            {
+                MeshGenerated(this, new MeshGeneratedEventArgs(opaque, false));
+                MeshGenerated(this, new MeshGeneratedEventArgs(transparent, true));
+            }
         }
     }
 }
