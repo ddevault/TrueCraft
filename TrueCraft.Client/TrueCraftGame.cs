@@ -171,7 +171,7 @@ namespace TrueCraft.Client
                 Client.Yaw += look.X;
                 Client.Pitch += look.Y;
                 Client.Yaw %= 360;
-                Client.Pitch = MathHelper.Clamp(Client.Pitch, -90, 90);
+                Client.Pitch = MathHelper.Clamp(Client.Pitch, -89.9f, 89.9f);
 
                 if (look != Vector2.Zero)
                     UpdateMatricies();
