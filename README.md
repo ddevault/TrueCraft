@@ -8,7 +8,7 @@ Minecraft beta 1.7.3 (circa September 2011). No decompiled code has been used in
 the development of this software. This is an **implementation** - not a clone.
 TrueCraft is compatible with Minecraft beta 1.7.3 clients and servers.
 
-![](https://a.pomf.se/vebvrs.png)
+![](https://a.pomf.se/yquumh.png)
 
 I miss the old days of Minecraft, when it was a simple game. It was nearly
 perfect. Most of what Mojang has added since beta 1.7.3 is fluff, life support
