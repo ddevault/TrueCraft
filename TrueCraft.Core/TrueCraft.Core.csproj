@@ -311,6 +311,7 @@
     <Compile Include="Logic\Blocks\UprightSignBlock.cs" />
     <Compile Include="TerrainGen\Decorators\LiquidDecorator.cs" />
     <Compile Include="Logic\BlockRepository.cs" />
+    <Compile Include="TrueCraftUser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

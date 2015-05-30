@@ -37,7 +37,7 @@ namespace TrueCraft.Client.Handlers
                 Process.GetCurrentProcess().Kill();
             }
             // TODO: Authentication
-            client.QueuePacket(new LoginRequestPacket(PacketReader.Version, "TestUser"));
+            client.QueuePacket(new LoginRequestPacket(PacketReader.Version, client.User.Username));
         }
 
         public static void HandleLoginResponse(IPacket _packet, MultiplayerClient client)

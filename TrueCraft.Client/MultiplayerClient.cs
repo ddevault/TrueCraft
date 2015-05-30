@@ -12,6 +12,7 @@ using TrueCraft.Core.Logic;
 using TrueCraft.API.Entities;
 using TrueCraft.API;
 using System.ComponentModel;
+using TrueCraft.Core;
 
 namespace TrueCraft.Client
 {
@@ -25,6 +26,7 @@ namespace TrueCraft.Client
         public event EventHandler<ChunkEventArgs> ChunkUnloaded;
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public TrueCraftUser User { get; set; }
         public ReadOnlyWorld World { get; private set; }
         public PhysicsEngine Physics { get; set; }
         public bool LoggedIn { get; internal set; }
@@ -36,8 +38,9 @@ namespace TrueCraft.Client
         private Thread NetworkWorker { get; set; }
         private readonly PacketHandler[] PacketHandlers;
 
-        public MultiplayerClient()
+        public MultiplayerClient(TrueCraftUser user)
         {
+            User = user;
             Client = new TcpClient();
             PacketQueue = new BlockingCollection<IPacket>(new ConcurrentQueue<IPacket>());
             PacketReader = new PacketReader();
@@ -81,7 +84,7 @@ namespace TrueCraft.Client
             Stream = new MinecraftStream(new BufferedStream(Client.GetStream()));
             NetworkWorker.Start();
             Physics.AddEntity(this);
-            QueuePacket(new HandshakePacket("TestUser")); // TODO: Get username from somewhere else
+            QueuePacket(new HandshakePacket(User.Username));
         }
 
         private void DoNetwork()

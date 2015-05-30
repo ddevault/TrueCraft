@@ -2,6 +2,7 @@
 using System.Net;
 using System.Linq;
 using System.Net.Sockets;
+using TrueCraft.Core;
 
 namespace TrueCraft.Client
 {
@@ -10,7 +11,8 @@ namespace TrueCraft.Client
         [STAThread]
         public static void Main(string[] args)
         {
-            var client = new MultiplayerClient();
+            var user = new TrueCraftUser { Username = args[1] };
+            var client = new MultiplayerClient(user);
             var game = new TrueCraftGame(client, ParseEndPoint(args[0]));
             game.Run();
             client.Disconnect();

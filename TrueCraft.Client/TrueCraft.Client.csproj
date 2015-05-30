@@ -26,10 +26,10 @@
     <DebugSymbols>true</DebugSymbols>
     <ErrorReport>prompt</ErrorReport>
     <ConsolePause>false</ConsolePause>
-    <Commandlineparameters>play.truecraft.io</Commandlineparameters>
+    <Commandlineparameters>play.truecraft.io SirCmpwn</Commandlineparameters>
     <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
     <StartAction>Project</StartAction>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
