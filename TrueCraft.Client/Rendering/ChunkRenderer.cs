@@ -19,7 +19,7 @@ namespace TrueCraft.Client.Rendering
     /// A daemon of sorts that creates meshes from chunks.
     /// Passing meshes back is NOT thread-safe.
     /// </summary>
-    public class ChunkConverter
+    public class ChunkRenderer
     {
         public class ChunkSorter : Comparer<Mesh>
         {
@@ -58,7 +58,7 @@ namespace TrueCraft.Client.Rendering
         private IBlockRepository BlockRepository { get; set; }
         private List<Tuple<Thread, CancellationTokenSource>> RenderThreads { get; set; }
 
-        public ChunkConverter(GraphicsDevice graphics, IBlockRepository blockRepository)
+        public ChunkRenderer(GraphicsDevice graphics, IBlockRepository blockRepository)
         {
             ChunkQueue = new ConcurrentQueue<ReadOnlyChunk>();
             RenderThreads = new List<Tuple<Thread, CancellationTokenSource>>();
@@ -180,7 +180,7 @@ namespace TrueCraft.Client.Rendering
                 }
             }
             var enumerator = state.DrawableCoordinates.GetEnumerator();
-            for (int j = 0; j < state.DrawableCoordinates.Count; j++)
+            for (int j = 0; j <= state.DrawableCoordinates.Count; j++)
             {
                 var coords = enumerator.Current;
                 enumerator.MoveNext();

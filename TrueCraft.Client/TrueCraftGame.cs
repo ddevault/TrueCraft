@@ -24,7 +24,7 @@ namespace TrueCraft.Client
         private FontRenderer DejaVu { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
         private IPEndPoint EndPoint { get; set; }
-        private ChunkConverter ChunkConverter { get; set; }
+        private ChunkRenderer ChunkConverter { get; set; }
         private DateTime NextPhysicsUpdate { get; set; }
         private List<ChunkMesh> ChunkMeshes { get; set; }
         private ConcurrentBag<Action> PendingMainThreadActions { get; set; }
@@ -63,7 +63,7 @@ namespace TrueCraft.Client
             Interfaces = new List<IGameInterface>();
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             base.Initialize(); // (calls LoadContent)
-            ChunkConverter = new ChunkConverter(Graphics.GraphicsDevice, Client.World.World.BlockRepository);
+            ChunkConverter = new ChunkRenderer(Graphics.GraphicsDevice, Client.World.World.BlockRepository);
             Client.ChunkLoaded += (sender, e) => ChunkConverter.QueueChunk(e.Chunk);
             Client.ChunkModified += (sender, e) => ChunkConverter.QueueHighPriorityChunk(e.Chunk);
             ChunkConverter.MeshGenerated += ChunkConverter_MeshGenerated;
@@ -77,7 +77,7 @@ namespace TrueCraft.Client
             PreviousKeyboardState = Keyboard.GetState();
         }
 
-        void ChunkConverter_MeshGenerated(object sender, ChunkConverter.MeshGeneratedEventArgs e)
+        void ChunkConverter_MeshGenerated(object sender, ChunkRenderer.MeshGeneratedEventArgs e)
         {
             if (e.Transparent)
                 IncomingTransparentChunks.Add(e.Mesh);
@@ -91,7 +91,7 @@ namespace TrueCraft.Client
             {
                 case "Position":
                     UpdateMatricies();
-                    var sorter = new ChunkConverter.ChunkSorter(new Coordinates3D(
+                    var sorter = new ChunkRenderer.ChunkSorter(new Coordinates3D(
                         (int)Client.Position.X, 0, (int)Client.Position.Z));
                     PendingMainThreadActions.Add(() => TransparentChunkMeshes.Sort(sorter));
                     break;
@@ -285,7 +285,7 @@ namespace TrueCraft.Client
 
             int fps = (int)(1 / gameTime.ElapsedGameTime.TotalSeconds);
             DejaVu.DrawText(SpriteBatch, 0, GraphicsDevice.Viewport.Height - 30,
-                string.Format("{0} FPS, {1} verticies, {2} chunks", fps + 1, verticies, chunks));
+                string.Format("{0} FPS, {1} verticies, {2} chunks, {3}", fps + 1, verticies, chunks, Client.Position));
             SpriteBatch.End();
 
             base.Draw(gameTime);

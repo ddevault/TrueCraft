@@ -15,8 +15,17 @@ namespace TrueCraft.Client.Handlers
         {
             var packet = (BlockChangePacket)_packet;
             var coordinates = new Coordinates3D(packet.X, packet.Y, packet.Z);
+            Coordinates3D adjusted;
             IChunk chunk;
-            var adjusted = client.World.World.FindBlockPosition(coordinates, out chunk);
+            try
+            {
+                adjusted = client.World.World.FindBlockPosition(coordinates, out chunk);
+            }
+            catch (ArgumentException)
+            {
+                // Relevant chunk is not loaded - ignore packet
+                return;
+            }
             chunk.SetBlockID(adjusted, packet.ID);
             chunk.SetMetadata(adjusted, (byte)packet.Metadata);
             client.OnChunkModified(new ChunkEventArgs(new ReadOnlyChunk(chunk)));
@@ -35,7 +44,7 @@ namespace TrueCraft.Client.Handlers
             var data = ZlibStream.UncompressBuffer(packet.CompressedData);
             IChunk chunk;
             var adjustedCoords = client.World.World.FindBlockPosition(
-                                     new Coordinates3D(packet.X, packet.Y, packet.Z), out chunk);
+                 new Coordinates3D(packet.X, packet.Y, packet.Z), out chunk);
 
             if (packet.Width == Chunk.Width
                 && packet.Height == Chunk.Height
