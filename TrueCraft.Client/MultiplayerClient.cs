@@ -20,6 +20,7 @@ namespace TrueCraft.Client
     public class MultiplayerClient : IAABBEntity, INotifyPropertyChanged // TODO: Make IMultiplayerClient and so on
     {
         public event EventHandler<ChatMessageEventArgs> ChatMessage;
+        public event EventHandler<ChunkEventArgs> ChunkModified;
         public event EventHandler<ChunkEventArgs> ChunkLoaded;
         public event EventHandler<ChunkEventArgs> ChunkUnloaded;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -126,6 +127,11 @@ namespace TrueCraft.Client
         protected internal void OnChunkUnloaded(ChunkEventArgs e)
         {
             if (ChunkUnloaded != null) ChunkUnloaded(this, e);
+        }
+
+        protected internal void OnChunkModified(ChunkEventArgs e)
+        {
+            if (ChunkModified != null) ChunkModified(this, e);
         }
 
         #region IAABBEntity implementation

@@ -26,11 +26,11 @@ namespace TrueCraft.Client
         private IPEndPoint EndPoint { get; set; }
         private ChunkConverter ChunkConverter { get; set; }
         private DateTime NextPhysicsUpdate { get; set; }
-        private List<Mesh> ChunkMeshes { get; set; }
+        private List<ChunkMesh> ChunkMeshes { get; set; }
         private ConcurrentBag<Action> PendingMainThreadActions { get; set; }
-        private ConcurrentBag<Mesh> IncomingChunks { get; set; }
-        private ConcurrentBag<Mesh> IncomingTransparentChunks { get; set; }
-        private List<Mesh> TransparentChunkMeshes { get; set; }
+        private ConcurrentBag<ChunkMesh> IncomingChunks { get; set; }
+        private ConcurrentBag<ChunkMesh> IncomingTransparentChunks { get; set; }
+        private List<ChunkMesh> TransparentChunkMeshes { get; set; }
         private Matrix Camera;
         private Matrix Perspective;
         private BoundingFrustum CameraView;
@@ -50,10 +50,10 @@ namespace TrueCraft.Client
             Client = client;
             EndPoint = endPoint;
             NextPhysicsUpdate = DateTime.MinValue;
-            ChunkMeshes = new List<Mesh>();
-            TransparentChunkMeshes = new List<Mesh>();
-            IncomingChunks = new ConcurrentBag<Mesh>();
-            IncomingTransparentChunks = new ConcurrentBag<Mesh>();
+            ChunkMeshes = new List<ChunkMesh>();
+            TransparentChunkMeshes = new List<ChunkMesh>();
+            IncomingChunks = new ConcurrentBag<ChunkMesh>();
+            IncomingTransparentChunks = new ConcurrentBag<ChunkMesh>();
             PendingMainThreadActions = new ConcurrentBag<Action>();
             MouseCaptured = true;
         }
@@ -65,6 +65,7 @@ namespace TrueCraft.Client
             base.Initialize(); // (calls LoadContent)
             ChunkConverter = new ChunkConverter(Graphics.GraphicsDevice, Client.World.World.BlockRepository);
             Client.ChunkLoaded += (sender, e) => ChunkConverter.QueueChunk(e.Chunk);
+            Client.ChunkModified += (sender, e) => ChunkConverter.QueueHighPriorityChunk(e.Chunk);
             ChunkConverter.MeshGenerated += ChunkConverter_MeshGenerated;
             ChunkConverter.Start();
             Client.PropertyChanged += HandleClientPropertyChanged;
@@ -185,10 +186,15 @@ namespace TrueCraft.Client
                 i.Update(gameTime);
             }
 
-            Mesh mesh;
+            ChunkMesh mesh;
             if (IncomingChunks.TryTake(out mesh))
+            {
+                var existing = ChunkMeshes.SingleOrDefault(m => m.Chunk.Chunk.Coordinates == mesh.Chunk.Chunk.Coordinates);
+                if (existing != null)
+                    ChunkMeshes.Remove(existing);
                 ChunkMeshes.Add(mesh);
-            if (IncomingTransparentChunks.TryTake(out mesh))
+            }
+            if (IncomingTransparentChunks.TryTake(out mesh)) // TODO: re-render transparent meshes
                 TransparentChunkMeshes.Add(mesh);
             Action action;
             if (PendingMainThreadActions.TryTake(out action))

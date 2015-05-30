@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 using TrueCraft.API.Logic;
+using System.Threading.Tasks;
 
 namespace TrueCraft.Client.Rendering
 {
@@ -41,9 +42,9 @@ namespace TrueCraft.Client.Rendering
         public class MeshGeneratedEventArgs : EventArgs
         {
             public bool Transparent { get; set; }
-            public Mesh Mesh { get; set; }
+            public ChunkMesh Mesh { get; set; }
 
-            public MeshGeneratedEventArgs(Mesh mesh, bool transparent)
+            public MeshGeneratedEventArgs(ChunkMesh mesh, bool transparent)
             {
                 Transparent = transparent;
                 Mesh = mesh;
@@ -79,6 +80,15 @@ namespace TrueCraft.Client.Rendering
         public void QueueChunk(ReadOnlyChunk chunk)
         {
             ChunkQueue.Enqueue(chunk);
+        }
+
+        public void QueueHighPriorityChunk(ReadOnlyChunk chunk)
+        {
+            // TODO: Overwrite existing chunks
+            Task.Factory.StartNew(() =>
+            {
+                ProcessChunk(chunk, new RenderState());
+            });
         }
 
         public void Start()
