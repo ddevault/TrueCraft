@@ -34,6 +34,9 @@
     <Reference Include="Xwt">
       <HintPath>..\lib\Xwt.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -43,6 +46,7 @@
     <Compile Include="Views\LoginView.cs" />
     <Compile Include="Views\MainMenuView.cs" />
     <Compile Include="Views\MultiplayerView.cs" />
+    <Compile Include="UserSettings.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -84,6 +88,7 @@
     <None Include="Xwt.WPF.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Content\truecraft-logo.png" />

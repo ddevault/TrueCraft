@@ -36,6 +36,13 @@ namespace TrueCraft.Launcher.Views
             LogInButton = new Button("Log In");
             RegisterButton = new Button("Register");
             RememberCheckBox = new CheckBox("Remember Me");
+            UsernameText.Text = UserSettings.Local.Username;
+            if (UserSettings.Local.AutoLogin)
+            {
+                PasswordText.Password = UserSettings.Local.Password;
+                RememberCheckBox.Active = true;
+            }
+
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TrueCraft.Launcher.Content.truecraft-logo.png"))
                 TrueCraftLogoImage = new ImageView(Image.FromStream(stream));
 
@@ -117,6 +124,13 @@ namespace TrueCraft.Launcher.Views
                     EnableForm();
                     Window.MainContainer.Remove(this);
                     Window.MainContainer.PackEnd(Window.MainMenuView = new MainMenuView(Window));
+                    UserSettings.Local.AutoLogin = RememberCheckBox.Active;
+                    UserSettings.Local.Username = Window.User.Username;
+                    if (UserSettings.Local.AutoLogin)
+                        UserSettings.Local.Password = PasswordText.Password;
+                    else
+                        UserSettings.Local.Password = string.Empty;
+                    UserSettings.Local.Save();
                 });
             }
             else
