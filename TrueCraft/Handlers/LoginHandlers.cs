@@ -60,7 +60,8 @@ namespace TrueCraft.Handlers
 
                 if (!string.IsNullOrEmpty(Program.ServerConfiguration.MOTD))
                     remoteClient.SendMessage(Program.ServerConfiguration.MOTD);
-                server.SendMessage(ChatColor.Yellow + "{0} joined the server.", remoteClient.Username);
+                if (!Program.ServerConfiguration.Singleplayer)
+                    server.SendMessage(ChatColor.Yellow + "{0} joined the server.", remoteClient.Username);
             }
         }
     }

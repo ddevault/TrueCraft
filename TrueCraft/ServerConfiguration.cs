@@ -27,6 +27,7 @@ namespace TrueCraft
             ServerPort = 25565;
             ServerAddress = "0.0.0.0";
             WorldSaveInterval = 30;
+            Singleplayer = false;
         }
 
         [YamlMember(Alias = "motd")]
@@ -44,5 +45,7 @@ namespace TrueCraft
         [YamlMember(Alias = "worldSaveInterval")]
         public int WorldSaveInterval { get; set; }
 
+        [YamlIgnore]
+        public bool Singleplayer { get; set; }
     }
 }

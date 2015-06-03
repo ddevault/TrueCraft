@@ -133,36 +133,49 @@ namespace TrueCraft.Launcher.Views
 
         private void HandleLoginResponse(IAsyncResult asyncResult)
         {
-            var request = (HttpWebRequest)asyncResult.AsyncState;
-            var response = request.EndGetResponse(asyncResult);
-            string session;
-            using (var reader = new StreamReader(response.GetResponseStream()))
-                session = reader.ReadToEnd();
-            if (session.Contains(":"))
+            try
             {
-                var parts = session.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-                Window.User.Username = parts[2];
-                Window.User.SessionId = parts[3];
-                Application.Invoke(() =>
+                var request = (HttpWebRequest)asyncResult.AsyncState;
+                var response = request.EndGetResponse(asyncResult);
+                string session;
+                using (var reader = new StreamReader(response.GetResponseStream()))
+                    session = reader.ReadToEnd();
+                if (session.Contains(":"))
                 {
-                    EnableForm();
-                    Window.MainContainer.Remove(this);
-                    Window.MainContainer.PackEnd(Window.MainMenuView = new MainMenuView(Window));
-                    UserSettings.Local.AutoLogin = RememberCheckBox.Active;
-                    UserSettings.Local.Username = Window.User.Username;
-                    if (UserSettings.Local.AutoLogin)
-                        UserSettings.Local.Password = PasswordText.Password;
-                    else
-                        UserSettings.Local.Password = string.Empty;
-                    UserSettings.Local.Save();
-                });
+                    var parts = session.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    Window.User.Username = parts[2];
+                    Window.User.SessionId = parts[3];
+                    Application.Invoke(() =>
+                    {
+                        EnableForm();
+                        Window.MainContainer.Remove(this);
+                        Window.MainContainer.PackEnd(Window.MainMenuView = new MainMenuView(Window));
+                        UserSettings.Local.AutoLogin = RememberCheckBox.Active;
+                        UserSettings.Local.Username = Window.User.Username;
+                        if (UserSettings.Local.AutoLogin)
+                            UserSettings.Local.Password = PasswordText.Password;
+                        else
+                            UserSettings.Local.Password = string.Empty;
+                        UserSettings.Local.Save();
+                    });
+                }
+                else
+                {
+                    Application.Invoke(() =>
+                    {
+                        EnableForm();
+                        ErrorLabel.Text = session;
+                        ErrorLabel.Visible = true;
+                        RegisterButton.Label = "Offline Mode";
+                    });
+                }
             }
-            else
+            catch
             {
                 Application.Invoke(() =>
                 {
                     EnableForm();
-                    ErrorLabel.Text = session;
+                    ErrorLabel.Text = "Unable to log in.";
                     ErrorLabel.Visible = true;
                     RegisterButton.Label = "Offline Mode";
                 });

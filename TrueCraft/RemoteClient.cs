@@ -123,6 +123,8 @@ namespace TrueCraft
         public bool Load()
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), "players", Username + ".nbt");
+            if (Program.ServerConfiguration.Singleplayer)
+                path = Path.Combine(((World)World).BaseDirectory, "player.nbt");
             if (!File.Exists(path))
                 return false;
             try
@@ -144,6 +146,8 @@ namespace TrueCraft
         public void Save()
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), "players", Username + ".nbt");
+            if (Program.ServerConfiguration.Singleplayer)
+                path = Path.Combine(((World)World).BaseDirectory, "player.nbt");
             if (!Directory.Exists(Path.GetDirectoryName(path)))
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
             if (Entity == null) // I didn't think this could happen but null reference exceptions have been repoted here

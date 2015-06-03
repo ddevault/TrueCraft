@@ -3,11 +3,11 @@ using TrueCraft.API.Networking;
 
 namespace TrueCraft.API.Server
 {
-    public class PlayerJoinedEventArgs : EventArgs
+    public class PlayerJoinedQuitEventArgs : EventArgs
     {
         public IRemoteClient Client { get; set; }
 
-        public PlayerJoinedEventArgs(IRemoteClient client)
+        public PlayerJoinedQuitEventArgs(IRemoteClient client)
         {
             Client = client;
         }

@@ -29,7 +29,7 @@ namespace TrueCraft.Launcher
             Username = "";
             Password = "";
             LastIP = "";
-            FavoriteServers = new[] { new FavoriteServer { Name = "TrueCraft", Address = "play.truecraft.io" } };
+            FavoriteServers = new FavoriteServer[0];
         }
 
         public void Load()

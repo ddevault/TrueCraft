@@ -90,6 +90,8 @@ namespace TrueCraft.Core.World
                 world.Seed = file.RootTag["Seed"].IntValue;
                 var providerName = file.RootTag["ChunkProvider"].StringValue;
                 var provider = (IChunkProvider)Activator.CreateInstance(Type.GetType(providerName), world);
+                if (file.RootTag.Contains("Name"))
+                    world.Name = file.RootTag["Name"].StringValue;
                 world.ChunkProvider = provider;
             }
             return world;
@@ -283,6 +285,7 @@ namespace TrueCraft.Core.World
             }));
             file.RootTag.Add(new NbtInt("Seed", this.Seed));
             file.RootTag.Add(new NbtString("ChunkProvider", this.ChunkProvider.GetType().FullName));
+            file.RootTag.Add(new NbtString("Name", Name));
             file.SaveToFile(Path.Combine(this.BaseDirectory, "manifest.nbt"), NbtCompression.ZLib);
         }
 

@@ -17,7 +17,8 @@ namespace TrueCraft.API.Server
     public interface IMultiplayerServer
     {
         event EventHandler<ChatMessageEventArgs> ChatMessageReceived;
-        event EventHandler<PlayerJoinedEventArgs> PlayerJoined;
+        event EventHandler<PlayerJoinedQuitEventArgs> PlayerJoined;
+        event EventHandler<PlayerJoinedQuitEventArgs> PlayerQuit;
 
         IAccessConfiguration AccessConfiguration { get; }
         IPacketReader PacketReader { get; }
@@ -27,6 +28,7 @@ namespace TrueCraft.API.Server
         IBlockRepository BlockRepository { get; }
         ICraftingRepository CraftingRepository { get; }
         IItemRepository ItemRepository { get; }
+        IPEndPoint EndPoint { get; }
         bool BlockUpdatesEnabled { get; set; }
         bool EnableClientLogging { get; set; }
 

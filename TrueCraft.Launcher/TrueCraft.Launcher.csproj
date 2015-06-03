@@ -47,6 +47,9 @@
     <Compile Include="Views\MainMenuView.cs" />
     <Compile Include="Views\MultiplayerView.cs" />
     <Compile Include="UserSettings.cs" />
+    <Compile Include="Views\SingleplayerView.cs" />
+    <Compile Include="Singleplayer\Worlds.cs" />
+    <Compile Include="Singleplayer\SingleplayerServer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -83,6 +86,7 @@
   <ItemGroup>
     <Folder Include="Content\" />
     <Folder Include="Views\" />
+    <Folder Include="Singleplayer\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Xwt.WPF.dll">

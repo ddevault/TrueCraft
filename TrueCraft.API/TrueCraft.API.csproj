@@ -95,7 +95,6 @@
     <Compile Include="ChatColor.cs" />
     <Compile Include="Server\ChatMessageEventArgs.cs" />
     <Compile Include="BlockFace.cs" />
-    <Compile Include="Server\PlayerJoinedEventArgs.cs" />
     <Compile Include="Logic\IBlockRepository.cs" />
     <Compile Include="Entities\IAABBEntity.cs" />
     <Compile Include="Entities\IBlockPhysicsProvider.cs" />
@@ -103,6 +102,7 @@
     <Compile Include="Logic\IItemRepository.cs" />
     <Compile Include="Logic\BlockDescriptor.cs" />
     <Compile Include="ArmorMaterial.cs" />
+    <Compile Include="Server\PlayerJoinedQuitEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

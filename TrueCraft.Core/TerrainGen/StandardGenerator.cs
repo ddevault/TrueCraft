@@ -30,6 +30,11 @@ namespace TrueCraft.Core.TerrainGen
         bool EnableCaves;
         private const int GroundLevel = 50;
 
+        public StandardGenerator(TrueCraft.Core.World.World world) : this()
+        {
+            // TODO: Do we want to do anything with that world?
+        }
+
         public StandardGenerator(bool singleBiome = false, bool enableCaves = true, byte generateBiome = (byte)Biome.Plains)
         {
             SingleBiome = singleBiome;

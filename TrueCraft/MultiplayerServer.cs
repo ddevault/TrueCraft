@@ -21,7 +21,8 @@ namespace TrueCraft
     public class MultiplayerServer : IMultiplayerServer
     {
         public event EventHandler<ChatMessageEventArgs> ChatMessageReceived;
-        public event EventHandler<PlayerJoinedEventArgs> PlayerJoined;
+        public event EventHandler<PlayerJoinedQuitEventArgs> PlayerJoined;
+        public event EventHandler<PlayerJoinedQuitEventArgs> PlayerQuit;
 
         public IAccessConfiguration AccessConfiguration { get; internal set; }
 
@@ -34,6 +35,7 @@ namespace TrueCraft
         public IItemRepository ItemRepository { get; private set; }
         public ICraftingRepository CraftingRepository { get; private set; }
         public bool EnableClientLogging { get; set; }
+        public IPEndPoint EndPoint { get; private set; }
 
         private bool _BlockUpdatesEnabled = true;
         private struct BlockUpdate
@@ -106,8 +108,9 @@ namespace TrueCraft
             ShuttingDown = false;
             Listener = new TcpListener(endPoint);
             Listener.Start();
+            EndPoint = (IPEndPoint)Listener.LocalEndpoint;
             Listener.BeginAcceptTcpClient(AcceptClient, null);
-            Log(LogCategory.Notice, "Running TrueCraft server on {0}", endPoint);
+            Log(LogCategory.Notice, "Running TrueCraft server on {0}", EndPoint);
             NetworkWorker.Start();
             EnvironmentWorker.Change(100, 1000 / 20);
         }
@@ -214,10 +217,16 @@ namespace TrueCraft
                 ChatMessageReceived(this, e);
         }
 
-        protected internal void OnPlayerJoined(PlayerJoinedEventArgs e)
+        protected internal void OnPlayerJoined(PlayerJoinedQuitEventArgs e)
         {
             if (PlayerJoined != null)
                 PlayerJoined(this, e);
+        }
+
+        protected internal void OnPlayerQuit(PlayerJoinedQuitEventArgs e)
+        {
+            if (PlayerQuit != null)
+                PlayerQuit(this, e);
         }
 
         private void LogPacket(IPacket packet, bool clientToServer)
@@ -240,15 +249,23 @@ namespace TrueCraft
             }
             client.Save();
             client.Disconnected = true;
+            OnPlayerQuit(new PlayerJoinedQuitEventArgs(client));
         }
 
         private void AcceptClient(IAsyncResult result)
         {
-            var tcpClient = Listener.EndAcceptTcpClient(result);
-            var client = new RemoteClient(this, tcpClient.GetStream());
-            lock (ClientLock)
-                Clients.Add(client);
-            Listener.BeginAcceptTcpClient(AcceptClient, null);
+            try
+            {
+                var tcpClient = Listener.EndAcceptTcpClient(result);
+                var client = new RemoteClient(this, tcpClient.GetStream());
+                lock (ClientLock)
+                    Clients.Add(client);
+                Listener.BeginAcceptTcpClient(AcceptClient, null);
+            }
+            catch
+            {
+                // Who cares
+            }
         }
 
         private void DoEnvironment(object discarded)

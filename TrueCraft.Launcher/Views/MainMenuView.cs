@@ -27,6 +27,11 @@ namespace TrueCraft.Launcher.Views
             OptionsButton = new Button("Options");
             QuitButton = new Button("Quit Game");
 
+            SingleplayerButton.Clicked += (sender, e) =>
+            {
+                Window.MainContainer.Remove(this);
+                Window.MainContainer.PackEnd(Window.SingleplayerView);
+            };
             MultiplayerButton.Clicked += (sender, e) =>
             {
                 Window.MainContainer.Remove(this);
