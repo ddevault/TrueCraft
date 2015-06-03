@@ -8,23 +8,28 @@ namespace TrueCraft.Launcher
     {
         public static UserSettings Local { get; set; }
 
-        public string SettingsPath
+        public static string SettingsPath
         {
             get
             {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".truecraft", "settings.json");
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    ".truecraft", "settings.json");
             }
         }
 
         public bool AutoLogin { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+        public string LastIP { get; set; }
+        public FavoriteServer[] FavoriteServers { get; set; }
 
         public UserSettings()
         {
             AutoLogin = false;
             Username = "";
             Password = "";
+            LastIP = "";
+            FavoriteServers = new[] { new FavoriteServer { Name = "TrueCraft", Address = "play.truecraft.io" } };
         }
 
         public void Load()
@@ -36,7 +41,13 @@ namespace TrueCraft.Launcher
         public void Save()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(SettingsPath));
-            File.WriteAllText(SettingsPath, JsonConvert.SerializeObject(this));
+            File.WriteAllText(SettingsPath, JsonConvert.SerializeObject(this, Formatting.Indented));
         }
+    }
+
+    public class FavoriteServer
+    {
+        public string Name { get; set; }
+        public string Address { get; set; }
     }
 }

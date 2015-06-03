@@ -58,7 +58,18 @@ namespace TrueCraft.Launcher.Views
                 if (e.Key == Key.Return || e.Key == Key.NumPadEnter)
                     LogInButton_Clicked(sender, e);
             };
-            RegisterButton.Clicked += (sender, e) => Window.WebView.Url = "http://truecraft.io/register";
+            RegisterButton.Clicked += (sender, e) =>
+            {
+                if (RegisterButton.Label == "Register")
+                    Window.WebView.Url = "http://truecraft.io/register";
+                else
+                {
+                    Window.User.Username = UsernameText.Text;
+                    Window.User.SessionId = "-";
+                    Window.MainContainer.Remove(this);
+                    Window.MainContainer.PackEnd(Window.MainMenuView = new MainMenuView(Window));
+                }
+            };
             LogInButton.Clicked += LogInButton_Clicked;
 
             this.PackStart(TrueCraftLogoImage);
@@ -100,11 +111,24 @@ namespace TrueCraft.Launcher.Views
 
         private void HandleLoginRequestReady(IAsyncResult asyncResult)
         {
-            var request = (HttpWebRequest)asyncResult.AsyncState;
-            var requestStream = request.EndGetRequestStream(asyncResult);
-            using (var writer = new StreamWriter(requestStream))
-                writer.Write(string.Format("user={0}&password={1}&version=12", UsernameText.Text, PasswordText.Password));
-            request.BeginGetResponse(HandleLoginResponse, request);
+            try
+            {
+                var request = (HttpWebRequest)asyncResult.AsyncState;
+                var requestStream = request.EndGetRequestStream(asyncResult);
+                using (var writer = new StreamWriter(requestStream))
+                    writer.Write(string.Format("user={0}&password={1}&version=12", UsernameText.Text, PasswordText.Password));
+                request.BeginGetResponse(HandleLoginResponse, request);
+            }
+            catch
+            {
+                Application.Invoke(() =>
+                {
+                    EnableForm();
+                    ErrorLabel.Text = "Unable to log in";
+                    ErrorLabel.Visible = true;
+                    RegisterButton.Label = "Offline Mode";
+                });
+            }
         }
 
         private void HandleLoginResponse(IAsyncResult asyncResult)
@@ -140,6 +164,7 @@ namespace TrueCraft.Launcher.Views
                     EnableForm();
                     ErrorLabel.Text = session;
                     ErrorLabel.Visible = true;
+                    RegisterButton.Label = "Offline Mode";
                 });
             }
         }

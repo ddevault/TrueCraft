@@ -92,5 +92,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Content\truecraft-logo.png" />
+    <EmbeddedResource Include="Content\default-server-icon.png" />
   </ItemGroup>
 </Project>
