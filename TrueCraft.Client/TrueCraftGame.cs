@@ -31,6 +31,7 @@ namespace TrueCraft.Client
         private ConcurrentBag<ChunkMesh> IncomingChunks { get; set; }
         private ConcurrentBag<ChunkMesh> IncomingTransparentChunks { get; set; }
         private List<ChunkMesh> TransparentChunkMeshes { get; set; }
+        private RenderTarget2D RenderTarget;
         private Matrix Camera;
         private Matrix Perspective;
         private BoundingFrustum CameraView;
@@ -75,6 +76,14 @@ namespace TrueCraft.Client
             Mouse.SetPosition(centerX, centerY);
             UpdateMatricies();
             PreviousKeyboardState = Keyboard.GetState();
+            Window.ClientSizeChanged += (sender, e) => CreateRenderTarget();
+            CreateRenderTarget();
+        }
+
+        private void CreateRenderTarget()
+        {
+            RenderTarget = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height,
+                false, GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
         }
 
         void ChunkConverter_MeshGenerated(object sender, ChunkRenderer.MeshGeneratedEventArgs e)
@@ -249,13 +258,15 @@ namespace TrueCraft.Client
 
         protected override void Draw(GameTime gameTime)
         {
+            GraphicsDevice.SetRenderTarget(RenderTarget);
+
             Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
             GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
             GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
 
             int verticies = 0, chunks = 0;
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
             for (int i = 0; i < ChunkMeshes.Count; i++)
             {
                 if (CameraView.Intersects(ChunkMeshes[i].BoundingBox))
@@ -286,6 +297,13 @@ namespace TrueCraft.Client
             int fps = (int)(1 / gameTime.ElapsedGameTime.TotalSeconds);
             DejaVu.DrawText(SpriteBatch, 0, GraphicsDevice.Viewport.Height - 30,
                 string.Format("{0} FPS, {1} verticies, {2} chunks, {3}", fps + 1, verticies, chunks, Client.Position));
+            SpriteBatch.End();
+
+            GraphicsDevice.SetRenderTarget(null);
+
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            SpriteBatch.Begin();
+            SpriteBatch.Draw(RenderTarget, new Vector2(0));
             SpriteBatch.End();
 
             base.Draw(gameTime);
