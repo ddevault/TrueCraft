@@ -281,7 +281,7 @@ namespace TrueCraft.Client
             GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
             for (int i = 0; i < ChunkMeshes.Count; i++)
             {
-                if (CameraView.Intersects(ChunkMeshes[i].BoundingBox))
+                if (CameraView.Intersects(ChunkMeshes[i].BoundingBox) && !ChunkMeshes[i].Empty)
                 {
                     verticies += ChunkMeshes[i].Verticies.VertexCount;
                     chunks++;
@@ -291,7 +291,7 @@ namespace TrueCraft.Client
             GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
             for (int i = 0; i < TransparentChunkMeshes.Count; i++)
             {
-                if (CameraView.Intersects(TransparentChunkMeshes[i].BoundingBox))
+                if (CameraView.Intersects(TransparentChunkMeshes[i].BoundingBox) && !TransparentChunkMeshes[i].Empty)
                 {
                     if (TransparentChunkMeshes[i].Verticies != null)
                         verticies += TransparentChunkMeshes[i].Verticies.VertexCount;

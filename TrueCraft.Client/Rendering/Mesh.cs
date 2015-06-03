@@ -7,21 +7,26 @@ namespace TrueCraft.Client.Rendering
 {
     public class Mesh : IDisposable
     {
-        private bool Empty { get; set; }
+        public bool Empty { get; set; }
         public VertexBuffer Verticies { get; set; }
         public IndexBuffer Indicies { get; set; }
         public BoundingBox BoundingBox { get; set; }
+
+        private static object GraphicsDeviceLock = new object();
 
         public Mesh(GraphicsDevice device, VertexPositionNormalTexture[] verticies, int[] indicies, bool calculateBounds = true)
         {
             Empty = verticies.Length == 0 && indicies.Length == 0;
             if (!Empty)
             {
-                Verticies = new VertexBuffer(device, VertexPositionNormalTexture.VertexDeclaration,
-                    verticies.Length, BufferUsage.WriteOnly);
-                Verticies.SetData(verticies);
-                Indicies = new IndexBuffer(device, typeof(int), indicies.Length, BufferUsage.WriteOnly);
-                Indicies.SetData(indicies);
+                lock (GraphicsDeviceLock)
+                {
+                    Verticies = new VertexBuffer(device, VertexPositionNormalTexture.VertexDeclaration,
+                        verticies.Length, BufferUsage.WriteOnly);
+                    Verticies.SetData(verticies);
+                    Indicies = new IndexBuffer(device, typeof(int), indicies.Length, BufferUsage.WriteOnly);
+                    Indicies.SetData(indicies);
+                }
                 if (calculateBounds)
                 {
                     BoundingBox = new BoundingBox(
