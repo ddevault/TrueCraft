@@ -5,6 +5,13 @@ namespace TrueCraft.Core.Logic.Blocks
 {
     public class WoodBlock : BlockProvider
     {
+        public enum WoodType
+        {
+            Oak = 0,
+            Spruce = 1,
+            Birch = 2
+        }
+
         public static readonly byte BlockID = 0x11;
         
         public override byte ID { get { return 0x11; } }

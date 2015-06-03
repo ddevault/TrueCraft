@@ -26,7 +26,7 @@
     <DebugSymbols>true</DebugSymbols>
     <ErrorReport>prompt</ErrorReport>
     <ConsolePause>false</ConsolePause>
-    <Commandlineparameters>play.truecraft.io SirCmpwn</Commandlineparameters>
+    <Commandlineparameters>localhost TestUser</Commandlineparameters>
     <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
     <StartAction>Project</StartAction>
     <Optimize>False</Optimize>
@@ -108,6 +108,7 @@
     <Compile Include="Rendering\Blocks\TorchRenderer.cs" />
     <Compile Include="Rendering\Blocks\LogRenderer.cs" />
     <Compile Include="Rendering\ChunkRenderer.cs" />
+    <Compile Include="Rendering\Blocks\LeavesRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

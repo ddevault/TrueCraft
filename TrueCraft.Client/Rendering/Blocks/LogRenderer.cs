@@ -11,50 +11,131 @@ namespace TrueCraft.Client.Rendering.Blocks
         static LogRenderer()
         {
             BlockRenderer.RegisterRenderer(WoodBlock.BlockID, new LogRenderer());
-            for (int i = 0; i < Texture.Length; i++)
-                Texture[i] *= new Vector2(16f / 256f);
+            for (int i = 0; i < BaseTexture.Length; i++)
+            {
+                BaseTexture[i] *= new Vector2(16f / 256f);
+                SpruceTexture[i] *= new Vector2(16f / 256f);
+                BirchTexture[i] *= new Vector2(16f / 256f);
+            }
         }
 
-        private static Vector2 EndsTexture = new Vector2(5, 1);
-        private static Vector2 SideTexture = new Vector2(4, 1);
-        private static Vector2[] Texture =
+        private static Vector2 BaseEndsTexture = new Vector2(5, 1);
+        private static Vector2 BaseSidesTexture = new Vector2(4, 1);
+        private static Vector2 SpruceSidesTexture = new Vector2(4, 7);
+        private static Vector2 BirchSidesTexture = new Vector2(5, 7);
+        private static Vector2[] BaseTexture =
         {
             // Positive Z
-            SideTexture + Vector2.UnitX + Vector2.UnitY,
-            SideTexture + Vector2.UnitY,
-            SideTexture,
-            SideTexture + Vector2.UnitX,
+            BaseSidesTexture + Vector2.UnitX + Vector2.UnitY,
+            BaseSidesTexture + Vector2.UnitY,
+            BaseSidesTexture,
+            BaseSidesTexture + Vector2.UnitX,
             // Negative Z
-            SideTexture + Vector2.UnitX + Vector2.UnitY,
-            SideTexture + Vector2.UnitY,
-            SideTexture,
-            SideTexture + Vector2.UnitX,
+            BaseSidesTexture + Vector2.UnitX + Vector2.UnitY,
+            BaseSidesTexture + Vector2.UnitY,
+            BaseSidesTexture,
+            BaseSidesTexture + Vector2.UnitX,
             // Positive X
-            SideTexture + Vector2.UnitX + Vector2.UnitY,
-            SideTexture + Vector2.UnitY,
-            SideTexture,
-            SideTexture + Vector2.UnitX,
+            BaseSidesTexture + Vector2.UnitX + Vector2.UnitY,
+            BaseSidesTexture + Vector2.UnitY,
+            BaseSidesTexture,
+            BaseSidesTexture + Vector2.UnitX,
             // Negative X
-            SideTexture + Vector2.UnitX + Vector2.UnitY,
-            SideTexture + Vector2.UnitY,
-            SideTexture,
-            SideTexture + Vector2.UnitX,
+            BaseSidesTexture + Vector2.UnitX + Vector2.UnitY,
+            BaseSidesTexture + Vector2.UnitY,
+            BaseSidesTexture,
+            BaseSidesTexture + Vector2.UnitX,
             // Positive Y
-            EndsTexture + Vector2.UnitX + Vector2.UnitY,
-            EndsTexture + Vector2.UnitY,
-            EndsTexture,
-            EndsTexture + Vector2.UnitX,
+            BaseEndsTexture + Vector2.UnitX + Vector2.UnitY,
+            BaseEndsTexture + Vector2.UnitY,
+            BaseEndsTexture,
+            BaseEndsTexture + Vector2.UnitX,
             // Negative Y
-            EndsTexture + Vector2.UnitX + Vector2.UnitY,
-            EndsTexture + Vector2.UnitY,
-            EndsTexture,
-            EndsTexture + Vector2.UnitX,
+            BaseEndsTexture + Vector2.UnitX + Vector2.UnitY,
+            BaseEndsTexture + Vector2.UnitY,
+            BaseEndsTexture,
+            BaseEndsTexture + Vector2.UnitX,
+        };
+        private static Vector2[] SpruceTexture =
+        {
+            // Positive Z
+            SpruceSidesTexture + Vector2.UnitX + Vector2.UnitY,
+            SpruceSidesTexture + Vector2.UnitY,
+            SpruceSidesTexture,
+            SpruceSidesTexture + Vector2.UnitX,
+            // Negative Z
+            SpruceSidesTexture + Vector2.UnitX + Vector2.UnitY,
+            SpruceSidesTexture + Vector2.UnitY,
+            SpruceSidesTexture,
+            SpruceSidesTexture + Vector2.UnitX,
+            // Positive X
+            SpruceSidesTexture + Vector2.UnitX + Vector2.UnitY,
+            SpruceSidesTexture + Vector2.UnitY,
+            SpruceSidesTexture,
+            SpruceSidesTexture + Vector2.UnitX,
+            // Negative X
+            SpruceSidesTexture + Vector2.UnitX + Vector2.UnitY,
+            SpruceSidesTexture + Vector2.UnitY,
+            SpruceSidesTexture,
+            SpruceSidesTexture + Vector2.UnitX,
+            // Positive Y
+            BaseEndsTexture + Vector2.UnitX + Vector2.UnitY,
+            BaseEndsTexture + Vector2.UnitY,
+            BaseEndsTexture,
+            BaseEndsTexture + Vector2.UnitX,
+            // Negative Y
+            BaseEndsTexture + Vector2.UnitX + Vector2.UnitY,
+            BaseEndsTexture + Vector2.UnitY,
+            BaseEndsTexture,
+            BaseEndsTexture + Vector2.UnitX,
+        };
+        private static Vector2[] BirchTexture =
+        {
+            // Positive Z
+            BirchSidesTexture + Vector2.UnitX + Vector2.UnitY,
+            BirchSidesTexture + Vector2.UnitY,
+            BirchSidesTexture,
+            BirchSidesTexture + Vector2.UnitX,
+            // Negative Z
+            BirchSidesTexture + Vector2.UnitX + Vector2.UnitY,
+            BirchSidesTexture + Vector2.UnitY,
+            BirchSidesTexture,
+            BirchSidesTexture + Vector2.UnitX,
+            // Positive X
+            BirchSidesTexture + Vector2.UnitX + Vector2.UnitY,
+            BirchSidesTexture + Vector2.UnitY,
+            BirchSidesTexture,
+            BirchSidesTexture + Vector2.UnitX,
+            // Negative X
+            BirchSidesTexture + Vector2.UnitX + Vector2.UnitY,
+            BirchSidesTexture + Vector2.UnitY,
+            BirchSidesTexture,
+            BirchSidesTexture + Vector2.UnitX,
+            // Positive Y
+            BaseEndsTexture + Vector2.UnitX + Vector2.UnitY,
+            BaseEndsTexture + Vector2.UnitY,
+            BaseEndsTexture,
+            BaseEndsTexture + Vector2.UnitX,
+            // Negative Y
+            BaseEndsTexture + Vector2.UnitX + Vector2.UnitY,
+            BaseEndsTexture + Vector2.UnitY,
+            BaseEndsTexture,
+            BaseEndsTexture + Vector2.UnitX,
         };
 
         public override VertexPositionNormalTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
-            Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
+             Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
-            return CreateUniformCube(offset, Texture, indiciesOffset, out indicies);
+            switch ((WoodBlock.WoodType)descriptor.Metadata)
+            {
+                case WoodBlock.WoodType.Spruce:
+                    return CreateUniformCube(offset, SpruceTexture, indiciesOffset, out indicies);
+                case WoodBlock.WoodType.Birch:
+                    return CreateUniformCube(offset, BirchTexture, indiciesOffset, out indicies);
+                case WoodBlock.WoodType.Oak:
+                default:
+                    return CreateUniformCube(offset, BaseTexture, indiciesOffset, out indicies);
+            }
         }
     }
 }
