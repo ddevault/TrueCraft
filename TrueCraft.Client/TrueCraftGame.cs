@@ -31,6 +31,7 @@ namespace TrueCraft.Client
         private ConcurrentBag<ChunkMesh> IncomingChunks { get; set; }
         private ConcurrentBag<ChunkMesh> IncomingTransparentChunks { get; set; }
         private List<ChunkMesh> TransparentChunkMeshes { get; set; }
+        public ChatInterface ChatInterface { get; set; }
         private RenderTarget2D RenderTarget;
         private Matrix Camera;
         private Matrix Perspective;
@@ -114,7 +115,7 @@ namespace TrueCraft.Client
                 fontFile = FontLoader.Load(f);
             var fontTexture = Content.Load<Texture2D>("dejavu_0.png");
             DejaVu = new FontRenderer(fontFile, fontTexture);
-            Interfaces.Add(new ChatInterface(Client, DejaVu));
+            Interfaces.Add(ChatInterface = new ChatInterface(Client, DejaVu));
 
             OpaqueEffect = new BasicEffect(GraphicsDevice);
             OpaqueEffect.EnableDefaultLighting();
@@ -148,6 +149,17 @@ namespace TrueCraft.Client
 
             // TODO: Rebindable keys
             // TODO: Horizontal terrain collisions
+
+            if (state.IsKeyDown(Keys.F2) && oldState.IsKeyUp(Keys.F2)) // Take a screenshot
+            {
+                var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    ".truecraft", "screenshots", DateTime.Now.ToString("yyyy-MM-dd_H.mm.ss") + ".png");
+                if (!Directory.Exists(Path.GetDirectoryName(path)))
+                    Directory.CreateDirectory(Path.GetDirectoryName(path));
+                using (var stream = File.OpenWrite(path))
+                    RenderTarget.SaveAsPng(stream, RenderTarget.Width, RenderTarget.Height);
+                ChatInterface.AddMessage(string.Format("Screenshot saved as {0}", Path.GetFileName(path)));
+            }
 
             Microsoft.Xna.Framework.Vector3 delta = Microsoft.Xna.Framework.Vector3.Zero;
 

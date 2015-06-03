@@ -34,13 +34,18 @@ namespace TrueCraft.Client.Interface
             client.ChatMessage += HandleChatMessage;
         }
 
-        void HandleChatMessage(object sender, ChatMessageEventArgs e)
+        public void AddMessage(string message)
         {
             lock (Messages_lock)
             {
-                Messages.Add(new ChatMessage(e.Message));
-                Console.WriteLine(e.Message);
+                Messages.Add(new ChatMessage(message));
+                Console.WriteLine(message);
             }
+        }
+
+        void HandleChatMessage(object sender, ChatMessageEventArgs e)
+        {
+            AddMessage(e.Message);
         }
 
         public void Update(GameTime gameTime)
