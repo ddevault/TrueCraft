@@ -91,6 +91,13 @@ namespace TrueCraft.Launcher.Views
             UsernameText.Sensitive = PasswordText.Sensitive = LogInButton.Sensitive = RegisterButton.Sensitive = true;
         }
 
+        private class LogInAsyncState
+        {
+            public HttpWebRequest Request { get; set; }
+            public string Username { get; set; }
+            public string Password { get; set; }
+        }
+
         private void LogInButton_Clicked(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(UsernameText.Text) || string.IsNullOrEmpty(PasswordText.Password))
@@ -106,17 +113,23 @@ namespace TrueCraft.Launcher.Views
             var request = WebRequest.CreateHttp(TrueCraftUser.AuthServer + "/api/login");
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded";
-            request.BeginGetRequestStream(HandleLoginRequestReady, request);
+            request.BeginGetRequestStream(HandleLoginRequestReady, new LogInAsyncState
+            {
+                Request = request,
+                Username = Window.User.Username,
+                Password = PasswordText.Password
+            });
         }
 
         private void HandleLoginRequestReady(IAsyncResult asyncResult)
         {
             try
             {
-                var request = (HttpWebRequest)asyncResult.AsyncState;
+                var state = (LogInAsyncState)asyncResult.AsyncState;
+                var request = state.Request;
                 var requestStream = request.EndGetRequestStream(asyncResult);
                 using (var writer = new StreamWriter(requestStream))
-                    writer.Write(string.Format("user={0}&password={1}&version=12", UsernameText.Text, PasswordText.Password));
+                    writer.Write(string.Format("user={0}&password={1}&version=12", state.Username, state.Password));
                 request.BeginGetResponse(HandleLoginResponse, request);
             }
             catch
@@ -143,10 +156,10 @@ namespace TrueCraft.Launcher.Views
                 if (session.Contains(":"))
                 {
                     var parts = session.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-                    Window.User.Username = parts[2];
-                    Window.User.SessionId = parts[3];
                     Application.Invoke(() =>
                     {
+                        Window.User.Username = parts[2];
+                        Window.User.SessionId = parts[3];
                         EnableForm();
                         Window.MainContainer.Remove(this);
                         Window.MainContainer.PackEnd(Window.MainMenuView = new MainMenuView(Window));
