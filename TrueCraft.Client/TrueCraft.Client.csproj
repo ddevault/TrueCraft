@@ -111,6 +111,7 @@
     <Compile Include="Rendering\Blocks\LeavesRenderer.cs" />
     <Compile Include="Rendering\Blocks\TallGrassRenderer.cs" />
     <Compile Include="Rendering\FlatQuadRenderer.cs" />
+    <Compile Include="Rendering\Blocks\LadderRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
