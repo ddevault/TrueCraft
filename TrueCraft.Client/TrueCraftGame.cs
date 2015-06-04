@@ -275,10 +275,10 @@ namespace TrueCraft.Client
             Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
             GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
             GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-            GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            GraphicsDevice.BlendState = BlendState.NonPremultiplied;
 
             int verticies = 0, chunks = 0;
-            GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
+            GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
             for (int i = 0; i < ChunkMeshes.Count; i++)
             {
                 if (CameraView.Intersects(ChunkMeshes[i].BoundingBox) && !ChunkMeshes[i].Empty)

@@ -7,6 +7,13 @@ namespace TrueCraft.Core.Logic.Blocks
 {
     public class TallGrassBlock : BlockProvider
     {
+        public enum TallGrassType
+        {
+            DeadBush = 0,
+            TallGrass = 1,
+            Fern = 2
+        }
+
         public static readonly byte BlockID = 0x1F;
         
         public override byte ID { get { return 0x1F; } }

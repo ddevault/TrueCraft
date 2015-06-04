@@ -109,6 +109,8 @@
     <Compile Include="Rendering\Blocks\LogRenderer.cs" />
     <Compile Include="Rendering\ChunkRenderer.cs" />
     <Compile Include="Rendering\Blocks\LeavesRenderer.cs" />
+    <Compile Include="Rendering\Blocks\TallGrassRenderer.cs" />
+    <Compile Include="Rendering\FlatQuadRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
