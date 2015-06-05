@@ -5,7 +5,7 @@ mono:
 before_install:
     - git submodule update --init --recursive
 install:
-    - nuget restore solution-name.sln
+    - nuget restore TrueCraft.sln
     - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
 script:
     - xbuild /p:Configuration=Release TrueCraft.sln
