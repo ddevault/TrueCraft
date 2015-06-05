@@ -50,10 +50,10 @@ namespace TrueCraft.Core.World
         public Region(Coordinates2D position, World world, string file) : this(position, world)
         {
             if (File.Exists(file))
-                regionFile = File.Open(file, FileMode.OpenOrCreate);
+                regionFile = File.Open(file, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
             else
             {
-                regionFile = File.Open(file, FileMode.OpenOrCreate);
+                regionFile = File.Open(file, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
                 CreateRegionHeader();
             }
         }

@@ -200,14 +200,14 @@ namespace TrueCraft.Core.World
         public int GetHeight(byte x, byte z)
         {
             LastAccessed = DateTime.Now;
-            return HeightMap[(byte)(x * Width) + z];
+            return HeightMap[(x * Width) + z];
         }
 
         private void SetHeight(byte x, byte z, int value)
         {
             LastAccessed = DateTime.Now;
             IsModified = true;
-            HeightMap[(byte)(x * Width) + z] = value;
+            HeightMap[(x * Width) + z] = value;
         }
 
         public void UpdateHeightMap()
@@ -308,7 +308,7 @@ namespace TrueCraft.Core.World
                 }
             }
 
-            // TODO: Tile entities, entities
+            // TODO: Entities
         }
     }
 }

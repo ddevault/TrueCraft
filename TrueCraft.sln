@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueCraft.Client", "TrueCra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueCraft.Launcher", "TrueCraft.Launcher\TrueCraft.Launcher.csproj", "{6604F17A-552E-405D-B327-37C8B1648C86}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{6756B61E-5856-4CA7-90B5-6053763FE7BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueCraft.Core.Test", "TrueCraft.Core.Test\TrueCraft.Core.Test.csproj", "{BCFDCD93-C23E-49E6-9767-A887B3C2A709}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -45,6 +49,14 @@ Global
 		{A6516869-A2FB-4E31-85C8-2285490CB32C}.Release|x64.Build.0 = Release|x86
 		{A6516869-A2FB-4E31-85C8-2285490CB32C}.Release|x86.ActiveCfg = Release|x86
 		{A6516869-A2FB-4E31-85C8-2285490CB32C}.Release|x86.Build.0 = Release|x86
+		{BCFDCD93-C23E-49E6-9767-A887B3C2A709}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BCFDCD93-C23E-49E6-9767-A887B3C2A709}.Debug|x64.Build.0 = Debug|Any CPU
+		{BCFDCD93-C23E-49E6-9767-A887B3C2A709}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BCFDCD93-C23E-49E6-9767-A887B3C2A709}.Debug|x86.Build.0 = Debug|Any CPU
+		{BCFDCD93-C23E-49E6-9767-A887B3C2A709}.Release|x64.ActiveCfg = Release|Any CPU
+		{BCFDCD93-C23E-49E6-9767-A887B3C2A709}.Release|x64.Build.0 = Release|Any CPU
+		{BCFDCD93-C23E-49E6-9767-A887B3C2A709}.Release|x86.ActiveCfg = Release|Any CPU
+		{BCFDCD93-C23E-49E6-9767-A887B3C2A709}.Release|x86.Build.0 = Release|Any CPU
 		{C1C47EF5-2D8A-4231-AAA8-F651F52F480E}.Debug|x64.ActiveCfg = Debug|x86
 		{C1C47EF5-2D8A-4231-AAA8-F651F52F480E}.Debug|x64.Build.0 = Debug|x86
 		{C1C47EF5-2D8A-4231-AAA8-F651F52F480E}.Debug|x86.ActiveCfg = Debug|x86
@@ -69,6 +81,9 @@ Global
 		{FEE55B54-91B0-4325-A2C3-D576C0B7A81F}.Release|x64.Build.0 = Release|Any CPU
 		{FEE55B54-91B0-4325-A2C3-D576C0B7A81F}.Release|x86.ActiveCfg = Release|Any CPU
 		{FEE55B54-91B0-4325-A2C3-D576C0B7A81F}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BCFDCD93-C23E-49E6-9767-A887B3C2A709} = {6756B61E-5856-4CA7-90B5-6053763FE7BA}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

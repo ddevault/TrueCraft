@@ -22,10 +22,17 @@ namespace TrueCraft.Core.TerrainGen
         {
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                foreach (var type in assembly.GetTypes().Where(t => typeof(IBiomeProvider).IsAssignableFrom(t) && !t.IsAbstract))
+                try
                 {
-                    var instance = (IBiomeProvider)Activator.CreateInstance(type);
-                    RegisterBiomeProvider(instance);
+                    foreach (var type in assembly.GetTypes().Where(t => typeof(IBiomeProvider).IsAssignableFrom(t) && !t.IsAbstract))
+                    {
+                        var instance = (IBiomeProvider)Activator.CreateInstance(type);
+                        RegisterBiomeProvider(instance);
+                    }
+                }
+                catch
+                {
+                    // There are some bugs with loading mscorlib during a unit test like this
                 }
             }
         }
