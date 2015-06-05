@@ -9,4 +9,4 @@ install:
     - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
 script:
     - xbuild /p:Configuration=Release TrueCraft.sln
-    - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./TrueCraft.Core.Tests/bin/Release/TrueCraft.Core.Tests.dll
+    - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./TrueCraft.Core.Test/bin/Release/TrueCraft.Core.Test.dll
