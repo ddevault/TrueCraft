@@ -1,12 +1,12 @@
 language: csharp
 solution: TrueCraft.sln
 mono:
-- latest
+    - latest
 before_install:
-- git submodule update --init --recursive
+    - git submodule update --init --recursive
+install:
+    - nuget restore solution-name.sln
+    - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
 script:
-- xbuild /p:Configuration=Release TrueCraft.sln
-before_deploy:
-- mkdir artifacts
-- "(cd ./TrueCraft.Launcher/bin/Release && tar -czvf ../../../artifacts/TrueCraft.tar.gz *)"
-#TODO: Configure Deployment
+    - xbuild /p:Configuration=Release TrueCraft.sln
+    - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./TrueCraft.Core.Tests/bin/Release/TrueCraft.Core.Tests.dll
