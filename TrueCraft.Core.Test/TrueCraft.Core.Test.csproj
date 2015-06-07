@@ -81,6 +81,7 @@
     <Compile Include="World\WorldTest.cs" />
     <Compile Include="Windows\WindowAreaTest.cs" />
     <Compile Include="Windows\CraftingWindowAreaTest.cs" />
+    <Compile Include="Logic\BlockProviderTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="World\" />
