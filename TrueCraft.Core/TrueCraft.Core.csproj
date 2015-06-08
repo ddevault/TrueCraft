@@ -204,6 +204,7 @@
     <Compile Include="TerrainGen\Noise\Perlin.cs" />
     <Compile Include="TerrainGen\Noise\ScaleNoise.cs" />
     <Compile Include="TerrainGen\Noise\CellNoise.cs" />
+    <Compile Include="Util\EndPointParser.cs" />
     <Compile Include="World\BiomeMap.cs" />
     <Compile Include="World\Chunk.cs" />
     <Compile Include="World\Region.cs" />

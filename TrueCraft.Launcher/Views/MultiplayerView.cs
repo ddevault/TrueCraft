@@ -1,10 +1,19 @@
 ﻿using System;
-using Xwt;
-using System.Collections.Generic;
 using System.Diagnostics;
-using Xwt.Drawing;
-using System.Reflection;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Reflection;
+using System.Threading;
+using TrueCraft.Core.Util;
+using TrueCraft.Launcher.Exceptions;
+using Xwt;
+using Xwt.Drawing;
+using Application = Xwt.Application;
+using Button = Xwt.Button;
+using Label = Xwt.Label;
+using ListView = Xwt.ListView;
+using SelectionMode = Xwt.SelectionMode;
 
 namespace TrueCraft.Launcher.Views
 {
@@ -30,7 +39,7 @@ namespace TrueCraft.Launcher.Views
         public MultiplayerView(LauncherWindow window)
         {
             Window = window;
-            this.MinWidth = 250;
+            MinWidth = 250;
 
             MultiplayerLabel = new Label("Multiplayer")
             {
@@ -114,11 +123,14 @@ namespace TrueCraft.Launcher.Views
                     Address = NewServerAddress.Text
                 };
                 var row = ServerListStore.AddRow();
-                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TrueCraft.Launcher.Content.default-server-icon.png"))
+                using (
+                    var stream =
+                        Assembly.GetExecutingAssembly()
+                            .GetManifestResourceStream("TrueCraft.Launcher.Content.default-server-icon.png"))
                     ServerListStore.SetValue(row, iconField, Image.FromStream(stream));
                 ServerListStore.SetValue(row, nameField, server.Name);
                 ServerListStore.SetValue(row, playersField, "TODO/50");
-                UserSettings.Local.FavoriteServers = UserSettings.Local.FavoriteServers.Concat(new[] { server }).ToArray();
+                UserSettings.Local.FavoriteServers = UserSettings.Local.FavoriteServers.Concat(new[] {server}).ToArray();
                 UserSettings.Local.Save();
                 AddServerButton.Sensitive = true;
                 RemoveServerButton.Sensitive = true;
@@ -131,7 +143,10 @@ namespace TrueCraft.Launcher.Views
             foreach (var server in UserSettings.Local.FavoriteServers)
             {
                 var row = ServerListStore.AddRow();
-                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TrueCraft.Launcher.Content.default-server-icon.png"))
+                using (
+                    var stream =
+                        Assembly.GetExecutingAssembly()
+                            .GetManifestResourceStream("TrueCraft.Launcher.Content.default-server-icon.png"))
                     ServerListStore.SetValue(row, iconField, Image.FromStream(stream));
                 ServerListStore.SetValue(row, nameField, server.Name);
                 ServerListStore.SetValue(row, playersField, "TODO/50");
@@ -152,26 +167,43 @@ namespace TrueCraft.Launcher.Views
             ServerCreationBox.PackStart(NewServerAddress);
             ServerCreationBox.PackStart(commitHBox);
 
-            this.PackEnd(BackButton);
-            this.PackEnd(ConnectButton);
-            this.PackStart(MultiplayerLabel);
-            this.PackStart(ServerIPEntry);
-            this.PackStart(ServerListView);
-            this.PackStart(addServerHBox);
-            this.PackStart(ServerCreationBox);
+            PackEnd(BackButton);
+            PackEnd(ConnectButton);
+            PackStart(MultiplayerLabel);
+            PackStart(ServerIPEntry);
+            PackStart(ServerListView);
+            PackStart(addServerHBox);
+            PackStart(ServerCreationBox);
         }
 
-        void ConnectButton_Clicked(object sender, EventArgs e)
+        private void ConnectButton_Clicked(object sender, EventArgs e)
         {
-            var ip = ServerIPEntry.Text;
+            var address = ServerIPEntry.Text;
             if (ServerListView.SelectedRow != -1)
-                ip = UserSettings.Local.FavoriteServers[ServerListView.SelectedRow].Address;
-            string TrueCraftLaunchParams = string.Format("{0} {1} {2}", ip, Window.User.Username, Window.User.SessionId);
+                address = UserSettings.Local.FavoriteServers[ServerListView.SelectedRow].Address;
+
+            try
+            {
+                TryConnectToServer(address);
+            }
+            catch (ServerConnectionFailedException exception)
+            {
+                MessageDialog.ShowWarning("Could not connect to server: \r\n" + exception.Message);
+                return;
+            }
+
+            StartClient(address);
+        }
+
+        private void StartClient(string address)
+        {
+            var trueCraftLaunchParams = string.Format("{0} {1} {2}", address, Window.User.Username, Window.User.SessionId);
             var process = new Process();
+            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
             if (RuntimeInfo.IsMono)
-                process.StartInfo = new ProcessStartInfo("mono", "TrueCraft.Client.exe " + TrueCraftLaunchParams);
+                process.StartInfo = new ProcessStartInfo("mono", "TrueCraft.Client.exe " + trueCraftLaunchParams);
             else
-                process.StartInfo = new ProcessStartInfo("TrueCraft.Client.exe", TrueCraftLaunchParams);
+                process.StartInfo = new ProcessStartInfo("TrueCraft.Client.exe", trueCraftLaunchParams);
             process.EnableRaisingEvents = true;
             process.Exited += (s, a) => Application.Invoke(ClientExited);
             process.Start();
@@ -180,8 +212,27 @@ namespace TrueCraft.Launcher.Views
             Window.ShowInTaskbar = false;
             Window.Hide();
         }
+        
+        public bool TryConnectToServer(string address)
+        {
+            var endPoint = EndPointParser.ParseEndPoint(address);
+            if (endPoint == null)
+                throw new ServerConnectionFailedException("Invalid endpoint supplied"); // TODO: Nicer message
 
-        void ClientExited()
+            try
+            {
+                var tcpClient = (new TcpClient());
+                tcpClient.Connect(endPoint.Address, endPoint.Port);
+            }
+            catch (SocketException e)
+            {
+                throw new ServerConnectionFailedException(e.Message);
+            }
+
+            return true;
+        }
+
+        private void ClientExited()
         {
             Window.Show();
             Window.ShowInTaskbar = true;
