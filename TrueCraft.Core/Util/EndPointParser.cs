@@ -22,12 +22,22 @@ namespace TrueCraft.Core.Util
                 return new IPEndPoint(address, 25565);
             if (int.TryParse(arg, out port))
                 return new IPEndPoint(IPAddress.Loopback, port);
-            return new IPEndPoint(Resolve(arg), 25565);
+            var ipAddress = Resolve(arg);
+            return ipAddress == null ? null : new IPEndPoint(ipAddress, 25565);
         }
 
         private static IPAddress Resolve(string arg)
         {
-            return Dns.GetHostEntry(arg).AddressList.FirstOrDefault(item => item.AddressFamily == AddressFamily.InterNetwork);
+            try
+            {
+                return
+                    Dns.GetHostEntry(arg)
+                        .AddressList.FirstOrDefault(item => item.AddressFamily == AddressFamily.InterNetwork);
+            }
+            catch (SocketException)
+            {
+                return null;
+            }
         }
     }
 }
