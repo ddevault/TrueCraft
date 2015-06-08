@@ -152,13 +152,13 @@ namespace TrueCraft.Launcher.Views
             ServerCreationBox.PackStart(NewServerAddress);
             ServerCreationBox.PackStart(commitHBox);
 
-            this.PackEnd(BackButton);
-            this.PackEnd(ConnectButton);
-            this.PackStart(MultiplayerLabel);
-            this.PackStart(ServerIPEntry);
-            this.PackStart(ServerListView);
-            this.PackStart(addServerHBox);
-            this.PackStart(ServerCreationBox);
+            PackEnd(BackButton);
+            PackEnd(ConnectButton);
+            PackStart(MultiplayerLabel);
+            PackStart(ServerIPEntry);
+            PackStart(ServerListView);
+            PackStart(addServerHBox);
+            PackStart(ServerCreationBox);
         }
 
         void ConnectButton_Clicked(object sender, EventArgs e)
@@ -166,12 +166,13 @@ namespace TrueCraft.Launcher.Views
             var ip = ServerIPEntry.Text;
             if (ServerListView.SelectedRow != -1)
                 ip = UserSettings.Local.FavoriteServers[ServerListView.SelectedRow].Address;
-            string TrueCraftLaunchParams = string.Format("{0} {1} {2}", ip, Window.User.Username, Window.User.SessionId);
+            var trueCraftLaunchParams = string.Format("{0} {1} {2}", ip, Window.User.Username, Window.User.SessionId);
             var process = new Process();
+            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
             if (RuntimeInfo.IsMono)
-                process.StartInfo = new ProcessStartInfo("mono", "TrueCraft.Client.exe " + TrueCraftLaunchParams);
+                process.StartInfo = new ProcessStartInfo("mono", "TrueCraft.Client.exe " + trueCraftLaunchParams);
             else
-                process.StartInfo = new ProcessStartInfo("TrueCraft.Client.exe", TrueCraftLaunchParams);
+                process.StartInfo = new ProcessStartInfo("TrueCraft.Client.exe", trueCraftLaunchParams);
             process.EnableRaisingEvents = true;
             process.Exited += (s, a) => Application.Invoke(ClientExited);
             process.Start();

@@ -36,7 +36,7 @@ namespace TrueCraft.Client
         private PacketReader PacketReader { get; set; }
         private BlockingCollection<IPacket> PacketQueue { get; set; }
         private Thread NetworkWorker { get; set; }
-        private readonly PacketHandler[] PacketHandlers;
+        private readonly PacketHandler[] _packetHandlers;
 
         public MultiplayerClient(TrueCraftUser user)
         {
@@ -45,8 +45,8 @@ namespace TrueCraft.Client
             PacketQueue = new BlockingCollection<IPacket>(new ConcurrentQueue<IPacket>());
             PacketReader = new PacketReader();
             PacketReader.RegisterCorePackets();
-            NetworkWorker = new Thread(new ThreadStart(DoNetwork));
-            PacketHandlers = new PacketHandler[0x100];
+            NetworkWorker = new Thread(DoNetwork);
+            _packetHandlers = new PacketHandler[0x100];
             Handlers.PacketHandlers.RegisterHandlers(this);
             World = new ReadOnlyWorld();
             var repo = new BlockRepository();
@@ -57,7 +57,7 @@ namespace TrueCraft.Client
 
         public void RegisterPacketHandler(byte packetId, PacketHandler handler)
         {
-            PacketHandlers[packetId] = handler;
+            _packetHandlers[packetId] = handler;
         }
 
         public void Connect(IPEndPoint endPoint)
@@ -93,24 +93,23 @@ namespace TrueCraft.Client
             while (true)
             {
                 IPacket packet;
-                DateTime limit = DateTime.Now.AddMilliseconds(500);
+                var limit = DateTime.Now.AddMilliseconds(500);
                 while (Client.Available != 0 && DateTime.Now < limit)
                 {
                     idle = false;
                     packet = PacketReader.ReadPacket(Stream, false);
-                    if (PacketHandlers[packet.ID] != null)
-                        PacketHandlers[packet.ID](packet, this);
+                    if (_packetHandlers[packet.ID] != null)
+                        _packetHandlers[packet.ID](packet, this);
                 }
                 limit = DateTime.Now.AddMilliseconds(500);
                 while (PacketQueue.Any() && DateTime.Now < limit)
                 {
                     idle = false;
 
-                    if (PacketQueue.TryTake(out packet, 100))
-                    {
-                        PacketReader.WritePacket(Stream, packet);
-                        Stream.BaseStream.Flush();
-                    }
+                    if (!PacketQueue.TryTake(out packet, 100)) continue;
+
+                    PacketReader.WritePacket(Stream, packet);
+                    Stream.BaseStream.Flush();
                 }
                 if (idle)
                     Thread.Sleep(100);
