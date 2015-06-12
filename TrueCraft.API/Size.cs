@@ -9,19 +9,41 @@ namespace TrueCraft.API
     [StructLayout(LayoutKind.Explicit)]
     public struct Size : IEquatable<Size>
     {
+        /// <summary>
+        /// The width component for the size.
+        /// </summary>
         [FieldOffset(0)]
         public double Width;
+
+        /// <summary>
+        /// The height component for the size.
+        /// </summary>
         [FieldOffset(8)]
         public double Height;
+
+        /// <summary>
+        /// The depth component for the size.
+        /// </summary>
         [FieldOffset(16)]
         public double Depth;
 
         #region Constructors
 
+        /// <summary>
+        /// Creates a new size from a specified value.
+        /// </summary>
+        /// <param name="d">The value of the components for the size.</param>
         public Size(double d)
         {
             this.Width = this.Height = this.Depth = d;
         }
+
+        /// <summary>
+        /// Creates a new size from specified values.
+        /// </summary>
+        /// <param name="width">The width component for the size.</param>
+        /// <param name="height">The height component for the size.</param>
+        /// <param name="depth">The depth component for the size.</param>
         public Size(double width, double height, double depth)
         {
             this.Width = width;
@@ -29,6 +51,10 @@ namespace TrueCraft.API
             this.Depth = depth;
         }
 
+        /// <summary>
+        /// Creates a new size by copying another.
+        /// </summary>
+        /// <param name="s">The size to copy.</param>
         public Size(Size s)
         {
             this.Width = s.Width;
@@ -230,6 +256,12 @@ namespace TrueCraft.API
 
         #region Math methods
 
+        /// <summary>
+        /// Returns the component-wise minimum of two sizes.
+        /// </summary>
+        /// <param name="a">The first size.</param>
+        /// <param name="b">The second size.</param>
+        /// <returns></returns>
         public static Size Min(Size a, Size b)
         {
             return new Size(Math.Min(a.Width, b.Width),
@@ -237,6 +269,11 @@ namespace TrueCraft.API
                             Math.Min(a.Depth, b.Depth));
         }
 
+        /// <summary>
+        /// Returns the component-wise minimum of this and another size.
+        /// </summary>
+        /// <param name="b">The other size.</param>
+        /// <returns></returns>
         public Size Min(Size b)
         {
             return new Size(Math.Min(this.Width, b.Width),
@@ -244,6 +281,12 @@ namespace TrueCraft.API
                             Math.Min(this.Depth, b.Depth));
         }
 
+        /// <summary>
+        /// Returns the component-wise maximum of two sizes.
+        /// </summary>
+        /// <param name="a">The first size.</param>
+        /// <param name="b">The second size.</param>
+        /// <returns></returns>
         public static Size Max(Size a, Size b)
         {
             return new Size(Math.Max(a.Width, b.Width),
@@ -251,6 +294,11 @@ namespace TrueCraft.API
                             Math.Max(a.Depth, b.Depth));
         }
 
+        /// <summary>
+        /// Returns the component-wise maximum of this and another size.
+        /// </summary>
+        /// <param name="b">The other size.</param>
+        /// <returns></returns>
         public Size Max(Size b)
         {
             return new Size(Math.Max(this.Width, b.Width),
@@ -258,16 +306,30 @@ namespace TrueCraft.API
                             Math.Max(this.Depth, b.Depth));
         }
 
+        /// <summary>
+        /// Returns the negate of a size.
+        /// </summary>
+        /// <param name="a">The size to negate.</param>
+        /// <returns></returns>
         public static Size Negate(Size a)
         {
             return -a;
         }
 
+        /// <summary>
+        /// Returns the negate of this size.
+        /// </summary>
+        /// <returns></returns>
         public Size Negate()
         {
             return -this;
         }
 
+        /// <summary>
+        /// Returns the component-wise absolute value of a size.
+        /// </summary>
+        /// <param name="a">The size.</param>
+        /// <returns></returns>
         public static Size Abs(Size a)
         {
             return new Size(Math.Abs(a.Width),
@@ -275,6 +337,10 @@ namespace TrueCraft.API
                             Math.Abs(a.Depth));
         }
 
+        /// <summary>
+        /// Returns the component-wise absolute value of this size.
+        /// </summary>
+        /// <returns></returns>
         public Size Abs()
         {
             return new Size(Math.Abs(this.Width),
@@ -284,6 +350,9 @@ namespace TrueCraft.API
 
         #endregion
 
+        /// <summary>
+        /// Gets the volume of a cuboid with the same dimensions as this size.
+        /// </summary>
         public double Volume
         {
             get
@@ -292,6 +361,9 @@ namespace TrueCraft.API
             }
         }
 
+        /// <summary>
+        /// Gets the surface area of a cuboid with the same dimensions as this size.
+        /// </summary>
         public double SurfaceArea
         {
             get
@@ -302,6 +374,9 @@ namespace TrueCraft.API
             }
         }
 
+        /// <summary>
+        /// Gets the lateral surface area of a cuboid with the same dimensions as this size.
+        /// </summary>
         public double LateralSurfaceArea
         {
             get
@@ -311,6 +386,9 @@ namespace TrueCraft.API
             }
         }
 
+        /// <summary>
+        /// Gets the length of a diagonal line passing through a cuboid with the same dimensions as this size.
+        /// </summary>
         public double Diagonal
         {
             get
@@ -321,6 +399,9 @@ namespace TrueCraft.API
             }
         }
 
+        /// <summary>
+        /// Returns the average dimension for this size.
+        /// </summary>
         public double Average
         {
             get
@@ -329,6 +410,11 @@ namespace TrueCraft.API
             }
         }
 
+        /// <summary>
+        /// Determines whether this size and another are equal.
+        /// </summary>
+        /// <param name="other">The other size.</param>
+        /// <returns></returns>
         public bool Equals(Size other)
         {
             return this.Width == other.Width &&
@@ -336,11 +422,20 @@ namespace TrueCraft.API
                    this.Depth == other.Depth;
         }
 
+        /// <summary>
+        /// Determines whether this and another object are equal.
+        /// </summary>
+        /// <param name="obj">The other object.</param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             return obj is Size && Equals((Size)obj);
         }
 
+        /// <summary>
+        /// Returns the hash code for this size.
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             unchecked

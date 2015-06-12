@@ -5,12 +5,22 @@ using System.Text;
 
 namespace TrueCraft.API
 {
+    /// <summary>
+    /// Represents a ray; a line with a start and direction, but no end.
+    /// </summary>
     // Mostly taken from the MonoXna project, which is licensed under the MIT license
     public struct Ray : IEquatable<Ray>
     {
         #region Public Fields
 
+        /// <summary>
+        /// The direction of the ray.
+        /// </summary>
         public readonly Vector3 Direction;
+
+        /// <summary>
+        /// The position of the ray (its origin).
+        /// </summary>
         public readonly Vector3 Position;
 
         #endregion
@@ -18,6 +28,11 @@ namespace TrueCraft.API
 
         #region Public Constructors
 
+        /// <summary>
+        /// Creates a new ray from specified values.
+        /// </summary>
+        /// <param name="position">The position of the ray (its origin).</param>
+        /// <param name="direction">The direction of the ray.</param>
         public Ray(Vector3 position, Vector3 direction)
         {
             this.Position = position;
@@ -29,23 +44,41 @@ namespace TrueCraft.API
 
         #region Public Methods
 
+        /// <summary>
+        /// Determines whether this and another object are equal.
+        /// </summary>
+        /// <param name="obj">The other object.</param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             return (obj is Ray) && Equals((Ray)obj);
         }
 
 
+        /// <summary>
+        /// Determines whether this and another ray are equal.
+        /// </summary>
+        /// <param name="other">The other ray.</param>
+        /// <returns></returns>
         public bool Equals(Ray other)
         {
             return Position.Equals(other.Position) && Direction.Equals(other.Direction);
         }
 
-
+        /// <summary>
+        /// Returns the hash code for this ray.
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             return Position.GetHashCode() ^ Direction.GetHashCode();
         }
 
+        /// <summary>
+        /// Returns the distance along the ray where it intersects the specified bounding box, if it intersects at all.
+        /// </summary>
+        /// <param name="box">The bounding box to check intersection with.</param>
+        /// <returns></returns>
         public double? Intersects(BoundingBox box)
         {
             //first test if start in box
@@ -129,6 +162,10 @@ namespace TrueCraft.API
             return a.Equals(b);
         }
 
+        /// <summary>
+        /// Returns a string representation of this ray.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return string.Format("{{Position:{0} Direction:{1}}}", Position.ToString(), Direction.ToString());

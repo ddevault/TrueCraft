@@ -9,18 +9,39 @@ namespace TrueCraft.API
     [StructLayout(LayoutKind.Explicit)]
     public struct Vector3 : IEquatable<Vector3>
     {
+        /// <summary>
+        /// The X component of this vector.
+        /// </summary>
         [FieldOffset(0)]
         public double X;
+
+        /// <summary>
+        /// The Y component of this vector.
+        /// </summary>
         [FieldOffset(8)]
         public double Y;
+
+        /// <summary>
+        /// The Z component of this vector.
+        /// </summary>
         [FieldOffset(16)]
         public double Z;
 
+        /// <summary>
+        /// Creates a new vector from the specified value.
+        /// </summary>
+        /// <param name="value">The value for the components of the vector.</param>
         public Vector3(double value)
         {
             X = Y = Z = value;
         }
 
+        /// <summary>
+        /// Creates a new vector from the specified values.
+        /// </summary>
+        /// <param name="x">The X component of the vector.</param>
+        /// <param name="y">The Y component of the vector.</param>
+        /// <param name="z">The Z component of the vector.</param>
         public Vector3(double x, double y, double z)
         {
             X = x;
@@ -28,6 +49,10 @@ namespace TrueCraft.API
             Z = z;
         }
 
+        /// <summary>
+        /// Creates a new vector from copying another.
+        /// </summary>
+        /// <param name="v">The vector to copy.</param>
         public Vector3(Vector3 v)
         {
             X = v.X;
@@ -97,6 +122,12 @@ namespace TrueCraft.API
             }
         }
 
+        /// <summary>
+        /// Returns the component-wise minumum of two vectors.
+        /// </summary>
+        /// <param name="value1">The first vector.</param>
+        /// <param name="value2">The second vector.</param>
+        /// <returns></returns>
         public static Vector3 Min(Vector3 value1, Vector3 value2)
         {
             return new Vector3(
@@ -106,6 +137,12 @@ namespace TrueCraft.API
                 );
         }
 
+        /// <summary>
+        /// Returns the component-wise maximum of two vectors.
+        /// </summary>
+        /// <param name="value1">The first vector.</param>
+        /// <param name="value2">The second vector.</param>
+        /// <returns></returns>
         public static Vector3 Max(Vector3 value1, Vector3 value2)
         {
             return new Vector3(
@@ -267,6 +304,7 @@ namespace TrueCraft.API
         #endregion
 
         #region Conversion operators
+
         public static implicit operator Vector3(Coordinates3D a)
         {
             return new Vector3(a.X, a.Y, a.Z);
@@ -285,33 +323,94 @@ namespace TrueCraft.API
 
         #region Constants
 
+        /// <summary>
+        /// A vector with its components set to 0.0.
+        /// </summary>
         public static readonly Vector3 Zero = new Vector3(0);
+
+        /// <summary>
+        /// A vector with its components set to 1.0.
+        /// </summary>
         public static readonly Vector3 One = new Vector3(1);
 
+
+        /// <summary>
+        /// A vector that points upward.
+        /// </summary>
         public static readonly Vector3 Up = new Vector3(0, 1, 0);
+
+        /// <summary>
+        /// A vector that points downward.
+        /// </summary>
         public static readonly Vector3 Down = new Vector3(0, -1, 0);
+
+        /// <summary>
+        /// A vector that points to the left.
+        /// </summary>
         public static readonly Vector3 Left = new Vector3(-1, 0, 0);
+
+        /// <summary>
+        /// A vector that points to the right.
+        /// </summary>
         public static readonly Vector3 Right = new Vector3(1, 0, 0);
+
+        /// <summary>
+        /// A vector that points backward.
+        /// </summary>
         public static readonly Vector3 Backwards = new Vector3(0, 0, -1);
+
+        /// <summary>
+        /// A vector that points forward.
+        /// </summary>
         public static readonly Vector3 Forwards = new Vector3(0, 0, 1);
 
+
+        /// <summary>
+        /// A vector that points to the east.
+        /// </summary>
         public static readonly Vector3 East = new Vector3(1, 0, 0);
+
+        /// <summary>
+        /// A vector that points to the west.
+        /// </summary>
         public static readonly Vector3 West = new Vector3(-1, 0, 0);
+
+        /// <summary>
+        /// A vector that points to the north.
+        /// </summary>
         public static readonly Vector3 North = new Vector3(0, 0, -1);
+
+        /// <summary>
+        /// A vector that points to the south.
+        /// </summary>
         public static readonly Vector3 South = new Vector3(0, 0, 1);
 
         #endregion
 
+        /// <summary>
+        /// Determines whether this and another vector are equal.
+        /// </summary>
+        /// <param name="other">The other vector.</param>
+        /// <returns></returns>
         public bool Equals(Vector3 other)
         {
             return other.X.Equals(X) && other.Y.Equals(Y) && other.Z.Equals(Z);
         }
 
+        /// <summary>
+        /// Determines whether this and another object are equal.
+        /// </summary>
+        /// <param name="obj">The other object.</param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             return obj is Vector3 && Equals((Vector3)obj);
         }
 
+        /// <summary>
+        /// Gets the hash code for this vector.
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             unchecked
