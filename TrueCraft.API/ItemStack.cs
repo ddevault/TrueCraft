@@ -10,8 +10,15 @@ using TrueCraft.API.Networking;
 
 namespace TrueCraft.API
 {
+    /// <summary>
+    /// Represents a stack of items.
+    /// </summary>
     public struct ItemStack : ICloneable, IEquatable<ItemStack>
     {
+        /// <summary>
+        /// Returns the hash code for this item stack.
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             unchecked
@@ -35,6 +42,10 @@ namespace TrueCraft.API
             return !left.Equals(right);
         }
 
+        /// <summary>
+        /// Creates a new item stack with the specified values.
+        /// </summary>
+        /// <param name="id">The item ID for the item stack.</param>
         public ItemStack(short id) : this()
         {
             _Id = id;
@@ -44,16 +55,34 @@ namespace TrueCraft.API
             Index = 0;
         }
 
+        /// <summary>
+        /// Creates a new item stack with the specified values.
+        /// </summary>
+        /// <param name="id">The item ID for the item stack.</param>
+        /// <param name="count">The item count for the item stack.</param>
         public ItemStack(short id, sbyte count) : this(id)
         {
             Count = count;
         }
 
+        /// <summary>
+        /// Creates a new item stack with the specified values.
+        /// </summary>
+        /// <param name="id">The item ID for the item stack.</param>
+        /// <param name="count">The item count for the item stack.</param>
+        /// <param name="metadata">The metadata for the item stack.</param>
         public ItemStack(short id, sbyte count, short metadata) : this(id, count)
         {
             Metadata = metadata;
         }
 
+        /// <summary>
+        /// Creates a new item stack with the specified values.
+        /// </summary>
+        /// <param name="id">The item ID for the item stack.</param>
+        /// <param name="count">The item count for the item stack.</param>
+        /// <param name="metadata">The metadata for the item stack.</param>
+        /// <param name="nbt">The NBT compound tag for the item stack.</param>
         public ItemStack(short id, sbyte count, short metadata, NbtCompound nbt) : this(id, count, metadata)
         {
             Nbt = nbt;
@@ -65,6 +94,11 @@ namespace TrueCraft.API
             }
         }
 
+        /// <summary>
+        /// Creates and returns a new item stack read from a Minecraft stream.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <returns></returns>
         public static ItemStack FromStream(IMinecraftStream stream)
         {
             var slot = ItemStack.EmptyStack;
@@ -84,6 +118,10 @@ namespace TrueCraft.API
             return slot;
         }
 
+        /// <summary>
+        /// Writes this item stack to a Minecraft stream.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
         public void WriteTo(IMinecraftStream stream)
         {
             stream.WriteInt16(ID);
@@ -103,6 +141,11 @@ namespace TrueCraft.API
             stream.WriteUInt8Array(mStream.GetBuffer());
         }
 
+        /// <summary>
+        /// Creates and returns a new item stack created from an NBT compound tag.
+        /// </summary>
+        /// <param name="compound">The compound tag to create the item stack from.</param>
+        /// <returns></returns>
         public static ItemStack FromNbt(NbtCompound compound)
         {
             var s = ItemStack.EmptyStack;
@@ -115,6 +158,10 @@ namespace TrueCraft.API
             return s;
         }
 
+        /// <summary>
+        /// Creates and returns a new NBT compound tag containing this item stack.
+        /// </summary>
+        /// <returns></returns>
         public NbtCompound ToNbt()
         {
             var c = new NbtCompound();
@@ -127,12 +174,18 @@ namespace TrueCraft.API
             return c;
         }
 
+        /// <summary>
+        /// Gets whether this item stack is empty.
+        /// </summary>
         [NbtIgnore]
         public bool Empty
         {
             get { return ID == -1; }
         }
 
+        /// <summary>
+        /// Gets or sets the item ID for this item stack.
+        /// </summary>
         public short ID
         {
             get { return _Id; }
@@ -148,6 +201,9 @@ namespace TrueCraft.API
             }
         }
 
+        /// <summary>
+        /// Gets or sets the item count for this item stack.
+        /// </summary>
         public sbyte Count
         {
             get { return _Count; }
@@ -163,6 +219,9 @@ namespace TrueCraft.API
             }
         }
 
+        /// <summary>
+        /// Gets or sets the metadata for this item stack.
+        /// </summary>
         public short Metadata
         {
             get { return _Metadata; }
@@ -172,11 +231,23 @@ namespace TrueCraft.API
         private short _Id;
         private sbyte _Count;
         private short _Metadata;
+
+        /// <summary>
+        /// The NBT compound tag for this item stack, if any.
+        /// </summary>
         [IgnoreOnNull]
         public NbtCompound Nbt { get; set; }
+
+        /// <summary>
+        /// The index (slot) of this item stack in an inventory.
+        /// </summary>
         [NbtIgnore]
         public int Index;
 
+        /// <summary>
+        /// Returns the string representation of this item stack.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             if (Empty)
@@ -188,11 +259,18 @@ namespace TrueCraft.API
             return "(" + result + ")";
         }
 
+        /// <summary>
+        /// Returns a clone of this item stack.
+        /// </summary>
+        /// <returns></returns>
         public object Clone()
         {
             return new ItemStack(ID, Count, Metadata, Nbt);
         }
 
+        /// <summary>
+        /// Gets an empty item stack.
+        /// </summary>
         [NbtIgnore]
         public static ItemStack EmptyStack
         {
@@ -202,6 +280,11 @@ namespace TrueCraft.API
             }
         }
 
+        /// <summary>
+        /// Determines whether this item stack can merge with another.
+        /// </summary>
+        /// <param name="other">The other item stack.</param>
+        /// <returns></returns>
         public bool CanMerge(ItemStack other)
         {
             if (this.Empty || other.Empty)
@@ -209,12 +292,22 @@ namespace TrueCraft.API
             return _Id == other._Id && _Metadata == other._Metadata && Equals(Nbt, other.Nbt);
         }
 
+        /// <summary>
+        /// Determines whether this item stack and another object are equal.
+        /// </summary>
+        /// <param name="obj">The other object.</param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             return obj is ItemStack && Equals((ItemStack)obj);
         }
 
+        /// <summary>
+        /// Determines whether this item stack and another are equal.
+        /// </summary>
+        /// <param name="other">The other item stack.</param>
+        /// <returns></returns>
         public bool Equals(ItemStack other)
         {
             return _Id == other._Id && _Count == other._Count && _Metadata == other._Metadata && Index == other.Index && Equals(Nbt, other.Nbt);

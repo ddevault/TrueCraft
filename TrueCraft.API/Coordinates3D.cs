@@ -5,15 +5,42 @@ using System.Text;
 
 namespace TrueCraft.API
 {
+    /// <summary>
+    /// Represents a tuple of 3D coordinates.
+    /// </summary>
     public struct Coordinates3D : IEquatable<Coordinates3D>
     {
-        public int X, Y, Z;
+        /// <summary>
+        /// The X component of the coordinates.
+        /// </summary>
+        public int X;
 
+        /// <summary>
+        /// The Y component of the coordinates.
+        /// </summary>
+        public int Y;
+
+        /// <summary>
+        /// The Z component of the coordinates.
+        /// </summary>
+        public int Z;
+
+
+        /// <summary>
+        /// Creates a new trio of coordinates from the specified value.
+        /// </summary>
+        /// <param name="value">The value for the components of the coordinates.</param>
         public Coordinates3D(int value)
         {
             X = Y = Z = value;
         }
 
+        /// <summary>
+        /// Creates a new trio of coordinates from the specified values.
+        /// </summary>
+        /// <param name="x">The X component of the coordinates.</param>
+        /// <param name="z">The Y component of the coordinates.</param>
+        /// <param name="z">The Z component of the coordinates.</param>
         public Coordinates3D(int x = 0, int y = 0, int z = 0)
         {
             X = x;
@@ -21,6 +48,10 @@ namespace TrueCraft.API
             Z = z;
         }
 
+        /// <summary>
+        /// Creates a new trio of coordinates by copying another.
+        /// </summary>
+        /// <param name="v">The coordinates to copy.</param>
         public Coordinates3D(Coordinates3D v)
         {
             X = v.X;
@@ -83,6 +114,12 @@ namespace TrueCraft.API
             }
         }
 
+        /// <summary>
+        /// Returns the component-wise minimum of two 3D coordinates.
+        /// </summary>
+        /// <param name="value1">The first coordinates.</param>
+        /// <param name="value2">The second coordinates.</param>
+        /// <returns></returns>
         public static Coordinates3D Min(Coordinates3D value1, Coordinates3D value2)
         {
             return new Coordinates3D(
@@ -92,6 +129,12 @@ namespace TrueCraft.API
                 );
         }
 
+        /// <summary>
+        /// Returns the component-wise maximum of two 3D coordinates.
+        /// </summary>
+        /// <param name="value1">The first coordinates.</param>
+        /// <param name="value2">The second coordinates.</param>
+        /// <returns></returns>
         public static Coordinates3D Max(Coordinates3D value1, Coordinates3D value2)
         {
             return new Coordinates3D(
@@ -222,32 +265,101 @@ namespace TrueCraft.API
 
         #region Constants
 
+        /// <summary>
+        /// A trio of 3D coordinates with components set to 0.0.
+        /// </summary>
         public static readonly Coordinates3D Zero = new Coordinates3D(0);
+
+        /// <summary>
+        /// A trio of 3D coordinates with components set to 0.0.
+        /// </summary>
         public static readonly Coordinates3D One = new Coordinates3D(1);
 
+
+        /// <summary>
+        /// A trio of 3D coordinates facing up.
+        /// </summary>
         public static readonly Coordinates3D Up = new Coordinates3D(0, 1, 0);
+
+        /// <summary>
+        /// A trio of 3D coordinates facing down.
+        /// </summary>
         public static readonly Coordinates3D Down = new Coordinates3D(0, -1, 0);
+
+        /// <summary>
+        /// A trio of 3D coordinates facing left.
+        /// </summary>
         public static readonly Coordinates3D Left = new Coordinates3D(-1, 0, 0);
+
+        /// <summary>
+        /// A trio of 3D coordinates facing right.
+        /// </summary>
         public static readonly Coordinates3D Right = new Coordinates3D(1, 0, 0);
+
+        /// <summary>
+        /// A trio of 3D coordinates facing backwards.
+        /// </summary>
         public static readonly Coordinates3D Backwards = new Coordinates3D(0, 0, -1);
+
+        /// <summary>
+        /// A trio of 3D coordinates facing forwards.
+        /// </summary>
         public static readonly Coordinates3D Forwards = new Coordinates3D(0, 0, 1);
 
+
+        /// <summary>
+        /// A trio of 3D coordinates facing to the east.
+        /// </summary>
         public static readonly Coordinates3D East = new Coordinates3D(1, 0, 0);
+
+        /// <summary>
+        /// A trio of 3D coordinates facing to the west.
+        /// </summary>
         public static readonly Coordinates3D West = new Coordinates3D(-1, 0, 0);
+
+        /// <summary>
+        /// A trio of 3D coordinates facing to the north.
+        /// </summary>
         public static readonly Coordinates3D North = new Coordinates3D(0, 0, -1);
+
+        /// <summary>
+        /// A trio of 3D coordinates facing to the south.
+        /// </summary>
         public static readonly Coordinates3D South = new Coordinates3D(0, 0, 1);
 
+        
+        /// <summary>
+        /// A trio of 3D coordinates facing the X axis at unit length.
+        /// </summary>
         public static readonly Coordinates3D OneX = new Coordinates3D(1, 0, 0);
+        
+        /// <summary>
+        /// A trio of 3D coordinates facing the Y axis at unit length.
+        /// </summary>
         public static readonly Coordinates3D OneY = new Coordinates3D(0, 1, 0);
+        
+        /// <summary>
+        /// A trio of 3D coordinates facing the Z axis at unit length.
+        /// </summary>
         public static readonly Coordinates3D OneZ = new Coordinates3D(0, 0, 1);
 
         #endregion
 
+        /// <summary>
+        /// Determines whether this 3D coordinates and another are equal.
+        /// </summary>
+        /// <param name="other">The other coordinates.</param>
+        /// <returns></returns>
         public bool Equals(Coordinates3D other)
         {
             return other.X.Equals(X) && other.Y.Equals(Y) && other.Z.Equals(Z);
         }
 
+        /// <summary>
+        /// Determines whether this and another object are equal.
+        /// </summary>
+        /// <param name="obj">The other object.</param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -255,6 +367,10 @@ namespace TrueCraft.API
             return Equals((Coordinates3D)obj);
         }
 
+        /// <summary>
+        /// Returns the hash code for this 3D coordinates.
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             unchecked
