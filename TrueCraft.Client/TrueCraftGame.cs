@@ -33,9 +33,8 @@ namespace TrueCraft.Client
         private List<ChunkMesh> TransparentChunkMeshes { get; set; }
         public ChatInterface ChatInterface { get; set; }
         private RenderTarget2D RenderTarget;
-        private Matrix Camera;
-        private Matrix Perspective;
         private BoundingFrustum CameraView;
+        private Camera Camera;
         private bool MouseCaptured;
         private KeyboardState PreviousKeyboardState;
 
@@ -75,7 +74,8 @@ namespace TrueCraft.Client
             var centerX = GraphicsDevice.Viewport.Width / 2;
             var centerY = GraphicsDevice.Viewport.Height / 2;
             Mouse.SetPosition(centerX, centerY);
-            UpdateMatricies();
+            Camera = new Camera(GraphicsDevice.Viewport.AspectRatio, 70.0f, 0.1f, 1000.0f);
+            UpdateCamera();
             PreviousKeyboardState = Keyboard.GetState();
             Window.ClientSizeChanged += (sender, e) => CreateRenderTarget();
             CreateRenderTarget();
@@ -100,7 +100,7 @@ namespace TrueCraft.Client
             switch (e.PropertyName)
             {
                 case "Position":
-                    UpdateMatricies();
+                    UpdateCamera();
                     var sorter = new ChunkRenderer.ChunkSorter(new Coordinates3D(
                         (int)Client.Position.X, 0, (int)Client.Position.Z));
                     PendingMainThreadActions.Add(() => TransparentChunkMeshes.Sort(sorter));
@@ -196,7 +196,7 @@ namespace TrueCraft.Client
                 Client.Pitch = MathHelper.Clamp(Client.Pitch, -89.9f, 89.9f);
 
                 if (look != Vector2.Zero)
-                    UpdateMatricies();
+                    UpdateCamera();
             }
         }
 
@@ -244,28 +244,20 @@ namespace TrueCraft.Client
             base.Update(gameTime);
         }
 
-        private void UpdateMatricies()
+        private void UpdateCamera()
         {
-            var player = new Microsoft.Xna.Framework.Vector3(
-                (float)Client.Position.X,
-                (float)(Client.Position.Y + (Client.Size.Height / 2)),
-                (float)Client.Position.Z);
+            Camera.Position = new TrueCraft.API.Vector3(
+                Client.Position.X,
+                Client.Position.Y + (Client.Size.Height / 2),
+                Client.Position.Z);
 
-            var lookAt = Microsoft.Xna.Framework.Vector3.Transform(
-                new Microsoft.Xna.Framework.Vector3(0, 0, -1),
-                Matrix.CreateRotationX(MathHelper.ToRadians(Client.Pitch)) * Matrix.CreateRotationY(MathHelper.ToRadians(Client.Yaw)));
+            Camera.Pitch = Client.Pitch;
+            Camera.Yaw = Client.Yaw;
 
-            Camera = Matrix.CreateLookAt(
-                player, player + lookAt,
-                Microsoft.Xna.Framework.Vector3.Up);
+            CameraView = Camera.GetFrustum();
 
-            Perspective = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(70f), GraphicsDevice.Viewport.AspectRatio, 0.01f, 1000f);
-
-            CameraView = new BoundingFrustum(Camera * Perspective);
-
-            OpaqueEffect.View = TransparentEffect.View = Camera;
-            OpaqueEffect.Projection = TransparentEffect.Projection = Perspective;
-            OpaqueEffect.World = TransparentEffect.World = Matrix.Identity;
+            Camera.ApplyTo(OpaqueEffect);
+            Camera.ApplyTo(TransparentEffect);
         }
 
         protected override void Draw(GameTime gameTime)
