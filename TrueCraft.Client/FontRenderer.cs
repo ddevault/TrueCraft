@@ -57,6 +57,8 @@ namespace TrueCraft.Client
         // RGB values taken from http://minecraft.gamepedia.com/Formatting_codes
         private static Color GetColor(string colorCode)
         {
+            colorCode = colorCode.ToLowerInvariant();
+
             switch (colorCode)
             {
                 case ChatColor.Black:

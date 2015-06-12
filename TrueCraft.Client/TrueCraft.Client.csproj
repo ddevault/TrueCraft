@@ -32,6 +32,7 @@
     <Optimize>False</Optimize>
     <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
     <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <ErrorReport>prompt</ErrorReport>
@@ -95,6 +96,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering\Camera.cs" />
     <Compile Include="TrueCraftGame.cs" />
     <Compile Include="MultiplayerClient.cs" />
     <Compile Include="Handlers\PacketHandlers.cs" />
@@ -149,14 +151,7 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-  <ItemGroup>
-    <Folder Include="Handlers\" />
-    <Folder Include="Interface\" />
-    <Folder Include="Events\" />
-    <Folder Include="Content\" />
-    <Folder Include="Rendering\" />
-    <Folder Include="Rendering\Blocks\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup />
   <ItemGroup>
     <Content Include="Content\dejavu_0.png">
