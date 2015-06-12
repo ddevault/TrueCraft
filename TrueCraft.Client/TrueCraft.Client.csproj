@@ -32,6 +32,10 @@
     <Optimize>False</Optimize>
     <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
     <PlatformTarget>x86</PlatformTarget>
+<<<<<<< HEAD
+=======
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+>>>>>>> 2075244... Revert disabling Visual Studio hosting process
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <ErrorReport>prompt</ErrorReport>
