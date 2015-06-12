@@ -29,9 +29,7 @@ namespace TrueCraft.API
     /// <summary>
     /// Represents an axis-aligned bounding box.
     /// </summary>
-    /// <remarks>
     /// Mostly taken from the MonoXna project, which is licensed under the MIT license
-    /// </remarks>
     public struct BoundingBox : IEquatable<BoundingBox>
     {
         #region Public Fields

@@ -8,9 +8,7 @@ namespace TrueCraft.API
     /// <summary>
     /// Represents a ray; a line with a start and direction, but no end.
     /// </summary>
-    /// <remarks>
     /// Mostly taken from the MonoXna project, which is licensed under the MIT license
-    /// </remarks>
     public struct Ray : IEquatable<Ray>
     {
         #region Public Fields
