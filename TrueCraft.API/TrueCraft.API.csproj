@@ -37,6 +37,7 @@
   <ItemGroup>
     <Compile Include="Configuration.cs" />
     <Compile Include="Coordinates3D.cs" />
+    <Compile Include="ChatFormat.cs" />
     <Compile Include="IAccessConfiguration.cs" />
     <Compile Include="PlantSpecies.cs" />
     <Compile Include="OreTypes.cs" />
