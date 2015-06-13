@@ -110,11 +110,12 @@ namespace TrueCraft.Client
 
         protected override void LoadContent()
         {
-            FontFile fontFile;
-            using (var f = File.OpenRead(Path.Combine(Content.RootDirectory, "dejavu.fnt")))
-                fontFile = FontLoader.Load(f);
-            var fontTexture = Content.Load<Texture2D>("dejavu_0.png");
-            DejaVu = new FontRenderer(fontFile, fontTexture);
+            DejaVu = new FontRenderer(
+                new Font(Content, "Fonts/DejaVu", FontStyle.Regular),
+                new Font(Content, "Fonts/DejaVu", FontStyle.Bold),
+                null, // No support for underlined or strikethrough yet. The FontRenderer will revert to using the regular font style.
+                null, // (I don't think BMFont has those options?)
+                new Font(Content, "Fonts/DejaVu", FontStyle.Italic));
             Interfaces.Add(ChatInterface = new ChatInterface(Client, DejaVu));
 
             OpaqueEffect = new BasicEffect(GraphicsDevice);

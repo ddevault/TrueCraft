@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TrueCraft.Client.Events;
 using System.Collections.Generic;
+using TrueCraft.Client.Rendering;
 
 namespace TrueCraft.Client.Interface
 {

@@ -97,6 +97,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\Camera.cs" />
+    <Compile Include="Rendering\Font.cs" />
+    <Compile Include="Rendering\FontRenderer.cs" />
+    <Compile Include="Rendering\FontStyle.cs" />
     <Compile Include="TrueCraftGame.cs" />
     <Compile Include="MultiplayerClient.cs" />
     <Compile Include="Handlers\PacketHandlers.cs" />
@@ -104,7 +107,6 @@
     <Compile Include="Interface\ChatInterface.cs" />
     <Compile Include="Interface\IGameInterface.cs" />
     <Compile Include="BMFont.cs" />
-    <Compile Include="FontRenderer.cs" />
     <Compile Include="Handlers\ChunkHandler.cs" />
     <Compile Include="ReadOnlyWorld.cs" />
     <Compile Include="Events\ChunkEventArgs.cs" />
@@ -154,10 +156,13 @@
   <ItemGroup />
   <ItemGroup />
   <ItemGroup>
-    <Content Include="Content\dejavu_0.png">
+    <Content Include="Content\Fonts\dejavu_bold_0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\dejavu.fnt">
+    <Content Include="Content\Fonts\dejavu_italic_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\dejavu_regular_0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\items.png">
@@ -166,6 +171,15 @@
     <Content Include="Content\terrain.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Content\Fonts\dejavu_bold.fnt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Fonts\dejavu_italic.fnt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Fonts\dejavu_regular.fnt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="OpenTK.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
