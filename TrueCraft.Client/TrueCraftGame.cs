@@ -201,9 +201,8 @@ namespace TrueCraft.Client
                 var centerY = GraphicsDevice.Viewport.Height / 2;
                 Mouse.SetPosition(centerX, centerY);
 
-                var look = new Vector2(
-                    (centerX - e.X),
-                    (centerY - e.Y) * (float)(GameTime.ElapsedGameTime.TotalSeconds * 70));
+                var look = new Vector2((centerX - e.X), (centerY - e.Y))
+                    * (float)(GameTime.ElapsedGameTime.TotalSeconds * 70);
 
                 Client.Yaw += look.X;
                 Client.Pitch += look.Y;
