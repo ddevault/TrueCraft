@@ -13,6 +13,7 @@ using System.ComponentModel;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.API.World;
 using System.Collections.Concurrent;
+using TrueCraft.Client.Input;
 
 namespace TrueCraft.Client
 {
@@ -37,6 +38,8 @@ namespace TrueCraft.Client
         private Camera Camera;
         private bool MouseCaptured;
         private KeyboardState PreviousKeyboardState;
+        private MouseComponent MouseComponent { get; set; }
+        private GameTime GameTime { get; set; }
 
         private BasicEffect OpaqueEffect, TransparentEffect;
 
@@ -57,6 +60,10 @@ namespace TrueCraft.Client
             IncomingTransparentChunks = new ConcurrentBag<ChunkMesh>();
             PendingMainThreadActions = new ConcurrentBag<Action>();
             MouseCaptured = true;
+
+            var mouseComponent = new MouseComponent(this);
+            MouseComponent = mouseComponent;
+            Components.Add(mouseComponent);
         }
 
         protected override void Initialize()
@@ -78,6 +85,7 @@ namespace TrueCraft.Client
             UpdateCamera();
             PreviousKeyboardState = Keyboard.GetState();
             Window.ClientSizeChanged += (sender, e) => CreateRenderTarget();
+            MouseComponent.Move += OnMouseComponentMove;
             CreateRenderTarget();
         }
 
@@ -183,14 +191,20 @@ namespace TrueCraft.Client
 
             if (state.IsKeyUp(Keys.Tab) && oldState.IsKeyDown(Keys.Tab))
                 MouseCaptured = !MouseCaptured;
+        }
+
+        private void OnMouseComponentMove(object sender, MouseMoveEventArgs e)
+        {
             if (MouseCaptured)
             {
                 var centerX = GraphicsDevice.Viewport.Width / 2;
                 var centerY = GraphicsDevice.Viewport.Height / 2;
-                var mouse = Mouse.GetState();
-                var look = new Vector2(centerX - mouse.Position.X, centerY - mouse.Position.Y)
-                       * (float)(gameTime.ElapsedGameTime.TotalSeconds * 70);
                 Mouse.SetPosition(centerX, centerY);
+
+                var look = new Vector2(
+                    (centerX - e.X),
+                    (centerY - e.Y) * (float)(GameTime.ElapsedGameTime.TotalSeconds * 70));
+
                 Client.Yaw += look.X;
                 Client.Pitch += look.Y;
                 Client.Yaw %= 360;
@@ -203,6 +217,8 @@ namespace TrueCraft.Client
 
         protected override void Update(GameTime gameTime)
         {
+            GameTime = gameTime;
+
             foreach (var i in Interfaces)
             {
                 i.Update(gameTime);
