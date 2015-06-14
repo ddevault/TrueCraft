@@ -389,5 +389,16 @@ namespace TrueCraft.Client
 
             base.Draw(gameTime);
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                KeyboardComponent.Dispose();
+                MouseComponent.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }
