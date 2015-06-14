@@ -7,25 +7,25 @@ namespace TrueCraft.Client.Input
     /// <summary>
     /// Encapsulates mouse input in an event-driven manner.
     /// </summary>
-    public class MouseComponent : GameComponent
+    public sealed class MouseComponent : GameComponent
     {
         /// <summary>
-        /// 
+        /// Raised when this mouse component is moved.
         /// </summary>
         public event EventHandler<MouseMoveEventArgs> Move;
 
         /// <summary>
-        /// 
+        /// Raised when a button for this mouse component is pressed.
         /// </summary>
         public event EventHandler<MouseButtonEventArgs> ButtonDown;
 
         /// <summary>
-        /// 
+        /// Raised when a button for this mouse component is released.
         /// </summary>
         public event EventHandler<MouseButtonEventArgs> ButtonUp;
 
         /// <summary>
-        /// 
+        /// Raised when the scroll wheel for this mouse component is moved.
         /// </summary>
         public event EventHandler<MouseScrollEventArgs> Scroll;
 
@@ -37,7 +37,7 @@ namespace TrueCraft.Client.Input
         /// <summary>
         /// Creates a new mouse component.
         /// </summary>
-        /// <param name="game"></param>
+        /// <param name="game">The parent game for the component.</param>
         public MouseComponent(Game game)
             : base(game)
         {
@@ -56,7 +56,7 @@ namespace TrueCraft.Client.Input
         /// <summary>
         /// Updates this mouse component.
         /// </summary>
-        /// <param name="gameTime"></param>
+        /// <param name="gameTime">The game time for the update.</param>
         public override void Update(GameTime gameTime)
         {
             var newState = Mouse.GetState();
@@ -69,22 +69,22 @@ namespace TrueCraft.Client.Input
         /// <summary>
         /// Processes a change between two states.
         /// </summary>
-        /// <param name="newState"></param>
-        /// <param name="last"></param>
-        private void Process(MouseState current, MouseState last)
+        /// <param name="newState">The new state.</param>
+        /// <param name="oldState">The old state.</param>
+        private void Process(MouseState newState, MouseState oldState)
         {
             // Movement.
-            if ((current.X != last.X) || (current.Y != last.Y))
+            if ((newState.X != oldState.X) || (newState.Y != oldState.Y))
             {
-                var args = new MouseMoveEventArgs(current.X, current.Y, (current.X - last.X), (current.Y - last.Y));
+                var args = new MouseMoveEventArgs(newState.X, newState.Y, (newState.X - oldState.X), (newState.Y - oldState.Y));
                 if (Move != null)
                     Move(this, args);
             }
 
             // Scrolling.
-            if (current.ScrollWheelValue != last.ScrollWheelValue)
+            if (newState.ScrollWheelValue != oldState.ScrollWheelValue)
             {
-                var args = new MouseScrollEventArgs(current.X, current.Y, current.ScrollWheelValue, (current.ScrollWheelValue - last.ScrollWheelValue));
+                var args = new MouseScrollEventArgs(newState.X, newState.Y, newState.ScrollWheelValue, (newState.ScrollWheelValue - oldState.ScrollWheelValue));
                 if (Scroll != null)
                     Scroll(this, args);
             }
@@ -92,9 +92,9 @@ namespace TrueCraft.Client.Input
             // A bit of code duplication here, shame XNA doesn't expose button state through an enumeration...
 
             // Left button.
-            if (current.LeftButton != last.LeftButton)
+            if (newState.LeftButton != oldState.LeftButton)
             {
-                var args = new MouseButtonEventArgs(current.X, current.Y, MouseButton.Left, (current.LeftButton == ButtonState.Pressed));
+                var args = new MouseButtonEventArgs(newState.X, newState.Y, MouseButton.Left, (newState.LeftButton == ButtonState.Pressed));
                 if (args.IsPressed)
                 {
                     if (ButtonDown != null)
@@ -108,9 +108,9 @@ namespace TrueCraft.Client.Input
             }
 
             // Right button.
-            if (current.RightButton != last.RightButton)
+            if (newState.RightButton != oldState.RightButton)
             {
-                var args = new MouseButtonEventArgs(current.X, current.Y, MouseButton.Right, (current.RightButton == ButtonState.Pressed));
+                var args = new MouseButtonEventArgs(newState.X, newState.Y, MouseButton.Right, (newState.RightButton == ButtonState.Pressed));
                 if (args.IsPressed)
                 {
                     if (ButtonDown != null)
@@ -124,9 +124,9 @@ namespace TrueCraft.Client.Input
             }
 
             // Middle button.
-            if (current.MiddleButton != last.MiddleButton)
+            if (newState.MiddleButton != oldState.MiddleButton)
             {
-                var args = new MouseButtonEventArgs(current.X, current.Y, MouseButton.Middle, (current.MiddleButton == ButtonState.Pressed));
+                var args = new MouseButtonEventArgs(newState.X, newState.Y, MouseButton.Middle, (newState.MiddleButton == ButtonState.Pressed));
                 if (args.IsPressed)
                 {
                     if (ButtonDown != null)
@@ -141,15 +141,18 @@ namespace TrueCraft.Client.Input
         }
 
         /// <summary>
-        /// Disposes of this mouse component.
+        /// Called when this mouse component is being disposed of.
         /// </summary>
-        /// <param name="disposing"></param>
+        /// <param name="disposing">Whether Dispose() called this method.</param>
         protected override void Dispose(bool disposing)
         {
-            Move = null;
-            ButtonDown = null;
-            ButtonUp = null;
-            Scroll = null;
+            if (disposing)
+            {
+                Move = null;
+                ButtonDown = null;
+                ButtonUp = null;
+                Scroll = null;
+            }
 
             base.Dispose(disposing);
         }

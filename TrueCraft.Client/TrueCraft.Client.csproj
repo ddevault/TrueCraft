@@ -94,6 +94,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Input\KeyboardComponent.cs" />
+    <Compile Include="Input\KeyboardEventArgs.cs" />
+    <Compile Include="Input\KeyboardKeyEventArgs.cs" />
     <Compile Include="Input\MouseButton.cs" />
     <Compile Include="Input\MouseButtonEventArgs.cs" />
     <Compile Include="Input\MouseComponent.cs" />
