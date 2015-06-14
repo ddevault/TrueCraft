@@ -37,9 +37,10 @@ namespace TrueCraft.Client
         private BoundingFrustum CameraView;
         private Camera Camera;
         private bool MouseCaptured;
-        private KeyboardState PreviousKeyboardState;
+        private KeyboardComponent KeyboardComponent { get; set; }
         private MouseComponent MouseComponent { get; set; }
         private GameTime GameTime { get; set; }
+        private Microsoft.Xna.Framework.Vector3 Delta { get; set; }
 
         private BasicEffect OpaqueEffect, TransparentEffect;
 
@@ -60,6 +61,10 @@ namespace TrueCraft.Client
             IncomingTransparentChunks = new ConcurrentBag<ChunkMesh>();
             PendingMainThreadActions = new ConcurrentBag<Action>();
             MouseCaptured = true;
+
+            var keyboardComponent = new KeyboardComponent(this);
+            KeyboardComponent = keyboardComponent;
+            Components.Add(keyboardComponent);
 
             var mouseComponent = new MouseComponent(this);
             MouseComponent = mouseComponent;
@@ -83,9 +88,10 @@ namespace TrueCraft.Client
             Mouse.SetPosition(centerX, centerY);
             Camera = new Camera(GraphicsDevice.Viewport.AspectRatio, 70.0f, 0.1f, 1000.0f);
             UpdateCamera();
-            PreviousKeyboardState = Keyboard.GetState();
             Window.ClientSizeChanged += (sender, e) => CreateRenderTarget();
             MouseComponent.Move += OnMouseComponentMove;
+            KeyboardComponent.KeyDown += OnKeyboardKeyDown;
+            KeyboardComponent.KeyUp += OnKeyboardKeyUp;
             CreateRenderTarget();
         }
 
@@ -151,46 +157,83 @@ namespace TrueCraft.Client
             base.OnExiting(sender, args);
         }
 
-        protected virtual void UpdateKeyboard(GameTime gameTime, KeyboardState state, KeyboardState oldState)
+        private void OnKeyboardKeyDown(object sender, KeyboardKeyEventArgs e)
         {
-            if (state.IsKeyDown(Keys.Escape))
-                Exit();
-
             // TODO: Rebindable keys
             // TODO: Horizontal terrain collisions
 
-            if (state.IsKeyDown(Keys.F2) && oldState.IsKeyUp(Keys.F2)) // Take a screenshot
+            switch (e.Key)
             {
-                var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                    ".truecraft", "screenshots", DateTime.Now.ToString("yyyy-MM-dd_H.mm.ss") + ".png");
-                if (!Directory.Exists(Path.GetDirectoryName(path)))
-                    Directory.CreateDirectory(Path.GetDirectoryName(path));
-                using (var stream = File.OpenWrite(path))
-                    RenderTarget.SaveAsPng(stream, RenderTarget.Width, RenderTarget.Height);
-                ChatInterface.AddMessage(string.Format("Screenshot saved as {0}", Path.GetFileName(path)));
+                // Quit the game.
+                case Keys.Escape:
+                    Exit();
+                    break;
+
+                // Take a screenshot.
+                case Keys.F2:
+                    TakeScreenshot();
+                    break;
+
+                // Move to the left.
+                case Keys.A:
+                case Keys.Left:
+                    Delta += Microsoft.Xna.Framework.Vector3.Left;
+                    break;
+
+                // Move to the right.
+                case Keys.D:
+                case Keys.Right:
+                    Delta += Microsoft.Xna.Framework.Vector3.Right;
+                    break;
+
+                // Move forwards.
+                case Keys.W:
+                case Keys.Up:
+                    Delta += Microsoft.Xna.Framework.Vector3.Forward;
+                    break;
+
+                // Move backwards.
+                case Keys.S:
+                case Keys.Down:
+                    Delta += Microsoft.Xna.Framework.Vector3.Backward;
+                    break;
+
+                // Toggle mouse capture.
+                case Keys.Tab:
+                    MouseCaptured = !MouseCaptured;
+                    break;
             }
 
-            Microsoft.Xna.Framework.Vector3 delta = Microsoft.Xna.Framework.Vector3.Zero;
+        }
 
-            if (state.IsKeyDown(Keys.Left) || state.IsKeyDown(Keys.A))
-                delta += Microsoft.Xna.Framework.Vector3.Left;
-            if (state.IsKeyDown(Keys.Right) || state.IsKeyDown(Keys.D))
-                delta += Microsoft.Xna.Framework.Vector3.Right;
-            if (state.IsKeyDown(Keys.Up) || state.IsKeyDown(Keys.W))
-                delta += Microsoft.Xna.Framework.Vector3.Forward;
-            if (state.IsKeyDown(Keys.Down) || state.IsKeyDown(Keys.S))
-                delta += Microsoft.Xna.Framework.Vector3.Backward;
-            
-            if (delta != Microsoft.Xna.Framework.Vector3.Zero)
+        private void OnKeyboardKeyUp(object sender, KeyboardKeyEventArgs e)
+        {
+            switch (e.Key)
             {
-                var lookAt = Microsoft.Xna.Framework.Vector3.Transform(
-                             delta, Matrix.CreateRotationY(MathHelper.ToRadians(Client.Yaw)));
+                // Stop moving to the left.
+                case Keys.A:
+                case Keys.Left:
+                    Delta -= Microsoft.Xna.Framework.Vector3.Left;
+                    break;
 
-                Client.Position += new TrueCraft.API.Vector3(lookAt.X, lookAt.Y, lookAt.Z) * (gameTime.ElapsedGameTime.TotalSeconds * 4.3717);
+                // Stop moving to the right.
+                case Keys.D:
+                case Keys.Right:
+                    Delta -= Microsoft.Xna.Framework.Vector3.Right;
+                    break;
+
+                // Stop moving forwards.
+                case Keys.W:
+                case Keys.Up:
+                    Delta -= Microsoft.Xna.Framework.Vector3.Forward;
+                    break;
+
+                // Stop moving backwards.
+                case Keys.S:
+                case Keys.Down:
+                    Delta -= Microsoft.Xna.Framework.Vector3.Backward;
+                    break;
             }
-
-            if (state.IsKeyUp(Keys.Tab) && oldState.IsKeyDown(Keys.Tab))
-                MouseCaptured = !MouseCaptured;
         }
 
         private void OnMouseComponentMove(object sender, MouseMoveEventArgs e)
@@ -212,6 +255,17 @@ namespace TrueCraft.Client
                 if (look != Vector2.Zero)
                     UpdateCamera();
             }
+        }
+
+        private void TakeScreenshot()
+        {
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                       ".truecraft", "screenshots", DateTime.Now.ToString("yyyy-MM-dd_H.mm.ss") + ".png");
+            if (!Directory.Exists(Path.GetDirectoryName(path)))
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+            using (var stream = File.OpenWrite(path))
+                RenderTarget.SaveAsPng(stream, RenderTarget.Width, RenderTarget.Height);
+            ChatInterface.AddMessage(string.Format("Screenshot saved as {0}", Path.GetFileName(path)));
         }
 
         protected override void Update(GameTime gameTime)
@@ -254,9 +308,16 @@ namespace TrueCraft.Client
                     Client.Position.Y + MultiplayerClient.Height, Client.Position.Z, Client.Yaw, Client.Pitch, false));
                 NextPhysicsUpdate = DateTime.Now.AddMilliseconds(1000 / 20);
             }
-            var state = Keyboard.GetState();
-            UpdateKeyboard(gameTime, state, PreviousKeyboardState);
-            PreviousKeyboardState = state;
+
+            if (Delta != Microsoft.Xna.Framework.Vector3.Zero)
+            {
+                var lookAt = Microsoft.Xna.Framework.Vector3.Transform(
+                             Delta, Matrix.CreateRotationY(MathHelper.ToRadians(Client.Yaw)));
+
+                Client.Position += new TrueCraft.API.Vector3(lookAt.X, lookAt.Y, lookAt.Z)
+                    * (gameTime.ElapsedGameTime.TotalSeconds * 4.3717);
+            }
+
             base.Update(gameTime);
         }
 
