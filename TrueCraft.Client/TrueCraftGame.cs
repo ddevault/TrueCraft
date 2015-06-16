@@ -350,9 +350,9 @@ namespace TrueCraft.Client
             GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
             for (int i = 0; i < ChunkMeshes.Count; i++)
             {
-                if (CameraView.Intersects(ChunkMeshes[i].BoundingBox) && !ChunkMeshes[i].Empty)
+                if (CameraView.Intersects(ChunkMeshes[i].BoundingBox))
                 {
-                    verticies += ChunkMeshes[i].Verticies.VertexCount;
+                    verticies += ChunkMeshes[i].GetTotalVertices();
                     chunks++;
                     ChunkMeshes[i].Draw(OpaqueEffect);
                 }
@@ -360,10 +360,10 @@ namespace TrueCraft.Client
             GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
             for (int i = 0; i < TransparentChunkMeshes.Count; i++)
             {
-                if (CameraView.Intersects(TransparentChunkMeshes[i].BoundingBox) && !TransparentChunkMeshes[i].Empty)
+                if (CameraView.Intersects(TransparentChunkMeshes[i].BoundingBox))
                 {
-                    if (TransparentChunkMeshes[i].Verticies != null)
-                        verticies += TransparentChunkMeshes[i].Verticies.VertexCount;
+                    if (!TransparentChunkMeshes[i].IsDisposed)
+                        verticies += TransparentChunkMeshes[i].GetTotalVertices();
                     TransparentChunkMeshes[i].Draw(TransparentEffect);
                 }
             }
