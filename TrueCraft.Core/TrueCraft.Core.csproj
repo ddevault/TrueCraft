@@ -30,6 +30,9 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="Ionic.Zip.Reduced">
       <HintPath>..\lib\Ionic.Zip.Reduced.dll</HintPath>
@@ -205,6 +208,7 @@
     <Compile Include="TerrainGen\Noise\ScaleNoise.cs" />
     <Compile Include="TerrainGen\Noise\CellNoise.cs" />
     <Compile Include="TexturePack.cs" />
+    <Compile Include="UserSettings.cs" />
     <Compile Include="World\BiomeMap.cs" />
     <Compile Include="World\Chunk.cs" />
     <Compile Include="World\Region.cs" />
@@ -325,7 +329,9 @@
       <Name>fNbt</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>

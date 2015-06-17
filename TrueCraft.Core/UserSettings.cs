@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using System.IO;
 
-namespace TrueCraft.Launcher
+namespace TrueCraft.Core
 {
     public class UserSettings
     {
@@ -21,6 +21,7 @@ namespace TrueCraft.Launcher
         public string Username { get; set; }
         public string Password { get; set; }
         public string LastIP { get; set; }
+        public string SelectedTexturePack { get; set; }
         public FavoriteServer[] FavoriteServers { get; set; }
 
         public UserSettings()
@@ -29,6 +30,7 @@ namespace TrueCraft.Launcher
             Username = "";
             Password = "";
             LastIP = "";
+            SelectedTexturePack = "Default.zip";
             FavoriteServers = new FavoriteServer[0];
         }
 
