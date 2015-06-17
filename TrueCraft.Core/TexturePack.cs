@@ -43,7 +43,7 @@ namespace TrueCraft.Core
         /// <param name="path"></param>
         public static TexturePack FromArchive(string path)
         {
-            if (string.IsNullOrEmpty(path) || !File.Exists(path))
+            if (string.IsNullOrEmpty(path))
                 throw new ArgumentException();
 
             string description = Unknown.Description;

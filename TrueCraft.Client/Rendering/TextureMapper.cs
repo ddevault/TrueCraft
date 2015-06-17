@@ -84,21 +84,21 @@ namespace TrueCraft.Client.Rendering
         public void AddTexturePack(TexturePack texturePack)
         {
             if (texturePack == null)
-                throw new ArgumentException();
+                return;
 
-            var archive = new ZipFile(Path.Combine(TexturePack.TexturePackPath, texturePack.Name));
-            foreach (var entry in archive.Entries)
+            // Make sure to 'silence' errors loading custom texture packs;
+            // they're unimportant as we can just use default textures.
+            try
             {
-                // Make sure to 'silence' errors loading custom texture packs;
-                // they're unimportant as we can just use default textures.
-                try
+                var archive = new ZipFile(Path.Combine(TexturePack.TexturePackPath, texturePack.Name));
+                foreach (var entry in archive.Entries)
                 {
                     var key = entry.FileName;
                     using (var stream = entry.OpenReader())
                         AddTexture(key, Texture2D.FromStream(Device, stream));
                 }
-                catch { }
             }
+            catch { return; }
         }
 
         /// <summary>
