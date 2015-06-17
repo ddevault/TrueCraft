@@ -103,17 +103,5 @@ namespace TrueCraft.Core
                 }
             }
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="path"></param>
-        public void ExtractTo(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-                throw new ArgumentException();
-
-            Archive.ExtractAll(path, ExtractExistingFileAction.OverwriteSilently);
-        }
     }
 }
