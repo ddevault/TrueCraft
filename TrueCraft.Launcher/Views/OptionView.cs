@@ -15,8 +15,7 @@ namespace TrueCraft.Launcher.Views
         public Label OptionLabel { get; set; }
         public Label TexturePackLabel { get; set; }
         public DataField<Image> TexturePackImageField { get; set; }
-        public DataField<string> TexturePackNameField { get; set; }
-        public DataField<string> TexturePackDescField { get; set; }
+        public DataField<string> TexturePackTextField { get; set; }
         public ListStore TexturePackStore { get; set; }
         public ListView TexturePackListView { get; set; }
         public Button OpenFolderButton { get; set; }
@@ -40,9 +39,8 @@ namespace TrueCraft.Launcher.Views
             };
             TexturePackLabel = new Label("Select a texture pack...");
             TexturePackImageField = new DataField<Image>();
-            TexturePackNameField = new DataField<string>();
-            TexturePackDescField = new DataField<string>();
-            TexturePackStore = new ListStore(TexturePackImageField, TexturePackNameField, TexturePackDescField);
+            TexturePackTextField = new DataField<string>();
+            TexturePackStore = new ListStore(TexturePackImageField, TexturePackTextField);
             TexturePackListView = new ListView
             {
                 MinHeight = 200,
@@ -54,7 +52,7 @@ namespace TrueCraft.Launcher.Views
             BackButton = new Button("Back");
 
             TexturePackListView.Columns.Add("Image", TexturePackImageField);
-            TexturePackListView.Columns.Add("Text", TexturePackNameField, TexturePackDescField);
+            TexturePackListView.Columns.Add("Text", TexturePackTextField);
 
             TexturePackListView.SelectionChanged += (sender, e) =>
             {
@@ -117,8 +115,7 @@ namespace TrueCraft.Launcher.Views
             var row = TexturePackStore.AddRow();
 
             TexturePackStore.SetValue(row, TexturePackImageField, Image.FromStream(pack.Image).WithSize(IconSize.Medium));
-            TexturePackStore.SetValue(row, TexturePackNameField, pack.Name);
-            TexturePackStore.SetValue(row, TexturePackDescField, pack.Description);
+            TexturePackStore.SetValue(row, TexturePackTextField, pack.Name + "\r\n" + pack.Description);
         }
     }
 }
