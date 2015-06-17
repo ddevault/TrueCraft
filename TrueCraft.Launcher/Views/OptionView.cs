@@ -13,6 +13,8 @@ namespace TrueCraft.Launcher.Views
         public LauncherWindow Window { get; set; }
         public Image DefaultImage { get; set; }
         public string DefaultDescription { get; set; }
+        public Image UnknownImage { get; set; }
+        public string UnknownDescription { get; set; }
 
         public Label OptionLabel { get; set; }
         public Label TexturePackLabel { get; set; }
@@ -29,8 +31,14 @@ namespace TrueCraft.Launcher.Views
 
         public OptionView(LauncherWindow window)
         {
-            DefaultImage = Image.FromFile("Content/default-pack.png");
-            DefaultDescription = File.ReadAllText("Content/default-pack.txt");
+            DefaultImage = Image.FromFile(
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/pack.png"));
+            DefaultDescription = File.ReadAllText(
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/pack.txt"));
+            UnknownImage = Image.FromFile(
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/default-pack.png"));
+            UnknownDescription = File.ReadAllText(
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/default-pack.txt"));
 
             _texturePacks = new List<TexturePack>();
             _lastTexturePack = null;
@@ -110,17 +118,30 @@ namespace TrueCraft.Launcher.Views
                     continue;
 
                 var texturePack = new TexturePack(zip);
-                _texturePacks.Add(texturePack);
-                AddTexturePackRow(texturePack);
+                if (!texturePack.IsCorrupt)
+                {
+                    _texturePacks.Add(texturePack);
+                    AddTexturePackRow(texturePack);
+                }
             }
         }
 
         private void AddTexturePackRow(TexturePack pack)
         {
             var row = TexturePackStore.AddRow();
-            TexturePackStore.SetValue(row, TexturePackImageField, (pack.Image == null) ? DefaultImage.WithSize(IconSize.Medium) : Image.FromStream(pack.Image).WithSize(IconSize.Medium));
-            TexturePackStore.SetValue(row, TexturePackNameField, pack.Name);
-            TexturePackStore.SetValue(row, TexturePackDescField, pack.Description ?? DefaultDescription);
+            var isDefault = (pack.Path == TexturePack.DefaultID);
+            if (isDefault)
+            {
+                TexturePackStore.SetValue(row, TexturePackImageField, DefaultImage.WithSize(IconSize.Medium));
+                TexturePackStore.SetValue(row, TexturePackNameField, pack.Name);
+                TexturePackStore.SetValue(row, TexturePackDescField, DefaultDescription);
+            }
+            else
+            {
+                TexturePackStore.SetValue(row, TexturePackImageField, (pack.Image == null) ? UnknownImage.WithSize(IconSize.Medium) : Image.FromStream(pack.Image).WithSize(IconSize.Medium));
+                TexturePackStore.SetValue(row, TexturePackNameField, pack.Name);
+                TexturePackStore.SetValue(row, TexturePackDescField, pack.Description ?? UnknownDescription);
+            }
         }
     }
 }

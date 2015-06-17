@@ -54,11 +54,16 @@ namespace TrueCraft.Core
         /// <summary>
         /// 
         /// </summary>
+        public bool IsCorrupt { get; private set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public TexturePack()
         {
             Path = TexturePack.DefaultID;
-            Name = "Default";
             Archive = new ZipFile();
+            Name = "Default";
         }
 
         /// <summary>
@@ -68,14 +73,27 @@ namespace TrueCraft.Core
         public TexturePack(string path)
         {
             if (string.IsNullOrEmpty(path) || !File.Exists(path))
-                throw new ArgumentException();
+                MakeDefault();
 
             Path = path;
             var fileInfo = new FileInfo(path); // A bit weird, but it works.
             Name = fileInfo.Name;
-            Archive = new ZipFile(Path);
+            try { Archive = new ZipFile(path); }
+            catch { IsCorrupt = true; }
 
             GetPackInfo();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void MakeDefault()
+        {
+            Path = TexturePack.DefaultID;
+            Archive = new ZipFile();
+            Name = "Default";
+            Image = null;
+            Description = null;
         }
 
         /// <summary>
@@ -84,31 +102,35 @@ namespace TrueCraft.Core
         /// <returns></returns>
         private void GetPackInfo()
         {
-            foreach (var entry in Archive.Entries)
+            try
             {
-                if (entry.FileName == "pack.txt")
+                foreach (var entry in Archive.Entries)
                 {
-                    using (var stream = entry.OpenReader())
+                    if (entry.FileName == "pack.txt")
                     {
-                        using (var reader = new StreamReader(stream))
-                            Description = reader.ReadToEnd();
+                        using (var stream = entry.OpenReader())
+                        {
+                            using (var reader = new StreamReader(stream))
+                                Description = reader.ReadToEnd();
+                        }
                     }
-                }
-                else if (entry.FileName == "pack.png")
-                {
-                    using (var stream = entry.OpenReader())
+                    else if (entry.FileName == "pack.png")
                     {
-                        // Better way to do this?
-                        var buffer = new byte[entry.UncompressedSize];
-                        stream.Read(buffer, 0, buffer.Length);
-                        Image = new MemoryStream((int)entry.UncompressedSize);
-                        Image.Write(buffer, 0, buffer.Length);
+                        using (var stream = entry.OpenReader())
+                        {
+                            // Better way to do this?
+                            var buffer = new byte[entry.UncompressedSize];
+                            stream.Read(buffer, 0, buffer.Length);
+                            Image = new MemoryStream((int)entry.UncompressedSize);
+                            Image.Write(buffer, 0, buffer.Length);
 
-                        // Fixes 'GLib.GException: Unrecognized image file format' on Linux.
-                        Image.Seek(0, SeekOrigin.Begin);
+                            // Fixes 'GLib.GException: Unrecognized image file format' on Linux.
+                            Image.Seek(0, SeekOrigin.Begin);
+                        }
                     }
                 }
             }
+            catch { IsCorrupt = true; }
         }
     }
 }
