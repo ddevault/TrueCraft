@@ -30,7 +30,7 @@ namespace TrueCraft.Core
             Username = "";
             Password = "";
             LastIP = "";
-            SelectedTexturePack = "Default.zip";
+            SelectedTexturePack = TexturePack.DefaultID;
             FavoriteServers = new FavoriteServer[0];
         }
 

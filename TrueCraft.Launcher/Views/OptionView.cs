@@ -11,6 +11,8 @@ namespace TrueCraft.Launcher.Views
     public class OptionView : VBox
     {
         public LauncherWindow Window { get; set; }
+        public Image DefaultImage { get; set; }
+        public string DefaultDescription { get; set; }
 
         public Label OptionLabel { get; set; }
         public Label TexturePackLabel { get; set; }
@@ -27,6 +29,9 @@ namespace TrueCraft.Launcher.Views
 
         public OptionView(LauncherWindow window)
         {
+            DefaultImage = Image.FromFile("Content/default-pack.png");
+            DefaultDescription = File.ReadAllText("Content/default-pack.txt");
+
             _texturePacks = new List<TexturePack>();
             _lastTexturePack = null;
 
@@ -89,8 +94,8 @@ namespace TrueCraft.Launcher.Views
 
         private void LoadTexturePacks()
         {
-            // We load Default.zip from a different directory.
-            var defaultPack = new TexturePack("Content/Default.zip");
+            // We load the default texture pack specially.
+            var defaultPack = new TexturePack();
             _texturePacks.Add(defaultPack);
             AddTexturePackRow(defaultPack);
 
@@ -113,9 +118,9 @@ namespace TrueCraft.Launcher.Views
         private void AddTexturePackRow(TexturePack pack)
         {
             var row = TexturePackStore.AddRow();
-            TexturePackStore.SetValue(row, TexturePackImageField, Image.FromStream(pack.Image).WithSize(IconSize.Medium));
+            TexturePackStore.SetValue(row, TexturePackImageField, (pack.Image == null) ? DefaultImage.WithSize(IconSize.Medium) : Image.FromStream(pack.Image).WithSize(IconSize.Medium));
             TexturePackStore.SetValue(row, TexturePackNameField, pack.Name);
-            TexturePackStore.SetValue(row, TexturePackDescField, pack.Description);
+            TexturePackStore.SetValue(row, TexturePackDescField, pack.Description ?? DefaultDescription);
         }
     }
 }

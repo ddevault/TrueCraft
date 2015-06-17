@@ -43,6 +43,7 @@ namespace TrueCraft.Client
         private GameTime GameTime { get; set; }
         private Microsoft.Xna.Framework.Vector3 Delta { get; set; }
         private TexturePack TexturePack { get; set; }
+        private TextureMapper TextureMapper { get; set; }
 
         private BasicEffect OpaqueEffect, TransparentEffect;
 
@@ -126,7 +127,14 @@ namespace TrueCraft.Client
 
         protected override void LoadContent()
         {
-            TexturePack = new TexturePack(UserSettings.Local.SelectedTexturePack);
+            // Ensure we have default textures loaded.
+            TextureMapper.LoadDefaults(GraphicsDevice);
+
+            // Load any custom textures if needed.
+            TexturePack = (UserSettings.Local.SelectedTexturePack != TexturePack.DefaultID) ?
+                new TexturePack(UserSettings.Local.SelectedTexturePack) : null;
+            TextureMapper = new TextureMapper(GraphicsDevice, TexturePack);
+
             DejaVu = new FontRenderer(
                 new Font(Content, "Fonts/DejaVu", FontStyle.Regular),
                 new Font(Content, "Fonts/DejaVu", FontStyle.Bold),
@@ -141,7 +149,7 @@ namespace TrueCraft.Client
             OpaqueEffect.DirectionalLight1.SpecularColor = Color.Black.ToVector3();
             OpaqueEffect.DirectionalLight2.SpecularColor = Color.Black.ToVector3();
             OpaqueEffect.TextureEnabled = true;
-            OpaqueEffect.Texture = TexturePack.GetTexture(GraphicsDevice, "terrain.png");
+            OpaqueEffect.Texture = TextureMapper.GetTexture("terrain.png");
             OpaqueEffect.FogEnabled = true;
             OpaqueEffect.FogStart = 512f;
             OpaqueEffect.FogEnd = 1000f;
@@ -149,7 +157,7 @@ namespace TrueCraft.Client
 
             TransparentEffect = new BasicEffect(GraphicsDevice);
             TransparentEffect.TextureEnabled = true;
-            TransparentEffect.Texture = TexturePack.GetTexture(GraphicsDevice, "terrain.png");
+            TransparentEffect.Texture = TextureMapper.GetTexture("terrain.png");
 
             base.LoadContent();
         }
