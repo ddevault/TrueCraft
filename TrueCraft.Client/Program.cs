@@ -11,6 +11,9 @@ namespace TrueCraft.Client
         [STAThread]
         public static void Main(string[] args)
         {
+            UserSettings.Local = new UserSettings();
+            UserSettings.Local.Load();
+
             var user = new TrueCraftUser { Username = args[1] };
             var client = new MultiplayerClient(user);
             var game = new TrueCraftGame(client, ParseEndPoint(args[0]));
