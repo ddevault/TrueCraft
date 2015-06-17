@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TrueCraft.Core;
+using Ionic.Zip;
 
 namespace TrueCraft.Client.Rendering
 {
@@ -85,7 +86,8 @@ namespace TrueCraft.Client.Rendering
             if (texturePack == null)
                 throw new ArgumentException();
 
-            foreach (var entry in texturePack.Archive.Entries)
+            var archive = new ZipFile(Path.Combine(TexturePack.TexturePackPath, texturePack.Name));
+            foreach (var entry in archive.Entries)
             {
                 // Make sure to 'silence' errors loading custom texture packs;
                 // they're unimportant as we can just use default textures.

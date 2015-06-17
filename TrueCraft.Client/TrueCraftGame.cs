@@ -42,7 +42,6 @@ namespace TrueCraft.Client
         private MouseComponent MouseComponent { get; set; }
         private GameTime GameTime { get; set; }
         private Microsoft.Xna.Framework.Vector3 Delta { get; set; }
-        private TexturePack TexturePack { get; set; }
         private TextureMapper TextureMapper { get; set; }
 
         private BasicEffect OpaqueEffect, TransparentEffect;
@@ -131,9 +130,9 @@ namespace TrueCraft.Client
             TextureMapper.LoadDefaults(GraphicsDevice);
 
             // Load any custom textures if needed.
-            TexturePack = (UserSettings.Local.SelectedTexturePack != TexturePack.DefaultID) ?
-                new TexturePack(UserSettings.Local.SelectedTexturePack) : null;
-            TextureMapper = new TextureMapper(GraphicsDevice, TexturePack);
+            TextureMapper = new TextureMapper(GraphicsDevice);
+            if (UserSettings.Local.SelectedTexturePack != TexturePack.Default.Name)
+                TextureMapper.AddTexturePack(TexturePack.FromArchive(Path.Combine(TexturePack.TexturePackPath, UserSettings.Local.SelectedTexturePack)));
 
             DejaVu = new FontRenderer(
                 new Font(Content, "Fonts/DejaVu", FontStyle.Regular),

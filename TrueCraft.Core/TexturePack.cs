@@ -12,7 +12,18 @@ namespace TrueCraft.Core
         /// <summary>
         /// 
         /// </summary>
-        public const string DefaultID = "#Default";
+        public static readonly TexturePack Unknown = new TexturePack(
+            "?",
+            File.OpenRead(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/default-pack.png")),
+            File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/default-pack.txt")));
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static readonly TexturePack Default = new TexturePack(
+            "Default",
+            File.OpenRead(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/pack.png")),
+            File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/pack.txt")));
 
         /// <summary>
         /// 
@@ -29,7 +40,47 @@ namespace TrueCraft.Core
         /// <summary>
         /// 
         /// </summary>
-        public string Path { get; private set; }
+        /// <param name="path"></param>
+        public static TexturePack FromArchive(string path)
+        {
+            if (string.IsNullOrEmpty(path) || !File.Exists(path))
+                throw new ArgumentException();
+
+            string description = Unknown.Description;
+            Stream image = Unknown.Image;
+            try
+            {
+                var archive = new ZipFile(path);
+                foreach (var entry in archive.Entries)
+                {
+                    if (entry.FileName == "pack.txt")
+                    {
+                        using (var stream = entry.OpenReader())
+                        {
+                            using (var reader = new StreamReader(stream))
+                                description = reader.ReadToEnd();
+                        }
+                    }
+                    else if (entry.FileName == "pack.png")
+                    {
+                        using (var stream = entry.OpenReader())
+                        {
+                            var buffer = new byte[entry.UncompressedSize];
+                            stream.Read(buffer, 0, buffer.Length);
+                            image = new MemoryStream((int)entry.UncompressedSize);
+                            image.Write(buffer, 0, buffer.Length);
+
+                            // Fixes 'GLib.GException: Unrecognized image file format' on Linux.
+                            image.Seek(0, SeekOrigin.Begin);
+                        }
+                    }
+                }
+            }
+            catch { return null; }
+
+            string name = new FileInfo(path).Name;
+            return new TexturePack(name, image, description);
+        }
 
         /// <summary>
         /// 
@@ -39,7 +90,7 @@ namespace TrueCraft.Core
         /// <summary>
         /// 
         /// </summary>
-        public ZipFile Archive { get; private set; }
+        public Stream Image { get; private set; }
 
         /// <summary>
         /// 
@@ -49,88 +100,14 @@ namespace TrueCraft.Core
         /// <summary>
         /// 
         /// </summary>
-        public MemoryStream Image { get; private set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool IsCorrupt { get; private set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public TexturePack()
+        /// <param name="name"></param>
+        /// <param name="image"></param>
+        /// <param name="description"></param>
+        public TexturePack(string name, Stream image, string description)
         {
-            Path = TexturePack.DefaultID;
-            Archive = new ZipFile();
-            Name = "Default";
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="path"></param>
-        public TexturePack(string path)
-        {
-            if (string.IsNullOrEmpty(path) || !File.Exists(path))
-                MakeDefault();
-
-            Path = path;
-            var fileInfo = new FileInfo(path); // A bit weird, but it works.
-            Name = fileInfo.Name;
-            try { Archive = new ZipFile(path); }
-            catch { IsCorrupt = true; }
-
-            GetPackInfo();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private void MakeDefault()
-        {
-            Path = TexturePack.DefaultID;
-            Archive = new ZipFile();
-            Name = "Default";
-            Image = null;
-            Description = null;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        private void GetPackInfo()
-        {
-            try
-            {
-                foreach (var entry in Archive.Entries)
-                {
-                    if (entry.FileName == "pack.txt")
-                    {
-                        using (var stream = entry.OpenReader())
-                        {
-                            using (var reader = new StreamReader(stream))
-                                Description = reader.ReadToEnd();
-                        }
-                    }
-                    else if (entry.FileName == "pack.png")
-                    {
-                        using (var stream = entry.OpenReader())
-                        {
-                            // Better way to do this?
-                            var buffer = new byte[entry.UncompressedSize];
-                            stream.Read(buffer, 0, buffer.Length);
-                            Image = new MemoryStream((int)entry.UncompressedSize);
-                            Image.Write(buffer, 0, buffer.Length);
-
-                            // Fixes 'GLib.GException: Unrecognized image file format' on Linux.
-                            Image.Seek(0, SeekOrigin.Begin);
-                        }
-                    }
-                }
-            }
-            catch { IsCorrupt = true; }
+            Name = name;
+            Image = image;
+            Description = description;
         }
     }
 }
