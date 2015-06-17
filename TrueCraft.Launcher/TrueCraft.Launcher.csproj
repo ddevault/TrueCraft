@@ -85,7 +85,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <None Include="Content\TexturePacks\Default.zip">
+    <None Include="Content\Default.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Xwt.WPF.dll">

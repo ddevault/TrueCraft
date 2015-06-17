@@ -87,17 +87,33 @@ namespace TrueCraft.Launcher.Views
 
         private void LoadTexturePacks()
         {
+            // We load Default.zip from a different directory.
+            var defaultPack = new TexturePack("Content/Default.zip");
+            _texturePacks.Add(defaultPack);
+            AddTexturePackRow(defaultPack);
+
+            // Make sure to create the texture pack directory if there is none.
+            if (!Directory.Exists(TexturePack.TexturePackPath))
+                Directory.CreateDirectory(TexturePack.TexturePackPath);
+
             var zips = Directory.EnumerateFiles(TexturePack.TexturePackPath);
             foreach (var zip in zips)
             {
+                if (!zip.EndsWith(".zip"))
+                    continue;
+
                 var texturePack = new TexturePack(zip);
                 _texturePacks.Add(texturePack);
-
-                var row = TexturePackStore.AddRow();
-                TexturePackStore.SetValue(row, TexturePackImageField, Image.FromStream(texturePack.Image).WithSize(IconSize.Medium));
-                TexturePackStore.SetValue(row, TexturePackNameField, texturePack.Name);
-                TexturePackStore.SetValue(row, TexturePackDescField, texturePack.Description);
+                AddTexturePackRow(texturePack);
             }
+        }
+
+        private void AddTexturePackRow(TexturePack pack)
+        {
+            var row = TexturePackStore.AddRow();
+            TexturePackStore.SetValue(row, TexturePackImageField, Image.FromStream(pack.Image).WithSize(IconSize.Medium));
+            TexturePackStore.SetValue(row, TexturePackNameField, pack.Name);
+            TexturePackStore.SetValue(row, TexturePackDescField, pack.Description);
         }
     }
 }
