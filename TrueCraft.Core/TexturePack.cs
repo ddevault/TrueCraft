@@ -58,7 +58,7 @@ namespace TrueCraft.Core
                         using (var stream = entry.OpenReader())
                         {
                             using (var reader = new StreamReader(stream))
-                                description = reader.ReadToEnd();
+                                description = reader.ReadToEnd().TrimEnd('\n', '\r', ' ');
                         }
                     }
                     else if (entry.FileName == "pack.png")
