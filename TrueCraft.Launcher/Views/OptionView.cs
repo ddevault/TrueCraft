@@ -15,6 +15,7 @@ namespace TrueCraft.Launcher.Views
         public Label OptionLabel { get; set; }
         public Label ResolutionLabel { get; set; }
         public ComboBox ResolutionComboBox { get; set; }
+        public CheckBox FullscreenCheckBox { get; set; }
         public Label TexturePackLabel { get; set; }
         public DataField<Image> TexturePackImageField { get; set; }
         public DataField<string> TexturePackTextField { get; set; }
@@ -63,6 +64,11 @@ namespace TrueCraft.Launcher.Views
             }
 
             ResolutionComboBox.SelectedIndex = resolutionIndex;
+            FullscreenCheckBox = new CheckBox()
+            {
+                Label = "Fullscreen mode",
+                State = (UserSettings.Local.IsFullscreen) ? CheckBoxState.On : CheckBoxState.Off
+            };
 
             TexturePackLabel = new Label("Select a texture pack...");
             TexturePackImageField = new DataField<Image>();
@@ -85,6 +91,12 @@ namespace TrueCraft.Launcher.Views
             {
                 UserSettings.Local.WindowResolution =
                     WindowResolution.FromString(ResolutionComboBox.SelectedText);
+                UserSettings.Local.Save();
+            };
+
+            FullscreenCheckBox.Clicked += (sender, e) =>
+            {
+                UserSettings.Local.IsFullscreen = !UserSettings.Local.IsFullscreen;
                 UserSettings.Local.Save();
             };
 
@@ -115,6 +127,7 @@ namespace TrueCraft.Launcher.Views
             this.PackStart(OptionLabel);
             this.PackStart(ResolutionLabel);
             this.PackStart(ResolutionComboBox);
+            this.PackStart(FullscreenCheckBox);
             this.PackStart(TexturePackLabel);
             this.PackStart(TexturePackListView);
             this.PackStart(OpenFolderButton);

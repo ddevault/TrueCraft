@@ -23,6 +23,7 @@ namespace TrueCraft.Core
         public string LastIP { get; set; }
         public string SelectedTexturePack { get; set; }
         public FavoriteServer[] FavoriteServers { get; set; }
+        public bool IsFullscreen { get; set; }
         public WindowResolution WindowResolution { get; set; }
 
         public UserSettings()
@@ -33,6 +34,7 @@ namespace TrueCraft.Core
             LastIP = "";
             SelectedTexturePack = TexturePack.Default.Name;
             FavoriteServers = new FavoriteServer[0];
+            IsFullscreen = false;
             WindowResolution = new WindowResolution()
             {
                 Width = 1280,
@@ -64,13 +66,16 @@ namespace TrueCraft.Core
         public static readonly WindowResolution[] Defaults =
             new WindowResolution[]
             {
-                                                            // (from Wikipedia)
+                                                            // (from Wikipedia/other)
                 WindowResolution.FromString("800 x 600"),   // SVGA
                 WindowResolution.FromString("960 x 640"),   // DVGA
                 WindowResolution.FromString("1024 x 600"),  // WSVGA
                 WindowResolution.FromString("1024 x 768"),  // XGA
                 WindowResolution.FromString("1280 x 1024"), // SXGA
                 WindowResolution.FromString("1600 x 1200"), // UXGA
+                WindowResolution.FromString("1920 x 1080"), // big
+                WindowResolution.FromString("1920 x 1200"), // really big
+                WindowResolution.FromString("4096 x 2160"), // huge
             };
 
         public static WindowResolution FromString(string str)
