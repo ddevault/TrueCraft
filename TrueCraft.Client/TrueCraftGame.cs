@@ -14,6 +14,7 @@ using TrueCraft.Core.Networking.Packets;
 using TrueCraft.API.World;
 using System.Collections.Concurrent;
 using TrueCraft.Client.Input;
+using TrueCraft.Core;
 
 namespace TrueCraft.Client
 {
@@ -41,6 +42,7 @@ namespace TrueCraft.Client
         private MouseComponent MouseComponent { get; set; }
         private GameTime GameTime { get; set; }
         private Microsoft.Xna.Framework.Vector3 Delta { get; set; }
+        private TexturePack TexturePack { get; set; }
 
         private BasicEffect OpaqueEffect, TransparentEffect;
 
@@ -124,6 +126,7 @@ namespace TrueCraft.Client
 
         protected override void LoadContent()
         {
+            TexturePack = new TexturePack(UserSettings.Local.SelectedTexturePack);
             DejaVu = new FontRenderer(
                 new Font(Content, "Fonts/DejaVu", FontStyle.Regular),
                 new Font(Content, "Fonts/DejaVu", FontStyle.Bold),
@@ -138,7 +141,7 @@ namespace TrueCraft.Client
             OpaqueEffect.DirectionalLight1.SpecularColor = Color.Black.ToVector3();
             OpaqueEffect.DirectionalLight2.SpecularColor = Color.Black.ToVector3();
             OpaqueEffect.TextureEnabled = true;
-            OpaqueEffect.Texture = Texture2D.FromStream(GraphicsDevice, File.OpenRead("Content/terrain.png"));
+            OpaqueEffect.Texture = TexturePack.GetTexture(GraphicsDevice, "terrain.png");
             OpaqueEffect.FogEnabled = true;
             OpaqueEffect.FogStart = 512f;
             OpaqueEffect.FogEnd = 1000f;
@@ -146,7 +149,7 @@ namespace TrueCraft.Client
 
             TransparentEffect = new BasicEffect(GraphicsDevice);
             TransparentEffect.TextureEnabled = true;
-            TransparentEffect.Texture = Texture2D.FromStream(GraphicsDevice, File.OpenRead("Content/terrain.png"));
+            TransparentEffect.Texture = TexturePack.GetTexture(GraphicsDevice, "terrain.png");
 
             base.LoadContent();
         }
@@ -250,7 +253,7 @@ namespace TrueCraft.Client
                 Client.Yaw += look.X;
                 Client.Pitch += look.Y;
                 Client.Yaw %= 360;
-                Client.Pitch = MathHelper.Clamp(Client.Pitch, -89.9f, 89.9f);
+                Client.Pitch = Microsoft.Xna.Framework.MathHelper.Clamp(Client.Pitch, -89.9f, 89.9f);
 
                 if (look != Vector2.Zero)
                     UpdateCamera();
@@ -312,7 +315,7 @@ namespace TrueCraft.Client
             if (Delta != Microsoft.Xna.Framework.Vector3.Zero)
             {
                 var lookAt = Microsoft.Xna.Framework.Vector3.Transform(
-                             Delta, Matrix.CreateRotationY(MathHelper.ToRadians(Client.Yaw)));
+                             Delta, Matrix.CreateRotationY(Microsoft.Xna.Framework.MathHelper.ToRadians(Client.Yaw)));
 
                 Client.Position += new TrueCraft.API.Vector3(lookAt.X, lookAt.Y, lookAt.Z)
                     * (gameTime.ElapsedGameTime.TotalSeconds * 4.3717);

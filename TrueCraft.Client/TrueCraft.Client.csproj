@@ -70,6 +70,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zip.Reduced, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\MonoGame.Framework.Linux.3.4.0.459\lib\net40\OpenTK.dll</HintPath>
       <Private>True</Private>
@@ -109,6 +113,7 @@
     <Compile Include="Rendering\Font.cs" />
     <Compile Include="Rendering\FontRenderer.cs" />
     <Compile Include="Rendering\FontStyle.cs" />
+    <Compile Include="Rendering\TexturePackExtensions.cs" />
     <Compile Include="TrueCraftGame.cs" />
     <Compile Include="MultiplayerClient.cs" />
     <Compile Include="Handlers\PacketHandlers.cs" />

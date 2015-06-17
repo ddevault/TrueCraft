@@ -60,12 +60,14 @@ namespace TrueCraft.Launcher.Views
             {
                 var texturePack = _texturePacks[TexturePackListView.SelectedRow];
                 if (_lastTexturePack != texturePack)
+                {
                     UserSettings.Local.SelectedTexturePack = texturePack.Path;
+                    UserSettings.Local.Save();
+                }
             };
 
             OpenFolderButton.Clicked += (sender, e) =>
             {
-                // TODO: Implement cross-platform logic here.
                 var dir = new DirectoryInfo(TexturePack.TexturePackPath);
                 Process.Start(dir.FullName);
             };
