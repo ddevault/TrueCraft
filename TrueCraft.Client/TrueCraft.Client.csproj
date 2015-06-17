@@ -114,6 +114,7 @@
     <Compile Include="Rendering\FontRenderer.cs" />
     <Compile Include="Rendering\FontStyle.cs" />
     <Compile Include="Rendering\TexturePackExtensions.cs" />
+    <Compile Include="Rendering\TextureMapper.cs" />
     <Compile Include="TrueCraftGame.cs" />
     <Compile Include="MultiplayerClient.cs" />
     <Compile Include="Handlers\PacketHandlers.cs" />

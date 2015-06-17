@@ -12,12 +12,7 @@ namespace TrueCraft.Core
         /// <summary>
         /// 
         /// </summary>
-        public const string DescriptionFile = "pack.txt";
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public const string ImageFile = "pack.png";
+        public const string DefaultID = "#Default";
 
         /// <summary>
         /// 
@@ -59,12 +54,21 @@ namespace TrueCraft.Core
         /// <summary>
         /// 
         /// </summary>
+        public TexturePack()
+        {
+            Path = TexturePack.DefaultID;
+            Name = "Default";
+            Archive = new ZipFile();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="path"></param>
         public TexturePack(string path)
         {
             if (string.IsNullOrEmpty(path) || !File.Exists(path))
                 throw new ArgumentException();
-
 
             Path = path;
             var fileInfo = new FileInfo(path); // A bit weird, but it works.
@@ -82,7 +86,7 @@ namespace TrueCraft.Core
         {
             foreach (var entry in Archive.Entries)
             {
-                if (entry.FileName == TexturePack.DescriptionFile)
+                if (entry.FileName == "pack.txt")
                 {
                     using (var stream = entry.OpenReader())
                     {
@@ -90,7 +94,7 @@ namespace TrueCraft.Core
                             Description = reader.ReadToEnd();
                     }
                 }
-                else if (entry.FileName == TexturePack.ImageFile)
+                else if (entry.FileName == "pack.png")
                 {
                     using (var stream = entry.OpenReader())
                     {
@@ -99,6 +103,9 @@ namespace TrueCraft.Core
                         stream.Read(buffer, 0, buffer.Length);
                         Image = new MemoryStream((int)entry.UncompressedSize);
                         Image.Write(buffer, 0, buffer.Length);
+
+                        // Fixes 'GLib.GException: Unrecognized image file format' on Linux.
+                        Image.Seek(0, SeekOrigin.Begin);
                     }
                 }
             }
