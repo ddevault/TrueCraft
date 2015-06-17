@@ -60,17 +60,13 @@ namespace TrueCraft.Launcher.Views
             {
                 var texturePack = _texturePacks[TexturePackListView.SelectedRow];
                 if (_lastTexturePack != texturePack)
-                {
-                    // TODO: Enforce a file structure so only certain named files are extracted.
-                    texturePack.ExtractTo("Content");
-                    _lastTexturePack = texturePack;
-                }
+                    UserSettings.Local.SelectedTexturePack = texturePack.Path;
             };
 
             OpenFolderButton.Clicked += (sender, e) =>
             {
                 // TODO: Implement cross-platform logic here.
-                var dir = new DirectoryInfo("./Content/TexturePacks");
+                var dir = new DirectoryInfo(TexturePack.TexturePackPath);
                 Process.Start(dir.FullName);
             };
 
@@ -91,7 +87,7 @@ namespace TrueCraft.Launcher.Views
 
         private void LoadTexturePacks()
         {
-            var zips = Directory.EnumerateFiles("Content/TexturePacks/");
+            var zips = Directory.EnumerateFiles(TexturePack.TexturePackPath);
             foreach (var zip in zips)
             {
                 var texturePack = new TexturePack(zip);
