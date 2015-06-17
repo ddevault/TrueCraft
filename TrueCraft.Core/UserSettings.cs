@@ -23,6 +23,7 @@ namespace TrueCraft.Core
         public string LastIP { get; set; }
         public string SelectedTexturePack { get; set; }
         public FavoriteServer[] FavoriteServers { get; set; }
+        public WindowParams Window { get; set; }
 
         public UserSettings()
         {
@@ -32,6 +33,9 @@ namespace TrueCraft.Core
             LastIP = "";
             SelectedTexturePack = TexturePack.Default.Name;
             FavoriteServers = new FavoriteServer[0];
+            Window = new WindowParams();
+            Window.Width = 1280;
+            Window.Height = 720;
         }
 
         public void Load()
@@ -51,5 +55,11 @@ namespace TrueCraft.Core
     {
         public string Name { get; set; }
         public string Address { get; set; }
+    }
+
+    public class WindowParams
+    {
+        public int Width { get; set; }
+        public int Height { get; set; }
     }
 }

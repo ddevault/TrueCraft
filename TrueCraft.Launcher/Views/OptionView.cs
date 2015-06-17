@@ -13,6 +13,9 @@ namespace TrueCraft.Launcher.Views
         public LauncherWindow Window { get; set; }
 
         public Label OptionLabel { get; set; }
+        public Label ResolutionLabel { get; set; }
+        public TextEntry WidthEntry { get; set; }
+        public TextEntry HeightEntry { get; set; }
         public Label TexturePackLabel { get; set; }
         public DataField<Image> TexturePackImageField { get; set; }
         public DataField<string> TexturePackTextField { get; set; }
@@ -37,6 +40,16 @@ namespace TrueCraft.Launcher.Views
                 Font = Font.WithSize(16),
                 TextAlignment = Alignment.Center
             };
+
+            ResolutionLabel = new Label("Set resolution...");
+            WidthEntry = new TextEntry() { PlaceholderText = UserSettings.Local.Window.Width.ToString() };
+            HeightEntry = new TextEntry() { PlaceholderText = UserSettings.Local.Window.Height.ToString() };
+
+            var resolutionHBox = new HBox();
+            WidthEntry.WidthRequest = HeightEntry.WidthRequest = 0.5;
+            resolutionHBox.PackStart(WidthEntry, true);
+            resolutionHBox.PackStart(HeightEntry, true);
+
             TexturePackLabel = new Label("Select a texture pack...");
             TexturePackImageField = new DataField<Image>();
             TexturePackTextField = new DataField<string>();
@@ -53,6 +66,26 @@ namespace TrueCraft.Launcher.Views
 
             TexturePackListView.Columns.Add("Image", TexturePackImageField);
             TexturePackListView.Columns.Add("Text", TexturePackTextField);
+
+            WidthEntry.Changed += (sender, e) =>
+            {
+                int value;
+                if (int.TryParse(WidthEntry.Text, out value))
+                {
+                    UserSettings.Local.Window.Width = value;
+                    UserSettings.Local.Save();
+                }
+            };
+
+            HeightEntry.Changed += (sender, e) =>
+            {
+                int value;
+                if (int.TryParse(WidthEntry.Text, out value))
+                {
+                    UserSettings.Local.Window.Height = value;
+                    UserSettings.Local.Save();
+                }
+            };
 
             TexturePackListView.SelectionChanged += (sender, e) =>
             {
@@ -79,6 +112,8 @@ namespace TrueCraft.Launcher.Views
             LoadTexturePacks();
 
             this.PackStart(OptionLabel);
+            this.PackStart(ResolutionLabel);
+            this.PackStart(resolutionHBox);
             this.PackStart(TexturePackLabel);
             this.PackStart(TexturePackListView);
             this.PackStart(OpenFolderButton);
