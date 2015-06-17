@@ -69,7 +69,7 @@ namespace TrueCraft.Client.Rendering
         /// <param name="contentManager"></param>
         private void LoadContent(ContentManager contentManager)
         {
-            var definitionPath = string.Format("{0}_{1}.fnt", Name.ToLowerInvariant(), Style.ToString().ToLowerInvariant());
+            var definitionPath = string.Format("{0}_{1}.fnt", Name, Style);
             using (var contents = File.OpenRead(Path.Combine(contentManager.RootDirectory, definitionPath)))
                 _definition = FontLoader.Load(contents);
 
@@ -77,7 +77,7 @@ namespace TrueCraft.Client.Rendering
             _textures = new Texture2D[_definition.Pages.Count];
             for (int i = 0; i < _definition.Pages.Count; i++)
             {
-                var texturePath = string.Format("{0}_{1}_{2}.png", Name.ToLowerInvariant(), Style.ToString().ToLowerInvariant(), i.ToString());
+                var texturePath = string.Format("{0}_{1}_{2}.png", Name, Style, i);
                 _textures[i] = contentManager.Load<Texture2D>(texturePath);
             }
         }
