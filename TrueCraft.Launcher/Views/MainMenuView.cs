@@ -37,6 +37,11 @@ namespace TrueCraft.Launcher.Views
                 Window.MainContainer.Remove(this);
                 Window.MainContainer.PackEnd(Window.MultiplayerView);
             };
+            OptionsButton.Clicked += (sender, e) =>
+            {
+                Window.MainContainer.Remove(this);
+                window.MainContainer.PackEnd(Window.OptionView);
+            };
             QuitButton.Clicked += (sender, e) => Application.Exit();
 
             this.PackStart(WelcomeText);

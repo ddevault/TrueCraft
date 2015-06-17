@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -47,6 +47,7 @@
     <Compile Include="Views\MainMenuView.cs" />
     <Compile Include="Views\MultiplayerView.cs" />
     <Compile Include="UserSettings.cs" />
+    <Compile Include="Views\OptionView.cs" />
     <Compile Include="Views\SingleplayerView.cs" />
     <Compile Include="Singleplayer\Worlds.cs" />
     <Compile Include="Singleplayer\SingleplayerServer.cs" />
@@ -83,12 +84,11 @@
       <Name>TrueCraft.Client</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Content\" />
-    <Folder Include="Views\" />
-    <Folder Include="Singleplayer\" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="Content\TexturePacks\Default.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Xwt.WPF.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
