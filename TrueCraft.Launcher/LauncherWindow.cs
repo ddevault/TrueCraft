@@ -17,6 +17,7 @@ namespace TrueCraft.Launcher
 
         public LoginView LoginView { get; set; }
         public MainMenuView MainMenuView { get; set; }
+        public OptionView OptionView { get; set; }
         public MultiplayerView MultiplayerView { get; set; }
         public SingleplayerView SingleplayerView { get; set; }
 
@@ -31,6 +32,7 @@ namespace TrueCraft.Launcher
             WebScrollView = new ScrollView();
             WebView = new WebView("http://truecraft.io/updates");
             LoginView = new LoginView(this);
+            OptionView = new OptionView(this);
             MultiplayerView = new MultiplayerView(this);
             SingleplayerView = new SingleplayerView(this);
 
