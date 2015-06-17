@@ -51,9 +51,9 @@ namespace TrueCraft.Client
             Window.Title = "TrueCraft";
             Content.RootDirectory = "Content";
             Graphics = new GraphicsDeviceManager(this);
-            Graphics.IsFullScreen = false;
-            Graphics.PreferredBackBufferWidth = 1280;
-            Graphics.PreferredBackBufferHeight = 720;
+            Graphics.IsFullScreen = UserSettings.Local.IsFullscreen;
+            Graphics.PreferredBackBufferWidth = UserSettings.Local.WindowResolution.Width;
+            Graphics.PreferredBackBufferHeight = UserSettings.Local.WindowResolution.Height;
             Client = client;
             EndPoint = endPoint;
             NextPhysicsUpdate = DateTime.MinValue;

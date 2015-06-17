@@ -38,7 +38,7 @@ namespace TrueCraft.Client.Rendering
                 lock (_syncLock)
                 {
                     _vertices = new VertexBuffer(_graphicsDevice, VertexPositionNormalTexture.VertexDeclaration,
-                        value.Length, BufferUsage.WriteOnly);
+                        (value.Length + 1), BufferUsage.WriteOnly);
                     _vertices.SetData(value);
                 }
 
@@ -119,7 +119,7 @@ namespace TrueCraft.Client.Rendering
                     _indices[index].Dispose();
 
                 _indices[index] = new IndexBuffer(_graphicsDevice, typeof(int),
-                    indices.Length, BufferUsage.WriteOnly);
+                    (indices.Length + 1), BufferUsage.WriteOnly);
                 _indices[index].SetData(indices);
             }
         }
