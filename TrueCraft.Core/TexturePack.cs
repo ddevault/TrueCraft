@@ -19,7 +19,17 @@ namespace TrueCraft.Core
         /// </summary>
         public const string ImageFile = "pack.png";
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        public static string TexturePackPath
+        {
+            get
+            {
+                return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    ".truecraft/texturepacks/");
+            }
+        }
 
         /// <summary>
         /// 
