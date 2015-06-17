@@ -5,6 +5,7 @@ using System.Diagnostics;
 using Xwt.Drawing;
 using System.Reflection;
 using System.Linq;
+using TrueCraft.Core;
 
 namespace TrueCraft.Launcher.Views
 {

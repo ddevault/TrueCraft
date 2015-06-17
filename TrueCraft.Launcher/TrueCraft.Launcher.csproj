@@ -46,7 +46,6 @@
     <Compile Include="Views\LoginView.cs" />
     <Compile Include="Views\MainMenuView.cs" />
     <Compile Include="Views\MultiplayerView.cs" />
-    <Compile Include="UserSettings.cs" />
     <Compile Include="Views\OptionView.cs" />
     <Compile Include="Views\SingleplayerView.cs" />
     <Compile Include="Singleplayer\Worlds.cs" />
