@@ -14,8 +14,7 @@ namespace TrueCraft.Launcher.Views
 
         public Label OptionLabel { get; set; }
         public Label ResolutionLabel { get; set; }
-        public TextEntry WidthEntry { get; set; }
-        public TextEntry HeightEntry { get; set; }
+        public ComboBox ResolutionComboBox { get; set; }
         public Label TexturePackLabel { get; set; }
         public DataField<Image> TexturePackImageField { get; set; }
         public DataField<string> TexturePackTextField { get; set; }
@@ -41,14 +40,29 @@ namespace TrueCraft.Launcher.Views
                 TextAlignment = Alignment.Center
             };
 
-            ResolutionLabel = new Label("Set resolution...");
-            WidthEntry = new TextEntry() { PlaceholderText = UserSettings.Local.Window.Width.ToString() };
-            HeightEntry = new TextEntry() { PlaceholderText = UserSettings.Local.Window.Height.ToString() };
+            ResolutionLabel = new Label("Select a resolution...");
+            ResolutionComboBox = new ComboBox();
 
-            var resolutionHBox = new HBox();
-            WidthEntry.WidthRequest = HeightEntry.WidthRequest = 0.5;
-            resolutionHBox.PackStart(WidthEntry, true);
-            resolutionHBox.PackStart(HeightEntry, true);
+            int resolutionIndex = -1;
+            for (int i = 0; i < WindowResolution.Defaults.Length; i++)
+            {
+                ResolutionComboBox.Items.Add(WindowResolution.Defaults[i].ToString());
+
+                if (resolutionIndex == -1)
+                {
+                    resolutionIndex =
+                        ((WindowResolution.Defaults[i].Width == UserSettings.Local.WindowResolution.Width) &&
+                        (WindowResolution.Defaults[i].Height == UserSettings.Local.WindowResolution.Height)) ? i : -1;
+                }
+            }
+
+            if (resolutionIndex == -1)
+            {
+                ResolutionComboBox.Items.Add(UserSettings.Local.WindowResolution.ToString());
+                resolutionIndex = ResolutionComboBox.Items.Count - 1;
+            }
+
+            ResolutionComboBox.SelectedIndex = resolutionIndex;
 
             TexturePackLabel = new Label("Select a texture pack...");
             TexturePackImageField = new DataField<Image>();
@@ -67,24 +81,11 @@ namespace TrueCraft.Launcher.Views
             TexturePackListView.Columns.Add("Image", TexturePackImageField);
             TexturePackListView.Columns.Add("Text", TexturePackTextField);
 
-            WidthEntry.Changed += (sender, e) =>
+            ResolutionComboBox.SelectionChanged += (sender, e) =>
             {
-                int value;
-                if (int.TryParse(WidthEntry.Text, out value))
-                {
-                    UserSettings.Local.Window.Width = value;
-                    UserSettings.Local.Save();
-                }
-            };
-
-            HeightEntry.Changed += (sender, e) =>
-            {
-                int value;
-                if (int.TryParse(WidthEntry.Text, out value))
-                {
-                    UserSettings.Local.Window.Height = value;
-                    UserSettings.Local.Save();
-                }
+                UserSettings.Local.WindowResolution =
+                    WindowResolution.FromString(ResolutionComboBox.SelectedText);
+                UserSettings.Local.Save();
             };
 
             TexturePackListView.SelectionChanged += (sender, e) =>
@@ -113,7 +114,7 @@ namespace TrueCraft.Launcher.Views
 
             this.PackStart(OptionLabel);
             this.PackStart(ResolutionLabel);
-            this.PackStart(resolutionHBox);
+            this.PackStart(ResolutionComboBox);
             this.PackStart(TexturePackLabel);
             this.PackStart(TexturePackListView);
             this.PackStart(OpenFolderButton);

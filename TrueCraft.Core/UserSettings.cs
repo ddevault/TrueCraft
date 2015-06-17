@@ -23,7 +23,7 @@ namespace TrueCraft.Core
         public string LastIP { get; set; }
         public string SelectedTexturePack { get; set; }
         public FavoriteServer[] FavoriteServers { get; set; }
-        public WindowParams Window { get; set; }
+        public WindowResolution WindowResolution { get; set; }
 
         public UserSettings()
         {
@@ -33,9 +33,11 @@ namespace TrueCraft.Core
             LastIP = "";
             SelectedTexturePack = TexturePack.Default.Name;
             FavoriteServers = new FavoriteServer[0];
-            Window = new WindowParams();
-            Window.Width = 1280;
-            Window.Height = 720;
+            WindowResolution = new WindowResolution()
+            {
+                Width = 1280,
+                Height = 720
+            };
         }
 
         public void Load()
@@ -57,9 +59,36 @@ namespace TrueCraft.Core
         public string Address { get; set; }
     }
 
-    public class WindowParams
+    public class WindowResolution
     {
+        public static readonly WindowResolution[] Defaults =
+            new WindowResolution[]
+            {
+                                                            // (from Wikipedia)
+                WindowResolution.FromString("800 x 600"),   // SVGA
+                WindowResolution.FromString("960 x 640"),   // DVGA
+                WindowResolution.FromString("1024 x 600"),  // WSVGA
+                WindowResolution.FromString("1024 x 768"),  // XGA
+                WindowResolution.FromString("1280 x 1024"), // SXGA
+                WindowResolution.FromString("1600 x 1200"), // UXGA
+            };
+
+        public static WindowResolution FromString(string str)
+        {
+            var tmp = str.Split('x');
+            return new WindowResolution()
+            {
+                Width = int.Parse(tmp[0].Trim()),
+                Height = int.Parse(tmp[1].Trim())
+            };
+        }
+
         public int Width { get; set; }
         public int Height { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("{0} x {1}", Width, Height);
+        }
     }
 }
