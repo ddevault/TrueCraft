@@ -20,13 +20,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="AfterBuild" command="rm ${TargetDir}/MonoGame.Framework.dll" />
-        <Command type="AfterBuild" command="cp ${SolutionDir}/packages/MonoGame.Framework.Linux.3.4.0.459/lib/net40/MonoGame.Framework.dll ${TargetDir}/MonoGame.Framework.Linux.dll" />
-        <Command type="AfterBuild" command="cp ${SolutionDir}/packages/MonoGame.Framework.WindowsGL.3.4.0.459/lib/net40/MonoGame.Framework.dll ${TargetDir}/MonoGame.Framework.Windows.dll" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -35,13 +28,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="AfterBuild" command="rm ${TargetDir}/MonoGame.Framework.dll" />
-        <Command type="AfterBuild" command="cp ${SolutionDir}/packages/MonoGame.Framework.Linux.3.4.0.459/lib/net40/MonoGame.Framework.dll ${TargetDir}/MonoGame.Framework.Linux.dll" />
-        <Command type="AfterBuild" command="cp ${SolutionDir}/packages/MonoGame.Framework.WindowsGL.3.4.0.459/lib/net40/MonoGame.Framework.dll ${TargetDir}/MonoGame.Framework.Windows.dll" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
