@@ -109,8 +109,6 @@
     <PostBuildEvent>rm $(TargetDir)/MonoGame.Framework.dll &amp;&amp; cp $(SolutionDir)/packages/MonoGame.Framework.Linux.3.4.0.459/lib/net40/MonoGame.Framework.dll $(TargetDir)/MonoGame.Framework.Linux.dll &amp;&amp; cp $(SolutionDir)/packages/MonoGame.Framework.WindowsGL.3.4.0.459/lib/net40/MonoGame.Framework.dll $(TargetDir)/MonoGame.Framework.Windows.dll</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
-    <!-- TODO: Someone needs to fix this up -->
-    <PostBuildEvent>del $(TargetDir)/MonoGame.Framework.dll &amp;&amp; copy $(SolutionDir)/packages/MonoGame.Framework.Linux.3.4.0.459/lib/net40/MonoGame.Framework.dll $(TargetDir)/MonoGame.Framework.Linux.dll &amp;&amp; cp $(SolutionDir)/packages/MonoGame.Framework.WindowsGL.3.4.0.459/lib/net40/MonoGame.Framework.dll $(TargetDir)/MonoGame.Framework.Windows.dll</PostBuildEvent>
     <PostBuildEvent>del $(TargetDir)MonoGame.Framework.dll
 copy $(SolutionDir)packages\MonoGame.Framework.Linux.3.4.0.459\lib\net40\MonoGame.Framework.dll $(TargetDir)MonoGame.Framework.Linux.dll
 copy $(SolutionDir)packages\MonoGame.Framework.WindowsGL.3.4.0.459\lib\net40\MonoGame.Framework.dll $(TargetDir)MonoGame.Framework.Windows.dll</PostBuildEvent>
