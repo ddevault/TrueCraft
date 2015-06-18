@@ -20,11 +20,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <CustomCommands>
+    <Command>
       <Command type="AfterBuild" command="rm ${TargetDir}/MonoGame.Framework.dll" />
-      <Command type="AfterBuild" command="cp ${SolutionDir}/packages/MonoGame.Framework.Linux.3.4.0.459/lib/net40/MonoGame.Framework.dll ${TargetDir}/MonoGame.Framework.Linux.dll" />
-      <Command type="AfterBuild" command="cp ${SolutionDir}/packages/MonoGame.Framework.WindowsGL.3.4.0.459/lib/net40/MonoGame.Framework.dll ${TargetDir}/MonoGame.Framework.Windows.dll" />
-    </CustomCommands>
+    </Command>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -33,11 +31,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <CustomCommands>
+    <Command>
       <Command type="AfterBuild" command="rm ${TargetDir}/MonoGame.Framework.dll" />
-      <Command type="AfterBuild" command="cp ${SolutionDir}/packages/MonoGame.Framework.Linux.3.4.0.459/lib/net40/MonoGame.Framework.dll ${TargetDir}/MonoGame.Framework.Linux.dll" />
-      <Command type="AfterBuild" command="cp ${SolutionDir}/packages/MonoGame.Framework.WindowsGL.3.4.0.459/lib/net40/MonoGame.Framework.dll ${TargetDir}/MonoGame.Framework.Windows.dll" />
-    </CustomCommands>
+    </Command>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -46,6 +42,9 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip.Reduced">
+      <HintPath>..\lib\Ionic.Zip.Reduced.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

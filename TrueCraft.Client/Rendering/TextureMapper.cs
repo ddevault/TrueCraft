@@ -94,8 +94,11 @@ namespace TrueCraft.Client.Rendering
                 foreach (var entry in archive.Entries)
                 {
                     var key = entry.FileName;
-                    using (var stream = entry.OpenReader())
-                        AddTexture(key, Texture2D.FromStream(Device, stream));
+                    if (Path.GetExtension(key) == ".png")
+                    {
+                        using (var stream = entry.OpenReader())
+                            AddTexture(key, Texture2D.FromStream(Device, stream));
+                    }
                 }
             }
             catch { return; }
