@@ -150,7 +150,7 @@ namespace TrueCraft.Client.Rendering
             if ((index < 0) || (index > _indices.Length))
                 throw new ArgumentOutOfRangeException();
 
-            if (_vertices == null || _vertices.IsDisposed || _indices[index] == null || _indices[index].IsDisposed)
+            if (_vertices == null || _vertices.IsDisposed || _indices[index] == null || _indices[index].IsDisposed || _indices[index].IndexCount < 3)
                 return; // Invalid state for rendering, just return.
 
             effect.GraphicsDevice.SetVertexBuffer(_vertices);
