@@ -149,7 +149,7 @@ namespace TrueCraft.Launcher.Views
         void OfficialAssetsButton_Clicked(object sender, EventArgs e)
         {
             var result = MessageDialog.AskQuestion("Download Mojang assets",
-                "This will download the official Minecraft assets from Mojang.\n\n" +
+                "This will download the official Minecraft assets from Mojang. " +
                 "By proceeding you agree to the Mojang asset guidelines:\n\n" +
                 "https://account.mojang.com/terms#brand\n\n" +
                 "Proceed?",
@@ -169,7 +169,7 @@ namespace TrueCraft.Launcher.Views
                             stream.Dispose();
                             var jar = ZipFile.Read(ms);
                             var zip = new ZipFile();
-                            zip.AddEntry("pack.txt", "Minecraft textures");
+                            zip.AddEntry("pack.txt", "The default look of Minecraft");
                             CopyBetweenZips("pack.png", jar, zip);
                             CopyBetweenZips("terrain.png", jar, zip);
                             // TODO: Items, windows, etc
@@ -177,8 +177,8 @@ namespace TrueCraft.Launcher.Views
                             Application.Invoke(() =>
                                 {
                                     OfficialAssetsProgress.Visible = false;
-                                    LoadTexturePacks();
                                     var texturePack = TexturePack.FromArchive(Path.Combine(TexturePack.TexturePackPath, "Minecraft.zip"));
+                                    _texturePacks.Add(texturePack);
                                     AddTexturePackRow(texturePack);
                                 });
                             ms.Dispose();
