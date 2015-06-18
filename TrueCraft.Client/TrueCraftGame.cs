@@ -338,6 +338,15 @@ namespace TrueCraft.Client
             Camera.ApplyTo(TransparentEffect);
         }
 
+        // Used for faking the disabling of color buffer writing.
+        private static readonly BlendState ColorWriteDisable = new BlendState()
+        {
+            ColorSourceBlend = Blend.Zero,
+            AlphaSourceBlend = Blend.Zero,
+            ColorDestinationBlend = Blend.One,
+            AlphaDestinationBlend = Blend.One
+        };
+
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.SetRenderTarget(RenderTarget);
@@ -346,7 +355,6 @@ namespace TrueCraft.Client
             Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
             GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
             GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-            GraphicsDevice.BlendState = BlendState.NonPremultiplied;
 
             int verticies = 0, chunks = 0;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -359,6 +367,19 @@ namespace TrueCraft.Client
                     ChunkMeshes[i].Draw(OpaqueEffect, 0);
                 }
             }
+
+            GraphicsDevice.BlendState = ColorWriteDisable;
+            for (int i = 0; i < ChunkMeshes.Count; i++)
+            {
+                if (CameraView.Intersects(ChunkMeshes[i].BoundingBox))
+                {
+                    if (!ChunkMeshes[i].IsDisposed)
+                        verticies += ChunkMeshes[i].GetTotalVertices();
+                    ChunkMeshes[i].Draw(TransparentEffect, 1);
+                }
+            }
+
+            GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             for (int i = 0; i < ChunkMeshes.Count; i++)
             {
                 if (CameraView.Intersects(ChunkMeshes[i].BoundingBox))
