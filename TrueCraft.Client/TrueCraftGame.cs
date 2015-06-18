@@ -86,7 +86,7 @@ namespace TrueCraft.Client
             var centerX = GraphicsDevice.Viewport.Width / 2;
             var centerY = GraphicsDevice.Viewport.Height / 2;
             Mouse.SetPosition(centerX, centerY);
-            Camera = new Camera(GraphicsDevice.Viewport.AspectRatio, 70.0f, 1.0f, 1000.0f);
+            Camera = new Camera(GraphicsDevice.Viewport.AspectRatio, 70.0f, 0.5f, 1000.0f);
             UpdateCamera();
             Window.ClientSizeChanged += (sender, e) => CreateRenderTarget();
             MouseComponent.Move += OnMouseComponentMove;
