@@ -338,13 +338,9 @@ namespace TrueCraft.Client
             Camera.ApplyTo(TransparentEffect);
         }
 
-        // Used for faking the disabling of color buffer writing.
         private static readonly BlendState ColorWriteDisable = new BlendState()
         {
-            ColorSourceBlend = Blend.Zero,
-            AlphaSourceBlend = Blend.Zero,
-            ColorDestinationBlend = Blend.One,
-            AlphaDestinationBlend = Blend.One
+            ColorWriteChannels.None
         };
 
         protected override void Draw(GameTime gameTime)
