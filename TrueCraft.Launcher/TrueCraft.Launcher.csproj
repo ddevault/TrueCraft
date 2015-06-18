@@ -119,4 +119,11 @@
     <EmbeddedResource Include="Content\truecraft-logo.png" />
     <EmbeddedResource Include="Content\default-server-icon.png" />
   </ItemGroup>
+  <PropertyGroup Condition=" '$(OS)' == 'UNIX' ">
+    <PostBuildEvent>rm $(TargetDir)/MonoGame.Framework.dll &amp;&amp; cp $(SolutionDir)/packages/MonoGame.Framework.Linux.3.4.0.459/lib/net40/MonoGame.Framework.dll $(TargetDir)/MonoGame.Framework.Linux.dll &amp;&amp; cp $(SolutionDir)/packages/MonoGame.Framework.WindowsGL.3.4.0.459/lib/net40/MonoGame.Framework.dll $(TargetDir)/MonoGame.Framework.Windows.dll</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+    <!-- TODO: Someone needs to fix this up -->
+    <PostBuildEvent>rm $(TargetDir)/MonoGame.Framework.dll &amp;&amp; cp $(SolutionDir)/packages/MonoGame.Framework.Linux.3.4.0.459/lib/net40/MonoGame.Framework.dll $(TargetDir)/MonoGame.Framework.Linux.dll &amp;&amp; cp $(SolutionDir)/packages/MonoGame.Framework.WindowsGL.3.4.0.459/lib/net40/MonoGame.Framework.dll $(TargetDir)/MonoGame.Framework.Windows.dll</PostBuildEvent>
+  </PropertyGroup>
 </Project>
