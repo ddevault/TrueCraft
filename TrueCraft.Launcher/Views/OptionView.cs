@@ -177,8 +177,8 @@ namespace TrueCraft.Launcher.Views
                             Application.Invoke(() =>
                                 {
                                     OfficialAssetsProgress.Visible = false;
-                                    LoadTexturePacks();
                                     var texturePack = TexturePack.FromArchive(Path.Combine(TexturePack.TexturePackPath, "Minecraft.zip"));
+                                    _texturePacks.Add(texturePack);
                                     AddTexturePackRow(texturePack);
                                 });
                             ms.Dispose();
