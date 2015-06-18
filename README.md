@@ -1,6 +1,4 @@
-# TrueCraft
-
-[![Build Status](https://travis-ci.org/SirCmpwn/TrueCraft.svg?branch=master)](https://travis-ci.org/SirCmpwn/TrueCraft)
+# TrueCraft [![Build Status](https://travis-ci.org/SirCmpwn/TrueCraft.svg?branch=master)](https://travis-ci.org/SirCmpwn/TrueCraft)
 
 http://truecraft.io - blog and such
 
