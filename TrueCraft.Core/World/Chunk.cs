@@ -59,7 +59,6 @@ namespace TrueCraft.Core.World
             TerrainPopulated = true;
             Biomes = new byte[Width * Depth];
             HeightMap = new int[Width * Depth];
-            LastAccessed = DateTime.Now;
             TileEntities = new Dictionary<Coordinates3D, NbtCompound>();
         }
 
@@ -78,28 +77,24 @@ namespace TrueCraft.Core.World
 
         public byte GetBlockID(Coordinates3D coordinates)
         {
-            LastAccessed = DateTime.Now;
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
             return Blocks[index];
         }
 
         public byte GetMetadata(Coordinates3D coordinates)
         {
-            LastAccessed = DateTime.Now;
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
             return Metadata[index];
         }
 
         public byte GetSkyLight(Coordinates3D coordinates)
         {
-            LastAccessed = DateTime.Now;
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
             return SkyLight[index];
         }
 
         public byte GetBlockLight(Coordinates3D coordinates)
         {
-            LastAccessed = DateTime.Now;
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
             return BlockLight[index];
         }
@@ -110,7 +105,6 @@ namespace TrueCraft.Core.World
         /// </summary>
         public void SetBlockID(Coordinates3D coordinates, byte value)
         {
-            LastAccessed = DateTime.Now;
             IsModified = true;
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
             Blocks[index] = value;
@@ -143,7 +137,6 @@ namespace TrueCraft.Core.World
         /// </summary>
         public void SetMetadata(Coordinates3D coordinates, byte value)
         {
-            LastAccessed = DateTime.Now;
             IsModified = true;
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
             Metadata[index] = value;
@@ -155,7 +148,6 @@ namespace TrueCraft.Core.World
         /// </summary>
         public void SetSkyLight(Coordinates3D coordinates, byte value)
         {
-            LastAccessed = DateTime.Now;
             IsModified = true;
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
             SkyLight[index] = value;
@@ -167,7 +159,6 @@ namespace TrueCraft.Core.World
         /// </summary>
         public void SetBlockLight(Coordinates3D coordinates, byte value)
         {
-            LastAccessed = DateTime.Now;
             IsModified = true;
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
             BlockLight[index] = value;
@@ -178,7 +169,6 @@ namespace TrueCraft.Core.World
         /// </summary>
         public NbtCompound GetTileEntity(Coordinates3D coordinates)
         {
-            LastAccessed = DateTime.Now;
             if (TileEntities.ContainsKey(coordinates))
                 return TileEntities[coordinates];
             return null;
@@ -189,7 +179,6 @@ namespace TrueCraft.Core.World
         /// </summary>
         public void SetTileEntity(Coordinates3D coordinates, NbtCompound value)
         {
-            LastAccessed = DateTime.Now;
             TileEntities[coordinates] = value;
             IsModified = true;
         }
@@ -199,13 +188,11 @@ namespace TrueCraft.Core.World
         /// </summary>
         public int GetHeight(byte x, byte z)
         {
-            LastAccessed = DateTime.Now;
             return HeightMap[(x * Width) + z];
         }
 
         private void SetHeight(byte x, byte z, int value)
         {
-            LastAccessed = DateTime.Now;
             IsModified = true;
             HeightMap[(x * Width) + z] = value;
         }
@@ -234,7 +221,6 @@ namespace TrueCraft.Core.World
 
         public NbtFile ToNbt()
         {
-            LastAccessed = DateTime.Now;
             var serializer = new NbtSerializer(typeof(Chunk));
             var compound = serializer.Serialize(this, "Level") as NbtCompound;
             var file = new NbtFile();

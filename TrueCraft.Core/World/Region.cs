@@ -127,7 +127,6 @@ namespace TrueCraft.Core.World
             if (!Chunks.ContainsKey(position))
                 Chunks.Add(position, chunk);
             chunk.IsModified = true;
-            chunk.LastAccessed = DateTime.Now;
             Chunks[position] = chunk;
         }
 
@@ -175,7 +174,7 @@ namespace TrueCraft.Core.World
 
                             chunk.IsModified = false;
                         }
-                        if ((DateTime.Now - chunk.LastAccessed).TotalMinutes > 5)
+                        if ((DateTime.UtcNow - chunk.LastAccessed).TotalMinutes > 5)
                             toRemove.Add(kvp.Key);
                     }
                     regionFile.Flush();

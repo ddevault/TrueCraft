@@ -271,6 +271,7 @@ namespace TrueCraft
         internal void LoadChunk(Coordinates2D position)
         {
             var chunk = World.GetChunk(position);
+            chunk.LastAccessed = DateTime.UtcNow;
             QueuePacket(new ChunkPreamblePacket(chunk.Coordinates.X, chunk.Coordinates.Z));
             QueuePacket(CreatePacket(chunk));
             LoadedChunks.Add(position);
