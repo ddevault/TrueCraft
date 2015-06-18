@@ -3,13 +3,23 @@ using System.Net;
 using System.Linq;
 using System.Net.Sockets;
 using TrueCraft.Core;
+using System.Threading;
 
 namespace TrueCraft.Client
 {
     public static class Program
     {
-        [STAThread]
         public static void Main(string[] args)
+        {
+            var thread = new Thread(() => Main_Thread(args));
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            thread.Join();
+        }
+
+        // We need to spawn the main thread manually so we can register the assembly resolver
+        // and manage apartment state ourselves.
+        private static void Main_Thread(string[] args)
         {
             UserSettings.Local = new UserSettings();
             UserSettings.Local.Load();
