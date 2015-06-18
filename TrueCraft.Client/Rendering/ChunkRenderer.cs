@@ -19,7 +19,7 @@ namespace TrueCraft.Client.Rendering
     /// A daemon of sorts that creates meshes from chunks.
     /// Passing meshes back is NOT thread-safe.
     /// </summary>
-    public class ChunkRenderer
+    public class ChunkRenderer : Renderer<ReadOnlyChunk>
     {
         public class ChunkSorter : Comparer<Mesh>
         {
@@ -39,83 +39,14 @@ namespace TrueCraft.Client.Rendering
             }
         }
 
-        public class MeshGeneratedEventArgs : EventArgs
-        {
-            public bool Transparent { get; set; }
-            public ChunkMesh Mesh { get; set; }
-
-            public MeshGeneratedEventArgs(ChunkMesh mesh, bool transparent)
-            {
-                Transparent = transparent;
-                Mesh = mesh;
-            }
-        }
-
-        public event EventHandler<MeshGeneratedEventArgs> MeshGenerated;
-
-        private ConcurrentQueue<ReadOnlyChunk> ChunkQueue { get; set; }
         private GraphicsDevice GraphicsDevice { get; set; }
         private IBlockRepository BlockRepository { get; set; }
-        private List<Tuple<Thread, CancellationTokenSource>> RenderThreads { get; set; }
 
         public ChunkRenderer(GraphicsDevice graphics, IBlockRepository blockRepository)
+            : base()
         {
-            ChunkQueue = new ConcurrentQueue<ReadOnlyChunk>();
-            RenderThreads = new List<Tuple<Thread, CancellationTokenSource>>();
-            var threads = Environment.ProcessorCount - 2;
-            if (threads < 1)
-                threads = 1;
-            for (int i = 0; i < threads; i++)
-            {
-                var token = new CancellationTokenSource();
-                var worker = new Thread(() => DoChunks(token));
-                worker.IsBackground = true;
-                RenderThreads.Add(new Tuple<Thread, CancellationTokenSource>(worker, token));
-            }
-
             BlockRepository = blockRepository;
             GraphicsDevice = graphics;
-        }
-
-        public void QueueChunk(ReadOnlyChunk chunk)
-        {
-            ChunkQueue.Enqueue(chunk);
-        }
-
-        public void QueueHighPriorityChunk(ReadOnlyChunk chunk)
-        {
-            // TODO: Overwrite existing chunks
-            Task.Factory.StartNew(() =>
-            {
-                ProcessChunk(chunk, new RenderState());
-            });
-        }
-
-        public void Start()
-        {
-            RenderThreads.ForEach(t => t.Item1.Start());
-        }
-
-        public void Stop()
-        {
-            RenderThreads.ForEach(t => t.Item2.Cancel());
-        }
-
-        private void DoChunks(CancellationTokenSource token)
-        {
-            var state = new RenderState();
-            while (true)
-            {
-                if (token.Token.IsCancellationRequested)
-                    return;
-
-                ReadOnlyChunk chunk;
-                if (ChunkQueue.TryDequeue(out chunk))
-                {
-                    ProcessChunk(chunk, state);
-                }
-                Thread.Sleep(1);
-            }
         }
 
         private static readonly Coordinates3D[] AdjacentCoordinates =
@@ -128,20 +59,30 @@ namespace TrueCraft.Client.Rendering
             Coordinates3D.West
         };
 
+        protected override bool TryRender(ReadOnlyChunk item, out Mesh result)
+        {
+            var state = new RenderState();
+            ProcessChunk(item, state);
+
+            result = new ChunkMesh(item, GraphicsDevice, state.Verticies.ToArray(),
+                state.OpaqueIndicies.ToArray(), state.TransparentIndicies.ToArray());
+
+            return (result != null);
+            
+        }
+
         private class RenderState
         {
-            public readonly List<VertexPositionNormalTexture> OpaqueVerticies = new List<VertexPositionNormalTexture>();
+            public readonly List<VertexPositionNormalTexture> Verticies = new List<VertexPositionNormalTexture>();
             public readonly List<int> OpaqueIndicies = new List<int>();
-            public readonly List<VertexPositionNormalTexture> TransparentVerticies = new List<VertexPositionNormalTexture>();
             public readonly List<int> TransparentIndicies = new List<int>();
             public readonly HashSet<Coordinates3D> DrawableCoordinates = new HashSet<Coordinates3D>();
         }
 
         private void ProcessChunk(ReadOnlyChunk chunk, RenderState state)
         {
-            state.OpaqueVerticies.Clear();
+            state.Verticies.Clear();
             state.OpaqueIndicies.Clear();
-            state.TransparentVerticies.Clear();
             state.TransparentIndicies.Clear();
             state.DrawableCoordinates.Clear();
 
@@ -198,8 +139,8 @@ namespace TrueCraft.Client.Rendering
                     int[] i;
                     var v = BlockRenderer.RenderBlock(provider, descriptor,
                         new Vector3(chunk.X * Chunk.Width + coords.X, coords.Y, chunk.Z * Chunk.Depth + coords.Z),
-                        state.OpaqueVerticies.Count, out i);
-                    state.OpaqueVerticies.AddRange(v);
+                        state.Verticies.Count, out i);
+                    state.Verticies.AddRange(v);
                     state.OpaqueIndicies.AddRange(i);
                 }
                 else
@@ -207,17 +148,10 @@ namespace TrueCraft.Client.Rendering
                     int[] i;
                     var v = BlockRenderer.RenderBlock(provider, descriptor,
                         new Vector3(chunk.X * Chunk.Width + coords.X, coords.Y, chunk.Z * Chunk.Depth + coords.Z),
-                        state.TransparentVerticies.Count, out i);
-                    state.TransparentVerticies.AddRange(v);
+                        state.Verticies.Count, out i);
+                    state.Verticies.AddRange(v);
                     state.TransparentIndicies.AddRange(i);
                 }
-            }
-            var opaque = new ChunkMesh(chunk, GraphicsDevice, state.OpaqueVerticies.ToArray(), state.OpaqueIndicies.ToArray());
-            var transparent = new ChunkMesh(chunk, GraphicsDevice, state.TransparentVerticies.ToArray(), state.TransparentIndicies.ToArray());
-            if (MeshGenerated != null)
-            {
-                MeshGenerated(this, new MeshGeneratedEventArgs(opaque, false));
-                MeshGenerated(this, new MeshGeneratedEventArgs(transparent, true));
             }
         }
     }
