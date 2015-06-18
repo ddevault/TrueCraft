@@ -340,7 +340,7 @@ namespace TrueCraft.Client
 
         private static readonly BlendState ColorWriteDisable = new BlendState()
         {
-            ColorWriteChannels.None
+            ColorWriteChannels = ColorWriteChannels.None
         };
 
         protected override void Draw(GameTime gameTime)
