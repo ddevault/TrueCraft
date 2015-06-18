@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Linq;
 using System.Net.Sockets;
@@ -28,7 +29,11 @@ namespace TrueCraft.Client
             if (RuntimeInfo.IsLinux)
                 return Assembly.LoadFile("MonoGame.Framework.Linux.dll");
             if (RuntimeInfo.IsWindows)
-                return Assembly.LoadFile("MonoGame.Framework.Windows.dll");
+            {
+                // MS.NET needs the absolute path to an assembly to load it.
+                var fileInfo = new FileInfo("MonoGame.Framework.Windows.dll");
+                return Assembly.LoadFile(fileInfo.FullName);
+            }
             // TODO: OSX support
             return null;
         }
