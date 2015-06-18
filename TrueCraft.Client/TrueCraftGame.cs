@@ -42,7 +42,8 @@ namespace TrueCraft.Client
         private Microsoft.Xna.Framework.Vector3 Delta { get; set; }
         private TextureMapper TextureMapper { get; set; }
 
-        private BasicEffect OpaqueEffect, TransparentEffect;
+        private BasicEffect OpaqueEffect;
+        private AlphaTestEffect TransparentEffect;
 
         public TrueCraftGame(MultiplayerClient client, IPEndPoint endPoint)
         {
@@ -148,8 +149,9 @@ namespace TrueCraft.Client
             OpaqueEffect.FogEnd = 1000f;
             OpaqueEffect.FogColor = Color.CornflowerBlue.ToVector3();
 
-            TransparentEffect = new BasicEffect(GraphicsDevice);
-            TransparentEffect.TextureEnabled = true;
+            TransparentEffect = new AlphaTestEffect(GraphicsDevice);
+            TransparentEffect.AlphaFunction = CompareFunction.Greater;
+            TransparentEffect.ReferenceAlpha = 127;
             TransparentEffect.Texture = TextureMapper.GetTexture("terrain.png");
 
             base.LoadContent();
@@ -339,6 +341,7 @@ namespace TrueCraft.Client
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.SetRenderTarget(RenderTarget);
+            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
             Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
             GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
@@ -346,7 +349,7 @@ namespace TrueCraft.Client
             GraphicsDevice.BlendState = BlendState.NonPremultiplied;
 
             int verticies = 0, chunks = 0;
-            GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             for (int i = 0; i < ChunkMeshes.Count; i++)
             {
                 if (CameraView.Intersects(ChunkMeshes[i].BoundingBox))
@@ -356,7 +359,6 @@ namespace TrueCraft.Client
                     ChunkMeshes[i].Draw(OpaqueEffect, 0);
                 }
             }
-            GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
             for (int i = 0; i < ChunkMeshes.Count; i++)
             {
                 if (CameraView.Intersects(ChunkMeshes[i].BoundingBox))
@@ -366,7 +368,6 @@ namespace TrueCraft.Client
                     ChunkMeshes[i].Draw(TransparentEffect, 1);
                 }
             }
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             SpriteBatch.Begin();
             for (int i = 0; i < Interfaces.Count; i++)
