@@ -29,6 +29,23 @@ namespace TrueCraft.Client.Rendering
             Vertices = vertices;
             SetSubmesh(0, indices);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="chunk"></param>
+        /// <param name="device"></param>
+        /// <param name="vertices"></param>
+        /// <param name="opaqueIndices"></param>
+        /// <param name="transparentIndices"></param>
+        public ChunkMesh(ReadOnlyChunk chunk, GraphicsDevice device, VertexPositionNormalTexture[] vertices, int[] opaqueIndices, int[] transparentIndices)
+            : base(device, 2, true)
+        {
+            Chunk = chunk;
+            Vertices = vertices;
+            SetSubmesh(0, opaqueIndices);
+            SetSubmesh(1, transparentIndices);
+        }
         
         /// <summary>
         /// 

@@ -137,6 +137,20 @@ namespace TrueCraft.Client.Rendering
         }
 
         /// <summary>
+        /// Applies this camera to the specified effect.
+        /// </summary>
+        /// <param name="effect">The effect to apply this camera to.</param>
+        public void ApplyTo(AlphaTestEffect effect)
+        {
+            if (_isDirty)
+                Recalculate();
+
+            effect.View = _view;
+            effect.Projection = _projection;
+            effect.World = Matrix.Identity;
+        }
+
+        /// <summary>
         /// Returns the bounding frustum calculated for this camera.
         /// </summary>
         /// <returns></returns>

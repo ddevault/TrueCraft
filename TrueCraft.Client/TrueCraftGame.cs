@@ -28,11 +28,9 @@ namespace TrueCraft.Client
         private IPEndPoint EndPoint { get; set; }
         private ChunkRenderer ChunkConverter { get; set; }
         private DateTime NextPhysicsUpdate { get; set; }
-        private List<ChunkMesh> ChunkMeshes { get; set; }
+        private List<Mesh> ChunkMeshes { get; set; }
         private ConcurrentBag<Action> PendingMainThreadActions { get; set; }
-        private ConcurrentBag<ChunkMesh> IncomingChunks { get; set; }
-        private ConcurrentBag<ChunkMesh> IncomingTransparentChunks { get; set; }
-        private List<ChunkMesh> TransparentChunkMeshes { get; set; }
+        private ConcurrentBag<Mesh> IncomingChunks { get; set; }
         public ChatInterface ChatInterface { get; set; }
         private RenderTarget2D RenderTarget;
         private BoundingFrustum CameraView;
@@ -44,23 +42,23 @@ namespace TrueCraft.Client
         private Microsoft.Xna.Framework.Vector3 Delta { get; set; }
         private TextureMapper TextureMapper { get; set; }
 
-        private BasicEffect OpaqueEffect, TransparentEffect;
+        private BasicEffect OpaqueEffect;
+        private AlphaTestEffect TransparentEffect;
 
         public TrueCraftGame(MultiplayerClient client, IPEndPoint endPoint)
         {
             Window.Title = "TrueCraft";
             Content.RootDirectory = "Content";
             Graphics = new GraphicsDeviceManager(this);
+            Graphics.SynchronizeWithVerticalRetrace = false;
             Graphics.IsFullScreen = UserSettings.Local.IsFullscreen;
             Graphics.PreferredBackBufferWidth = UserSettings.Local.WindowResolution.Width;
             Graphics.PreferredBackBufferHeight = UserSettings.Local.WindowResolution.Height;
             Client = client;
             EndPoint = endPoint;
             NextPhysicsUpdate = DateTime.MinValue;
-            ChunkMeshes = new List<ChunkMesh>();
-            TransparentChunkMeshes = new List<ChunkMesh>();
-            IncomingChunks = new ConcurrentBag<ChunkMesh>();
-            IncomingTransparentChunks = new ConcurrentBag<ChunkMesh>();
+            ChunkMeshes = new List<Mesh>();
+            IncomingChunks = new ConcurrentBag<Mesh>();
             PendingMainThreadActions = new ConcurrentBag<Action>();
             MouseCaptured = true;
 
@@ -79,16 +77,16 @@ namespace TrueCraft.Client
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             base.Initialize(); // (calls LoadContent)
             ChunkConverter = new ChunkRenderer(Graphics.GraphicsDevice, Client.World.World.BlockRepository);
-            Client.ChunkLoaded += (sender, e) => ChunkConverter.QueueChunk(e.Chunk);
-            Client.ChunkModified += (sender, e) => ChunkConverter.QueueHighPriorityChunk(e.Chunk);
-            ChunkConverter.MeshGenerated += ChunkConverter_MeshGenerated;
+            Client.ChunkLoaded += (sender, e) => ChunkConverter.Enqueue(e.Chunk);
+            Client.ChunkModified += (sender, e) => ChunkConverter.Enqueue(e.Chunk, true);
+            ChunkConverter.MeshCompleted += ChunkConverter_MeshGenerated;
             ChunkConverter.Start();
             Client.PropertyChanged += HandleClientPropertyChanged;
             Client.Connect(EndPoint);
             var centerX = GraphicsDevice.Viewport.Width / 2;
             var centerY = GraphicsDevice.Viewport.Height / 2;
             Mouse.SetPosition(centerX, centerY);
-            Camera = new Camera(GraphicsDevice.Viewport.AspectRatio, 70.0f, 0.1f, 1000.0f);
+            Camera = new Camera(GraphicsDevice.Viewport.AspectRatio, 70.0f, 1.0f, 1000.0f);
             UpdateCamera();
             Window.ClientSizeChanged += (sender, e) => CreateRenderTarget();
             MouseComponent.Move += OnMouseComponentMove;
@@ -103,12 +101,9 @@ namespace TrueCraft.Client
                 false, GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
         }
 
-        void ChunkConverter_MeshGenerated(object sender, ChunkRenderer.MeshGeneratedEventArgs e)
+        void ChunkConverter_MeshGenerated(object sender, RendererEventArgs<ReadOnlyChunk> e)
         {
-            if (e.Transparent)
-                IncomingTransparentChunks.Add(e.Mesh);
-            else
-                IncomingChunks.Add(e.Mesh);
+            IncomingChunks.Add(e.Result);
         }
 
         void HandleClientPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -119,7 +114,7 @@ namespace TrueCraft.Client
                     UpdateCamera();
                     var sorter = new ChunkRenderer.ChunkSorter(new Coordinates3D(
                         (int)Client.Position.X, 0, (int)Client.Position.Z));
-                    PendingMainThreadActions.Add(() => TransparentChunkMeshes.Sort(sorter));
+                    PendingMainThreadActions.Add(() => ChunkMeshes.Sort(sorter));
                     break;
             }
         }
@@ -154,8 +149,9 @@ namespace TrueCraft.Client
             OpaqueEffect.FogEnd = 1000f;
             OpaqueEffect.FogColor = Color.CornflowerBlue.ToVector3();
 
-            TransparentEffect = new BasicEffect(GraphicsDevice);
-            TransparentEffect.TextureEnabled = true;
+            TransparentEffect = new AlphaTestEffect(GraphicsDevice);
+            TransparentEffect.AlphaFunction = CompareFunction.Greater;
+            TransparentEffect.ReferenceAlpha = 127;
             TransparentEffect.Texture = TextureMapper.GetTexture("terrain.png");
 
             base.LoadContent();
@@ -287,16 +283,11 @@ namespace TrueCraft.Client
                 i.Update(gameTime);
             }
 
-            ChunkMesh mesh;
+            Mesh mesh;
             if (IncomingChunks.TryTake(out mesh))
             {
-                var existing = ChunkMeshes.SingleOrDefault(m => m.Chunk.Chunk.Coordinates == mesh.Chunk.Chunk.Coordinates);
-                if (existing != null)
-                    ChunkMeshes.Remove(existing);
                 ChunkMeshes.Add(mesh);
             }
-            if (IncomingTransparentChunks.TryTake(out mesh)) // TODO: re-render transparent meshes
-                TransparentChunkMeshes.Add(mesh);
             Action action;
             if (PendingMainThreadActions.TryTake(out action))
                 action();
@@ -347,37 +338,57 @@ namespace TrueCraft.Client
             Camera.ApplyTo(TransparentEffect);
         }
 
+        // Used for faking the disabling of color buffer writing.
+        private static readonly BlendState ColorWriteDisable = new BlendState()
+        {
+            ColorSourceBlend = Blend.Zero,
+            AlphaSourceBlend = Blend.Zero,
+            ColorDestinationBlend = Blend.One,
+            AlphaDestinationBlend = Blend.One
+        };
+
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.SetRenderTarget(RenderTarget);
+            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
             Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
             GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
             GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
-            GraphicsDevice.BlendState = BlendState.NonPremultiplied;
 
             int verticies = 0, chunks = 0;
-            GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             for (int i = 0; i < ChunkMeshes.Count; i++)
             {
                 if (CameraView.Intersects(ChunkMeshes[i].BoundingBox))
                 {
                     verticies += ChunkMeshes[i].GetTotalVertices();
                     chunks++;
-                    ChunkMeshes[i].Draw(OpaqueEffect);
+                    ChunkMeshes[i].Draw(OpaqueEffect, 0);
                 }
             }
-            GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
-            for (int i = 0; i < TransparentChunkMeshes.Count; i++)
+
+            GraphicsDevice.BlendState = ColorWriteDisable;
+            for (int i = 0; i < ChunkMeshes.Count; i++)
             {
-                if (CameraView.Intersects(TransparentChunkMeshes[i].BoundingBox))
+                if (CameraView.Intersects(ChunkMeshes[i].BoundingBox))
                 {
-                    if (!TransparentChunkMeshes[i].IsDisposed)
-                        verticies += TransparentChunkMeshes[i].GetTotalVertices();
-                    TransparentChunkMeshes[i].Draw(TransparentEffect);
+                    if (!ChunkMeshes[i].IsDisposed)
+                        verticies += ChunkMeshes[i].GetTotalVertices();
+                    ChunkMeshes[i].Draw(TransparentEffect, 1);
                 }
             }
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
+            GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+            for (int i = 0; i < ChunkMeshes.Count; i++)
+            {
+                if (CameraView.Intersects(ChunkMeshes[i].BoundingBox))
+                {
+                    if (!ChunkMeshes[i].IsDisposed)
+                        verticies += ChunkMeshes[i].GetTotalVertices();
+                    ChunkMeshes[i].Draw(TransparentEffect, 1);
+                }
+            }
 
             SpriteBatch.Begin();
             for (int i = 0; i < Interfaces.Count; i++)
