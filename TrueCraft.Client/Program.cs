@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Sockets;
 using TrueCraft.Core;
 using System.Threading;
+using System.Reflection;
 
 namespace TrueCraft.Client
 {
@@ -11,10 +12,25 @@ namespace TrueCraft.Client
     {
         public static void Main(string[] args)
         {
+            AppDomain.CurrentDomain.AssemblyResolve += AppDomain_CurrentDomain_AssemblyResolve;
+
             var thread = new Thread(() => Main_Thread(args));
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
             thread.Join();
+        }
+
+        static Assembly AppDomain_CurrentDomain_AssemblyResolve (object sender, ResolveEventArgs args)
+        {
+            var assemblyName = new AssemblyName(args.Name);
+            if (assemblyName.Name != "MonoGame.Framework")
+                return null;
+            if (RuntimeInfo.IsLinux)
+                return Assembly.LoadFile("MonoGame.Framework.Linux.dll");
+            if (RuntimeInfo.IsWindows)
+                return Assembly.LoadFile("MonoGame.Framework.Windows.dll");
+            // TODO: OSX support
+            return null;
         }
 
         // We need to spawn the main thread manually so we can register the assembly resolver

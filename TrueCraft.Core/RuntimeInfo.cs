@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace TrueCraft.Launcher
+namespace TrueCraft.Core
 {
     public static class RuntimeInfo
     {
