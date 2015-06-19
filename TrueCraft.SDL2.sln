@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueCraft", "TrueCraft\TrueCraft.csproj", "{C1C47EF5-2D8A-4231-AAA8-F651F52F480E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueCraft.API", "TrueCraft.API\TrueCraft.API.csproj", "{FEE55B54-91B0-4325-A2C3-D576C0B7A81F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueCraft.Core", "TrueCraft.Core\TrueCraft.Core.csproj", "{FA4BE9A3-DBF0-4380-BA2B-FFAA71C4706D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueCraft.Client.SDL2", "TrueCraft.Client\TrueCraft.Client.SDL2.csproj", "{0D8E8F2D-74BB-4C91-AFE2-C6E33AA40FD4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fNbt", "externals\fNbt\fNbt\fNbt.csproj", "{4488498D-976D-4DA3-BF72-109531AF0488}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FNA", "externals\FNA\FNA.csproj", "{35253CE1-C864-4CD3-8249-4D1319748E8F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D8E8F2D-74BB-4C91-AFE2-C6E33AA40FD4}.Debug|x86.ActiveCfg = Debug|x86
+		{0D8E8F2D-74BB-4C91-AFE2-C6E33AA40FD4}.Debug|x86.Build.0 = Debug|x86
+		{0D8E8F2D-74BB-4C91-AFE2-C6E33AA40FD4}.Release|x86.ActiveCfg = Release|x86
+		{0D8E8F2D-74BB-4C91-AFE2-C6E33AA40FD4}.Release|x86.Build.0 = Release|x86
+		{35253CE1-C864-4CD3-8249-4D1319748E8F}.Debug|x86.ActiveCfg = Debug|x86
+		{35253CE1-C864-4CD3-8249-4D1319748E8F}.Debug|x86.Build.0 = Debug|x86
+		{35253CE1-C864-4CD3-8249-4D1319748E8F}.Release|x86.ActiveCfg = Release|x86
+		{35253CE1-C864-4CD3-8249-4D1319748E8F}.Release|x86.Build.0 = Release|x86
+		{4488498D-976D-4DA3-BF72-109531AF0488}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4488498D-976D-4DA3-BF72-109531AF0488}.Debug|x86.Build.0 = Debug|Any CPU
+		{4488498D-976D-4DA3-BF72-109531AF0488}.Release|x86.ActiveCfg = Release|Any CPU
+		{4488498D-976D-4DA3-BF72-109531AF0488}.Release|x86.Build.0 = Release|Any CPU
+		{C1C47EF5-2D8A-4231-AAA8-F651F52F480E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C1C47EF5-2D8A-4231-AAA8-F651F52F480E}.Debug|x86.Build.0 = Debug|Any CPU
+		{C1C47EF5-2D8A-4231-AAA8-F651F52F480E}.Release|x86.ActiveCfg = Release|Any CPU
+		{C1C47EF5-2D8A-4231-AAA8-F651F52F480E}.Release|x86.Build.0 = Release|Any CPU
+		{FA4BE9A3-DBF0-4380-BA2B-FFAA71C4706D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FA4BE9A3-DBF0-4380-BA2B-FFAA71C4706D}.Debug|x86.Build.0 = Debug|Any CPU
+		{FA4BE9A3-DBF0-4380-BA2B-FFAA71C4706D}.Release|x86.ActiveCfg = Release|Any CPU
+		{FA4BE9A3-DBF0-4380-BA2B-FFAA71C4706D}.Release|x86.Build.0 = Release|Any CPU
+		{FEE55B54-91B0-4325-A2C3-D576C0B7A81F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FEE55B54-91B0-4325-A2C3-D576C0B7A81F}.Debug|x86.Build.0 = Debug|Any CPU
+		{FEE55B54-91B0-4325-A2C3-D576C0B7A81F}.Release|x86.ActiveCfg = Release|Any CPU
+		{FEE55B54-91B0-4325-A2C3-D576C0B7A81F}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = TrueCraft\TrueCraft.csproj
+	EndGlobalSection
+EndGlobal

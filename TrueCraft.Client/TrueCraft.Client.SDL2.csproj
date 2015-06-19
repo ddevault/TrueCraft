@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0D8E8F2D-74BB-4C91-AFE2-C6E33AA40FD4}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>TrueCraft.Client</RootNamespace>
+    <AssemblyName>TrueCraft.Client</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;WINDOWS;SDL2;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>false</ConsolePause>
+    <DefineConstants>WINDOWS;SDL2;</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Input\KeyboardComponent.cs" />
+    <Compile Include="Input\KeyboardEventArgs.cs" />
+    <Compile Include="Input\KeyboardKeyEventArgs.cs" />
+    <Compile Include="Input\MouseButton.cs" />
+    <Compile Include="Input\MouseButtonEventArgs.cs" />
+    <Compile Include="Input\MouseComponent.cs" />
+    <Compile Include="Input\MouseEventArgs.cs" />
+    <Compile Include="Input\MouseMoveEventArgs.cs" />
+    <Compile Include="Input\MouseScrollEventArgs.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering\Camera.cs" />
+    <Compile Include="Rendering\Font.cs" />
+    <Compile Include="Rendering\FontRenderer.cs" />
+    <Compile Include="Rendering\FontStyle.cs" />
+    <Compile Include="Rendering\Renderer.cs" />
+    <Compile Include="Rendering\RendererEventArgs.cs" />
+    <Compile Include="Rendering\TextureMapper.cs" />
+    <Compile Include="TrueCraftGame.cs" />
+    <Compile Include="MultiplayerClient.cs" />
+    <Compile Include="Handlers\PacketHandlers.cs" />
+    <Compile Include="Events\ChatMessageEventArgs.cs" />
+    <Compile Include="Interface\ChatInterface.cs" />
+    <Compile Include="Interface\IGameInterface.cs" />
+    <Compile Include="BMFont.cs" />
+    <Compile Include="Handlers\ChunkHandler.cs" />
+    <Compile Include="ReadOnlyWorld.cs" />
+    <Compile Include="Events\ChunkEventArgs.cs" />
+    <Compile Include="PhysicsEngine.cs" />
+    <Compile Include="Rendering\Mesh.cs" />
+    <Compile Include="Rendering\BlockRenderer.cs" />
+    <Compile Include="Rendering\ChunkMesh.cs" />
+    <Compile Include="Rendering\Blocks\GrassRenderer.cs" />
+    <Compile Include="Rendering\Blocks\CraftingTableRenderer.cs" />
+    <Compile Include="Rendering\Blocks\TNTRenderer.cs" />
+    <Compile Include="Rendering\Blocks\SnowRenderer.cs" />
+    <Compile Include="Rendering\Blocks\TorchRenderer.cs" />
+    <Compile Include="Rendering\Blocks\LogRenderer.cs" />
+    <Compile Include="Rendering\ChunkRenderer.cs" />
+    <Compile Include="Rendering\Blocks\LeavesRenderer.cs" />
+    <Compile Include="Rendering\Blocks\TallGrassRenderer.cs" />
+    <Compile Include="Rendering\FlatQuadRenderer.cs" />
+    <Compile Include="Rendering\Blocks\LadderRenderer.cs" />
+    <Compile Include="Rendering\Blocks\SugarcaneRenderer.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Ionic.Zip.Reduced">
+      <HintPath>..\lib\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\externals\FNA\FNA.csproj">
+      <Project>{35253CE1-C864-4CD3-8249-4D1319748E8F}</Project>
+      <Name>FNA</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TrueCraft.API\TrueCraft.API.csproj">
+      <Project>{FEE55B54-91B0-4325-A2C3-D576C0B7A81F}</Project>
+      <Name>TrueCraft.API</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TrueCraft.Core\TrueCraft.Core.csproj">
+      <Project>{FA4BE9A3-DBF0-4380-BA2B-FFAA71C4706D}</Project>
+      <Name>TrueCraft.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\default-pack.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\default-pack.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\items.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\pack.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\pack.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\terrain.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\DejaVu_Bold.fnt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\DejaVu_Bold_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\DejaVu_Italic.fnt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\DejaVu_Italic_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\DejaVu_Regular.fnt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Fonts\DejaVu_Regular_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

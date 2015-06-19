@@ -403,7 +403,7 @@ namespace TrueCraft.Client
 
             GraphicsDevice.Clear(Color.CornflowerBlue);
             SpriteBatch.Begin();
-            SpriteBatch.Draw(RenderTarget, new Vector2(0));
+            SpriteBatch.Draw(RenderTarget, Vector2.Zero, Color.White);
             SpriteBatch.End();
 
             base.Draw(gameTime);

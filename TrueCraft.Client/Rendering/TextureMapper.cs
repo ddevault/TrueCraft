@@ -6,7 +6,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TrueCraft.Core;
 using Ionic.Zip;
+#if !SDL2
 using MonoGame.Utilities.Png;
+#endif
 
 namespace TrueCraft.Client.Rendering
 {
@@ -29,8 +31,19 @@ namespace TrueCraft.Client.Rendering
         {
             Defaults.Clear();
 
+#if SDL2
+            using (FileStream items = File.OpenRead("Content/items.png"))
+            {
+                Defaults.Add("items.png", Texture2D.FromStream(graphicsDevice, items));
+            }
+            using (FileStream terrain = File.OpenRead("Content/terrain.png"))
+            {
+                Defaults.Add("terrain.png", Texture2D.FromStream(graphicsDevice, terrain));
+            }
+#else
             Defaults.Add("items.png", new PngReader().Read(File.OpenRead("Content/items.png"), graphicsDevice));
             Defaults.Add("terrain.png", new PngReader().Read(File.OpenRead("Content/terrain.png"), graphicsDevice));
+#endif
         }
 
         /// <summary>
@@ -104,7 +117,11 @@ namespace TrueCraft.Client.Rendering
                                 var ms = new MemoryStream();
                                 CopyStream(stream, ms);
                                 ms.Seek(0, SeekOrigin.Begin);
+#if SDL2
+                                AddTexture(key, Texture2D.FromStream(Device, ms));
+#else
                                 AddTexture(key, new PngReader().Read(ms, Device));
+#endif
                                 ms.Dispose();
                             }
                             catch (Exception ex) { Console.WriteLine("Exception occured while loading {0} from texture pack:\n\n{1}", key, ex); }
