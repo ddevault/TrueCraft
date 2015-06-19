@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TrueCraft.Core;
 using Ionic.Zip;
+using MonoGame.Utilities.Png;
 
 namespace TrueCraft.Client.Rendering
 {
@@ -28,8 +29,8 @@ namespace TrueCraft.Client.Rendering
         {
             Defaults.Clear();
 
-            Defaults.Add("items.png", Texture2D.FromStream(graphicsDevice, File.OpenRead("Content/items.png")));
-            Defaults.Add("terrain.png", Texture2D.FromStream(graphicsDevice, File.OpenRead("Content/terrain.png")));
+            Defaults.Add("items.png", new PngReader().Read(File.OpenRead("Content/items.png"), graphicsDevice));
+            Defaults.Add("terrain.png", new PngReader().Read(File.OpenRead("Content/terrain.png"), graphicsDevice));
         }
 
         /// <summary>
@@ -97,11 +98,31 @@ namespace TrueCraft.Client.Rendering
                     if (Path.GetExtension(key) == ".png")
                     {
                         using (var stream = entry.OpenReader())
-                            AddTexture(key, Texture2D.FromStream(Device, stream));
+                        {
+                            try
+                            {
+                                var ms = new MemoryStream();
+                                CopyStream(stream, ms);
+                                ms.Seek(0, SeekOrigin.Begin);
+                                AddTexture(key, new PngReader().Read(ms, Device));
+                                ms.Dispose();
+                            }
+                            catch (Exception ex) { Console.WriteLine("Exception occured while loading {0} from texture pack:\n\n{1}", key, ex); }
+                        }
                     }
                 }
             }
             catch { return; }
+        }
+
+        public static void CopyStream(Stream input, Stream output)
+        {
+            byte[] buffer = new byte[16*1024];
+            int read;
+            while((read = input.Read (buffer, 0, buffer.Length)) > 0)
+            {
+                output.Write(buffer, 0, read);
+            }
         }
 
         /// <summary>
