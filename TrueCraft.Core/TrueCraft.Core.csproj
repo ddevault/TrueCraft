@@ -244,7 +244,6 @@
     <Compile Include="Logic\Blocks\FarmlandBlock.cs" />
     <Compile Include="Logic\Blocks\FenceBlock.cs" />
     <Compile Include="Logic\Blocks\FireBlock.cs" />
-    <Compile Include="Logic\Blocks\FlowerBlock.cs" />
     <Compile Include="Logic\Blocks\FurnaceBlock.cs" />
     <Compile Include="Logic\Blocks\GlassBlock.cs" />
     <Compile Include="Logic\Blocks\GlowstoneBlock.cs" />
@@ -318,6 +317,7 @@
     <Compile Include="Logic\BlockRepository.cs" />
     <Compile Include="TrueCraftUser.cs" />
     <Compile Include="RuntimeInfo.cs" />
+    <Compile Include="Logic\Blocks\DandelionBlock.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

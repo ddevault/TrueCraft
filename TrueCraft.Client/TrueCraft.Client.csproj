@@ -96,10 +96,10 @@
     <Compile Include="Rendering\Blocks\LogRenderer.cs" />
     <Compile Include="Rendering\ChunkRenderer.cs" />
     <Compile Include="Rendering\Blocks\LeavesRenderer.cs" />
-    <Compile Include="Rendering\Blocks\TallGrassRenderer.cs" />
     <Compile Include="Rendering\FlatQuadRenderer.cs" />
     <Compile Include="Rendering\Blocks\LadderRenderer.cs" />
     <Compile Include="Rendering\Blocks\SugarcaneRenderer.cs" />
+    <Compile Include="Rendering\Blocks\VegitationRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

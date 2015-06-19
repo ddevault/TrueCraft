@@ -141,7 +141,7 @@ namespace TrueCraft.Core.Logic.Items
                     return new[,]
                     {
                         {
-                            new ItemStack(FlowerBlock.BlockID)
+                            new ItemStack(DandelionBlock.BlockID)
                         }
                     };
                 }

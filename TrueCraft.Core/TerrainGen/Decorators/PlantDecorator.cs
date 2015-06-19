@@ -75,7 +75,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
 
         void GenerateDandelion(IChunk chunk, Coordinates3D location)
         {
-            chunk.SetBlockID(location, FlowerBlock.BlockID);
+            chunk.SetBlockID(location, DandelionBlock.BlockID);
         }
 
         void GenerateTallGrass(IChunk chunk, Coordinates3D location, byte meta)

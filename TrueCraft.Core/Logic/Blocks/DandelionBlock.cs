@@ -1,9 +1,10 @@
 using System;
 using TrueCraft.API.Logic;
+using TrueCraft.API;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class FlowerBlock : BlockProvider
+    public class DandelionBlock : BlockProvider
     {
         public static readonly byte BlockID = 0x25;
         
@@ -18,6 +19,8 @@ namespace TrueCraft.Core.Logic.Blocks
         public override bool Opaque { get { return false; } }
         
         public override string DisplayName { get { return "Flower"; } }
+
+        public override BoundingBox? BoundingBox { get { return null; } }
 
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
