@@ -26,10 +26,7 @@ namespace TrueCraft.Client.Rendering
             : base(game, 1, true)
         {
             Chunk = chunk;
-            game.PendingMainThreadActions.Add(() =>
-            {
-                Vertices = vertices;
-            });
+            Vertices = vertices;
             SetSubmesh(0, indices);
         }
 
@@ -45,10 +42,7 @@ namespace TrueCraft.Client.Rendering
             : base(game, 2, true)
         {
             Chunk = chunk;
-            game.PendingMainThreadActions.Add(() =>
-            {
-                Vertices = vertices;
-            });
+            Vertices = vertices;
             SetSubmesh(0, opaqueIndices);
             SetSubmesh(1, transparentIndices);
         }

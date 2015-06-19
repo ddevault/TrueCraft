@@ -36,12 +36,12 @@ namespace TrueCraft.Client.Rendering
                 if (_vertices != null)
                     _vertices.Dispose();
 
-                lock (_syncLock)
+                _game.PendingMainThreadActions.Add(() =>
                 {
                     _vertices = new VertexBuffer(_graphicsDevice, VertexPositionNormalTexture.VertexDeclaration,
                         (value.Length + 1), BufferUsage.WriteOnly);
                     _vertices.SetData(value);
-                }
+                });
 
                 if (_recalculateBounds)
                     BoundingBox = RecalculateBounds(value);
@@ -85,10 +85,7 @@ namespace TrueCraft.Client.Rendering
         public Mesh(TrueCraftGame game, VertexPositionNormalTexture[] vertices, int submeshes = 1, bool recalculateBounds = true)
             : this(game, submeshes, recalculateBounds)
         {
-            game.PendingMainThreadActions.Add(() =>
-            {
-                Vertices = vertices;
-            });
+            Vertices = vertices;
         }
 
         /// <summary>
@@ -101,10 +98,7 @@ namespace TrueCraft.Client.Rendering
         public Mesh(TrueCraftGame game, VertexPositionNormalTexture[] vertices, int[] indices, bool recalculateBounds = true)
             : this(game, 1, recalculateBounds)
         {
-            game.PendingMainThreadActions.Add(() =>
-            {
-                Vertices = vertices;
-            });
+            Vertices = vertices;
             SetSubmesh(0, indices);
         }
 
@@ -123,9 +117,12 @@ namespace TrueCraft.Client.Rendering
                 if (_indices[index] != null)
                     _indices[index].Dispose();
 
-                _indices[index] = new IndexBuffer(_graphicsDevice, typeof(int),
-                    (indices.Length + 1), BufferUsage.WriteOnly);
-                _indices[index].SetData(indices);
+                _game.PendingMainThreadActions.Add(() =>
+                {
+                    _indices[index] = new IndexBuffer(_graphicsDevice, typeof(int),
+                        (indices.Length + 1), BufferUsage.WriteOnly);
+                    _indices[index].SetData(indices);
+                });
             }
         }
 
