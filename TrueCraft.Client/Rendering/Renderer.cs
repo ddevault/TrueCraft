@@ -52,7 +52,7 @@ namespace TrueCraft.Client.Rendering
             lock (_syncLock)
             {
                 _isRunning = false;
-                _rendererThread = new Thread(DoRendering);
+                _rendererThread = new Thread(DoRendering) { IsBackground = true };
                 _items = new ConcurrentQueue<T>(); _priorityItems = new ConcurrentQueue<T>();
                 _isDisposed = false;
             }
