@@ -1,3 +1,6 @@
 [submodule "externals/fNbt"]
 	path = externals/fNbt
 	url = https://github.com/SirCmpwn/fNbt.git
+[submodule "externals/FNA"]
+	path = externals/FNA
+	url = https://github.com/flibitijibibo/FNA.git
