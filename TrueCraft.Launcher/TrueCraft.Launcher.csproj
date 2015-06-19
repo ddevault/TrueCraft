@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="Content\truecraft-logo.pdn" />
     <None Include="Xwt.WPF.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
