@@ -10,10 +10,6 @@ I miss the old days of Minecraft, when it was a simple game. It was nearly perfe
 
 The goal of this project is effectively to fork Minecraft. Your contribution is welcome, but keep in mind that I will mercilessly reject changes that aren't in line with the vision. If you like the new Minecraft, please feel free to keep playing it. If you miss the old Minecraft, join me.
 
-### "What about Craft.Net?"
-
-Craft.Net aims to support the latest version of Minecraft. That means I'm aiming for a moving target every time Mojang updates the game, adding more features that I don't like. I'm tired of Craft.Net. Let's do this instead.
-
 ## Compiling
 
 **Use a recursive git clone.**
@@ -44,13 +40,7 @@ If you are a dirty dev, you are more limited in how you can help. You can work o
 
 ## Assets
 
-TrueCraft cannot use the official Minecraft assets, such as the texture pack and some of the sound effects. We maintain our own texture pack:
-
-![](https://raw.githubusercontent.com/SirCmpwn/TrueCraft/master/TrueCraft.Client/Content/terrain.png)
-
-This is based on [Programmer Art](https://github.com/deathcap/ProgrammerArt), and we are slowly replacing each texture with something that is as close to the Minecraft look & feel as possible. There is also a [Github issue](https://github.com/SirCmpwn/TrueCraft/tree/master/TrueCraft.Client/Content) around finding more assets for our uses.
-
-We have kept compatability with Minecraft (beta 1.7.3) texture packs, so if you want to use the official assets privately you are welcome to. See [the relevant page](https://github.com/SirCmpwn/TrueCraft/wiki/Using-official-assets) on the wiki.
+TrueCraft is compatible with Minecraft beta 1.7.3 texture packs. We ship one of our own, based on [Programmer Art](https://github.com/deathcap/ProgrammerArt). You can install the official assets through the TrueCraft launcher if you wish.
 
 ## Blah blah blah
 
