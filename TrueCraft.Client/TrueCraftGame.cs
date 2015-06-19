@@ -411,6 +411,8 @@ namespace TrueCraft.Client
         {
             if (disposing)
             {
+                ChunkConverter.Dispose();
+
                 KeyboardComponent.Dispose();
                 MouseComponent.Dispose();
             }
