@@ -3,10 +3,13 @@ using TrueCraft.API.Networking;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.API;
 using TrueCraft.Core.World;
-using MonoGame.Utilities;
 using TrueCraft.Client.Events;
 using TrueCraft.API.World;
+#if SDL2
 using Ionic.Zlib;
+#else
+using MonoGame.Utilities;
+#endif
 
 namespace TrueCraft.Client.Handlers
 {
