@@ -19,6 +19,7 @@ namespace TrueCraft.Client.Rendering
         private static readonly object _syncLock =
             new object();
 
+        private TrueCraftGame _game;
         private GraphicsDevice _graphicsDevice;
         protected VertexBuffer _vertices; // ChunkMesh uses these but external classes shouldn't, so I've made them protected.
         protected IndexBuffer[] _indices;
@@ -63,15 +64,13 @@ namespace TrueCraft.Client.Rendering
         /// <param name="graphicsDevice">The graphics device to store the mesh on.</param>
         /// <param name="submeshes">The number of submeshes in the mesh.</param>
         /// <param name="recalculateBounds">Whether the mesh should recalculate its bounding box when changed.</param>
-        public Mesh(GraphicsDevice graphicsDevice, int submeshes = 1, bool recalculateBounds = true)
+        public Mesh(TrueCraftGame game, int submeshes = 1, bool recalculateBounds = true)
         {
-            if (graphicsDevice == null)
-                throw new ArgumentException();
-
             if ((submeshes < 0) || (submeshes >= Mesh.SubmeshLimit))
                 throw new ArgumentOutOfRangeException();
 
-            _graphicsDevice = graphicsDevice;
+            _game = game;
+            _graphicsDevice = game.GraphicsDevice;
             _indices = new IndexBuffer[submeshes];
             _recalculateBounds = recalculateBounds;
         }
@@ -83,10 +82,13 @@ namespace TrueCraft.Client.Rendering
         /// <param name="vertices">The vertices in the mesh.</param>
         /// <param name="submeshes">The number of submeshes in the mesh.</param>
         /// <param name="recalculateBounds">Whether the mesh should recalculate its bounding box when changed.</param>
-        public Mesh(GraphicsDevice graphicsDevice, VertexPositionNormalTexture[] vertices, int submeshes = 1, bool recalculateBounds = true)
-            : this(graphicsDevice, submeshes, recalculateBounds)
+        public Mesh(TrueCraftGame game, VertexPositionNormalTexture[] vertices, int submeshes = 1, bool recalculateBounds = true)
+            : this(game, submeshes, recalculateBounds)
         {
-            Vertices = vertices;
+            game.PendingMainThreadActions.Add(() =>
+            {
+                Vertices = vertices;
+            });
         }
 
         /// <summary>
@@ -96,10 +98,13 @@ namespace TrueCraft.Client.Rendering
         /// <param name="vertices">The vertices in the mesh.</param>
         /// <param name="indices">The first (and only) submesh in the mesh.</param>
         /// <param name="recalculateBounds">Whether the mesh should recalculate its bounding box when changed.</param>
-        public Mesh(GraphicsDevice graphicsDevice, VertexPositionNormalTexture[] vertices, int[] indices, bool recalculateBounds = true)
-            : this(graphicsDevice, 1, recalculateBounds)
+        public Mesh(TrueCraftGame game, VertexPositionNormalTexture[] vertices, int[] indices, bool recalculateBounds = true)
+            : this(game, 1, recalculateBounds)
         {
-            Vertices = vertices;
+            game.PendingMainThreadActions.Add(() =>
+            {
+                Vertices = vertices;
+            });
             SetSubmesh(0, indices);
         }
 

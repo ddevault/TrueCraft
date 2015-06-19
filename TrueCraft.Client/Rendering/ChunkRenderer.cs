@@ -39,14 +39,14 @@ namespace TrueCraft.Client.Rendering
             }
         }
 
-        private GraphicsDevice GraphicsDevice { get; set; }
+        private TrueCraftGame Game { get; set; }
         private IBlockRepository BlockRepository { get; set; }
 
-        public ChunkRenderer(GraphicsDevice graphics, IBlockRepository blockRepository)
+        public ChunkRenderer(TrueCraftGame game, IBlockRepository blockRepository)
             : base()
         {
             BlockRepository = blockRepository;
-            GraphicsDevice = graphics;
+            Game = game;
         }
 
         private static readonly Coordinates3D[] AdjacentCoordinates =
@@ -64,7 +64,7 @@ namespace TrueCraft.Client.Rendering
             var state = new RenderState();
             ProcessChunk(item, state);
 
-            result = new ChunkMesh(item, GraphicsDevice, state.Verticies.ToArray(),
+            result = new ChunkMesh(item, Game, state.Verticies.ToArray(),
                 state.OpaqueIndicies.ToArray(), state.TransparentIndicies.ToArray());
 
             return (result != null);

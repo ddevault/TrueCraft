@@ -22,11 +22,14 @@ namespace TrueCraft.Client.Rendering
         /// <param name="device"></param>
         /// <param name="vertices"></param>
         /// <param name="indices"></param>
-        public ChunkMesh(ReadOnlyChunk chunk, GraphicsDevice device, VertexPositionNormalTexture[] vertices, int[] indices)
-            : base(device, 1, true)
+        public ChunkMesh(ReadOnlyChunk chunk, TrueCraftGame game, VertexPositionNormalTexture[] vertices, int[] indices)
+            : base(game, 1, true)
         {
             Chunk = chunk;
-            Vertices = vertices;
+            game.PendingMainThreadActions.Add(() =>
+            {
+                Vertices = vertices;
+            });
             SetSubmesh(0, indices);
         }
 
@@ -38,11 +41,14 @@ namespace TrueCraft.Client.Rendering
         /// <param name="vertices"></param>
         /// <param name="opaqueIndices"></param>
         /// <param name="transparentIndices"></param>
-        public ChunkMesh(ReadOnlyChunk chunk, GraphicsDevice device, VertexPositionNormalTexture[] vertices, int[] opaqueIndices, int[] transparentIndices)
-            : base(device, 2, true)
+        public ChunkMesh(ReadOnlyChunk chunk, TrueCraftGame game, VertexPositionNormalTexture[] vertices, int[] opaqueIndices, int[] transparentIndices)
+            : base(game, 2, true)
         {
             Chunk = chunk;
-            Vertices = vertices;
+            game.PendingMainThreadActions.Add(() =>
+            {
+                Vertices = vertices;
+            });
             SetSubmesh(0, opaqueIndices);
             SetSubmesh(1, transparentIndices);
         }

@@ -29,7 +29,7 @@ namespace TrueCraft.Client
         private ChunkRenderer ChunkConverter { get; set; }
         private DateTime NextPhysicsUpdate { get; set; }
         private List<Mesh> ChunkMeshes { get; set; }
-        private ConcurrentBag<Action> PendingMainThreadActions { get; set; }
+        public ConcurrentBag<Action> PendingMainThreadActions { get; set; }
         private ConcurrentBag<Mesh> IncomingChunks { get; set; }
         public ChatInterface ChatInterface { get; set; }
         private RenderTarget2D RenderTarget;
@@ -76,7 +76,7 @@ namespace TrueCraft.Client
             Interfaces = new List<IGameInterface>();
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             base.Initialize(); // (calls LoadContent)
-            ChunkConverter = new ChunkRenderer(Graphics.GraphicsDevice, Client.World.World.BlockRepository);
+            ChunkConverter = new ChunkRenderer(this, Client.World.World.BlockRepository);
             Client.ChunkLoaded += (sender, e) => ChunkConverter.Enqueue(e.Chunk);
             Client.ChunkModified += (sender, e) => ChunkConverter.Enqueue(e.Chunk, true);
             ChunkConverter.MeshCompleted += ChunkConverter_MeshGenerated;
