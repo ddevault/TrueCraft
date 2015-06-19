@@ -168,18 +168,13 @@ namespace TrueCraft.Client.Rendering
         /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
+            Stop();
+            lock (_syncLock)
             {
-                Stop();
-                lock (_syncLock)
-                {
-                    _rendererThread = null;
-                    _items = null; _priorityItems = null;
-                    _isDisposed = true;
-                }
+                _rendererThread = null;
+                _items = null; _priorityItems = null;
+                _isDisposed = true;
             }
-            else
-                throw new NotSupportedException(); // We should 'encourage' developers to dispose of renderers properly.
         }
 
         /// <summary>
