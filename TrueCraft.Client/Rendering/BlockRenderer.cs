@@ -17,7 +17,7 @@ namespace TrueCraft.Client.Rendering
             Renderers[id] = renderer;
         }
 
-        public static VertexPositionNormalTexture[] RenderBlock(IBlockProvider provider, BlockDescriptor descriptor,
+        public static VertexPositionNormalColorTexture[] RenderBlock(IBlockProvider provider, BlockDescriptor descriptor,
             Vector3 offset, int indiciesOffset, out int[] indicies)
         {
             var textureMap = provider.GetTextureMap(descriptor.Metadata);
@@ -26,7 +26,7 @@ namespace TrueCraft.Client.Rendering
             return Renderers[descriptor.ID].Render(descriptor, offset, textureMap, indiciesOffset, out indicies);
         }
 
-        public virtual VertexPositionNormalTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
+        public virtual VertexPositionNormalColorTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
             Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
             var texCoords = new Vector2(textureMap.Item1, textureMap.Item2);
@@ -39,19 +39,19 @@ namespace TrueCraft.Client.Rendering
             };
             for (int i = 0; i < texture.Length; i++)
                 texture[i] *= new Vector2(16f / 256f);
-            return CreateUniformCube(offset, texture, indiciesOffset, out indicies);
+            return CreateUniformCube(offset, texture, indiciesOffset, out indicies, Color.White);
         }
 
-        protected VertexPositionNormalTexture[] CreateUniformCube(Vector3 offset, Vector2[] texture, int indiciesOffset, out int[] indicies)
+        protected VertexPositionNormalColorTexture[] CreateUniformCube(Vector3 offset, Vector2[] texture, int indiciesOffset, out int[] indicies, Color color)
         {
             indicies = new int[6 * 6];
-            var verticies = new VertexPositionNormalTexture[4 * 6];
+            var verticies = new VertexPositionNormalColorTexture[4 * 6];
             int[] _indicies;
             int textureIndex = 0;
             for (int _side = 0; _side < 6; _side++)
             {
                 var side = (CubeFace)_side;
-                var quad = CreateQuad(side, offset, texture, textureIndex % texture.Length, indiciesOffset, out _indicies);
+                var quad = CreateQuad(side, offset, texture, textureIndex % texture.Length, indiciesOffset, out _indicies, color);
                 Array.Copy(quad, 0, verticies, _side * 4, 4);
                 Array.Copy(_indicies, 0, indicies, _side * 6, 6);
                 textureIndex += 4;
@@ -59,18 +59,18 @@ namespace TrueCraft.Client.Rendering
             return verticies;
         }
 
-        protected static VertexPositionNormalTexture[] CreateQuad(CubeFace face, Vector3 offset, Vector2[] texture, int textureOffset,
-             int indiciesOffset, out int[] indicies)
+        protected static VertexPositionNormalColorTexture[] CreateQuad(CubeFace face, Vector3 offset, Vector2[] texture, int textureOffset,
+            int indiciesOffset, out int[] indicies, Color color)
         {
             indicies = new[] { 0, 1, 3, 1, 2, 3 };
             for (int i = 0; i < indicies.Length; i++)
                 indicies[i] += ((int)face * 4) + indiciesOffset;
-            var quad = new VertexPositionNormalTexture[4];
+            var quad = new VertexPositionNormalColorTexture[4];
             var unit = CubeMesh[(int)face];
             var normal = CubeNormals[(int)face];
             for (int i = 0; i < 4; i++)
             {
-                quad[i] = new VertexPositionNormalTexture(offset + unit[i], normal, texture[textureOffset + i]);
+                quad[i] = new VertexPositionNormalColorTexture(offset + unit[i], normal, color, texture[textureOffset + i]);
             }
             return quad;
         }

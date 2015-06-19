@@ -71,24 +71,24 @@ namespace TrueCraft.Client.Rendering.Blocks
             }
         }
 
-        public override VertexPositionNormalTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
+        public override VertexPositionNormalColorTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
             Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
             if (descriptor.ID == RoseBlock.BlockID)
-                return RenderQuads(descriptor, offset, RoseTexture, indiciesOffset, out indicies);
+                return RenderQuads(descriptor, offset, RoseTexture, indiciesOffset, out indicies, Color.White);
             else if (descriptor.ID == DandelionBlock.BlockID)
-                return RenderQuads(descriptor, offset, DandelionTexture, indiciesOffset, out indicies);
+                return RenderQuads(descriptor, offset, DandelionTexture, indiciesOffset, out indicies, Color.White);
             else
             {
                 switch ((TallGrassBlock.TallGrassType)descriptor.Metadata)
                 {
                     case TallGrassBlock.TallGrassType.DeadBush:
-                        return RenderQuads(descriptor, offset, DeadBushTexture, indiciesOffset, out indicies);
+                        return RenderQuads(descriptor, offset, DeadBushTexture, indiciesOffset, out indicies, Color.White);
                     case TallGrassBlock.TallGrassType.Fern:
-                        return RenderQuads(descriptor, offset, FernTexture, indiciesOffset, out indicies);
+                        return RenderQuads(descriptor, offset, FernTexture, indiciesOffset, out indicies, GrassRenderer.BiomeColor);
                     case TallGrassBlock.TallGrassType.TallGrass:
                     default:
-                        return RenderQuads(descriptor, offset, TallGrassTexture, indiciesOffset, out indicies);
+                        return RenderQuads(descriptor, offset, TallGrassTexture, indiciesOffset, out indicies, GrassRenderer.BiomeColor);
                 }
             }
         }

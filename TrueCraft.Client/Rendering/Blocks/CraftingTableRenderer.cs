@@ -53,10 +53,10 @@ namespace TrueCraft.Client.Rendering.Blocks
             BottomTexture + Vector2.UnitX,
         };
 
-        public override VertexPositionNormalTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
+        public override VertexPositionNormalColorTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
             Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
-            return CreateUniformCube(offset, Texture, indiciesOffset, out indicies);
+            return CreateUniformCube(offset, Texture, indiciesOffset, out indicies, Color.White);
         }
     }
 }

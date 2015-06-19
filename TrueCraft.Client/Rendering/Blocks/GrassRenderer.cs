@@ -52,10 +52,18 @@ namespace TrueCraft.Client.Rendering.Blocks
             EndsTexture + Vector2.UnitX,
         };
 
-        public override VertexPositionNormalTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
+        public static readonly Color BiomeColor = new Color(105, 169, 63);
+
+        public override VertexPositionNormalColorTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
             Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
-            return CreateUniformCube(offset, Texture, indiciesOffset, out indicies);
+            var cube = CreateUniformCube(offset, Texture, indiciesOffset, out indicies, Color.White);
+            // Apply biome colors to top of cube
+            for (int i = (int)(CubeFace.PositiveY) * 4; i < (int)(CubeFace.PositiveY) * 4 + 4; i++)
+            {
+                cube[i].Color = BiomeColor; // TODO: Take this from biome
+            }
+            return cube;
         }
     }
 }

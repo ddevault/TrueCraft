@@ -73,7 +73,7 @@ namespace TrueCraft.Client.Rendering
 
         private class RenderState
         {
-            public readonly List<VertexPositionNormalTexture> Verticies = new List<VertexPositionNormalTexture>();
+            public readonly List<VertexPositionNormalColorTexture> Verticies = new List<VertexPositionNormalColorTexture>();
             public readonly List<int> OpaqueIndicies = new List<int>();
             public readonly List<int> TransparentIndicies = new List<int>();
             public readonly HashSet<Coordinates3D> DrawableCoordinates = new HashSet<Coordinates3D>();

@@ -148,11 +148,13 @@ namespace TrueCraft.Client
             OpaqueEffect.FogStart = 512f;
             OpaqueEffect.FogEnd = 1000f;
             OpaqueEffect.FogColor = Color.CornflowerBlue.ToVector3();
+            OpaqueEffect.VertexColorEnabled = true;
 
             TransparentEffect = new AlphaTestEffect(GraphicsDevice);
             TransparentEffect.AlphaFunction = CompareFunction.Greater;
             TransparentEffect.ReferenceAlpha = 127;
             TransparentEffect.Texture = TextureMapper.GetTexture("terrain.png");
+            TransparentEffect.VertexColorEnabled = true;
 
             base.LoadContent();
         }

@@ -24,37 +24,37 @@ namespace TrueCraft.Client.Rendering.Blocks
             TextureMap + Vector2.UnitX
         };
 
-        public override VertexPositionNormalTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
+        public override VertexPositionNormalColorTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
                                                              Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
-            VertexPositionNormalTexture[] verticies;
+            VertexPositionNormalColorTexture[] verticies;
             Vector3 correction;
             int faceCorrection = 0;
             switch ((LadderBlock.LadderDirection)descriptor.Metadata)
             {
                 case LadderBlock.LadderDirection.North:
-                    verticies = CreateQuad(CubeFace.PositiveZ, offset, Texture, 0, indiciesOffset, out indicies);
+                    verticies = CreateQuad(CubeFace.PositiveZ, offset, Texture, 0, indiciesOffset, out indicies, Color.White);
                     correction = Vector3.Forward;
                     faceCorrection = (int)CubeFace.PositiveZ * 4;
                     break;
                 case LadderBlock.LadderDirection.South:
-                    verticies = CreateQuad(CubeFace.NegativeZ, offset, Texture, 0, indiciesOffset, out indicies);
+                    verticies = CreateQuad(CubeFace.NegativeZ, offset, Texture, 0, indiciesOffset, out indicies, Color.White);
                     correction = Vector3.Backward;
                     faceCorrection = (int)CubeFace.NegativeZ * 4;
                     break;
                 case LadderBlock.LadderDirection.East:
-                    verticies = CreateQuad(CubeFace.NegativeX, offset, Texture, 0, indiciesOffset, out indicies);
+                    verticies = CreateQuad(CubeFace.NegativeX, offset, Texture, 0, indiciesOffset, out indicies, Color.White);
                     correction = Vector3.Right;
                     faceCorrection = (int)CubeFace.NegativeX * 4;
                     break;
                 case LadderBlock.LadderDirection.West:
-                    verticies = CreateQuad(CubeFace.PositiveX, offset, Texture, 0, indiciesOffset, out indicies);
+                    verticies = CreateQuad(CubeFace.PositiveX, offset, Texture, 0, indiciesOffset, out indicies, Color.White);
                     correction = Vector3.Left;
                     faceCorrection = (int)CubeFace.PositiveX * 4;
                     break;
                 default:
                     // Should never happen
-                    verticies = CreateUniformCube(offset, Texture, indiciesOffset, out indicies);
+                    verticies = CreateUniformCube(offset, Texture, indiciesOffset, out indicies, Color.White);
                     correction = Vector3.Zero;
                     break;
             }

@@ -23,22 +23,22 @@ namespace TrueCraft.Client.Rendering
                 Texture[i] *= new Vector2(16f / 256f);
         }
 
-        public override VertexPositionNormalTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
+        public override VertexPositionNormalColorTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
             Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
-            return RenderQuads(descriptor, offset, Texture, indiciesOffset, out indicies);
+            return RenderQuads(descriptor, offset, Texture, indiciesOffset, out indicies, Color.White);
         }
 
-        protected VertexPositionNormalTexture[] RenderQuads(BlockDescriptor descriptor, Vector3 offset,
-             Vector2[] textureMap, int indiciesOffset, out int[] indicies)
+        protected VertexPositionNormalColorTexture[] RenderQuads(BlockDescriptor descriptor, Vector3 offset,
+            Vector2[] textureMap, int indiciesOffset, out int[] indicies, Color color)
         {
             indicies = new int[6 * 4];
-            var verticies = new VertexPositionNormalTexture[4 * 4];
+            var verticies = new VertexPositionNormalColorTexture[4 * 4];
             int[] _indicies;
             int textureIndex = 0;
             for (int side = 0; side < 4; side++)
             {
-                var quad = CreateAngledQuad(side, offset, textureMap, textureIndex % textureMap.Length, indiciesOffset, out _indicies);
+                var quad = CreateAngledQuad(side, offset, textureMap, textureIndex % textureMap.Length, indiciesOffset, out _indicies, color);
                 Array.Copy(quad, 0, verticies, side * 4, 4);
                 Array.Copy(_indicies, 0, indicies, side * 6, 6);
                 textureIndex += 4;
@@ -46,18 +46,18 @@ namespace TrueCraft.Client.Rendering
             return verticies;
         }
 
-        protected static VertexPositionNormalTexture[] CreateAngledQuad(int face, Vector3 offset, Vector2[] texture, int textureOffset,
-             int indiciesOffset, out int[] indicies)
+        protected static VertexPositionNormalColorTexture[] CreateAngledQuad(int face, Vector3 offset, Vector2[] texture, int textureOffset,
+            int indiciesOffset, out int[] indicies, Color color)
         {
             indicies = new[] { 0, 1, 3, 1, 2, 3 };
             for (int i = 0; i < indicies.Length; i++)
                 indicies[i] += (face * 4) + indiciesOffset;
-            var quad = new VertexPositionNormalTexture[4];
+            var quad = new VertexPositionNormalColorTexture[4];
             var unit = QuadMesh[face];
             var normal = CubeNormals[face];
             for (int i = 0; i < 4; i++)
             {
-                quad[i] = new VertexPositionNormalTexture(offset + unit[i], normal, texture[textureOffset + i]);
+                quad[i] = new VertexPositionNormalColorTexture(offset + unit[i], normal, color, texture[textureOffset + i]);
             }
             return quad;
         }

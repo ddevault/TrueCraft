@@ -29,7 +29,7 @@ namespace TrueCraft.Client.Rendering
         /// <summary>
         /// Gets or sets the vertices in this mesh.
         /// </summary>
-        public VertexPositionNormalTexture[] Vertices
+        public VertexPositionNormalColorTexture[] Vertices
         {
             set
             {
@@ -38,7 +38,7 @@ namespace TrueCraft.Client.Rendering
 
                 _game.PendingMainThreadActions.Add(() =>
                 {
-                    _vertices = new VertexBuffer(_graphicsDevice, VertexPositionNormalTexture.VertexDeclaration,
+                        _vertices = new VertexBuffer(_graphicsDevice, VertexPositionNormalColorTexture.VertexDeclaration,
                         (value.Length + 1), BufferUsage.WriteOnly);
                     _vertices.SetData(value);
                 });
@@ -82,7 +82,7 @@ namespace TrueCraft.Client.Rendering
         /// <param name="vertices">The vertices in the mesh.</param>
         /// <param name="submeshes">The number of submeshes in the mesh.</param>
         /// <param name="recalculateBounds">Whether the mesh should recalculate its bounding box when changed.</param>
-        public Mesh(TrueCraftGame game, VertexPositionNormalTexture[] vertices, int submeshes = 1, bool recalculateBounds = true)
+        public Mesh(TrueCraftGame game, VertexPositionNormalColorTexture[] vertices, int submeshes = 1, bool recalculateBounds = true)
             : this(game, submeshes, recalculateBounds)
         {
             Vertices = vertices;
@@ -95,7 +95,7 @@ namespace TrueCraft.Client.Rendering
         /// <param name="vertices">The vertices in the mesh.</param>
         /// <param name="indices">The first (and only) submesh in the mesh.</param>
         /// <param name="recalculateBounds">Whether the mesh should recalculate its bounding box when changed.</param>
-        public Mesh(TrueCraftGame game, VertexPositionNormalTexture[] vertices, int[] indices, bool recalculateBounds = true)
+        public Mesh(TrueCraftGame game, VertexPositionNormalColorTexture[] vertices, int[] indices, bool recalculateBounds = true)
             : this(game, 1, recalculateBounds)
         {
             Vertices = vertices;
@@ -198,7 +198,7 @@ namespace TrueCraft.Client.Rendering
         /// </summary>
         /// <param name="vertices">The vertices in this mesh.</param>
         /// <returns></returns>
-        protected virtual BoundingBox RecalculateBounds(VertexPositionNormalTexture[] vertices)
+        protected virtual BoundingBox RecalculateBounds(VertexPositionNormalColorTexture[] vertices)
         {
             return new BoundingBox(
                 vertices.Select(v => v.Position).OrderBy(v => v.Length()).First(),
