@@ -67,6 +67,7 @@ namespace TrueCraft
         private IList<ILogProvider> LogProviders;
         internal object ClientLock = new object();
         private bool ShuttingDown = false;
+        private QueryProtocol QueryProtocol;
 
         public MultiplayerServer()
         {
@@ -91,6 +92,7 @@ namespace TrueCraft
             CraftingRepository = craftingRepository;
             PendingBlockUpdates = new Queue<BlockUpdate>();
             EnableClientLogging = false;
+            QueryProtocol = new TrueCraft.QueryProtocol(this);
 
             AccessConfiguration = Configuration.LoadConfiguration<AccessConfiguration>("access.yaml");
 
@@ -113,12 +115,16 @@ namespace TrueCraft
             Log(LogCategory.Notice, "Running TrueCraft server on {0}", EndPoint);
             NetworkWorker.Start();
             EnvironmentWorker.Change(100, 1000 / 20);
+            if(Program.ServerConfiguration.Query)
+                QueryProtocol.Start();
         }
 
         public void Stop()
         {
             ShuttingDown = true;
             Listener.Stop();
+            if(Program.ServerConfiguration.Query)
+                QueryProtocol.Stop();
             foreach (var w in Worlds)
                 w.Save();
             foreach (var c in Clients)
