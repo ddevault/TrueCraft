@@ -131,7 +131,8 @@ namespace TrueCraft.Client.Rendering
                     Metadata = chunk.GetMetadata(coords),
                     BlockLight = chunk.GetBlockLight(coords),
                     SkyLight = chunk.GetSkyLight(coords),
-                    Coordinates = coords
+                    Coordinates = coords,
+                    Chunk = chunk.Chunk
                 };
                 var provider = BlockRepository.GetBlockProvider(descriptor.ID);
                 if (provider.RenderOpaque)

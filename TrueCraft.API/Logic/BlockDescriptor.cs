@@ -1,4 +1,5 @@
 ﻿using System;
+using TrueCraft.API.World;
 
 namespace TrueCraft.API.Logic
 {
@@ -8,6 +9,9 @@ namespace TrueCraft.API.Logic
         public byte Metadata;
         public byte BlockLight;
         public byte SkyLight;
+        // Optional
         public Coordinates3D Coordinates;
+        // Optional
+        public IChunk Chunk;
     }
 }

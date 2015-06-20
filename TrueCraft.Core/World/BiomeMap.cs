@@ -24,7 +24,7 @@ namespace TrueCraft.Core.World
             TempNoise.Octaves = 2;
             TempNoise.Lacunarity = 1.3;
             RainNoise.Frequency = 0.03;
-            RainNoise.Octaves = 2;
+            RainNoise.Octaves = 3;
             RainNoise.Amplitude = 5;
             RainNoise.Lacunarity = 1.7;
             TempNoise.Seed = seed;
