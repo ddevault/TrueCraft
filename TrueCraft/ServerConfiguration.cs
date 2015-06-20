@@ -22,7 +22,7 @@ namespace TrueCraft
 
         public ServerConfiguration()
         {
-            MOTD = ChatColor.Red + "Welcome to TrueCraft!";
+            MOTD = "Welcome to TrueCraft!";
             Debug = new DebugConfiguration();
             ServerPort = 25565;
             ServerAddress = "0.0.0.0";

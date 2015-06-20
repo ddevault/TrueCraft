@@ -185,7 +185,7 @@ namespace TrueCraft
             stats.Add("gametype", "SMP");
             stats.Add("game_id", "TRUECRAFT");
             stats.Add("version", "1.0");
-            stats.Add("plugins", "");
+            stats.Add("plugins", "TrueCraft");
             stats.Add("map", Server.Worlds.First().Name);
             stats.Add("numplayers", Server.Clients.Count.ToString());
             stats.Add("maxplayers", "64");
