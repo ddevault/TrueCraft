@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.IO;
 using System.Threading;
+using TrueCraft.API.Server;
 
 namespace TrueCraft
 {
@@ -15,22 +16,24 @@ namespace TrueCraft
         private int Port;
         private Timer Timer;
         private Random Rnd;
+        private IMultiplayerServer Server;
         private CancellationTokenSource CToken;
 
-        private readonly Tuple<byte, byte> ProtocolVersion = new Tuple<byte, byte>(0xFE, 0xFD);
+        private readonly byte[] ProtocolVersion = new byte[] { 0xFE, 0xFD };
         private readonly byte Type_Handshake = 0x09;
         private readonly byte Type_Stat = 0x00;
 
         private Dictionary<IPEndPoint, QueryUser> UserList;
         private object UserLock = new object();
 
-        public QueryProtocol(int port)
+        public QueryProtocol(IMultiplayerServer server)
         {
-            Port = port;
             Rnd = new Random();
+            Server = server;
         }
         public void Start()
         {
+            Port = Program.ServerConfiguration.QueryPort;
             Udp = new UdpClient(Port);
             Timer = new Timer(ResetUserList, null, 0, 30000);
             CToken = new CancellationTokenSource();
@@ -41,16 +44,25 @@ namespace TrueCraft
         {
             if (CToken.IsCancellationRequested) return;
 
-            var clientEP = new IPEndPoint(IPAddress.Any, Port);
-            byte[] buffer = Udp.EndReceive(ar, ref clientEP);
-
-            switch (buffer.Length)
+            try
             {
-                case 7: HandleHandshake(buffer, clientEP); break;
-                case 11: HandleBasicStat(buffer, clientEP); break;
-                case 15: HandleFullStat(buffer, clientEP); break;
-            }
+                var clientEP = new IPEndPoint(IPAddress.Any, Port);
+                byte[] buffer = Udp.EndReceive(ar, ref clientEP);
 
+                if (CheckVersion(buffer))
+                {
+                    if (buffer[2] == Type_Handshake)
+                        HandleHandshake(buffer, clientEP);
+                    else if (buffer[2] == Type_Stat)
+                    {
+                        if (buffer.Length == 11)
+                            HandleBasicStat(buffer, clientEP);
+                        else if (buffer.Length == 15)
+                            HandleFullStat(buffer, clientEP);
+                    }
+                }
+            }
+            catch { }
             if (CToken.IsCancellationRequested) return;
 
             Udp.BeginReceive(HandleReceive, null);
@@ -59,7 +71,6 @@ namespace TrueCraft
         private void HandleHandshake(byte[] buffer, IPEndPoint clientEP)
         {
             var stream = GetStream(buffer);
-            CheckHead(Type_Handshake, stream);
             int sessionId = GetSessionId(stream);
 
             var user = new QueryUser { SessionId = sessionId, ChallengeToken = Rnd.Next() };
@@ -80,7 +91,6 @@ namespace TrueCraft
         private void HandleBasicStat(byte[] buffer, IPEndPoint clientEP)
         {
             var stream = GetStream(buffer);
-            CheckHead(Type_Stat, stream);
             int sessionId = GetSessionId(stream);
             int token = GetToken(stream);
 
@@ -105,7 +115,6 @@ namespace TrueCraft
         private void HandleFullStat(byte[] buffer, IPEndPoint clientEP)
         {
             var stream = GetStream(buffer);
-            CheckHead(Type_Stat, stream);
             int sessionId = GetSessionId(stream);
             int token = GetToken(stream);
 
@@ -131,22 +140,9 @@ namespace TrueCraft
             SendResponse(response, clientEP);
         }
 
-        private void CheckVersion(BinaryReader stream)
+        private bool CheckVersion(byte[] ver)
         {
-            byte ver1 = stream.ReadByte();
-            byte ver2 = stream.ReadByte();
-            if (ver1 != ProtocolVersion.Item1 || ver2 != ProtocolVersion.Item2) 
-                throw new Exception("Incorrect Protocol Version");
-        }
-        private void CheckType(byte Type, BinaryReader stream)
-        {
-            byte type = stream.ReadByte();
-            if (type != Type) throw new Exception("Incorrect Type");
-        }
-        private void CheckHead(byte Type, BinaryReader stream)
-        {
-            CheckVersion(stream);
-            CheckType(Type, stream);
+            return ver[0] == ProtocolVersion[0] && ver[1] == ProtocolVersion[1];
         }
         private int GetSessionId(BinaryReader stream)
         {
@@ -187,8 +183,8 @@ namespace TrueCraft
             stats.Add("game_id", "TRUECRAFT");
             stats.Add("version", "1.0");
             stats.Add("plugins", "");
-            stats.Add("map", Program.Server.Worlds.First().Name);
-            stats.Add("numplayers", Program.Server.Clients.Count.ToString());
+            stats.Add("map", Server.Worlds.First().Name);
+            stats.Add("numplayers", Server.Clients.Count.ToString());
             stats.Add("maxplayers", "64");
             stats.Add("hostport", Program.ServerConfiguration.ServerPort.ToString());
             stats.Add("hostip", Program.ServerConfiguration.ServerAddress);
@@ -198,7 +194,7 @@ namespace TrueCraft
         {
             var names = new List<string>();
             lock (Program.Server.ClientLock)
-                foreach (var client in Program.Server.Clients)
+                foreach (var client in Server.Clients)
                     names.Add(client.Username);
             return names;
         }
