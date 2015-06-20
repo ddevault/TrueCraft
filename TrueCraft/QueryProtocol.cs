@@ -49,6 +49,8 @@ namespace TrueCraft
                 var clientEP = new IPEndPoint(IPAddress.Any, Port);
                 byte[] buffer = Udp.EndReceive(ar, ref clientEP);
 
+                DoReverseEndian(buffer);
+
                 if (CheckVersion(buffer))
                 {
                     if (buffer[2] == Type_Handshake)
@@ -124,12 +126,13 @@ namespace TrueCraft
             var stats = GetStats();
             var response = GetStream();
             WriteHead(Type_Stat, user, response);
-            WriteStringToStream("SPLITNUM", response.BaseStream);
+            WriteStringToStream("SPLITNUM\0\0", response.BaseStream);
             foreach (var pair in stats)
             {
                 WriteStringToStream(pair.Key, response.BaseStream);
                 WriteStringToStream(pair.Value, response.BaseStream);
             }
+            response.Write((byte)0x00);
             response.Write((byte)0x01);
             WriteStringToStream("player_\0", response.BaseStream);
             var players = GetPlayers();
@@ -197,6 +200,25 @@ namespace TrueCraft
                 foreach (var client in Server.Clients)
                     names.Add(client.Username);
             return names;
+        }
+        private void DoReverseEndian(byte[] buffer)
+        {
+            if (buffer.Length >= 7)
+            {
+                Swap(ref buffer[3], ref buffer[6]);
+                Swap(ref buffer[4], ref buffer[5]);
+            }
+            if (buffer.Length >= 11)
+            {
+                Swap(ref buffer[7], ref buffer[10]);
+                Swap(ref buffer[8], ref buffer[9]);
+            }
+        }
+        private void Swap(ref byte a, ref byte b)
+        {
+            byte c = a;
+            a = b;
+            b = c;
         }
 
         public void Stop()
