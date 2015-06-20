@@ -78,7 +78,7 @@ namespace TrueCraft.Client
             base.Initialize(); // (calls LoadContent)
             ChunkConverter = new ChunkRenderer(this, Client.World.World.BlockRepository);
             Client.ChunkLoaded += (sender, e) => ChunkConverter.Enqueue(e.Chunk);
-            Client.ChunkModified += (sender, e) => ChunkConverter.Enqueue(e.Chunk, true);
+            //Client.ChunkModified += (sender, e) => ChunkConverter.Enqueue(e.Chunk, true);
             ChunkConverter.MeshCompleted += ChunkConverter_MeshGenerated;
             ChunkConverter.Start();
             Client.PropertyChanged += HandleClientPropertyChanged;

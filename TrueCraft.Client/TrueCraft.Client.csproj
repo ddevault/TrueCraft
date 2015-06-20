@@ -102,6 +102,8 @@
     <Compile Include="Rendering\Blocks\VegitationRenderer.cs" />
     <Compile Include="Rendering\VertexPositionNormalColorTexture.cs" />
     <Compile Include="Rendering\Blocks\WheatRenderer.cs" />
+    <Compile Include="Rendering\Blocks\WaterRenderer.cs" />
+    <Compile Include="Rendering\Blocks\FarmlandRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
