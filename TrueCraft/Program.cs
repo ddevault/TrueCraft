@@ -51,7 +51,7 @@ namespace TrueCraft
             }
             catch
             {
-                world = new World("default", new FlatlandGenerator());
+                world = new World("default", new StandardGenerator());
                 world.BlockRepository = Server.BlockRepository;
                 world.Save("world");
                 Server.AddWorld(world);
