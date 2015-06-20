@@ -115,11 +115,18 @@ namespace TrueCraft
             var stats = GetStats();
             var response = GetStream();
             WriteHead(Type_Stat, user, response);
+            WriteStringToStream("SPLITNUM", response.BaseStream);
             foreach (var pair in stats)
             {
                 WriteStringToStream(pair.Key, response.BaseStream);
                 WriteStringToStream(pair.Value, response.BaseStream);
             }
+            response.Write((byte)0x01);
+            WriteStringToStream("player_\0", response.BaseStream);
+            var players = GetPlayers();
+            foreach (string player in players)
+                WriteStringToStream(player, response.BaseStream);
+            response.Write((byte)0x00);
 
             SendResponse(response, clientEP);
         }
@@ -186,6 +193,14 @@ namespace TrueCraft
             stats.Add("hostport", Program.ServerConfiguration.ServerPort.ToString());
             stats.Add("hostip", Program.ServerConfiguration.ServerAddress);
             return stats;
+        }
+        private List<string> GetPlayers()
+        {
+            var names = new List<string>();
+            lock (Program.Server.ClientLock)
+                foreach (var client in Program.Server.Clients)
+                    names.Add(client.Username);
+            return names;
         }
 
         public void Stop()
