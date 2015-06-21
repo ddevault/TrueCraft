@@ -246,7 +246,7 @@ namespace TrueCraft.Client
 
         private void OnMouseComponentMove(object sender, MouseMoveEventArgs e)
         {
-            if (MouseCaptured)
+            if (MouseCaptured && IsActive)
             {
                 var centerX = GraphicsDevice.Viewport.Width / 2;
                 var centerY = GraphicsDevice.Viewport.Height / 2;
