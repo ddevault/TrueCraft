@@ -4,7 +4,7 @@ using TrueCraft.API;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class StoneSlabBlock : BlockProvider
+    public class SlabBlock : BlockProvider
     {
         public enum SlabMaterial
         {
@@ -120,9 +120,9 @@ namespace TrueCraft.Core.Logic.Blocks
         }
     }
 
-    public class DoubleStoneSlabBlock : BlockProvider
+    public class DoubleSlabBlock : SlabBlock
     {
-        public static readonly byte BlockID = 0x2B;
+        public static readonly new byte BlockID = 0x2B;
 
         public override byte ID { get { return 0x2B; } }
 
