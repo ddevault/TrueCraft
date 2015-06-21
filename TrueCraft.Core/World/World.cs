@@ -95,11 +95,9 @@ namespace TrueCraft.Core.World
                 if (file.RootTag.Contains("Name"))
                     world.Name = file.RootTag["Name"].StringValue;
                 world.ChunkProvider = provider;
-
-                return world;
             }
 
-            throw new FileNotFoundException();
+            return world;
         }
 
         /// <summary>
