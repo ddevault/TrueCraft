@@ -8,134 +8,189 @@ namespace TrueCraft.Client.Rendering.Blocks
 {
     public class SlabRenderer : BlockRenderer
     {
+        private static Vector2 StoneTopTexture = new Vector2(6, 0);
+        private static Vector2 StoneSideTexture = new Vector2(5, 0);
+        private static Vector2 StoneBottomTexture = new Vector2(6, 0);
+        private static Vector2 SandstoneTopTexture = new Vector2(0, 13);
+        private static Vector2 SandstoneSideTexture = new Vector2(0, 12);
+        private static Vector2 SandstoneBottomTexture = new Vector2(0, 14);
+        private static Vector2 WoodTopTexture = new Vector2(4, 0);
+        private static Vector2 WoodSideTexture = new Vector2(4, 0);
+        private static Vector2 WoodBottomTexture = new Vector2(4, 0);
+        private static Vector2 CobbleTopTexture = new Vector2(1, 0);
+        private static Vector2 CobbleSideTexture = new Vector2(1, 0);
+        private static Vector2 CobbleBottomTexture = new Vector2(1, 0);
+
+        private static Vector2[] StoneTextureMap =
+        {
+            // Positive Z
+            StoneSideTexture + Vector2.UnitX + Vector2.UnitY,
+            StoneSideTexture + Vector2.UnitY,
+            StoneSideTexture,
+            StoneSideTexture + Vector2.UnitX,
+            // Negative Z
+            StoneSideTexture + Vector2.UnitX + Vector2.UnitY,
+            StoneSideTexture + Vector2.UnitY,
+            StoneSideTexture,
+            StoneSideTexture + Vector2.UnitX,
+            // Positive X
+            StoneSideTexture + Vector2.UnitX + Vector2.UnitY,
+            StoneSideTexture + Vector2.UnitY,
+            StoneSideTexture,
+            StoneSideTexture + Vector2.UnitX,
+            // Negative X
+            StoneSideTexture + Vector2.UnitX + Vector2.UnitY,
+            StoneSideTexture + Vector2.UnitY,
+            StoneSideTexture,
+            StoneSideTexture + Vector2.UnitX,
+            // Negative Y
+            StoneTopTexture + Vector2.UnitX + Vector2.UnitY,
+            StoneTopTexture + Vector2.UnitY,
+            StoneTopTexture,
+            StoneTopTexture + Vector2.UnitX,
+            // Negative Y
+            StoneBottomTexture + Vector2.UnitX + Vector2.UnitY,
+            StoneBottomTexture + Vector2.UnitY,
+            StoneBottomTexture,
+            StoneBottomTexture + Vector2.UnitX,
+        };
+
+        private static Vector2[] SandstoneTextureMap =
+        {
+            // Positive Z
+            SandstoneSideTexture + Vector2.UnitX + Vector2.UnitY,
+            SandstoneSideTexture + Vector2.UnitY,
+            SandstoneSideTexture,
+            SandstoneSideTexture + Vector2.UnitX,
+            // Negative Z
+            SandstoneSideTexture + Vector2.UnitX + Vector2.UnitY,
+            SandstoneSideTexture + Vector2.UnitY,
+            SandstoneSideTexture,
+            SandstoneSideTexture + Vector2.UnitX,
+            // Positive X
+            SandstoneSideTexture + Vector2.UnitX + Vector2.UnitY,
+            SandstoneSideTexture + Vector2.UnitY,
+            SandstoneSideTexture,
+            SandstoneSideTexture + Vector2.UnitX,
+            // Negative X
+            SandstoneSideTexture + Vector2.UnitX + Vector2.UnitY,
+            SandstoneSideTexture + Vector2.UnitY,
+            SandstoneSideTexture,
+            SandstoneSideTexture + Vector2.UnitX,
+            // Negative Y
+            SandstoneTopTexture + Vector2.UnitX + Vector2.UnitY,
+            SandstoneTopTexture + Vector2.UnitY,
+            SandstoneTopTexture,
+            SandstoneTopTexture + Vector2.UnitX,
+            // Negative Y
+            SandstoneBottomTexture + Vector2.UnitX + Vector2.UnitY,
+            SandstoneBottomTexture + Vector2.UnitY,
+            SandstoneBottomTexture,
+            SandstoneBottomTexture + Vector2.UnitX,
+        };
+
+        private static Vector2[] WoodTextureMap =
+        {
+            // Positive Z
+            WoodSideTexture + Vector2.UnitX + Vector2.UnitY,
+            WoodSideTexture + Vector2.UnitY,
+            WoodSideTexture,
+            WoodSideTexture + Vector2.UnitX,
+            // Negative Z
+            WoodSideTexture + Vector2.UnitX + Vector2.UnitY,
+            WoodSideTexture + Vector2.UnitY,
+            WoodSideTexture,
+            WoodSideTexture + Vector2.UnitX,
+            // Positive X
+            WoodSideTexture + Vector2.UnitX + Vector2.UnitY,
+            WoodSideTexture + Vector2.UnitY,
+            WoodSideTexture,
+            WoodSideTexture + Vector2.UnitX,
+            // Negative X
+            WoodSideTexture + Vector2.UnitX + Vector2.UnitY,
+            WoodSideTexture + Vector2.UnitY,
+            WoodSideTexture,
+            WoodSideTexture + Vector2.UnitX,
+            // Negative Y
+            WoodTopTexture + Vector2.UnitX + Vector2.UnitY,
+            WoodTopTexture + Vector2.UnitY,
+            WoodTopTexture,
+            WoodTopTexture + Vector2.UnitX,
+            // Negative Y
+            WoodBottomTexture + Vector2.UnitX + Vector2.UnitY,
+            WoodBottomTexture + Vector2.UnitY,
+            WoodBottomTexture,
+            WoodBottomTexture + Vector2.UnitX,
+        };
+
+        private static Vector2[] CobbleTextureMap =
+        {
+            // Positive Z
+            CobbleSideTexture + Vector2.UnitX + Vector2.UnitY,
+            CobbleSideTexture + Vector2.UnitY,
+            CobbleSideTexture,
+            CobbleSideTexture + Vector2.UnitX,
+            // Negative Z
+            CobbleSideTexture + Vector2.UnitX + Vector2.UnitY,
+            CobbleSideTexture + Vector2.UnitY,
+            CobbleSideTexture,
+            CobbleSideTexture + Vector2.UnitX,
+            // Positive X
+            CobbleSideTexture + Vector2.UnitX + Vector2.UnitY,
+            CobbleSideTexture + Vector2.UnitY,
+            CobbleSideTexture,
+            CobbleSideTexture + Vector2.UnitX,
+            // Negative X
+            CobbleSideTexture + Vector2.UnitX + Vector2.UnitY,
+            CobbleSideTexture + Vector2.UnitY,
+            CobbleSideTexture,
+            CobbleSideTexture + Vector2.UnitX,
+            // Negative Y
+            CobbleTopTexture + Vector2.UnitX + Vector2.UnitY,
+            CobbleTopTexture + Vector2.UnitY,
+            CobbleTopTexture,
+            CobbleTopTexture + Vector2.UnitX,
+            // Negative Y
+            CobbleBottomTexture + Vector2.UnitX + Vector2.UnitY,
+            CobbleBottomTexture + Vector2.UnitY,
+            CobbleBottomTexture,
+            CobbleBottomTexture + Vector2.UnitX,
+        };
+
         static SlabRenderer()
         {
-            BlockRenderer.RegisterRenderer(StoneSlabBlock.BlockID, new SlabRenderer());
-            BlockRenderer.RegisterRenderer(DoubleStoneSlabBlock.BlockID, new SlabRenderer());
-        }
+            BlockRenderer.RegisterRenderer(SlabBlock.BlockID, new SlabRenderer());
+            BlockRenderer.RegisterRenderer(DoubleSlabBlock.BlockID, new SlabRenderer());
 
-        public enum SlabType : byte
-        {
-            Stone = 0,
-            Sandstone = 1,
-            Wood =2,
-            Cobblestone = 3
-        }
-
-        protected virtual Vector2 GetSideTexture(SlabType type)
-        {
-            switch (type)
+            for (int i = 0; i < StoneTextureMap.Length; i++)
             {
-                case SlabType.Stone:
-                    return new Vector2(5, 0);
-
-                case SlabType.Sandstone:
-                    return new Vector2(0, 12);
-
-                case SlabType.Wood:
-                    return new Vector2(4, 0);
-
-                case SlabType.Cobblestone:
-                    return new Vector2(1, 0);
-
-                default:
-                    return Vector2.Zero;
+                StoneTextureMap[i] *= new Vector2(16f / 256f);
+                SandstoneTextureMap[i] *= new Vector2(16f / 256f);
+                WoodTextureMap[i] *= new Vector2(16f / 256f);
+                CobbleTextureMap[i] *= new Vector2(16f / 256f);
             }
         }
 
-        protected virtual Vector2 GetTopTexture(SlabType type)
+        protected virtual Vector2[] GetTextureMap(SlabBlock.SlabMaterial material)
         {
-            switch (type)
+            switch (material)
             {
-                case SlabType.Stone:
-                    return new Vector2(6, 0);
-
-                case SlabType.Sandstone:
-                    return new Vector2(0, 13);
-
-                case SlabType.Wood:
-                    return new Vector2(4, 0);
-
-                case SlabType.Cobblestone:
-                    return new Vector2(1, 0);
-
+                case SlabBlock.SlabMaterial.Stone:
+                    return StoneTextureMap;
+                case SlabBlock.SlabMaterial.Standstone:
+                    return SandstoneTextureMap;
+                case SlabBlock.SlabMaterial.Wooden:
+                    return WoodTextureMap;
+                case SlabBlock.SlabMaterial.Cobblestone:
+                    return CobbleTextureMap;
                 default:
-                    return Vector2.Zero;
+                    return null;
             }
         }
-
-        protected virtual Vector2 GetBottomTexture(SlabType type)
-        {
-            switch (type)
-            {
-                case SlabType.Stone:
-                    return new Vector2(6, 0);
-
-                case SlabType.Sandstone:
-                    return new Vector2(0, 14);
-
-                case SlabType.Wood:
-                    return new Vector2(4, 0);
-
-                case SlabType.Cobblestone:
-                    return new Vector2(1, 0);
-
-                default:
-                    return Vector2.Zero;
-            }
-        }
-
-        protected virtual Vector2[] GetTextureMap(SlabType type, bool isDouble)
-        {
-            var sideTexture = GetSideTexture(type);
-            var topTexture = GetTopTexture(type);
-            var bottomTexture = GetBottomTexture(type);
-
-            var result = new Vector2[]
-            {
-                // Positive Z
-                sideTexture + Vector2.UnitX + ((isDouble) ? Vector2.UnitY : Vector2.UnitY / 2),
-                sideTexture + ((isDouble) ? Vector2.UnitY : Vector2.UnitY / 2),
-                sideTexture,
-                sideTexture + Vector2.UnitX,
-                // Negative Z
-                sideTexture + Vector2.UnitX + ((isDouble) ? Vector2.UnitY : Vector2.UnitY / 2),
-                sideTexture + ((isDouble) ? Vector2.UnitY : Vector2.UnitY / 2),
-                sideTexture,
-                sideTexture + Vector2.UnitX,
-                // Positive X
-                sideTexture + Vector2.UnitX + ((isDouble) ? Vector2.UnitY : Vector2.UnitY / 2),
-                sideTexture + ((isDouble) ? Vector2.UnitY : Vector2.UnitY / 2),
-                sideTexture,
-                sideTexture + Vector2.UnitX,
-                // Negative X
-                sideTexture + Vector2.UnitX + ((isDouble) ? Vector2.UnitY : Vector2.UnitY / 2),
-                sideTexture + ((isDouble) ? Vector2.UnitY : Vector2.UnitY / 2),
-                sideTexture,
-                sideTexture + Vector2.UnitX,
-                // Positive Y
-                topTexture + Vector2.UnitX + Vector2.UnitY,
-                topTexture + Vector2.UnitY,
-                topTexture,
-                topTexture + Vector2.UnitX,
-                // Negative Y
-                bottomTexture + Vector2.UnitX + Vector2.UnitY,
-                bottomTexture + Vector2.UnitY,
-                bottomTexture,
-                bottomTexture + Vector2.UnitX
-            };
-
-            for (int i = 0; i < result.Length; i++)
-                result[i] *= new Vector2(16f / 256f);
-
-            return result;
-        }
-
-        public static int Value = 0;
 
         public override VertexPositionNormalColorTexture[] Render(BlockDescriptor descriptor, Vector3 offset, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
-            if (descriptor.ID == StoneSlabBlock.BlockID)
+            if (descriptor.ID == SlabBlock.BlockID)
                 return RenderSlab(descriptor, offset, textureMap, indiciesOffset, out indicies);
             else
                 return RenderDoubleSlab(descriptor, offset, textureMap, indiciesOffset, out indicies);
@@ -143,7 +198,7 @@ namespace TrueCraft.Client.Rendering.Blocks
 
         protected virtual VertexPositionNormalColorTexture[] RenderSlab(BlockDescriptor descriptor, Vector3 offset, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
-            var result = CreateUniformCube(offset, GetTextureMap((SlabType)descriptor.Metadata, false), indiciesOffset, out indicies, Color.White);
+            var result = CreateUniformCube(offset, GetTextureMap((SlabBlock.SlabMaterial)descriptor.Metadata), indiciesOffset, out indicies, Color.White);
             for (int i = 0; i < 6; i++)
             {
                 var face = (CubeFace)i;
@@ -153,8 +208,13 @@ namespace TrueCraft.Client.Rendering.Blocks
                     case CubeFace.NegativeZ:
                     case CubeFace.PositiveX:
                     case CubeFace.NegativeX:
-                        for (int j = 2; j < 4; j++)
-                            result[(i * 4) + j].Position.Y -= 0.5f;
+                        for (int j = 0; j < 2; j++)
+                            result[(i * 4) + j].Texture.Y -= (1f / 32f);
+                        for (int k = 2; k < 4; k++)
+                        {
+                            result[(i * 4) + k].Position.Y -= 0.5f;
+                            // result[(i * 4) + k].Texture.Y -= (1f / 16f);
+                        }
                         break;
 
                     case CubeFace.PositiveY:
@@ -169,7 +229,7 @@ namespace TrueCraft.Client.Rendering.Blocks
 
         protected virtual VertexPositionNormalColorTexture[] RenderDoubleSlab(BlockDescriptor descriptor, Vector3 offset, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
-            return CreateUniformCube(offset, GetTextureMap((SlabType)descriptor.Metadata, true), indiciesOffset, out indicies, Color.White);
+            return CreateUniformCube(offset, GetTextureMap((SlabBlock.SlabMaterial)descriptor.Metadata), indiciesOffset, out indicies, Color.White);
         }
     }
 }
