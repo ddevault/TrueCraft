@@ -22,12 +22,14 @@ namespace TrueCraft
 
         public ServerConfiguration()
         {
-            MOTD = ChatColor.Red + "Welcome to TrueCraft!";
+            MOTD = "Welcome to TrueCraft!";
             Debug = new DebugConfiguration();
             ServerPort = 25565;
             ServerAddress = "0.0.0.0";
             WorldSaveInterval = 30;
             Singleplayer = false;
+            Query = true;
+            QueryPort = 25566;
         }
 
         [YamlMember(Alias = "motd")]
@@ -47,5 +49,11 @@ namespace TrueCraft
 
         [YamlIgnore]
         public bool Singleplayer { get; set; }
+
+        [YamlMember(Alias = "query")]
+        public bool Query { get; set; }
+
+        [YamlMember(Alias = "queryPort")]
+        public int QueryPort { get; set; }
     }
 }
