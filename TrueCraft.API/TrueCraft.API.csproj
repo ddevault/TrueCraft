@@ -31,7 +31,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="YamlDotNet">
-      <HintPath>..\packages\YamlDotNet.3.5.1\lib\net35\YamlDotNet.dll</HintPath>
+      <HintPath>..\packages\YamlDotNet.3.6.0\lib\net35\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -113,5 +113,8 @@
       <Project>{4488498D-976D-4DA3-BF72-109531AF0488}</Project>
       <Name>fNbt</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

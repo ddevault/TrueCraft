@@ -323,6 +323,7 @@
     <Compile Include="TrueCraftUser.cs" />
     <Compile Include="RuntimeInfo.cs" />
     <Compile Include="Logic\Blocks\DandelionBlock.cs" />
+    <Compile Include="Windows\ChestWindow.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

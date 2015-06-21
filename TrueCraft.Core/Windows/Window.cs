@@ -70,13 +70,15 @@ namespace TrueCraft.Core.Windows
             throw new IndexOutOfRangeException();
         }
 
-        public int Length
+        public virtual int Length
         {
             get 
             {
                 return WindowAreas.Sum(a => a.Length);
             }
         }
+
+        public virtual int MinecraftWasWrittenByFuckingIdiotsLength { get { return Length; } }
 
         public bool Empty
         {

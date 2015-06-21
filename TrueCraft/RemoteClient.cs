@@ -207,7 +207,7 @@ namespace TrueCraft
             CurrentWindow = window;
             window.ID = NextWindowID++;
             if (NextWindowID < 0) NextWindowID = 1;
-            QueuePacket(new OpenWindowPacket(window.ID, window.Type, window.Name, (sbyte)window.Length));
+            QueuePacket(new OpenWindowPacket(window.ID, window.Type, window.Name, (sbyte)window.MinecraftWasWrittenByFuckingIdiotsLength));
             QueuePacket(new WindowItemsPacket(window.ID, window.GetSlots()));
         }
 

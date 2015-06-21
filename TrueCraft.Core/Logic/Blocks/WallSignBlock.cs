@@ -4,6 +4,8 @@ using TrueCraft.API;
 using TrueCraft.API.World;
 using TrueCraft.API.Networking;
 using TrueCraft.Core.Logic.Items;
+using TrueCraft.Core.Networking.Packets;
+using fNbt;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
@@ -36,6 +38,23 @@ namespace TrueCraft.Core.Logic.Blocks
         protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
         {
             return new[] { new ItemStack(SignItem.ItemID) };
+        }
+
+        public override void TileEntityLoadedForClient(BlockDescriptor descriptor, IWorld world, NbtCompound entity, IRemoteClient client)
+        {
+            client.QueuePacket(new UpdateSignPacket
+                {
+                    X = descriptor.Coordinates.X,
+                    Y = (short)descriptor.Coordinates.Y,
+                    Z = descriptor.Coordinates.Z,
+                    Text = new[]
+                        {
+                            entity["Text1"].StringValue,
+                            entity["Text2"].StringValue,
+                            entity["Text3"].StringValue,
+                            entity["Text4"].StringValue
+                        }
+                });
         }
     }
 }
