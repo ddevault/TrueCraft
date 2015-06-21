@@ -184,7 +184,7 @@ namespace TrueCraft.Client.Rendering.Blocks
                 case SlabBlock.SlabMaterial.Cobblestone:
                     return CobbleTextureMap;
                 default:
-                    return null;
+                    return StoneTextureMap;
             }
         }
 
