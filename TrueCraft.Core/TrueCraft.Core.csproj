@@ -39,6 +39,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\ByteArraySegment.cs" />
     <Compile Include="Logging\LogHelpers.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\EntityEventArgs.cs" />
@@ -113,6 +114,10 @@
     <Compile Include="Logic\Items\SwordItem.cs" />
     <Compile Include="Logic\Items\ToolItem.cs" />
     <Compile Include="Logic\Items\WheatItem.cs" />
+    <Compile Include="Networking\BufferManager.cs" />
+    <Compile Include="Networking\ByteListMemoryStream.cs" />
+    <Compile Include="Networking\PacketSegmentProcessor.cs" />
+    <Compile Include="Networking\SocketAsyncEventArgsPool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Networking\MinecraftStream.cs" />
     <Compile Include="Networking\PacketReader.cs" />

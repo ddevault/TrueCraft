@@ -45,7 +45,7 @@ namespace TrueCraft.Core.World
             }
             set
             {
-                BaseTime = DateTime.Now.AddSeconds(-value/20);
+                BaseTime = DateTime.Now.AddSeconds(-value / 20);
             }
         }
 
@@ -79,8 +79,10 @@ namespace TrueCraft.Core.World
         {
             if (!Directory.Exists(baseDirectory))
                 throw new DirectoryNotFoundException();
+
             var world = new World(Path.GetFileName(baseDirectory));
             world.BaseDirectory = baseDirectory;
+
             if (File.Exists(Path.Combine(baseDirectory, "manifest.nbt")))
             {
                 var file = new NbtFile(Path.Combine(baseDirectory, "manifest.nbt"));
@@ -93,8 +95,11 @@ namespace TrueCraft.Core.World
                 if (file.RootTag.Contains("Name"))
                     world.Name = file.RootTag["Name"].StringValue;
                 world.ChunkProvider = provider;
+
+                return world;
             }
-            return world;
+
+            throw new FileNotFoundException();
         }
 
         /// <summary>
@@ -207,7 +212,7 @@ namespace TrueCraft.Core.World
             var adjustedCoordinates = FindBlockPosition(coordinates, out chunk);
             var old = GetBlockDataFromChunk(adjustedCoordinates, chunk, coordinates);
             chunk.SetBlockID(adjustedCoordinates, descriptor.ID);
-            chunk.SetMetadata(adjustedCoordinates,descriptor.Metadata);
+            chunk.SetMetadata(adjustedCoordinates, descriptor.Metadata);
             if (BlockChanged != null)
                 BlockChanged(this, new BlockChangeEventArgs(coordinates, old, GetBlockDataFromChunk(adjustedCoordinates, chunk, coordinates)));
         }

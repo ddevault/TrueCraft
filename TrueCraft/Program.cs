@@ -27,9 +27,9 @@ namespace TrueCraft
             Server = new MultiplayerServer();
 
             Server.AddLogProvider(new ConsoleLogProvider(LogCategory.Notice | LogCategory.Warning | LogCategory.Error | LogCategory.Debug));
-            #if DEBUG
+#if DEBUG
             Server.AddLogProvider(new FileLogProvider(new StreamWriter("packets.log", false), LogCategory.Packets));
-            #endif
+#endif
 
             ServerConfiguration = Configuration.LoadConfiguration<ServerConfiguration>("config.yaml");
 

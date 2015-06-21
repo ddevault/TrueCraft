@@ -12,13 +12,14 @@ using TrueCraft.Core.Logic;
 using TrueCraft.API.Entities;
 using TrueCraft.API;
 using System.ComponentModel;
+using System.IO;
 using TrueCraft.Core;
 
 namespace TrueCraft.Client
 {
     public delegate void PacketHandler(IPacket packet, MultiplayerClient client);
 
-    public class MultiplayerClient : IAABBEntity, INotifyPropertyChanged // TODO: Make IMultiplayerClient and so on
+    public class MultiplayerClient : IAABBEntity, INotifyPropertyChanged, IDisposable // TODO: Make IMultiplayerClient and so on
     {
         public event EventHandler<ChatMessageEventArgs> ChatMessage;
         public event EventHandler<ChunkEventArgs> ChunkModified;
@@ -26,26 +27,40 @@ namespace TrueCraft.Client
         public event EventHandler<ChunkEventArgs> ChunkUnloaded;
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private long _connected;
+
         public TrueCraftUser User { get; set; }
         public ReadOnlyWorld World { get; private set; }
         public PhysicsEngine Physics { get; set; }
         public bool LoggedIn { get; internal set; }
 
+        public bool Connected
+        {
+            get
+            {
+                return Interlocked.Read(ref _connected) == 1;
+            }
+        }
+
         private TcpClient Client { get; set; }
         private IMinecraftStream Stream { get; set; }
         private PacketReader PacketReader { get; set; }
-        private BlockingCollection<IPacket> PacketQueue { get; set; }
-        private Thread NetworkWorker { get; set; }
+
         private readonly PacketHandler[] PacketHandlers;
+
+        private SemaphoreSlim _sem = new SemaphoreSlim(1, 1);
+
+        private readonly CancellationTokenSource _cancel;
+
+        private SocketAsyncEventArgsPool SocketPool { get; set; }
 
         public MultiplayerClient(TrueCraftUser user)
         {
             User = user;
             Client = new TcpClient();
-            PacketQueue = new BlockingCollection<IPacket>(new ConcurrentQueue<IPacket>());
             PacketReader = new PacketReader();
             PacketReader.RegisterCorePackets();
-            NetworkWorker = new Thread(new ThreadStart(DoNetwork));
+            //NetworkWorker = new Thread(new ThreadStart(DoNetwork));
             PacketHandlers = new PacketHandler[0x100];
             Handlers.PacketHandlers.RegisterHandlers(this);
             World = new ReadOnlyWorld();
@@ -53,6 +68,9 @@ namespace TrueCraft.Client
             repo.DiscoverBlockProviders();
             World.World.BlockRepository = repo;
             Physics = new PhysicsEngine(World, repo);
+            SocketPool = new SocketAsyncEventArgsPool(100, 200, 65536);
+            _connected = 0;
+            _cancel = new CancellationTokenSource();
         }
 
         public void RegisterPacketHandler(byte packetId, PacketHandler handler)
@@ -62,58 +80,122 @@ namespace TrueCraft.Client
 
         public void Connect(IPEndPoint endPoint)
         {
-            Client.BeginConnect(endPoint.Address, endPoint.Port, ConnectionComplete, null);
+            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+            args.Completed += Connection_Completed;
+            args.RemoteEndPoint = endPoint;
+
+            if (!Client.Client.ConnectAsync(args))
+                Connection_Completed(this, args);
+        }
+
+        private void Connection_Completed(object sender, SocketAsyncEventArgs e)
+        {
+            if (e.SocketError == SocketError.Success)
+            {
+                Interlocked.CompareExchange(ref _connected, 1, 0);
+
+                Physics.AddEntity(this);
+
+                StartReceive();
+                QueuePacket(new HandshakePacket(User.Username));
+            }
+            else
+            {
+                throw new Exception("Could not connect to server!");
+            }
         }
 
         public void Disconnect()
         {
-            NetworkWorker.Abort();
-            new DisconnectPacket("Disconnecting").WritePacket(Stream);
-            Stream.BaseStream.Flush();
+            if (!Connected)
+                return;
+
+            Interlocked.CompareExchange(ref _connected, 0, 1);
+
+            QueuePacket(new DisconnectPacket("Disconnecting"));
+
+            Client.Client.Shutdown(SocketShutdown.Send);
             Client.Close();
+
+            _cancel.Cancel();
         }
 
         public void QueuePacket(IPacket packet)
         {
-            PacketQueue.Add(packet);
-        }
+            if (!Connected || (Client != null && !Client.Connected))
+                return;
 
-        private void ConnectionComplete(IAsyncResult result)
-        {
-            Client.EndConnect(result);
-            Stream = new MinecraftStream(new BufferedStream(Client.GetStream()));
-            NetworkWorker.Start();
-            Physics.AddEntity(this);
-            QueuePacket(new HandshakePacket(User.Username));
-        }
-
-        private void DoNetwork()
-        {
-            bool idle = true;
-            while (true)
+            using (MemoryStream writeStream = new MemoryStream())
             {
-                IPacket packet;
-                DateTime limit = DateTime.Now.AddMilliseconds(500);
-                while (Client.Available != 0 && DateTime.Now < limit)
+                using (MinecraftStream ms = new MinecraftStream(writeStream))
                 {
-                    idle = false;
-                    packet = PacketReader.ReadPacket(Stream, false);
+                    ms.WriteUInt8(packet.ID);
+                    packet.WritePacket(ms);
+                }
+
+                byte[] buffer = writeStream.ToArray();
+
+                SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+                args.Completed += Operation_Completed;
+                args.SetBuffer(buffer, 0, buffer.Length);
+
+                if (Client != null && !Client.Client.SendAsync(args))
+                    Operation_Completed(this, args);
+            }
+        }
+
+        private void StartReceive()
+        {
+            SocketAsyncEventArgs args = SocketPool.Get();
+            args.Completed += Operation_Completed;
+
+            if (!Client.Client.ReceiveAsync(args))
+                Operation_Completed(this, args);
+        }
+
+        private void Operation_Completed(object sender, SocketAsyncEventArgs e)
+        {
+            e.Completed -= Operation_Completed;
+
+            switch (e.LastOperation)
+            {
+                case SocketAsyncOperation.Receive:
+                    ProcessNetwork(e);
+
+                    SocketPool.Add(e);
+                    break;
+                case SocketAsyncOperation.Send:
+                    e.SetBuffer(null, 0, 0);
+                    break;
+            }
+        }
+
+        private void ProcessNetwork(SocketAsyncEventArgs e)
+        {
+            if (e.SocketError == SocketError.Success && e.BytesTransferred > 0)
+            {
+                SocketAsyncEventArgs newArgs = SocketPool.Get();
+                newArgs.Completed += Operation_Completed;
+
+                if (Client != null && !Client.Client.ReceiveAsync(newArgs))
+                    Operation_Completed(this, newArgs);
+
+                _sem.Wait(_cancel.Token);
+
+                var packets = PacketReader.ReadPackets(this, e.Buffer, e.Offset, e.BytesTransferred, false);
+
+                foreach (IPacket packet in packets)
+                {
                     if (PacketHandlers[packet.ID] != null)
                         PacketHandlers[packet.ID](packet, this);
                 }
-                limit = DateTime.Now.AddMilliseconds(500);
-                while (PacketQueue.Any() && DateTime.Now < limit)
-                {
-                    idle = false;
 
-                    if (PacketQueue.TryTake(out packet, 100))
-                    {
-                        PacketReader.WritePacket(Stream, packet);
-                        Stream.BaseStream.Flush();
-                    }
-                }
-                if (idle)
-                    Thread.Sleep(100);
+                if (_sem != null)
+                    _sem.Release();
+            }
+            else
+            {
+                Disconnect();
             }
         }
 
@@ -224,5 +306,29 @@ namespace TrueCraft.Client
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Disconnect();
+
+                _sem.Dispose();
+            }
+
+            _sem = null;
+        }
+
+        ~MultiplayerClient()
+        {
+            Dispose(false);
+        }
     }
 }

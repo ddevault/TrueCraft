@@ -18,7 +18,7 @@ using TrueCraft.Core.Logic;
 
 namespace TrueCraft
 {
-    public class MultiplayerServer : IMultiplayerServer
+    public class MultiplayerServer : IMultiplayerServer, IDisposable
     {
         public event EventHandler<ChatMessageEventArgs> ChatMessageReceived;
         public event EventHandler<PlayerJoinedQuitEventArgs> PlayerJoined;
@@ -38,6 +38,7 @@ namespace TrueCraft
         public IPEndPoint EndPoint { get; private set; }
 
         private bool _BlockUpdatesEnabled = true;
+
         private struct BlockUpdate
         {
             public Coordinates3D Coordinates;
@@ -61,19 +62,18 @@ namespace TrueCraft
         }
 
         private Timer EnvironmentWorker;
-        private Thread NetworkWorker;
         private TcpListener Listener;
         private readonly PacketHandler[] PacketHandlers;
         private IList<ILogProvider> LogProviders;
         internal object ClientLock = new object();
-        private bool ShuttingDown = false;
 
+        public bool ShuttingDown { get; private set; }
+        
         public MultiplayerServer()
         {
             var reader = new PacketReader();
             PacketReader = reader;
             Clients = new List<IRemoteClient>();
-            NetworkWorker = new Thread(new ThreadStart(DoNetwork));
             EnvironmentWorker = new Timer(DoEnvironment);
             PacketHandlers = new PacketHandler[0x100];
             Worlds = new List<IWorld>();
@@ -109,9 +109,14 @@ namespace TrueCraft
             Listener = new TcpListener(endPoint);
             Listener.Start();
             EndPoint = (IPEndPoint)Listener.LocalEndpoint;
-            Listener.BeginAcceptTcpClient(AcceptClient, null);
+
+            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+            args.Completed += AcceptClient;
+
+            if (!Listener.Server.AcceptAsync(args))
+                AcceptClient(this, args);
+            
             Log(LogCategory.Notice, "Running TrueCraft server on {0}", EndPoint);
-            NetworkWorker.Start();
             EnvironmentWorker.Change(100, 1000 / 20);
         }
 
@@ -229,18 +234,18 @@ namespace TrueCraft
                 PlayerQuit(this, e);
         }
 
-        private void LogPacket(IPacket packet, bool clientToServer)
-        {
-            for (int i = 0, LogProvidersCount = LogProviders.Count; i < LogProvidersCount; i++)
-            {
-                var provider = LogProviders[i];
-                packet.Log(provider, clientToServer);
-            }
-        }
-
-        private void DisconnectClient(IRemoteClient _client)
+        public void DisconnectClient(IRemoteClient _client)
         {
             var client = (RemoteClient)_client;
+
+            lock (ClientLock)
+            {
+                Clients.Remove(client);
+            }
+
+            if (client.Disconnected)
+                return;
+
             if (client.LoggedIn)
             {
                 SendMessage(ChatColor.Yellow + "{0} has left the server.", client.Username);
@@ -248,23 +253,31 @@ namespace TrueCraft
                 GetEntityManagerForWorld(client.World).FlushDespawns();
             }
             client.Save();
-            client.Disconnected = true;
+            client.Disconnect();
             OnPlayerQuit(new PlayerJoinedQuitEventArgs(client));
+
+            client.Dispose();
         }
 
-        private void AcceptClient(IAsyncResult result)
+        private void AcceptClient(object sender, SocketAsyncEventArgs args)
         {
             try
             {
-                var tcpClient = Listener.EndAcceptTcpClient(result);
-                var client = new RemoteClient(this, tcpClient.GetStream());
+                var client = new RemoteClient(this, PacketReader, PacketHandlers, args.AcceptSocket);
+
                 lock (ClientLock)
                     Clients.Add(client);
-                Listener.BeginAcceptTcpClient(AcceptClient, null);
             }
             catch
             {
                 // Who cares
+            }
+            finally
+            {
+                args.AcceptSocket = null;
+
+                if (!ShuttingDown && !Listener.Server.AcceptAsync(args))
+                    AcceptClient(this, args);
             }
         }
 
@@ -276,116 +289,6 @@ namespace TrueCraft
             foreach (var manager in EntityManagers)
             {
                 manager.Update();
-            }
-        }
-
-        private void DoNetwork()
-        {
-            while (true)
-            {
-                if (ShuttingDown)
-                    return;
-                bool idle = true;
-                for (int i = 0; i < Clients.Count && i >= 0; i++)
-                {
-                    RemoteClient client;
-                    lock (ClientLock)
-                        client = Clients[i] as RemoteClient;
-
-                    if (client == null)
-                        continue;
-
-                    while (client.PacketQueue.Count != 0)
-                    {
-                        idle = false;
-                        try
-                        {
-                            IPacket packet;
-                            if (client.PacketQueue.TryTake(out packet))
-                            {
-                                LogPacket(packet, false);
-                                PacketReader.WritePacket(client.MinecraftStream, packet);
-                                client.MinecraftStream.BaseStream.Flush();
-                                if (packet is DisconnectPacket)
-                                {
-                                    DisconnectClient(client);
-                                    break;
-                                }
-                            }
-                        }
-                        catch (SocketException e)
-                        {
-                            Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
-                            Log(LogCategory.Debug, e.ToString());
-                            PacketReader.WritePacket(client.MinecraftStream, new DisconnectPacket("An exception has occured on the server."));
-                            client.MinecraftStream.BaseStream.Flush();
-                            DisconnectClient(client);
-                            break;
-                        }
-                        catch (Exception e)
-                        {
-                            Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
-                            Log(LogCategory.Debug, e.ToString());
-                            DisconnectClient(client);
-                            break;
-                        }
-                    }
-                    if (client.Disconnected)
-                    {
-                        lock (ClientLock)
-                            Clients.RemoveAt(i);
-                        break;
-                    }
-                    const long maxTicks = 100000 * 200; // 200ms
-                    var start = DateTime.Now;
-                    while (client.DataAvailable && (DateTime.Now.Ticks - start.Ticks) < maxTicks)
-                    {
-                        idle = false;
-                        try
-                        {
-                            var packet = PacketReader.ReadPacket(client.MinecraftStream);
-                            client.LastSuccessfulPacket = packet;
-                            LogPacket(packet, true);
-                            if (PacketHandlers[packet.ID] != null)
-                                PacketHandlers[packet.ID](packet, client, this);
-                            else
-                                client.Log("Unhandled packet {0}", packet.GetType().Name);
-                        }
-                        catch (PlayerDisconnectException)
-                        {
-                            DisconnectClient(client);
-                            break;
-                        }
-                        catch (SocketException e)
-                        {
-                            Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
-                            Log(LogCategory.Debug, e.ToString());
-                            DisconnectClient(client);
-                            break;
-                        }
-                        catch (Exception e)
-                        {
-                            Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
-                            Log(LogCategory.Debug, e.ToString());
-                            try
-                            {
-                                PacketReader.WritePacket(client.MinecraftStream, new DisconnectPacket("An exception has occured on the server."));
-                                client.MinecraftStream.BaseStream.Flush();
-                            }
-                            catch { /* Silently ignore, by now it's too late */ }
-                            DisconnectClient(client);
-                            break;
-                        }
-                    }
-                    if (idle)
-                        Thread.Sleep(100);
-                    if (client.Disconnected)
-                    {
-                        lock (ClientLock)
-                            Clients.RemoveAt(i);
-                        break;
-                    }
-                }
             }
         }
 
@@ -402,6 +305,26 @@ namespace TrueCraft
         public bool PlayerIsOp(string client)
         {
             return AccessConfiguration.Oplist.Contains(client, StringComparer.CurrentCultureIgnoreCase);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Stop();
+            }
+        }
+
+        ~MultiplayerServer()
+        {
+            Dispose(false);
         }
     }
 }

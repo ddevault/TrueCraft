@@ -32,6 +32,8 @@ namespace TrueCraft.API.Server
         bool BlockUpdatesEnabled { get; set; }
         bool EnableClientLogging { get; set; }
 
+        bool ShuttingDown { get; }
+
         void Start(IPEndPoint endPoint);
         void Stop();
         void RegisterPacketHandler(byte packetId, PacketHandler handler);
@@ -40,6 +42,8 @@ namespace TrueCraft.API.Server
         void Log(LogCategory category, string text, params object[] parameters);
         IEntityManager GetEntityManagerForWorld(IWorld world);
         void SendMessage(string message, params object[] parameters);
+
+        void DisconnectClient(IRemoteClient client);
 
         bool PlayerIsWhitelisted(string client);
         bool PlayerIsBlacklisted(string client);

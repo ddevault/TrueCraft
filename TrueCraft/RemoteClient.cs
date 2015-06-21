@@ -23,13 +23,10 @@ using TrueCraft.API.Logic;
 
 namespace TrueCraft
 {
-    public class RemoteClient : IRemoteClient
+    public class RemoteClient : IRemoteClient, IDisposable
     {
-        public RemoteClient(IMultiplayerServer server, NetworkStream stream)
+        public RemoteClient(IMultiplayerServer server, IPacketReader packetReader, PacketHandler[] packetHandlers, Socket connection)
         {
-            NetworkStream = stream;
-            MinecraftStream = new MinecraftStream(new TrueCraft.Core.Networking.BufferedStream(NetworkStream));
-            PacketQueue = new BlockingCollection<IPacket>(new ConcurrentQueue<IPacket>());
             LoadedChunks = new List<Coordinates2D>();
             Server = server;
             Inventory = new InventoryWindow(server.CraftingRepository);
@@ -41,18 +38,25 @@ namespace TrueCraft
             Disconnected = false;
             EnableLogging = server.EnableClientLogging;
             NextWindowID = 1;
+            Connection = connection;
+            SocketPool = new SocketAsyncEventArgsPool(100, 200, 65536);
+            PacketReader = packetReader;
+            PacketHandlers = packetHandlers;
+
+            _cancel = new CancellationTokenSource();
+
+            StartReceive();
         }
-            
+
         /// <summary>
         /// A list of entities that this client is aware of.
         /// </summary>
         internal List<IEntity> KnownEntities { get; set; }
-        internal bool Disconnected { get; set; }
         internal sbyte NextWindowID { get; set; }
 
-        public NetworkStream NetworkStream { get; set; }
+        //public NetworkStream NetworkStream { get; set; }
+        public bool Disconnected { get; private set; }
         public IMinecraftStream MinecraftStream { get; internal set; }
-        public BlockingCollection<IPacket> PacketQueue { get; private set; }
         public string Username { get; internal set; }
         public bool LoggedIn { get; internal set; }
         public IMultiplayerServer Server { get; set; }
@@ -64,7 +68,21 @@ namespace TrueCraft
         public bool EnableLogging { get; set; }
         public IPacket LastSuccessfulPacket { get; set; }
 
+        public Socket Connection { get; private set; }
+
+
+        private SemaphoreSlim _sem = new SemaphoreSlim(1, 1);
+
+        private SocketAsyncEventArgsPool SocketPool { get; set; }
+
+        public IPacketReader PacketReader { get; private set; }
+
+        private PacketHandler[] PacketHandlers { get; set; }
+
         private IEntity _Entity;
+
+        private readonly CancellationTokenSource _cancel;
+
         public IEntity Entity
         {
             get
@@ -116,7 +134,7 @@ namespace TrueCraft
         {
             get
             {
-                return NetworkStream.DataAvailable;
+                return true;
             }
         }
 
@@ -195,7 +213,110 @@ namespace TrueCraft
 
         public void QueuePacket(IPacket packet)
         {
-            PacketQueue.Add(packet);
+            if (Disconnected || (Connection != null && !Connection.Connected))
+                return;
+
+            using (MemoryStream writeStream = new MemoryStream())
+            {
+                using (MinecraftStream ms = new MinecraftStream(writeStream))
+                {
+                    writeStream.WriteByte(packet.ID);
+                    packet.WritePacket(ms);
+                }
+
+                byte[] buffer = writeStream.ToArray();
+
+                SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+                args.UserToken = packet;
+                args.Completed += Operation_Completed;
+                args.SetBuffer(buffer, 0, buffer.Length);
+
+                if (Connection != null)
+                {
+                    if (!Connection.SendAsync(args))
+                        Operation_Completed(this, args);
+                }
+            }
+        }
+
+        private void StartReceive()
+        {
+            SocketAsyncEventArgs args = SocketPool.Get();
+            args.Completed += Operation_Completed;
+
+            if (!Connection.ReceiveAsync(args))
+                Operation_Completed(this, args);
+        }
+
+        private void Operation_Completed(object sender, SocketAsyncEventArgs e)
+        {
+            e.Completed -= Operation_Completed;
+
+            switch (e.LastOperation)
+            {
+                case SocketAsyncOperation.Receive:
+                    ProcessNetwork(e);
+
+                    SocketPool.Add(e);
+                    break;
+                case SocketAsyncOperation.Send:
+                    IPacket packet = e.UserToken as IPacket;
+
+                    if (packet is DisconnectPacket)
+                        Server.DisconnectClient(this);
+
+                    e.SetBuffer(null, 0, 0);
+                    break;
+            }
+        }
+
+        private void ProcessNetwork(SocketAsyncEventArgs e)
+        {
+            if (Server.ShuttingDown)
+                return;
+
+            if (e.SocketError == SocketError.Success && e.BytesTransferred > 0)
+            {
+                SocketAsyncEventArgs newArgs = SocketPool.Get();
+                newArgs.Completed += Operation_Completed;
+
+                if (!Connection.ReceiveAsync(newArgs))
+                    Operation_Completed(this, newArgs);
+
+                _sem.Wait(_cancel.Token);
+
+                var packets = PacketReader.ReadPackets(this, e.Buffer, e.Offset, e.BytesTransferred);
+                
+                foreach (IPacket packet in packets)
+                {
+                    LastSuccessfulPacket = packet;
+                    
+                    if (PacketHandlers[packet.ID] != null)
+                        PacketHandlers[packet.ID](packet, this, Server);
+                    else
+                        Log("Unhandled packet {0}", packet.GetType().Name);
+                }
+
+                if (_sem != null)
+                    _sem.Release();
+            }
+            else
+            {
+                Server.DisconnectClient(this);
+            }
+        }
+
+        public void Disconnect()
+        {
+            if (!Disconnected)
+                return;
+
+            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+            Connection.DisconnectAsync(args);
+
+            Disconnected = true;
+
+            _cancel.Cancel();
         }
 
         public void SendMessage(string message)
@@ -267,7 +388,7 @@ namespace TrueCraft
                 }
             }
         }
-            
+
         internal void LoadChunk(Coordinates2D position)
         {
             var chunk = World.GetChunk(position);
@@ -329,11 +450,39 @@ namespace TrueCraft
             Buffer.BlockCopy(chunk.Blocks, 0, data, 0, chunk.Blocks.Length);
             Buffer.BlockCopy(chunk.Metadata.Data, 0, data, chunk.Blocks.Length, chunk.Metadata.Data.Length);
             Buffer.BlockCopy(chunk.BlockLight.Data, 0, data, chunk.Blocks.Length + chunk.Metadata.Data.Length, chunk.BlockLight.Data.Length);
-            Buffer.BlockCopy(chunk.SkyLight.Data, 0, data, chunk.Blocks.Length + chunk.Metadata.Data.Length 
+            Buffer.BlockCopy(chunk.SkyLight.Data, 0, data, chunk.Blocks.Length + chunk.Metadata.Data.Length
                 + chunk.BlockLight.Data.Length, chunk.SkyLight.Data.Length);
 
             var result = ZlibStream.CompressBuffer(data);
             return new ChunkDataPacket(X * Chunk.Width, 0, Z * Chunk.Depth, Chunk.Width, Chunk.Height, Chunk.Depth, result);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                IPacketSegmentProcessor processor;
+                while (!PacketReader.Processors.TryRemove(this, out processor))
+                    Thread.Sleep(1);
+
+                Disconnect();
+
+                _sem.Dispose();
+            }
+
+            _sem = null;
+        }
+
+        ~RemoteClient()
+        {
+            Dispose(false);
         }
     }
 }

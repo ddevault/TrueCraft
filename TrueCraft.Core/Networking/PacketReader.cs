@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using TrueCraft.API.Networking;
 using TrueCraft.Core.Networking.Packets;
@@ -10,8 +12,17 @@ namespace TrueCraft.Core.Networking
         public static readonly int Version = 14;
         public int ProtocolVersion { get { return Version; } }
 
-        private Func<IPacket>[] ClientboundPackets = new Func<IPacket>[0x100];
-        private Func<IPacket>[] ServerboundPackets = new Func<IPacket>[0x100];
+        internal Func<IPacket>[] ClientboundPackets = new Func<IPacket>[0x100];
+        internal Func<IPacket>[] ServerboundPackets = new Func<IPacket>[0x100];
+
+        public ConcurrentDictionary<object, IPacketSegmentProcessor> Processors { get; private set; }
+
+        private static readonly byte[] EmptyBuffer = new byte[0];
+
+        public PacketReader()
+        {
+            Processors = new ConcurrentDictionary<object, IPacketSegmentProcessor>();
+        }
 
         /// <summary>
         /// Registers TrueCraft.Core implementations of all packets used by vanilla Minecraft.
@@ -99,19 +110,33 @@ namespace TrueCraft.Core.Networking
                 ServerboundPackets[packet.ID] = func;
         }
 
-        public IPacket ReadPacket(IMinecraftStream stream, bool serverbound = true)
+        public IEnumerable<IPacket> ReadPackets(object key, byte[] buffer, int offset, int length, bool serverbound = true)
         {
-            var id = stream.ReadUInt8();
-            Func<IPacket> createPacket;
-            if (serverbound)
-                createPacket = ServerboundPackets[id];
-            else
-                createPacket = ClientboundPackets[id];
-            if (createPacket == null)
-                throw new NotSupportedException("Unable to read packet type 0x" + id.ToString("X2"));
-            var instance = createPacket();
-            instance.ReadPacket(stream);
-            return instance;
+            if (!Processors.ContainsKey(key))
+                Processors[key] = new PacketSegmentProcessor(this, serverbound);
+
+            IPacketSegmentProcessor processor = Processors[key];
+            
+            IPacket packet;
+            processor.ProcessNextSegment(buffer, offset, length, out packet);
+
+            if (packet == null)
+                yield break;
+
+            while (true)
+            {
+                yield return packet;
+
+                if (!processor.ProcessNextSegment(EmptyBuffer, 0, 0, out packet))
+                {
+                    if (packet != null)
+                    {
+                        yield return packet;
+                    }
+
+                    yield break;
+                }
+            }
         }
 
         public void WritePacket(IMinecraftStream stream, IPacket packet)

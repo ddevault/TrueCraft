@@ -39,6 +39,7 @@
     <Compile Include="Coordinates3D.cs" />
     <Compile Include="ChatFormat.cs" />
     <Compile Include="IAccessConfiguration.cs" />
+    <Compile Include="Networking\IPacketSegmentProcessor.cs" />
     <Compile Include="PlantSpecies.cs" />
     <Compile Include="OreTypes.cs" />
     <Compile Include="ToolMaterial.cs" />
