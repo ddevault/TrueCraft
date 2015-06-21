@@ -68,6 +68,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\Blocks\CobwebRenderer.cs" />
+    <Compile Include="Rendering\Blocks\SlabRenderer.cs" />
     <Compile Include="Rendering\Camera.cs" />
     <Compile Include="Rendering\Font.cs" />
     <Compile Include="Rendering\FontRenderer.cs" />
