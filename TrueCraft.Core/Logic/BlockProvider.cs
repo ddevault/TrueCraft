@@ -99,7 +99,7 @@ namespace TrueCraft.Core.Logic
             coordinates += MathHelper.BlockFaceToCoordinates(face);
             var old = world.GetBlockData(coordinates);
             byte[] overwritable =
-                {
+            {
                 AirBlock.BlockID,
                 WaterBlock.BlockID,
                 StationaryWaterBlock.BlockID,
