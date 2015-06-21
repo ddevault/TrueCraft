@@ -44,7 +44,7 @@ namespace TrueCraft
         private void HandleReceive(IAsyncResult ar)
         {
             if (CToken.IsCancellationRequested) return;
-
+            
             try
             {
                 var clientEP = new IPEndPoint(IPAddress.Any, Port);
@@ -95,8 +95,7 @@ namespace TrueCraft
                         using (var writer = new BinaryWriter(response))
                         {
                             WriteHead(Type_Handshake, user, writer);
-                            WriteStringToStream(user.ChallengeToken.ToString(), ms);
-
+                            WriteStringToStream(user.ChallengeToken.ToString(), response);
                             SendResponse(response.ToArray(), clientEP);
                         }
                     }
@@ -180,7 +179,7 @@ namespace TrueCraft
 
         private bool CheckVersion(byte[] ver)
         {
-            return ver.SequenceEqual(ProtocolVersion);
+            return ver[0] == ProtocolVersion[0] && ver[1] == ProtocolVersion[1];
         }
         private int GetSessionId(BinaryReader stream)
         {
