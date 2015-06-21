@@ -303,7 +303,7 @@
     <Compile Include="Logic\Blocks\LapisLazuliBlock.cs" />
     <Compile Include="Logic\Blocks\LockedChestBlock.cs" />
     <Compile Include="Logic\Blocks\TallGrassBlock.cs" />
-    <Compile Include="Logic\Blocks\StoneSlabBlock.cs" />
+    <Compile Include="Logic\Blocks\SlabBlock.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="Logging\PacketLogging.cs" />
     <Compile Include="Logging\FileLogProvider.cs" />
