@@ -44,6 +44,12 @@ namespace TrueCraft.Core.Logic.Blocks
             return new[] { new ItemStack(SignItem.ItemID) };
         }
 
+        public override void BlockMined(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            world.SetTileEntity(descriptor.Coordinates, null);
+            base.BlockMined(descriptor, face, world, user);
+        }
+
         public override void TileEntityLoadedForClient(BlockDescriptor descriptor, IWorld world, NbtCompound entity, IRemoteClient client)
         {
             client.QueuePacket(new UpdateSignPacket

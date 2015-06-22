@@ -6,6 +6,8 @@ using TrueCraft.API.World;
 using TrueCraft.API.Networking;
 using fNbt;
 using TrueCraft.Core.Windows;
+using System.Collections.Generic;
+using TrueCraft.Core.Entities;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
@@ -203,6 +205,23 @@ namespace TrueCraft.Core.Logic.Blocks
                 }; // TODO: Memory leak here, make windows implement IDisposable
             user.OpenWindow(window);
             return false;
+        }
+
+        public override void BlockMined(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            var self = descriptor.Coordinates;
+            var entity = world.GetTileEntity(self);
+            var manager = user.Server.GetEntityManagerForWorld(world);
+            if (entity != null)
+            {
+                foreach (var item in (NbtList)entity["Items"])
+                {
+                    var slot = ItemStack.FromNbt((NbtCompound)item);
+                    manager.SpawnEntity(new ItemEntity(descriptor.Coordinates + new Vector3(0.5), slot));
+                }
+            }
+            world.SetTileEntity(self, null);
+            base.BlockMined(descriptor, face, world, user);
         }
     }
 }

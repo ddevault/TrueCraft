@@ -9,6 +9,8 @@ using TrueCraft.Core.Windows;
 using TrueCraft.API.Logic;
 using TrueCraft.Core.Entities;
 using fNbt;
+using TrueCraft.Core.Logic.Blocks;
+using System.Linq;
 
 namespace TrueCraft.Handlers
 {
@@ -286,14 +288,19 @@ namespace TrueCraft.Handlers
             var coords = new Coordinates3D(packet.X, packet.Y, packet.Z);
             if (client.Entity.Position.DistanceTo(coords) < 10) // TODO: Reach
             {
-                client.World.SetTileEntity(coords, new NbtCompound(new[]
+                var block = client.World.GetBlockID(coords);
+                if (block == UprightSignBlock.BlockID || block == WallSignBlock.BlockID)
                 {
-                    new NbtString("Text1", packet.Text[0]),
-                    new NbtString("Text2", packet.Text[1]),
-                    new NbtString("Text3", packet.Text[2]),
-                    new NbtString("Text4", packet.Text[3]),
-                }));
-                client.QueuePacket(packet);
+                    client.World.SetTileEntity(coords, new NbtCompound(new[]
+                    {
+                        new NbtString("Text1", packet.Text[0]),
+                        new NbtString("Text2", packet.Text[1]),
+                        new NbtString("Text3", packet.Text[2]),
+                        new NbtString("Text4", packet.Text[3]),
+                    }));
+                    // TODO: Some utility methods for things like "clients with given chunk loaded"
+                    server.Clients.Where(c => ((RemoteClient)c).LoggedIn && c.World == _client.World).ToList().ForEach(c => c.QueuePacket(packet));
+                }
             }
         }
     }

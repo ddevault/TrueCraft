@@ -177,7 +177,10 @@ namespace TrueCraft.Core.World
         /// </summary>
         public void SetTileEntity(Coordinates3D coordinates, NbtCompound value)
         {
-            TileEntities[coordinates] = value;
+            if (value == null && TileEntities.ContainsKey(coordinates))
+                TileEntities.Remove(coordinates);
+            else
+                TileEntities[coordinates] = value;
             IsModified = true;
         }
 
