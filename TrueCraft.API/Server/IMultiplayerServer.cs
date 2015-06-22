@@ -32,8 +32,6 @@ namespace TrueCraft.API.Server
         bool BlockUpdatesEnabled { get; set; }
         bool EnableClientLogging { get; set; }
 
-        bool ShuttingDown { get; }
-
         void Start(IPEndPoint endPoint);
         void Stop();
         void RegisterPacketHandler(byte packetId, PacketHandler handler);

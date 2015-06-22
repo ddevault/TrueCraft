@@ -69,7 +69,7 @@ namespace TrueCraft
         
         private QueryProtocol QueryProtocol;
 
-        public bool ShuttingDown { get; private set; }
+        internal bool ShuttingDown { get; private set; }
         
         public MultiplayerServer()
         {

@@ -19,7 +19,9 @@ using System.Threading;
 using TrueCraft.Core.Entities;
 using System.IO;
 using fNbt;
+using TrueCraft.API.Logging;
 using TrueCraft.API.Logic;
+using TrueCraft.Exceptions;
 
 namespace TrueCraft
 {
@@ -69,7 +71,6 @@ namespace TrueCraft
         public IPacket LastSuccessfulPacket { get; set; }
 
         public Socket Connection { get; private set; }
-
 
         private SemaphoreSlim _sem = new SemaphoreSlim(1, 1);
 
@@ -272,7 +273,7 @@ namespace TrueCraft
 
         private void ProcessNetwork(SocketAsyncEventArgs e)
         {
-            if (Server.ShuttingDown)
+            if (Connection == null || !Connection.Connected)
                 return;
 
             if (e.SocketError == SocketError.Success && e.BytesTransferred > 0)
@@ -286,15 +287,33 @@ namespace TrueCraft
                 _sem.Wait(_cancel.Token);
 
                 var packets = PacketReader.ReadPackets(this, e.Buffer, e.Offset, e.BytesTransferred);
-                
+
                 foreach (IPacket packet in packets)
                 {
                     LastSuccessfulPacket = packet;
-                    
+
                     if (PacketHandlers[packet.ID] != null)
-                        PacketHandlers[packet.ID](packet, this, Server);
+                    {
+                        try
+                        {
+                            PacketHandlers[packet.ID](packet, this, Server);
+                        }
+                        catch (PlayerDisconnectException)
+                        {
+                            Server.DisconnectClient(this);
+                        }
+                        catch (Exception ex)
+                        {
+                            Server.Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
+                            Server.Log(LogCategory.Debug, ex.ToString());
+
+                            Server.DisconnectClient(this);
+                        }
+                    }
                     else
+                    {
                         Log("Unhandled packet {0}", packet.GetType().Name);
+                    }
                 }
 
                 if (_sem != null)
