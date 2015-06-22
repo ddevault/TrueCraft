@@ -63,9 +63,18 @@ namespace TrueCraft.Commands
         protected static bool GiveItem(IRemoteClient receivingPlayer, string itemid, string amount, IRemoteClient client)
         {
             short id;
+            short metadata = 0;
             int count;
 
-            if (!short.TryParse(itemid, out id) || !Int32.TryParse(amount, out count)) return false;
+            if (itemid.Contains(":"))
+            {
+                var parts = itemid.Split(':');
+                if (!short.TryParse(parts[0], out id) || !short.TryParse(parts[1], out metadata) || !Int32.TryParse(amount, out count)) return false;
+            }
+            else
+            {
+                if (!short.TryParse(itemid, out id) || !Int32.TryParse(amount, out count)) return false;
+            }
 
             if (client.Server.ItemRepository.GetItemProvider(id) == null)
             {
@@ -87,7 +96,7 @@ namespace TrueCraft.Commands
 
                 count -= amountToGive;
 
-                inventory.PickUpStack(new ItemStack(id, amountToGive));
+                inventory.PickUpStack(new ItemStack(id, amountToGive, metadata));
             }
 
             return true;

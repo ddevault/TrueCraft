@@ -1,10 +1,18 @@
 using System;
 using TrueCraft.API.Logic;
+using TrueCraft.API;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
     public class SaplingBlock : BlockProvider
     {
+        public enum SaplingType
+        {
+            Oak = 0,
+            Spruce = 1,
+            Birch = 2
+        }
+
         public static readonly byte BlockID = 0x06;
         
         public override byte ID { get { return 0x06; } }
@@ -18,6 +26,8 @@ namespace TrueCraft.Core.Logic.Blocks
         public override bool Opaque { get { return false; } }
         
         public override string DisplayName { get { return "Sapling"; } }
+
+        public override BoundingBox? BoundingBox { get { return null; } }
 
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
