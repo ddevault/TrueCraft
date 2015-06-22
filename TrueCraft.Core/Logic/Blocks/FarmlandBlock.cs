@@ -9,6 +9,15 @@ namespace TrueCraft.Core.Logic.Blocks
 {
     public class FarmlandBlock : BlockProvider
     {
+        public enum MoistureLevel : byte
+        {
+            Dry = 0x0,
+
+            // Any value less than 0x7 is considered 'dry'
+
+            Moist = 0x7
+        }
+
         public static readonly int UpdateIntervalSeconds = 30;
 
         public static readonly byte BlockID = 0x3C;
