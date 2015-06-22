@@ -216,6 +216,7 @@ namespace TrueCraft
             if (!clientInitiated)
                 QueuePacket(new CloseWindowPacket(CurrentWindow.ID));
             CurrentWindow.CopyToInventory(Inventory);
+            CurrentWindow.Dispose();
             CurrentWindow = InventoryWindow;
         }
 

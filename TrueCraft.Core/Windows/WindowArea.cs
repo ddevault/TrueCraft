@@ -96,5 +96,10 @@ namespace TrueCraft.Core.Windows
             if (WindowChange != null)
                 WindowChange(this, e);
         }
+
+        public virtual void Dispose()
+        {
+            WindowChange = null;
+        }
     }
 }

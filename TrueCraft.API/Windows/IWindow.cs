@@ -2,7 +2,7 @@
 
 namespace TrueCraft.API.Windows
 {
-    public interface IWindow
+    public interface IWindow : IDisposable
     {
         event EventHandler<WindowChangeEventArgs> WindowChange;
 

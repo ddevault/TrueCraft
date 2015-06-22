@@ -202,7 +202,7 @@ namespace TrueCraft.Core.Logic.Blocks
                             newEntity["Items"] = entityAdjacent;
                         world.SetTileEntity(adjacent, newEntity);
                     }
-                }; // TODO: Memory leak here, make windows implement IDisposable
+                };
             user.OpenWindow(window);
             return false;
         }

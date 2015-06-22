@@ -7,7 +7,7 @@ using TrueCraft.API;
 
 namespace TrueCraft.Core.Windows
 {
-    public abstract class Window : IWindow
+    public abstract class Window : IWindow, IDisposable
     {
         public abstract IWindowArea[] WindowAreas { get; protected set; }
 
@@ -140,6 +140,15 @@ namespace TrueCraft.Core.Windows
         {
             if (WindowChange != null)
                 WindowChange(this, e);
+        }
+
+        public virtual void Dispose()
+        {
+            for (int i = 0; i < WindowAreas.Length; i++)
+            {
+                WindowAreas[i].Dispose();
+            }
+            WindowChange = null;
         }
     }
 }
