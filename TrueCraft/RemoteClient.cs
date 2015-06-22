@@ -57,7 +57,6 @@ namespace TrueCraft
         internal sbyte NextWindowID { get; set; }
 
         //public NetworkStream NetworkStream { get; set; }
-        public bool Disconnected { get; private set; }
         public IMinecraftStream MinecraftStream { get; internal set; }
         public string Username { get; internal set; }
         public bool LoggedIn { get; internal set; }
@@ -82,7 +81,21 @@ namespace TrueCraft
 
         private IEntity _Entity;
 
+        private long disconnected;
+
         private readonly CancellationTokenSource _cancel;
+
+        public bool Disconnected
+        {
+            get
+            {
+                return Interlocked.Read(ref disconnected) == 1;
+            }
+            internal set
+            {
+                Interlocked.CompareExchange(ref disconnected, value ? 1 : 0, value ? 0 : 1);
+            }
+        }
 
         public IEntity Entity
         {
@@ -330,10 +343,10 @@ namespace TrueCraft
             if (!Disconnected)
                 return;
 
+            Disconnected = true;
+
             SocketAsyncEventArgs args = new SocketAsyncEventArgs();
             Connection.DisconnectAsync(args);
-
-            Disconnected = true;
 
             _cancel.Cancel();
         }

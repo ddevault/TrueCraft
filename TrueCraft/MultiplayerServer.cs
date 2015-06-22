@@ -253,6 +253,8 @@ namespace TrueCraft
             if (client.Disconnected)
                 return;
 
+            client.Disconnected = true;
+
             if (client.LoggedIn)
             {
                 SendMessage(ChatColor.Yellow + "{0} has left the server.", client.Username);
