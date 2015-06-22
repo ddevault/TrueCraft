@@ -17,9 +17,9 @@ namespace TrueCraft.Client.Rendering.Blocks
         private static Vector2 WoodTopTexture = new Vector2(4, 0);
         private static Vector2 WoodSideTexture = new Vector2(4, 0);
         private static Vector2 WoodBottomTexture = new Vector2(4, 0);
-        private static Vector2 CobbleTopTexture = new Vector2(1, 0);
-        private static Vector2 CobbleSideTexture = new Vector2(1, 0);
-        private static Vector2 CobbleBottomTexture = new Vector2(1, 0);
+        private static Vector2 CobbleTopTexture = new Vector2(0, 1);
+        private static Vector2 CobbleSideTexture = new Vector2(0, 1);
+        private static Vector2 CobbleBottomTexture = new Vector2(0, 1);
 
         private static Vector2[] StoneTextureMap =
         {
