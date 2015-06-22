@@ -12,8 +12,6 @@ namespace TrueCraft.Core.World
     {
         public const int Width = 16, Height = 128, Depth = 16;
 
-        private static readonly NbtSerializer Serializer = new NbtSerializer(typeof(Chunk));
-
         [NbtIgnore]
         public DateTime LastAccessed { get; set; }
         [NbtIgnore]

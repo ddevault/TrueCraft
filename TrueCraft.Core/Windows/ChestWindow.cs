@@ -47,6 +47,7 @@ namespace TrueCraft.Core.Windows
         }
 
         public const int ChestIndex = 0;
+        public const int DoubleChestSecondaryIndex = 27;
         public const int MainIndex = 27;
         public const int HotbarIndex = 54;
         public const int DoubleMainIndex = 54;

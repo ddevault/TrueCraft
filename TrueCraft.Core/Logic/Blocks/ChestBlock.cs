@@ -110,51 +110,98 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override bool BlockRightClicked(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
-            bool unobstructed = true, isDouble = false;
-            Coordinates3D other = Coordinates3D.Down;
+            var adjacent = -Coordinates3D.One; // -1, no adjacent chest
+            var self = descriptor.Coordinates;
             for (int i = 0; i < AdjacentBlocks.Length; i++)
             {
-                if (world.GetBlockID(descriptor.Coordinates + AdjacentBlocks[i]) == ChestBlock.BlockID)
+                var test = self + AdjacentBlocks[i];
+                if (world.GetBlockID(test) == ChestBlock.BlockID)
                 {
-                    isDouble = true;
-                    other = descriptor.Coordinates + AdjacentBlocks[i];
-                    var _ = world.BlockRepository.GetBlockProvider(world.GetBlockID(
-                        descriptor.Coordinates + AdjacentBlocks[i] + Coordinates3D.Up));
-                    if (_.Opaque)
-                        unobstructed = false;
+                    adjacent = test;
+                    var up = world.BlockRepository.GetBlockProvider(world.GetBlockID(test + Coordinates3D.Up));
+                    if (up.Opaque)
+                        return false; // Obstructed
+                    break;
                 }
             }
-            if (world.BlockRepository.GetBlockProvider(world.GetBlockID(descriptor.Coordinates + Coordinates3D.Up)).Opaque)
-                unobstructed = false;
-            if (!unobstructed)
-                return false;
-            var entity = world.GetTileEntity(descriptor.Coordinates);
-            var window = new ChestWindow((InventoryWindow)user.Inventory, isDouble);
+            var upSelf = world.BlockRepository.GetBlockProvider(world.GetBlockID(self + Coordinates3D.Up));
+            if (upSelf.Opaque)
+                return false; // Obstructed
+
+            if (adjacent != -Coordinates3D.One)
+            {
+                // Ensure that chests are always opened in the same arrangement
+                if (adjacent.X < self.X ||
+                    adjacent.Z < self.Z)
+                {
+                    var _ = adjacent;
+                    adjacent = self;
+                    self = _; // Swap
+                }
+            }
+
+            var window = new ChestWindow((InventoryWindow)user.Inventory, adjacent != -Coordinates3D.One);
+            // Add items
+            var entity = world.GetTileEntity(self);
             if (entity != null)
             {
-                foreach (NbtCompound item in (NbtList)entity["Items"])
+                foreach (var item in (NbtList)entity["Items"])
                 {
-                    var stack = ItemStack.FromNbt(item);
-                    window.ChestInventory[stack.Index] = stack;
+                    var slot = ItemStack.FromNbt((NbtCompound)item);
+                    window.ChestInventory[slot.Index] = slot;
                 }
             }
-            if (isDouble)
+            // Add adjacent items
+            if (adjacent != -Coordinates3D.One)
             {
-                entity = world.GetTileEntity(other);
+                entity = world.GetTileEntity(adjacent);
                 if (entity != null)
                 {
-                    foreach (NbtCompound item in (NbtList)entity["Items"])
+                    foreach (var item in (NbtList)entity["Items"])
                     {
-                        var stack = ItemStack.FromNbt(item);
-                        window.ChestInventory[stack.Index] = stack;
+                        var slot = ItemStack.FromNbt((NbtCompound)item);
+                        window.ChestInventory[slot.Index + ChestWindow.DoubleChestSecondaryIndex] = slot;
                     }
                 }
             }
-            user.OpenWindow(window);
             window.WindowChange += (sender, e) =>
-            {
-                // TODO: Update tile entity
-            }; // TODO: Memory leak here
+                {
+                    var entitySelf = new NbtList("Items", NbtTagType.Compound);
+                    var entityAdjacent = new NbtList("Items", NbtTagType.Compound);
+                    for (int i = 0; i < window.ChestInventory.Items.Length; i++)
+                    {
+                        var item = window.ChestInventory.Items[i];
+                        if (!item.Empty)
+                        {
+                            if (i < ChestWindow.DoubleChestSecondaryIndex)
+                            {
+                                item.Index = i;
+                                entitySelf.Add(item.ToNbt());
+                            }
+                            else
+                            {
+                                item.Index = i - ChestWindow.DoubleChestSecondaryIndex;
+                                entityAdjacent.Add(item.ToNbt());
+                            }
+                        }
+                    }
+                    var newEntity = world.GetTileEntity(self);
+                    if (newEntity == null)
+                        newEntity = new NbtCompound(new[] { entitySelf });
+                    else
+                        newEntity["Items"] = entitySelf;
+                    world.SetTileEntity(self, newEntity);
+                    if (adjacent != -Coordinates3D.One)
+                    {
+                        newEntity = world.GetTileEntity(adjacent);
+                        if (newEntity == null)
+                            newEntity = new NbtCompound(new[] { entityAdjacent });
+                        else
+                            newEntity["Items"] = entityAdjacent;
+                        world.SetTileEntity(adjacent, newEntity);
+                    }
+                }; // TODO: Memory leak here, make windows implement IDisposable
+            user.OpenWindow(window);
             return false;
         }
     }
