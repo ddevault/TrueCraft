@@ -95,7 +95,15 @@ namespace TrueCraft.Core.Logic.Blocks
             if (ValidCactusPosition(descriptor, user.Server.BlockRepository, world))
                 base.BlockPlaced(descriptor, face, world, user);
             else
-                user.Inventory.PickUpStack(new ItemStack(CactusBlock.BlockID, (sbyte)1));
+            {
+                world.SetBlockID(descriptor.Coordinates, AirBlock.BlockID);
+
+                var manager = user.Server.GetEntityManagerForWorld(world);
+                manager.SpawnEntity(
+                    new ItemEntity(descriptor.Coordinates + Coordinates3D.Up,
+                        new ItemStack(CactusBlock.BlockID, (sbyte)1)));
+                // user.Inventory.PickUpStack() wasn't working?
+            }
         }
 
         public override void BlockUpdate(BlockDescriptor descriptor, BlockDescriptor source, IMultiplayerServer server, IWorld world)
