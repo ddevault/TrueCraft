@@ -113,11 +113,6 @@ namespace TrueCraft.Client
             Interlocked.CompareExchange(ref connected, 0, 1);
 
             QueuePacket(new DisconnectPacket("Disconnecting"));
-
-            Client.Client.Shutdown(SocketShutdown.Send);
-            Client.Close();
-
-            cancel.Cancel();
         }
 
         public void QueuePacket(IPacket packet)
@@ -136,6 +131,7 @@ namespace TrueCraft.Client
                 byte[] buffer = writeStream.ToArray();
 
                 SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+                args.UserToken = packet;
                 args.Completed += OperationCompleted;
                 args.SetBuffer(buffer, 0, buffer.Length);
 
@@ -165,6 +161,16 @@ namespace TrueCraft.Client
                     SocketPool.Add(e);
                     break;
                 case SocketAsyncOperation.Send:
+                    IPacket packet = e.UserToken as IPacket;
+
+                    if (packet is DisconnectPacket)
+                    {
+                        Client.Client.Shutdown(SocketShutdown.Send);
+                        Client.Close();
+
+                        cancel.Cancel();
+                    }
+
                     e.SetBuffer(null, 0, 0);
                     break;
             }
