@@ -52,6 +52,7 @@ namespace TrueCraft.Client
             var repo = new BlockRepository();
             repo.DiscoverBlockProviders();
             World.World.BlockRepository = repo;
+            World.World.ChunkProvider = new EmptyGenerator();
             Physics = new PhysicsEngine(World, repo);
         }
 
