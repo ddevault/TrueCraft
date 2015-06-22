@@ -45,7 +45,7 @@ namespace TrueCraft
             PacketReader = packetReader;
             PacketHandlers = packetHandlers;
 
-            _cancel = new CancellationTokenSource();
+            cancel = new CancellationTokenSource();
 
             StartReceive();
         }
@@ -71,7 +71,7 @@ namespace TrueCraft
 
         public Socket Connection { get; private set; }
 
-        private SemaphoreSlim _sem = new SemaphoreSlim(1, 1);
+        private SemaphoreSlim sem = new SemaphoreSlim(1, 1);
 
         private SocketAsyncEventArgsPool SocketPool { get; set; }
 
@@ -83,7 +83,7 @@ namespace TrueCraft
 
         private long disconnected;
 
-        private readonly CancellationTokenSource _cancel;
+        private readonly CancellationTokenSource cancel;
 
         public bool Disconnected
         {
@@ -242,13 +242,13 @@ namespace TrueCraft
 
                 SocketAsyncEventArgs args = new SocketAsyncEventArgs();
                 args.UserToken = packet;
-                args.Completed += Operation_Completed;
+                args.Completed += OperationCompleted;
                 args.SetBuffer(buffer, 0, buffer.Length);
 
                 if (Connection != null)
                 {
                     if (!Connection.SendAsync(args))
-                        Operation_Completed(this, args);
+                        OperationCompleted(this, args);
                 }
             }
         }
@@ -256,15 +256,15 @@ namespace TrueCraft
         private void StartReceive()
         {
             SocketAsyncEventArgs args = SocketPool.Get();
-            args.Completed += Operation_Completed;
+            args.Completed += OperationCompleted;
 
             if (!Connection.ReceiveAsync(args))
-                Operation_Completed(this, args);
+                OperationCompleted(this, args);
         }
 
-        private void Operation_Completed(object sender, SocketAsyncEventArgs e)
+        private void OperationCompleted(object sender, SocketAsyncEventArgs e)
         {
-            e.Completed -= Operation_Completed;
+            e.Completed -= OperationCompleted;
 
             switch (e.LastOperation)
             {
@@ -292,12 +292,12 @@ namespace TrueCraft
             if (e.SocketError == SocketError.Success && e.BytesTransferred > 0)
             {
                 SocketAsyncEventArgs newArgs = SocketPool.Get();
-                newArgs.Completed += Operation_Completed;
+                newArgs.Completed += OperationCompleted;
 
                 if (!Connection.ReceiveAsync(newArgs))
-                    Operation_Completed(this, newArgs);
+                    OperationCompleted(this, newArgs);
 
-                _sem.Wait(_cancel.Token);
+                sem.Wait(cancel.Token);
 
                 var packets = PacketReader.ReadPackets(this, e.Buffer, e.Offset, e.BytesTransferred);
 
@@ -329,8 +329,8 @@ namespace TrueCraft
                     }
                 }
 
-                if (_sem != null)
-                    _sem.Release();
+                if (sem != null)
+                    sem.Release();
             }
             else
             {
@@ -348,7 +348,7 @@ namespace TrueCraft
             SocketAsyncEventArgs args = new SocketAsyncEventArgs();
             Connection.DisconnectAsync(args);
 
-            _cancel.Cancel();
+            cancel.Cancel();
         }
 
         public void SendMessage(string message)
@@ -506,10 +506,10 @@ namespace TrueCraft
 
                 Disconnect();
 
-                _sem.Dispose();
+                sem.Dispose();
             }
 
-            _sem = null;
+            sem = null;
         }
 
         ~RemoteClient()

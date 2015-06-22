@@ -8,8 +8,8 @@ namespace TrueCraft.Core.Networking
 {
     public class ByteListMemoryStream : Stream
     {
-        private long _position;
-        private readonly List<byte> _buffer;
+        private long position;
+        private readonly List<byte> buffer;
 
         public ByteListMemoryStream() : this(new List<byte>())
         {
@@ -17,8 +17,8 @@ namespace TrueCraft.Core.Networking
 
         public ByteListMemoryStream(List<byte> buffer, int offset = 0)
         {
-            _position = offset;
-            _buffer = buffer;
+            position = offset;
+            this.buffer = buffer;
         }
 
         public override void Flush()
@@ -28,18 +28,18 @@ namespace TrueCraft.Core.Networking
         public override long Seek(long offset, SeekOrigin origin)
         {
             if (origin == SeekOrigin.Begin)
-                _position = offset;
+                position = offset;
             else if (origin == SeekOrigin.Current)
-                _position += offset;
+                position += offset;
             else //End
-                _position = (_buffer.Count - 1) - offset;
+                position = (buffer.Count - 1) - offset;
 
-            return _position;
+            return position;
         }
 
         public override void SetLength(long value)
         {
-            _buffer.RemoveRange((int)value, _buffer.Count - (int)value);
+            buffer.RemoveRange((int)value, buffer.Count - (int)value);
         }
 
         public override int Read(byte[] buffer, int offset, int count)
@@ -50,11 +50,11 @@ namespace TrueCraft.Core.Networking
             if (buffer.Length < count)
                 throw new ArgumentOutOfRangeException("count");
 
-            byte[] buf = _buffer.Skip((int)_position).Take(count).ToArray();
+            byte[] buf = this.buffer.Skip((int)position).Take(count).ToArray();
             
             Buffer.BlockCopy(buf, 0, buffer, offset, buf.Length);
 
-            _position += Math.Min(count, buf.Length);
+            position += Math.Min(count, buf.Length);
             
             return Math.Min(count, buf.Length);
         }
@@ -67,8 +67,8 @@ namespace TrueCraft.Core.Networking
             if (buffer.Length < count)
                 throw new ArgumentOutOfRangeException("count");
 
-            _buffer.AddRange(buffer.Skip(offset).Take(count));
-            _position += count;
+            this.buffer.AddRange(buffer.Skip(offset).Take(count));
+            position += count;
         }
 
         public override bool CanRead
@@ -99,7 +99,7 @@ namespace TrueCraft.Core.Networking
         {
             get
             {
-                return _buffer.Count;
+                return buffer.Count;
             }
         }
 
@@ -107,11 +107,11 @@ namespace TrueCraft.Core.Networking
         {
             get
             {
-                return _position;
+                return position;
             }
             set
             {
-                _position = value;
+                position = value;
             }
         }
     }

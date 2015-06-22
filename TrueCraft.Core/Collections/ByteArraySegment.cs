@@ -8,15 +8,15 @@ namespace TrueCraft.Core.Collections
 {
     public class ByteArraySegment : ICollection<byte>
     {
-        private readonly byte[] _array;
-        private readonly int _start;
-        private readonly int _count;
+        private readonly byte[] array;
+        private readonly int start;
+        private readonly int count;
 
         public ByteArraySegment(byte[] array, int start, int count)
         {
-            _array = array;
-            _start = start;
-            _count = count;
+            this.array = array;
+            this.start = start;
+            this.count = count;
         }
 
         public void Add(byte item)
@@ -31,12 +31,12 @@ namespace TrueCraft.Core.Collections
 
         public bool Contains(byte item)
         {
-            return _array.Contains(item);
+            return array.Contains(item);
         }
 
         public void CopyTo(byte[] target, int index)
         {
-            Buffer.BlockCopy(_array, _start, target, index, _count);
+            Buffer.BlockCopy(array, start, target, index, count);
         }
 
         public bool Remove(byte item)
@@ -48,7 +48,7 @@ namespace TrueCraft.Core.Collections
         {
             get
             {
-                return _count;
+                return count;
             }
         }
 
@@ -64,14 +64,14 @@ namespace TrueCraft.Core.Collections
         {
             get
             {
-                return _array[index];
+                return array[index];
             }
             set
             {
-                if (index > _array.Length)
+                if (index > array.Length)
                     throw new ArgumentOutOfRangeException("value");
 
-                _array[index] = value;
+                array[index] = value;
             }
         }
 
@@ -87,37 +87,37 @@ namespace TrueCraft.Core.Collections
 
         class ByteArraySegmentEnumerator : IEnumerator<byte>
         {
-            private byte _current;
-            private int _pos;
+            private byte current;
+            private int pos;
 
             private readonly ByteArraySegment _segment;
 
             public ByteArraySegmentEnumerator(ByteArraySegment segment)
             {
                 _segment = segment;
-                _pos = segment._start;
+                pos = segment.start;
             }
 
             public bool MoveNext()
             {
-                if (_pos >= _segment.Count)
+                if (pos >= _segment.Count)
                     return false;
 
-                _current = _segment._array[++_pos];
+                current = _segment.array[++pos];
 
                 return true;
             }
 
             public void Reset()
             {
-                _pos = _segment._start;
+                pos = _segment.start;
             }
 
             public byte Current
             {
                 get
                 {
-                    return _current;
+                    return current;
                 }
             }
 

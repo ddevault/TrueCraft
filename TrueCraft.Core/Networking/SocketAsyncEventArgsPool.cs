@@ -9,17 +9,17 @@ namespace TrueCraft.Core.Networking
 {
     public class SocketAsyncEventArgsPool : IDisposable
     {
-        private readonly BlockingCollection<SocketAsyncEventArgs> _argsPool;
+        private readonly BlockingCollection<SocketAsyncEventArgs> argsPool;
 
-        private readonly int _maxPoolSize;
+        private readonly int maxPoolSize;
 
-        private BufferManager _bufferManager;
+        private BufferManager bufferManager;
 
         public SocketAsyncEventArgsPool(int poolSize, int maxSize, int bufferSize)
         {
-            _maxPoolSize = maxSize;
-            _argsPool = new BlockingCollection<SocketAsyncEventArgs>(new ConcurrentQueue<SocketAsyncEventArgs>());
-            _bufferManager = new BufferManager(bufferSize);
+            maxPoolSize = maxSize;
+            argsPool = new BlockingCollection<SocketAsyncEventArgs>(new ConcurrentQueue<SocketAsyncEventArgs>());
+            bufferManager = new BufferManager(bufferSize);
 
             Init(poolSize);
         }
@@ -28,21 +28,21 @@ namespace TrueCraft.Core.Networking
         {
             for (int i = 0; i < size; i++)
             {
-                _argsPool.Add(CreateEventArgs());
+                argsPool.Add(CreateEventArgs());
             }
         }
 
         public SocketAsyncEventArgs Get()
         {
             SocketAsyncEventArgs args;
-            if (!_argsPool.TryTake(out args))
+            if (!argsPool.TryTake(out args))
             {
                 args = CreateEventArgs();
             }
 
-            if (_argsPool.Count > _maxPoolSize)
+            if (argsPool.Count > maxPoolSize)
             {
-                Trim(_argsPool.Count - _maxPoolSize);
+                Trim(argsPool.Count - maxPoolSize);
             }
 
             return args;
@@ -50,14 +50,14 @@ namespace TrueCraft.Core.Networking
 
         public void Add(SocketAsyncEventArgs args)
         {
-            if (!_argsPool.IsAddingCompleted)
-                _argsPool.Add(args);
+            if (!argsPool.IsAddingCompleted)
+                argsPool.Add(args);
         }
 
         protected SocketAsyncEventArgs CreateEventArgs()
         {
             SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-            _bufferManager.SetBuffer(args);
+            bufferManager.SetBuffer(args);
 
             return args;
         }
@@ -68,9 +68,9 @@ namespace TrueCraft.Core.Networking
             {
                 SocketAsyncEventArgs args;
 
-                if (_argsPool.TryTake(out args))
+                if (argsPool.TryTake(out args))
                 {
-                    _bufferManager.ClearBuffer(args);
+                    bufferManager.ClearBuffer(args);
                     args.Dispose();
                 }
             }
@@ -87,18 +87,18 @@ namespace TrueCraft.Core.Networking
         {
             if (disposing)
             {
-                _argsPool.CompleteAdding();
+                argsPool.CompleteAdding();
 
-                while (_argsPool.Count > 0)
+                while (argsPool.Count > 0)
                 {
-                    SocketAsyncEventArgs arg = _argsPool.Take();
+                    SocketAsyncEventArgs arg = argsPool.Take();
 
-                    _bufferManager.ClearBuffer(arg);
+                    bufferManager.ClearBuffer(arg);
                     arg.Dispose();
                 }
             }
 
-            _bufferManager = null;
+            bufferManager = null;
         }
 
         ~SocketAsyncEventArgsPool()

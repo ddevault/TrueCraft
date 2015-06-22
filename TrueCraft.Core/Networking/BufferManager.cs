@@ -8,42 +8,42 @@ namespace TrueCraft.Core.Networking
 {
     public class BufferManager
     {
-        private readonly object _bufferLocker = new object();
+        private readonly object bufferLocker = new object();
 
-        private readonly List<byte[]> _buffers;
+        private readonly List<byte[]> buffers;
 
-        private readonly int _bufferSize;
+        private readonly int bufferSize;
 
-        private readonly Stack<int> _availableBuffers;
+        private readonly Stack<int> availableBuffers;
 
         public BufferManager(int bufferSize)
         {
-            _bufferSize = bufferSize;
-            _buffers = new List<byte[]>();
-            _availableBuffers = new Stack<int>();
+            this.bufferSize = bufferSize;
+            buffers = new List<byte[]>();
+            availableBuffers = new Stack<int>();
         }
 
         public void SetBuffer(SocketAsyncEventArgs args)
         {
-            if (_availableBuffers.Count > 0)
+            if (availableBuffers.Count > 0)
             {
-                int index = _availableBuffers.Pop();
+                int index = availableBuffers.Pop();
 
                 byte[] buffer;
-                lock (_bufferLocker)
+                lock (bufferLocker)
                 {
-                    buffer = _buffers[index];
+                    buffer = buffers[index];
                 }
 
                 args.SetBuffer(buffer, 0, buffer.Length);
             }
             else
             {
-                byte[] buffer = new byte[_bufferSize];
+                byte[] buffer = new byte[bufferSize];
 
-                lock (_bufferLocker)
+                lock (bufferLocker)
                 {
-                    _buffers.Add(buffer);
+                    buffers.Add(buffer);
                 }
 
                 args.SetBuffer(buffer, 0, buffer.Length);
@@ -53,13 +53,13 @@ namespace TrueCraft.Core.Networking
         public void ClearBuffer(SocketAsyncEventArgs args)
         {
             int index;
-            lock (_bufferLocker)
+            lock (bufferLocker)
             {
-                index = _buffers.IndexOf(args.Buffer);
+                index = buffers.IndexOf(args.Buffer);
             }
 
             if (index >= 0)
-                _availableBuffers.Push(index);
+                availableBuffers.Push(index);
 
             args.SetBuffer(null, 0, 0);
         }

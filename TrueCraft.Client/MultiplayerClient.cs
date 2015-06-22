@@ -27,7 +27,7 @@ namespace TrueCraft.Client
         public event EventHandler<ChunkEventArgs> ChunkUnloaded;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private long _connected;
+        private long connected;
 
         public TrueCraftUser User { get; set; }
         public ReadOnlyWorld World { get; private set; }
@@ -38,7 +38,7 @@ namespace TrueCraft.Client
         {
             get
             {
-                return Interlocked.Read(ref _connected) == 1;
+                return Interlocked.Read(ref connected) == 1;
             }
         }
 
@@ -48,9 +48,9 @@ namespace TrueCraft.Client
 
         private readonly PacketHandler[] PacketHandlers;
 
-        private SemaphoreSlim _sem = new SemaphoreSlim(1, 1);
+        private SemaphoreSlim sem = new SemaphoreSlim(1, 1);
 
-        private readonly CancellationTokenSource _cancel;
+        private readonly CancellationTokenSource cancel;
 
         private SocketAsyncEventArgsPool SocketPool { get; set; }
 
@@ -69,8 +69,8 @@ namespace TrueCraft.Client
             World.World.BlockRepository = repo;
             Physics = new PhysicsEngine(World, repo);
             SocketPool = new SocketAsyncEventArgsPool(100, 200, 65536);
-            _connected = 0;
-            _cancel = new CancellationTokenSource();
+            connected = 0;
+            cancel = new CancellationTokenSource();
         }
 
         public void RegisterPacketHandler(byte packetId, PacketHandler handler)
@@ -92,7 +92,7 @@ namespace TrueCraft.Client
         {
             if (e.SocketError == SocketError.Success)
             {
-                Interlocked.CompareExchange(ref _connected, 1, 0);
+                Interlocked.CompareExchange(ref connected, 1, 0);
 
                 Physics.AddEntity(this);
 
@@ -110,14 +110,14 @@ namespace TrueCraft.Client
             if (!Connected)
                 return;
 
-            Interlocked.CompareExchange(ref _connected, 0, 1);
+            Interlocked.CompareExchange(ref connected, 0, 1);
 
             QueuePacket(new DisconnectPacket("Disconnecting"));
 
             Client.Client.Shutdown(SocketShutdown.Send);
             Client.Close();
 
-            _cancel.Cancel();
+            cancel.Cancel();
         }
 
         public void QueuePacket(IPacket packet)
@@ -136,26 +136,26 @@ namespace TrueCraft.Client
                 byte[] buffer = writeStream.ToArray();
 
                 SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-                args.Completed += Operation_Completed;
+                args.Completed += OperationCompleted;
                 args.SetBuffer(buffer, 0, buffer.Length);
 
                 if (Client != null && !Client.Client.SendAsync(args))
-                    Operation_Completed(this, args);
+                    OperationCompleted(this, args);
             }
         }
 
         private void StartReceive()
         {
             SocketAsyncEventArgs args = SocketPool.Get();
-            args.Completed += Operation_Completed;
+            args.Completed += OperationCompleted;
 
             if (!Client.Client.ReceiveAsync(args))
-                Operation_Completed(this, args);
+                OperationCompleted(this, args);
         }
 
-        private void Operation_Completed(object sender, SocketAsyncEventArgs e)
+        private void OperationCompleted(object sender, SocketAsyncEventArgs e)
         {
-            e.Completed -= Operation_Completed;
+            e.Completed -= OperationCompleted;
 
             switch (e.LastOperation)
             {
@@ -175,12 +175,12 @@ namespace TrueCraft.Client
             if (e.SocketError == SocketError.Success && e.BytesTransferred > 0)
             {
                 SocketAsyncEventArgs newArgs = SocketPool.Get();
-                newArgs.Completed += Operation_Completed;
+                newArgs.Completed += OperationCompleted;
 
                 if (Client != null && !Client.Client.ReceiveAsync(newArgs))
-                    Operation_Completed(this, newArgs);
+                    OperationCompleted(this, newArgs);
 
-                _sem.Wait(_cancel.Token);
+                sem.Wait(cancel.Token);
 
                 var packets = PacketReader.ReadPackets(this, e.Buffer, e.Offset, e.BytesTransferred, false);
 
@@ -190,8 +190,8 @@ namespace TrueCraft.Client
                         PacketHandlers[packet.ID](packet, this);
                 }
 
-                if (_sem != null)
-                    _sem.Release();
+                if (sem != null)
+                    sem.Release();
             }
             else
             {
@@ -320,10 +320,10 @@ namespace TrueCraft.Client
             {
                 Disconnect();
 
-                _sem.Dispose();
+                sem.Dispose();
             }
 
-            _sem = null;
+            sem = null;
         }
 
         ~MultiplayerClient()
