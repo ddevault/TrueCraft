@@ -15,6 +15,7 @@ using TrueCraft.API.World;
 using System.Collections.Concurrent;
 using TrueCraft.Client.Input;
 using TrueCraft.Core;
+using MonoGame.Utilities.Png;
 
 namespace TrueCraft.Client
 {
@@ -316,11 +317,11 @@ namespace TrueCraft.Client
         private void TakeScreenshot()
         {
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                       ".truecraft", "screenshots", DateTime.Now.ToString("yyyy-MM-dd_H.mm.ss") + ".png");
+                           ".truecraft", "screenshots", DateTime.Now.ToString("yyyy-MM-dd_H.mm.ss") + ".png");
             if (!Directory.Exists(Path.GetDirectoryName(path)))
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
             using (var stream = File.OpenWrite(path))
-                RenderTarget.SaveAsPng(stream, RenderTarget.Width, RenderTarget.Height);
+                new PngWriter().Write(RenderTarget, stream);
             ChatInterface.AddMessage(string.Format("Screenshot saved as {0}", Path.GetFileName(path)));
         }
 
