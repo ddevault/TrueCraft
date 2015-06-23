@@ -120,7 +120,7 @@ namespace TrueCraft.Client.Interface
             Input = string.Empty;
             Messages = new List<ChatMessage>();
             DummyTexture = new Texture2D(keyboard.Game.GraphicsDevice, 1, 1);
-            DummyTexture.SetData(new Color[] { Color.White });
+            DummyTexture.SetData(new[] { Color.White });
 
             Client.ChatMessage += OnChatMessage;
             Keyboard.KeyDown += OnKeyDown;
@@ -147,12 +147,12 @@ namespace TrueCraft.Client.Interface
         protected override void OnDrawSprites(GameTime gameTime, SpriteBatch spriteBatch)
         {
             // UI scaling
-            var scale = GetScaleFactor();
+            var scale = GetScaleFactor() * 1.5f;
             var xOrigin = (int)(10 * scale);
             var yOffset = (int)(25 * scale);
             var yOrigin = (int)(5 * scale) + (spriteBatch.GraphicsDevice.Viewport.Height - (yOffset * 7));
 
-            var color = Color.Lerp(Color.Transparent, Color.Black, 0.6f);
+            var color = Color.Lerp(Color.Transparent, Color.Black, 0.5f);
 
             lock (Lock)
             {

@@ -90,7 +90,13 @@ namespace TrueCraft.Client.Rendering
                             dy + (int)(glyph.YOffset * scale),
                             (int)(glyph.Width * scale),
                             (int)(glyph.Height * scale));
+                        var shadowRectangle = new Rectangle(
+                            dx + (int)(glyph.XOffset * scale) + 2,
+                            dy + (int)(glyph.YOffset * scale) + 2,
+                            (int)(glyph.Width * scale),
+                            (int)(glyph.Height * scale));
 
+                        spriteBatch.Draw(font.GetTexture(glyph.Page), shadowRectangle, sourceRectangle, new Color(63, 63, 21));
                         spriteBatch.Draw(font.GetTexture(glyph.Page), destRectangle, sourceRectangle, color);
                         dx += (int)(glyph.XAdvance * scale);
                     }
