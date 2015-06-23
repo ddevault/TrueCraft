@@ -147,7 +147,7 @@ namespace TrueCraft.Client.Interface
         protected override void OnDrawSprites(GameTime gameTime, SpriteBatch spriteBatch)
         {
             // UI scaling
-            var scale = GetScaleFactor() * 1.5f;
+            var scale = GetScaleFactor();
             var xOrigin = (int)(10 * scale);
             var yOffset = (int)(25 * scale);
             var yOrigin = (int)(5 * scale) + (spriteBatch.GraphicsDevice.Viewport.Height - (yOffset * 7));
