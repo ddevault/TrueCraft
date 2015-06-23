@@ -187,13 +187,13 @@ namespace TrueCraft.Client
 
                 // Open chat window.
                 case Keys.T:
-                    if (!ChatInterface.HasFocus)
+                    if (!ChatInterface.HasFocus && ChatInterface.IsVisible)
                         ChatInterface.HasFocus = true;
                     break;
 
                 // Open chat window.
                 case Keys.OemQuestion:
-                    if (!ChatInterface.HasFocus)
+                    if (!ChatInterface.HasFocus && ChatInterface.IsVisible)
                         ChatInterface.HasFocus = true;
                     break;
 
