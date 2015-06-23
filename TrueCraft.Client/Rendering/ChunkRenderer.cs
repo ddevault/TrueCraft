@@ -68,7 +68,6 @@ namespace TrueCraft.Client.Rendering
                 state.OpaqueIndicies.ToArray(), state.TransparentIndicies.ToArray());
 
             return (result != null);
-            
         }
 
         private class RenderState

@@ -334,7 +334,7 @@ namespace TrueCraft.Client
             }
 
             Mesh mesh;
-            if (IncomingChunks.TryTake(out mesh))
+            while (IncomingChunks.TryTake(out mesh))
             {
                 ChunkMeshes.Add(mesh);
             }

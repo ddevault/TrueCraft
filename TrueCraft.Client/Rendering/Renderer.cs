@@ -19,7 +19,7 @@ namespace TrueCraft.Client.Rendering
         public event EventHandler<RendererEventArgs<T>> MeshCompleted;
 
         private volatile bool _isRunning;
-        private Thread _rendererThread;
+        private Thread[] _rendererThreads;
         private ConcurrentQueue<T> _items, _priorityItems;
         private volatile bool _isDisposed;
 
@@ -52,7 +52,14 @@ namespace TrueCraft.Client.Rendering
             lock (_syncLock)
             {
                 _isRunning = false;
-                _rendererThread = new Thread(DoRendering) { IsBackground = true };
+                var threads = Environment.ProcessorCount - 2;
+                if (threads < 1)
+                    threads = 1;
+                _rendererThreads = new Thread[threads];
+                for (int i = 0; i < _rendererThreads.Length; i++)
+                {
+                    _rendererThreads[i] = new Thread(DoRendering) { IsBackground = true };
+                }
                 _items = new ConcurrentQueue<T>(); _priorityItems = new ConcurrentQueue<T>();
                 _isDisposed = false;
             }
@@ -70,7 +77,8 @@ namespace TrueCraft.Client.Rendering
             lock (_syncLock)
             {
                 _isRunning = true;
-                _rendererThread.Start(null);
+                for (int i = 0; i < _rendererThreads.Length; i++)
+                    _rendererThreads[i].Start(null);
             }
         }
 
@@ -126,7 +134,8 @@ namespace TrueCraft.Client.Rendering
             lock (_syncLock)
             {
                 _isRunning = false;
-                _rendererThread.Join();
+                for (int i = 0; i < _rendererThreads.Length; i++)
+                    _rendererThreads[i].Join();
             }
         }
 
@@ -171,7 +180,7 @@ namespace TrueCraft.Client.Rendering
             Stop();
             lock (_syncLock)
             {
-                _rendererThread = null;
+                _rendererThreads = null;
                 _items = null; _priorityItems = null;
                 _isDisposed = true;
             }
