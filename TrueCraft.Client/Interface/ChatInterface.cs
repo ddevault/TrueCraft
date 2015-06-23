@@ -1,15 +1,15 @@
 ﻿using System;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using TrueCraft.Client.Events;
+using System.Collections;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
 using TrueCraft.Client.Rendering;
 using TrueCraft.Client.Input;
-using Microsoft.Xna.Framework.Input;
 
 namespace TrueCraft.Client.Interface
 {
-    public class ChatInterface : IGameInterface
+    public class ChatInterface : Control
     {
         private static bool TryParseKey(Keys key, bool shift, out char value)
         {
@@ -100,111 +100,37 @@ namespace TrueCraft.Client.Interface
             }
         }
 
-        public event EventHandler<EventArgs> FocusChanged;
+        public bool HasFocus { get; set; }
 
-        private readonly object _syncLock =
-            new object();
-        private bool _hasFocus;
-
-        public bool HasFocus
-        {
-            get { return _hasFocus; }
-            private set
-            {
-                if (value != _hasFocus)
-                {
-                    _hasFocus = value;
-
-                    var args = EventArgs.Empty;
-                    if (FocusChanged != null)
-                        FocusChanged(this, args);
-                }
-            }
-        }
         public MultiplayerClient Client { get; set; }
         public KeyboardComponent Keyboard { get; set; }
         public FontRenderer Font { get; set; }
 
+        private readonly object Lock = new object();
         private string Input { get; set; }
         private List<ChatMessage> Messages { get; set; }
+        private Texture2D DummyTexture { get; set; }
 
         public ChatInterface(MultiplayerClient client, KeyboardComponent keyboard, FontRenderer font)
         {
             Client = client;
             Keyboard = keyboard;
             Font = font;
+
             Input = string.Empty;
-            HasFocus = false;
             Messages = new List<ChatMessage>();
+            DummyTexture = new Texture2D(keyboard.Game.GraphicsDevice, 1, 1);
+            DummyTexture.SetData(new Color[] { Color.White });
 
-            keyboard.KeyUp += HandleKeyDown;
-            client.ChatMessage += HandleChatMessage;
+            Client.ChatMessage += OnChatMessage;
+            Keyboard.KeyDown += OnKeyDown;
         }
 
-        public void AddMessage(string message)
+        protected override void OnShow() { }
+
+        protected override void OnUpdate(GameTime gameTime)
         {
-            lock (_syncLock)
-            {
-                Messages.Add(new ChatMessage(message));
-                Console.WriteLine(message);
-            }
-        }
-
-        private void HandleKeyDown(object sender, KeyboardKeyEventArgs e)
-        {
-            if (HasFocus)
-            {
-                if (e.Key == Keys.Enter)
-                {
-                    HasFocus = false;
-                    if (Input.Length != 0)
-                    {
-                        Client.SendMessage(Input);
-                        Input = string.Empty;
-                    }
-                    return;
-                }
-                else if (e.Key == Keys.Back)
-                {
-                    Input = Input.Substring(0, Input.Length - 1);
-                }
-                else if (e.Key == Keys.Escape)
-                {
-                    HasFocus = false;
-                    Input = string.Empty;
-                    return;
-                }
-
-                var shift = (Keyboard.State.IsKeyDown(Keys.LeftShift) || Keyboard.State.IsKeyDown(Keys.RightShift));
-                var value = default(char);
-
-                if (TryParseKey(e.Key, shift, out value))
-                    Input += new string(new char[] { value });
-            }
-            else
-            {
-                switch (e.Key)
-                {
-                    case Keys.T:
-                        HasFocus = true;
-                        break;
-
-                    case Keys.OemQuestion:
-                        HasFocus = true;
-                        Input += "/";
-                        break;
-                }
-            }
-        }
-
-        void HandleChatMessage(object sender, ChatMessageEventArgs e)
-        {
-            AddMessage(e.Message);
-        }
-
-        public void Update(GameTime gameTime)
-        {
-            lock (_syncLock)
+            lock (Lock)
             {
                 for (int i = 0; i < Messages.Count; i++)
                 {
@@ -218,25 +144,78 @@ namespace TrueCraft.Client.Interface
             }
         }
 
-        public void DrawSprites(GameTime gameTime, SpriteBatch spriteBatch)
+        protected override void OnDrawSprites(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            lock (_syncLock)
+            // UI scaling
+            var scale = GetScaleFactor();
+            var xOrigin = (int)(10 * scale);
+            var yOffset = (int)(25 * scale);
+            var yOrigin = (int)(5 * scale) + (spriteBatch.GraphicsDevice.Viewport.Height - (yOffset * 7));
+
+            var color = Color.Lerp(Color.Transparent, Color.Black, 0.6f);
+
+            lock (Lock)
             {
+                if ((Messages.Count == 0) && !HasFocus) return;
+                spriteBatch.Draw(DummyTexture, new Rectangle(xOrigin - 2, yOrigin - 2, (int)(600 * scale) + 4, (yOffset * 5) + 4), color);
+
+                var total = 5;
                 for (int i = (Messages.Count - 1); i >= 0; i--)
                 {
-                    if (Messages.Count == 0)
-                        break;
-
-                    var invi = (Messages.Count - i);
-
                     var message = Messages[i];
-                    Font.DrawText(spriteBatch, 0, i * 30, message.Message);
-                    if (invi >= 5) break;
+                    total--;
+
+                    Font.DrawText(spriteBatch, xOrigin , yOrigin + (yOffset * total), message.Message, scale);
+                    if (total == 0) break;
+                }
+
+                if (HasFocus)
+                {
+                    spriteBatch.Draw(DummyTexture, new Rectangle(xOrigin - 2, yOrigin + (yOffset * 5) + xOrigin - 2, (int)(600 * scale) + 4, yOffset + 4), color);
+                    Font.DrawText(spriteBatch, xOrigin, yOrigin + (yOffset * 5) + xOrigin, "> " + Input, scale);
                 }
             }
+        }
 
+        private void OnChatMessage(object sender, Events.ChatMessageEventArgs e)
+        {
+            AddMessage(e.Message);
+        }
+
+        private void OnKeyDown(object sender, KeyboardKeyEventArgs e)
+        {
             if (HasFocus)
-                Font.DrawText(spriteBatch, 0, (6 * 30) + 15, "> " + Input);
+            {
+                if (e.Key == Keys.Back)
+                    Input = Input.Substring(0, Input.Length - 1);
+                else
+                {
+                    var shift = (Keyboard.State.IsKeyDown(Keys.LeftShift) || Keyboard.State.IsKeyDown(Keys.RightShift));
+                    var value = default(char);
+
+                    if (TryParseKey(e.Key, shift, out value))
+                        Input += new string(new char[] { value });
+                }
+            }
+            else
+            {
+                if (Input != string.Empty)
+                {
+                    Client.SendMessage(Input);
+                    Input = string.Empty;
+                }
+            }
+        }
+
+        protected override void OnHide() { }
+
+        public void AddMessage(string message)
+        {
+            lock (Lock)
+            {
+                Messages.Add(new ChatMessage(message));
+                Console.WriteLine(message);
+            }
         }
     }
 }

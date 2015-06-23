@@ -23,7 +23,7 @@ namespace TrueCraft.Client
         private MultiplayerClient Client { get; set; }
         private GraphicsDeviceManager Graphics { get; set; }
         private List<IGameInterface> Interfaces { get; set; }
-        private FontRenderer DejaVu { get; set; }
+        private FontRenderer Pixel { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
         private IPEndPoint EndPoint { get; set; }
         private ChunkRenderer ChunkConverter { get; set; }
@@ -32,6 +32,7 @@ namespace TrueCraft.Client
         public ConcurrentBag<Action> PendingMainThreadActions { get; set; }
         private ConcurrentBag<Mesh> IncomingChunks { get; set; }
         public ChatInterface ChatInterface { get; set; }
+        public DebugInterface DebugInterface { get; set; }
         private RenderTarget2D RenderTarget;
         private BoundingFrustum CameraView;
         private Camera Camera;
@@ -129,14 +130,17 @@ namespace TrueCraft.Client
             if (UserSettings.Local.SelectedTexturePack != TexturePack.Default.Name)
                 TextureMapper.AddTexturePack(TexturePack.FromArchive(Path.Combine(TexturePack.TexturePackPath, UserSettings.Local.SelectedTexturePack)));
 
-            DejaVu = new FontRenderer(
-                new Font(Content, "Fonts/DejaVu", FontStyle.Regular),
-                new Font(Content, "Fonts/DejaVu", FontStyle.Bold),
+            Pixel = new FontRenderer(
+                new Font(Content, "Fonts/Pixel", FontStyle.Regular),
+                new Font(Content, "Fonts/Pixel", FontStyle.Bold),
                 null, // No support for underlined or strikethrough yet. The FontRenderer will revert to using the regular font style.
                 null, // (I don't think BMFont has those options?)
-                new Font(Content, "Fonts/DejaVu", FontStyle.Italic));
-            Interfaces.Add(ChatInterface = new ChatInterface(Client, KeyboardComponent, DejaVu));
-            ChatInterface.FocusChanged += ChatInterface_FocusChanged;
+                new Font(Content, "Fonts/Pixel", FontStyle.Italic));
+            Interfaces.Add(ChatInterface = new ChatInterface(Client, KeyboardComponent, Pixel));
+            Interfaces.Add(DebugInterface = new DebugInterface(Client, Pixel));
+
+            ChatInterface.IsVisible = true;
+            DebugInterface.IsVisible = true;
 
             OpaqueEffect = new BasicEffect(GraphicsDevice);
             OpaqueEffect.EnableDefaultLighting();
@@ -160,23 +164,6 @@ namespace TrueCraft.Client
             base.LoadContent();
         }
 
-        private bool MouseCapturedBackup;
-
-        void ChatInterface_FocusChanged(object sender, EventArgs e)
-        {
-            //if (ChatInterface.HasFocus)
-            //{
-            //    MouseCapturedBackup == MouseCaptured;
-            //    MouseCaptured = false;
-            //}
-
-            //MouseCapturedBackup = MouseCaptured;
-
-            //if (MouseCaptured && ChatInterface.HasFocus)
-            //    MouseCaptured = false;
-            //else 
-        }
-
         protected override void OnExiting(object sender, EventArgs args)
         {
             ChunkConverter.Stop();
@@ -188,14 +175,32 @@ namespace TrueCraft.Client
             // TODO: Rebindable keys
             // TODO: Horizontal terrain collisions
 
-            if (ChatInterface.HasFocus)
-                return;
-
             switch (e.Key)
             {
-                // Quit the game.
+                // Close game (or chat).
                 case Keys.Escape:
-                    Exit();
+                    if (ChatInterface.HasFocus)
+                        ChatInterface.HasFocus = false;
+                    else
+                        Exit();
+                    break;
+
+                // Open chat window.
+                case Keys.T:
+                    if (!ChatInterface.HasFocus && ChatInterface.IsVisible)
+                        ChatInterface.HasFocus = true;
+                    break;
+
+                // Open chat window.
+                case Keys.OemQuestion:
+                    if (!ChatInterface.HasFocus && ChatInterface.IsVisible)
+                        ChatInterface.HasFocus = true;
+                    break;
+
+                // Close chat window.
+                case Keys.Enter:
+                    if (ChatInterface.HasFocus)
+                        ChatInterface.HasFocus = false;
                     break;
 
                 // Take a screenshot.
@@ -203,27 +208,45 @@ namespace TrueCraft.Client
                     TakeScreenshot();
                     break;
 
+                // Toggle debug view.
+                case Keys.F3:
+                    DebugInterface.IsVisible = !DebugInterface.IsVisible;
+                    break;
+
+                // Change interface scale.
+                case Keys.F4:
+                    foreach (var item in Interfaces)
+                    {
+                        item.Scale = (InterfaceScale)(item.Scale + 1);
+                        if ((int)item.Scale > 2) item.Scale = InterfaceScale.Small;
+                    }
+                    break;
+
                 // Move to the left.
                 case Keys.A:
                 case Keys.Left:
+                    if (ChatInterface.HasFocus) break;
                     Delta += Microsoft.Xna.Framework.Vector3.Left;
                     break;
 
                 // Move to the right.
                 case Keys.D:
                 case Keys.Right:
+                    if (ChatInterface.HasFocus) break;
                     Delta += Microsoft.Xna.Framework.Vector3.Right;
                     break;
 
                 // Move forwards.
                 case Keys.W:
                 case Keys.Up:
+                    if (ChatInterface.HasFocus) break;
                     Delta += Microsoft.Xna.Framework.Vector3.Forward;
                     break;
 
                 // Move backwards.
                 case Keys.S:
                 case Keys.Down:
+                    if (ChatInterface.HasFocus) break;
                     Delta += Microsoft.Xna.Framework.Vector3.Backward;
                     break;
 
@@ -237,32 +260,33 @@ namespace TrueCraft.Client
 
         private void OnKeyboardKeyUp(object sender, KeyboardKeyEventArgs e)
         {
-            if (ChatInterface.HasFocus)
-                return;
-
             switch (e.Key)
             {
                 // Stop moving to the left.
                 case Keys.A:
                 case Keys.Left:
+                    if (ChatInterface.HasFocus) break;
                     Delta -= Microsoft.Xna.Framework.Vector3.Left;
                     break;
 
                 // Stop moving to the right.
                 case Keys.D:
                 case Keys.Right:
+                    if (ChatInterface.HasFocus) break;
                     Delta -= Microsoft.Xna.Framework.Vector3.Right;
                     break;
 
                 // Stop moving forwards.
                 case Keys.W:
                 case Keys.Up:
+                    if (ChatInterface.HasFocus) break;
                     Delta -= Microsoft.Xna.Framework.Vector3.Forward;
                     break;
 
                 // Stop moving backwards.
                 case Keys.S:
                 case Keys.Down:
+                    if (ChatInterface.HasFocus) break;
                     Delta -= Microsoft.Xna.Framework.Vector3.Backward;
                     break;
             }
@@ -412,15 +436,12 @@ namespace TrueCraft.Client
                 }
             }
 
+            DebugInterface.Vertices = verticies;
+            DebugInterface.Chunks = chunks;
+
             SpriteBatch.Begin();
             for (int i = 0; i < Interfaces.Count; i++)
-            {
                 Interfaces[i].DrawSprites(gameTime, SpriteBatch);
-            }
-
-            int fps = (int)(1 / gameTime.ElapsedGameTime.TotalSeconds);
-            DejaVu.DrawText(SpriteBatch, 0, GraphicsDevice.Viewport.Height - 30,
-                string.Format("{0} FPS, {1} verticies, {2} chunks, {3}", fps + 1, verticies, chunks, Client.Position));
             SpriteBatch.End();
 
             GraphicsDevice.SetRenderTarget(null);
