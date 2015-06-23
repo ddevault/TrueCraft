@@ -135,7 +135,8 @@ namespace TrueCraft.Client
                 null, // No support for underlined or strikethrough yet. The FontRenderer will revert to using the regular font style.
                 null, // (I don't think BMFont has those options?)
                 new Font(Content, "Fonts/DejaVu", FontStyle.Italic));
-            Interfaces.Add(ChatInterface = new ChatInterface(Client, DejaVu));
+            Interfaces.Add(ChatInterface = new ChatInterface(Client, KeyboardComponent, DejaVu));
+            ChatInterface.FocusChanged += ChatInterface_FocusChanged;
 
             OpaqueEffect = new BasicEffect(GraphicsDevice);
             OpaqueEffect.EnableDefaultLighting();
@@ -159,6 +160,23 @@ namespace TrueCraft.Client
             base.LoadContent();
         }
 
+        private bool MouseCapturedBackup;
+
+        void ChatInterface_FocusChanged(object sender, EventArgs e)
+        {
+            //if (ChatInterface.HasFocus)
+            //{
+            //    MouseCapturedBackup == MouseCaptured;
+            //    MouseCaptured = false;
+            //}
+
+            //MouseCapturedBackup = MouseCaptured;
+
+            //if (MouseCaptured && ChatInterface.HasFocus)
+            //    MouseCaptured = false;
+            //else 
+        }
+
         protected override void OnExiting(object sender, EventArgs args)
         {
             ChunkConverter.Stop();
@@ -169,6 +187,9 @@ namespace TrueCraft.Client
         {
             // TODO: Rebindable keys
             // TODO: Horizontal terrain collisions
+
+            if (ChatInterface.HasFocus)
+                return;
 
             switch (e.Key)
             {
@@ -216,6 +237,9 @@ namespace TrueCraft.Client
 
         private void OnKeyboardKeyUp(object sender, KeyboardKeyEventArgs e)
         {
+            if (ChatInterface.HasFocus)
+                return;
+
             switch (e.Key)
             {
                 // Stop moving to the left.

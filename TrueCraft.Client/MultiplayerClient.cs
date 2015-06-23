@@ -116,6 +116,13 @@ namespace TrueCraft.Client
             QueuePacket(new DisconnectPacket("Disconnecting"));
         }
 
+        public void SendMessage(string message)
+        {
+            var parts = message.Split('\n');
+            foreach (var part in parts)
+                QueuePacket(new ChatMessagePacket(part));
+        }
+
         public void QueuePacket(IPacket packet)
         {
             if (!Connected || (Client != null && !Client.Connected))
