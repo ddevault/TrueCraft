@@ -101,14 +101,14 @@ namespace TrueCraft.Client.Interface
             switch (Scale)
             {
                 case InterfaceScale.Small:
-                    return 0.75f;
+                    return 0.5f;
 
                 default:
                 case InterfaceScale.Medium:
                     return 1.0f;
 
                 case InterfaceScale.Large:
-                    return 1.25f;
+                    return 1.5f;
             }
         }
     }

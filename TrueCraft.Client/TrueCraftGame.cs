@@ -440,7 +440,7 @@ namespace TrueCraft.Client
             DebugInterface.Vertices = verticies;
             DebugInterface.Chunks = chunks;
 
-            SpriteBatch.Begin();
+            SpriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, null);
             for (int i = 0; i < Interfaces.Count; i++)
                 Interfaces[i].DrawSprites(gameTime, SpriteBatch);
             SpriteBatch.End();
