@@ -111,9 +111,9 @@ namespace TrueCraft.Client
             if (!Connected)
                 return;
 
-            Interlocked.CompareExchange(ref connected, 0, 1);
-
             QueuePacket(new DisconnectPacket("Disconnecting"));
+            
+            Interlocked.CompareExchange(ref connected, 0, 1);
         }
 
         public void SendMessage(string message)
