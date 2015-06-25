@@ -16,6 +16,9 @@ using System.Collections.Concurrent;
 using TrueCraft.Client.Input;
 using TrueCraft.Core;
 using MonoGame.Utilities.Png;
+using TrueCraft.Client.Rendering.Effects;
+
+using XnaVector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace TrueCraft.Client
 {
@@ -44,7 +47,7 @@ namespace TrueCraft.Client
         private Microsoft.Xna.Framework.Vector3 Delta { get; set; }
         private TextureMapper TextureMapper { get; set; }
 
-        private BasicEffect OpaqueEffect;
+        private OpaqueEffect OpaqueEffect;
         private AlphaTestEffect TransparentEffect;
 
         public TrueCraftGame(MultiplayerClient client, IPEndPoint endPoint)
@@ -143,18 +146,13 @@ namespace TrueCraft.Client
             ChatInterface.IsVisible = true;
             DebugInterface.IsVisible = true;
 
-            OpaqueEffect = new BasicEffect(GraphicsDevice);
-            OpaqueEffect.EnableDefaultLighting();
-            OpaqueEffect.DirectionalLight0.SpecularColor = Color.Black.ToVector3();
-            OpaqueEffect.DirectionalLight1.SpecularColor = Color.Black.ToVector3();
-            OpaqueEffect.DirectionalLight2.SpecularColor = Color.Black.ToVector3();
-            OpaqueEffect.TextureEnabled = true;
+            OpaqueEffect = new OpaqueEffect(Content);
             OpaqueEffect.Texture = TextureMapper.GetTexture("terrain.png");
-            OpaqueEffect.FogEnabled = true;
-            OpaqueEffect.FogStart = 512f;
-            OpaqueEffect.FogEnd = 1000f;
-            OpaqueEffect.FogColor = Color.CornflowerBlue.ToVector3();
-            OpaqueEffect.VertexColorEnabled = true;
+            OpaqueEffect.Ambient.Color = Color.White.ToVector3();
+            OpaqueEffect.Ambient.Intensity = 0.6f;
+            OpaqueEffect.Diffuse.Color = Color.White.ToVector3();
+            OpaqueEffect.Diffuse.Intensity = 0.7f;
+            OpaqueEffect.Diffuse.Direction = (XnaVector3.Up / 4) + (XnaVector3.Left / 3) + (XnaVector3.Backward / 2);
 
             TransparentEffect = new AlphaTestEffect(GraphicsDevice);
             TransparentEffect.AlphaFunction = CompareFunction.Greater;
