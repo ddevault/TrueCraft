@@ -73,9 +73,12 @@
     <Compile Include="Rendering\Blocks\CobwebRenderer.cs" />
     <Compile Include="Rendering\Blocks\SlabRenderer.cs" />
     <Compile Include="Rendering\Camera.cs" />
+    <Compile Include="Rendering\Effects\AmbientState.cs" />
+    <Compile Include="Rendering\Effects\DiffuseState.cs" />
     <Compile Include="Rendering\Font.cs" />
     <Compile Include="Rendering\FontRenderer.cs" />
     <Compile Include="Rendering\FontStyle.cs" />
+    <Compile Include="Rendering\Effects\OpaqueEffect.cs" />
     <Compile Include="Rendering\Renderer.cs" />
     <Compile Include="Rendering\RendererEventArgs.cs" />
     <Compile Include="Rendering\TextureMapper.cs" />
@@ -145,6 +148,7 @@
     <Content Include="Content\default-pack.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Effects\Opaque.fx" />
     <Content Include="Content\Fonts\pixel-license.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
