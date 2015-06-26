@@ -306,7 +306,13 @@ namespace TrueCraft
                 if (!Connection.ReceiveAsync(newArgs))
                     OperationCompleted(this, newArgs);
 
-                sem.Wait(cancel.Token);
+                try
+                {
+                    sem.Wait(cancel.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                }
 
                 var packets = PacketReader.ReadPackets(this, e.Buffer, e.Offset, e.BytesTransferred);
 
