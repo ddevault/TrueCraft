@@ -26,7 +26,7 @@ namespace TrueCraft.Core.Logic.Blocks
             return new Tuple<int, int>(9, 6);
         }
 
-        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
             return new[] { new ItemStack(GlowstoneDustItem.ItemID, (sbyte)new Random().Next(2, 4), descriptor.Metadata) };
         }

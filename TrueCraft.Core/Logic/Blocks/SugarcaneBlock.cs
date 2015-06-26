@@ -40,7 +40,7 @@ namespace TrueCraft.Core.Logic.Blocks
             return new Tuple<int, int>(9, 4);
         }
 
-        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
             return new[] { new ItemStack(SugarCanesItem.ItemID) };
         }
@@ -80,7 +80,7 @@ namespace TrueCraft.Core.Logic.Blocks
             {
                 // Destroy self
                 world.SetBlockID(descriptor.Coordinates, 0);
-                GenerateDropEntity(descriptor, world, server);
+                GenerateDropEntity(descriptor, world, server, ItemStack.EmptyStack);
             }
         }
 

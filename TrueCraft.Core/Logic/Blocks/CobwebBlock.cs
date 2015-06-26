@@ -28,9 +28,13 @@ namespace TrueCraft.Core.Logic.Blocks
             return new Tuple<int, int>(11, 0);
         }
 
-        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
-            return new[] { new ItemStack(StringItem.ItemID, 1, descriptor.Metadata) };
+            var provider = ItemRepository.GetItemProvider(item.ID);
+            if (provider is SwordItem)
+                return new[] { new ItemStack(StringItem.ItemID, 1, descriptor.Metadata) };
+            else
+                return new ItemStack[0];
         }
     }
 }

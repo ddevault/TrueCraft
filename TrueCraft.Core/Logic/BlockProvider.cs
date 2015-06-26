@@ -17,6 +17,9 @@ namespace TrueCraft.Core.Logic
     /// </summary>
     public abstract class BlockProvider : IItemProvider, IBlockProvider
     {
+        public static IBlockRepository BlockRepository { get; set; }
+        public static IItemRepository ItemRepository { get; set; }
+
         public virtual void BlockLeftClicked(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
             // This space intentionally left blank
@@ -34,18 +37,18 @@ namespace TrueCraft.Core.Logic
 
         public virtual void BlockMined(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
-            GenerateDropEntity(descriptor, world, user.Server);
+            GenerateDropEntity(descriptor, world, user.Server, user.SelectedItem);
             world.SetBlockID(descriptor.Coordinates, 0);
         }
 
-        public void GenerateDropEntity(BlockDescriptor descriptor, IWorld world, IMultiplayerServer server)
+        public void GenerateDropEntity(BlockDescriptor descriptor, IWorld world, IMultiplayerServer server, ItemStack item)
         {
             var entityManager = server.GetEntityManagerForWorld(world);
-            var items = GetDrop(descriptor);
-            foreach (var item in items)
+            var items = GetDrop(descriptor, item);
+            foreach (var i in items)
             {
-                if (item.Empty) continue;
-                var entity = new ItemEntity(new Vector3(descriptor.Coordinates) + new Vector3(0.5), item);
+                if (i.Empty) continue;
+                var entity = new ItemEntity(new Vector3(descriptor.Coordinates) + new Vector3(0.5), i);
                 entityManager.SpawnEntity(entity);
             }
         }
@@ -66,7 +69,7 @@ namespace TrueCraft.Core.Logic
         {
             if (!IsSupported(descriptor, server, world))
             {
-                GenerateDropEntity(descriptor, world, server);
+                GenerateDropEntity(descriptor, world, server, ItemStack.EmptyStack);
                 world.SetBlockID(descriptor.Coordinates, 0);
             }
         }
@@ -76,7 +79,7 @@ namespace TrueCraft.Core.Logic
             // This space intentionally left blank
         }
 
-        protected virtual ItemStack[] GetDrop(BlockDescriptor descriptor) // TODO: Include tools
+        protected virtual ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
             short meta = 0;
             if (this is ICraftingRecipe)

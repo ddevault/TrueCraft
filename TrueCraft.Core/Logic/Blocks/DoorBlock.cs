@@ -20,7 +20,7 @@ namespace TrueCraft.Core.Logic.Blocks
                 world.SetBlockID(descriptor.Coordinates, 0);
         }
 
-        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
             return new[] { new ItemStack(ItemID) };
         }

@@ -31,7 +31,7 @@ namespace TrueCraft.Core.Logic.Blocks
             return new Tuple<int, int>(8, 5);
         }
 
-        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
             if (descriptor.Metadata >= 7)
                 return new[] { new ItemStack(WheatItem.ItemID), new ItemStack(SeedsItem.ItemID, (sbyte)MathHelper.Random.Next(3)) };
@@ -57,7 +57,7 @@ namespace TrueCraft.Core.Logic.Blocks
         {
             if (world.GetBlockID(descriptor.Coordinates + Coordinates3D.Down) != FarmlandBlock.BlockID)
             {
-                GenerateDropEntity(descriptor, world, server);
+                GenerateDropEntity(descriptor, world, server, ItemStack.EmptyStack);
                 world.SetBlockID(descriptor.Coordinates, 0);
             }
         }

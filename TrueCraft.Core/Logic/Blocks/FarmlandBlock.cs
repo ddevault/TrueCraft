@@ -36,7 +36,7 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override string DisplayName { get { return "Farmland"; } }
 
-        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
             return new[] { new ItemStack(DirtBlock.BlockID) };
         }

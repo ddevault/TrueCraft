@@ -25,7 +25,7 @@ namespace TrueCraft.Core.Logic.Blocks
             return new Tuple<int, int>(1, 4);
         }
 
-        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
             return new ItemStack[0];
         }

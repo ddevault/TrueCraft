@@ -26,7 +26,7 @@ namespace TrueCraft.Core.Logic.Blocks
             }
         }
 
-        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
             return new ItemStack[0];
         }
@@ -151,7 +151,7 @@ namespace TrueCraft.Core.Logic.Blocks
         {
             // For each block we can flow into, generate an item entity if appropriate
             var provider = world.BlockRepository.GetBlockProvider(world.GetBlockID(target.TargetBlock));
-            provider.GenerateDropEntity(new BlockDescriptor { Coordinates = target.TargetBlock, ID = provider.ID }, world, server);
+            provider.GenerateDropEntity(new BlockDescriptor { Coordinates = target.TargetBlock, ID = provider.ID }, world, server, ItemStack.EmptyStack);
             // And overwrite the block with a new fluid block.
             world.SetBlockID(target.TargetBlock, FlowingID);
             world.SetMetadata(target.TargetBlock, target.Level);

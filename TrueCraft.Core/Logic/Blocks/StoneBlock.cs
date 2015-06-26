@@ -1,6 +1,7 @@
 using System;
 using TrueCraft.API.Logic;
 using TrueCraft.API;
+using TrueCraft.Core.Logic.Items;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
@@ -23,9 +24,13 @@ namespace TrueCraft.Core.Logic.Blocks
             return new Tuple<int, int>(1, 0);
         }
 
-        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
-            return new[] { new ItemStack(CobblestoneBlock.BlockID, 1, descriptor.Metadata) };
+            var provider = ItemRepository.GetItemProvider(item.ID);
+            if (provider is PickaxeItem)
+                return new[] { new ItemStack(CobblestoneBlock.BlockID, 1, descriptor.Metadata) };
+            else
+                return new ItemStack[0];
         }
     }
 }

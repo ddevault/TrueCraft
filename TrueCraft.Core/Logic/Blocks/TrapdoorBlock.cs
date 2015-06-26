@@ -85,7 +85,7 @@ namespace TrueCraft.Core.Logic.Blocks
             base.ItemUsedOnBlock(coordinates, item, face, world, user);
         }
 
-        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
             return new[] { new ItemStack(ID) };
         }

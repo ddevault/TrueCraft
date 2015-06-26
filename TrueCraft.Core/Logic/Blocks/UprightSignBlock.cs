@@ -41,7 +41,7 @@ namespace TrueCraft.Core.Logic.Blocks
             world.SetMetadata(descriptor.Coordinates, (byte)(rotation / 22.5));
         }
 
-        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
             return new[] { new ItemStack(SignItem.ItemID) };
         }

@@ -91,6 +91,8 @@ namespace TrueCraft
             var itemRepository = new ItemRepository();
             itemRepository.DiscoverItemProviders();
             ItemRepository = itemRepository;
+            BlockProvider.ItemRepository = ItemRepository;
+            BlockProvider.BlockRepository = BlockRepository;
             var craftingRepository = new CraftingRepository();
             craftingRepository.DiscoverRecipes();
             CraftingRepository = craftingRepository;

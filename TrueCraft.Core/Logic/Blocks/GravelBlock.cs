@@ -28,7 +28,7 @@ namespace TrueCraft.Core.Logic.Blocks
             return new Tuple<int, int>(3, 1);
         }
 
-        protected override ItemStack[] GetDrop(BlockDescriptor descriptor)
+        protected override ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
             //Gravel has a 10% chance of dropping flint.
             if (MathHelper.Random.Next(10) == 0)
