@@ -283,6 +283,10 @@ namespace TrueCraft
                     e.SetBuffer(null, 0, 0);
                     break;
             }
+
+            if(Connection != null)
+                if (!Connection.Connected && !Disconnected)
+                    Server.DisconnectClient(this);
         }
 
         private void ProcessNetwork(SocketAsyncEventArgs e)
