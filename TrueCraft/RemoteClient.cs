@@ -282,9 +282,13 @@ namespace TrueCraft
 
                     e.SetBuffer(null, 0, 0);
                     break;
+                case SocketAsyncOperation.Disconnect:
+                    Connection.Close();
+
+                    break;
             }
 
-            if(Connection != null)
+            if (Connection != null)
                 if (!Connection.Connected && !Disconnected)
                     Server.DisconnectClient(this);
         }
@@ -345,15 +349,18 @@ namespace TrueCraft
 
         public void Disconnect()
         {
-            if (!Disconnected)
+            if (Disconnected)
                 return;
 
             Disconnected = true;
 
-            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-            Connection.DisconnectAsync(args);
-
             cancel.Cancel();
+
+            Connection.Shutdown(SocketShutdown.Send);
+
+            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+            args.Completed += OperationCompleted;
+            Connection.DisconnectAsync(args);
         }
 
         public void SendMessage(string message)
