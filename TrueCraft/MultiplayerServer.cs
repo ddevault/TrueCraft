@@ -113,6 +113,8 @@ namespace TrueCraft
             Listener.Start();
             EndPoint = (IPEndPoint)Listener.LocalEndpoint;
 
+            Scheduler.Start();
+
             SocketAsyncEventArgs args = new SocketAsyncEventArgs();
             args.Completed += AcceptClient;
 
@@ -135,6 +137,8 @@ namespace TrueCraft
                 w.Save();
             foreach (var c in Clients)
                 DisconnectClient(c);
+
+            Scheduler.Stop();
         }
 
         public void AddWorld(IWorld world)
@@ -294,7 +298,6 @@ namespace TrueCraft
         {
             if (ShuttingDown)
                 return;
-            Scheduler.Update();
             foreach (var manager in EntityManagers)
             {
                 manager.Update();
