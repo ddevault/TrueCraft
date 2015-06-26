@@ -15,6 +15,8 @@ using TrueCraft.Core.Logging;
 using TrueCraft.API.Logic;
 using TrueCraft.Exceptions;
 using TrueCraft.Core.Logic;
+using TrueCraft.Core.Lighting;
+using TrueCraft.Core.World;
 
 namespace TrueCraft
 {
@@ -30,6 +32,7 @@ namespace TrueCraft
         public IList<IRemoteClient> Clients { get; private set; }
         public IList<IWorld> Worlds { get; private set; }
         public IList<IEntityManager> EntityManagers { get; private set; }
+        public IList<WorldLighter> WorldLighters { get; set; }
         public IEventScheduler Scheduler { get; private set; }
         public IBlockRepository BlockRepository { get; private set; }
         public IItemRepository ItemRepository { get; private set; }
@@ -94,6 +97,7 @@ namespace TrueCraft
             PendingBlockUpdates = new Queue<BlockUpdate>();
             EnableClientLogging = false;
             QueryProtocol = new TrueCraft.QueryProtocol(this);
+            WorldLighters = new List<WorldLighter>();
 
             AccessConfiguration = Configuration.LoadConfiguration<AccessConfiguration>("access.yaml");
 
@@ -145,25 +149,49 @@ namespace TrueCraft
         {
             Worlds.Add(world);
             world.BlockRepository = BlockRepository;
+            world.ChunkGenerated += HandleChunkGenerated;
             world.BlockChanged += HandleBlockChanged;
             var manager = new EntityManager(this, world);
             EntityManagers.Add(manager);
+            var lighter = new WorldLighter(world, BlockRepository);
+            WorldLighters.Add(lighter);
         }
 
         void HandleBlockChanged(object sender, BlockChangeEventArgs e)
         {
-            for (int i = 0, ClientsCount = Clients.Count; i < ClientsCount; i++)
+            // TODO: Propegate lighting changes to client (not possible with beta 1.7.3 protocol)
+            if (e.NewBlock.ID != e.OldBlock.ID || e.NewBlock.Metadata != e.OldBlock.Metadata)
             {
-                var client = (RemoteClient)Clients[i];
-                // TODO: Confirm that the client knows of this block
-                if (client.LoggedIn && client.World == sender)
+                for (int i = 0, ClientsCount = Clients.Count; i < ClientsCount; i++)
                 {
-                    client.QueuePacket(new BlockChangePacket(e.Position.X, (sbyte)e.Position.Y, e.Position.Z,
-                            (sbyte)e.NewBlock.ID, (sbyte)e.NewBlock.Metadata));
+                    var client = (RemoteClient)Clients[i];
+                    // TODO: Confirm that the client knows of this block
+                    if (client.LoggedIn && client.World == sender)
+                    {
+                        client.QueuePacket(new BlockChangePacket(e.Position.X, (sbyte)e.Position.Y, e.Position.Z,
+                                (sbyte)e.NewBlock.ID, (sbyte)e.NewBlock.Metadata));
+                    }
+                }
+                PendingBlockUpdates.Enqueue(new BlockUpdate { Coordinates = e.Position, World = sender as IWorld });
+                ProcessBlockUpdates();
+                var lighter = WorldLighters.SingleOrDefault(l => l.World == sender);
+                if (lighter != null)
+                {
+                    lighter.EnqueueOperation(new BoundingBox(e.Position, e.Position + Vector3.One), true);
+                    lighter.EnqueueOperation(new BoundingBox(e.Position, e.Position + Vector3.One), false);
                 }
             }
-            PendingBlockUpdates.Enqueue(new BlockUpdate { Coordinates = e.Position, World = sender as IWorld });
-            ProcessBlockUpdates();
+        }
+
+        void HandleChunkGenerated(object sender, ChunkGeneratedEventArgs e)
+        {
+            var lighter = new WorldLighter(sender as IWorld, BlockRepository);
+            var coords = e.Coordinates * new Coordinates2D(Chunk.Width, Chunk.Depth);
+            lighter.EnqueueOperation(new BoundingBox(new Vector3(coords.X, 0, coords.Z),
+                    new Vector3(coords.X + Chunk.Width, Chunk.Height, coords.Z + Chunk.Depth)), true, true);
+            while (lighter.TryLightNext()) // Initial lighting
+            {
+            }
         }
 
         private void ProcessBlockUpdates()
@@ -301,6 +329,13 @@ namespace TrueCraft
             foreach (var manager in EntityManagers)
             {
                 manager.Update();
+            }
+            foreach (var lighter in WorldLighters)
+            {
+                int attempts = 500;
+                while (attempts-- > 0 && lighter.TryLightNext())
+                {
+                }
             }
         }
 

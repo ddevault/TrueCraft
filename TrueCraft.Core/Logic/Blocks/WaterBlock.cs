@@ -23,7 +23,7 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override bool Opaque { get { return false; } }
 
-        public override byte LightModifier { get { return 3; } }
+        public override byte LightModifier { get { return 2; } }
         
         public override string DisplayName { get { return "Water"; } }
 
@@ -48,15 +48,5 @@ namespace TrueCraft.Core.Logic.Blocks
         public override byte ID { get { return 0x09; } }
 
         public override string DisplayName { get { return "Water (stationary)"; } }
-
-        public override double BlastResistance { get { return 500; } }
-
-        public override double Hardness { get { return 100; } }
-
-        public override byte Luminance { get { return 0; } }
-
-        public override bool Opaque { get { return false; } }
-
-        public override byte LightModifier { get { return 3; } }
     }
 }

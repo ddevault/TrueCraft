@@ -50,6 +50,7 @@ namespace TrueCraft.Core.World
         }
 
         public event EventHandler<BlockChangeEventArgs> BlockChanged;
+        public event EventHandler<ChunkGeneratedEventArgs> ChunkGenerated;
 
         public World()
         {
@@ -103,20 +104,22 @@ namespace TrueCraft.Core.World
         /// <summary>
         /// Finds a chunk that contains the specified block coordinates.
         /// </summary>
-        public IChunk FindChunk(Coordinates3D coordinates)
+        public IChunk FindChunk(Coordinates3D coordinates, bool generate = true)
         {
             IChunk chunk;
-            FindBlockPosition(coordinates, out chunk);
+            FindBlockPosition(coordinates, out chunk, generate);
             return chunk;
         }
 
-        public IChunk GetChunk(Coordinates2D coordinates)
+        public IChunk GetChunk(Coordinates2D coordinates, bool generate = true)
         {
             int regionX = coordinates.X / Region.Width - ((coordinates.X < 0) ? 1 : 0);
             int regionZ = coordinates.Z / Region.Depth - ((coordinates.Z < 0) ? 1 : 0);
 
-            var region = LoadOrGenerateRegion(new Coordinates2D(regionX, regionZ));
-            return region.GetChunk(new Coordinates2D(coordinates.X - regionX * 32, coordinates.Z - regionZ * 32));
+            var region = LoadOrGenerateRegion(new Coordinates2D(regionX, regionZ), generate);
+            if (region == null)
+                return null;
+            return region.GetChunk(new Coordinates2D(coordinates.X - regionX * 32, coordinates.Z - regionZ * 32), generate);
         }
 
         public void GenerateChunk(Coordinates2D coordinates)
@@ -254,15 +257,25 @@ namespace TrueCraft.Core.World
         public void SetSkyLight(Coordinates3D coordinates, byte value)
         {
             IChunk chunk;
-            coordinates = FindBlockPosition(coordinates, out chunk);
-            chunk.SetSkyLight(coordinates, value);
+            var adjustedCoordinates = FindBlockPosition(coordinates, out chunk);
+            BlockDescriptor old = new BlockDescriptor();
+            if (BlockChanged != null)
+                old = GetBlockDataFromChunk(adjustedCoordinates, chunk, coordinates);
+            chunk.SetSkyLight(adjustedCoordinates, value);
+            if (BlockChanged != null)
+                BlockChanged(this, new BlockChangeEventArgs(coordinates, old, GetBlockDataFromChunk(adjustedCoordinates, chunk, coordinates)));
         }
 
         public void SetBlockLight(Coordinates3D coordinates, byte value)
         {
             IChunk chunk;
-            coordinates = FindBlockPosition(coordinates, out chunk);
-            chunk.SetBlockLight(coordinates, value);
+            var adjustedCoordinates = FindBlockPosition(coordinates, out chunk);
+            BlockDescriptor old = new BlockDescriptor();
+            if (BlockChanged != null)
+                old = GetBlockDataFromChunk(adjustedCoordinates, chunk, coordinates);
+            chunk.SetBlockLight(adjustedCoordinates, value);
+            if (BlockChanged != null)
+                BlockChanged(this, new BlockChangeEventArgs(coordinates, old, GetBlockDataFromChunk(adjustedCoordinates, chunk, coordinates)));
         }
 
         public void SetTileEntity(Coordinates3D coordinates, NbtCompound value)
@@ -300,7 +313,7 @@ namespace TrueCraft.Core.World
             Save();
         }
 
-        public Coordinates3D FindBlockPosition(Coordinates3D coordinates, out IChunk chunk)
+        public Coordinates3D FindBlockPosition(Coordinates3D coordinates, out IChunk chunk, bool generate = true)
         {
             if (coordinates.Y < 0 || coordinates.Y >= Chunk.Height)
                 throw new ArgumentOutOfRangeException("coordinates", "Coordinates are out of range");
@@ -308,7 +321,7 @@ namespace TrueCraft.Core.World
             var chunkX = (int)Math.Floor((double)coordinates.X / Chunk.Width);
             var chunkZ = (int)Math.Floor((double)coordinates.Z / Chunk.Depth);
 
-            chunk = GetChunk(new Coordinates2D(chunkX, chunkZ));
+            chunk = GetChunk(new Coordinates2D(chunkX, chunkZ), generate);
             return new Coordinates3D(
                 (coordinates.X - chunkX * Chunk.Width) % Chunk.Width,
                 coordinates.Y,
@@ -317,13 +330,15 @@ namespace TrueCraft.Core.World
 
         public bool IsValidPosition(Coordinates3D position)
         {
-            return position.Y >= 0 && position.Y <= 255;
+            return position.Y >= 0 && position.Y < Chunk.Height;
         }
 
-        private Region LoadOrGenerateRegion(Coordinates2D coordinates)
+        private Region LoadOrGenerateRegion(Coordinates2D coordinates, bool generate = true)
         {
             if (Regions.ContainsKey(coordinates))
                 return (Region)Regions[coordinates];
+            if (!generate)
+                return null;
             Region region;
             if (BaseDirectory != null)
             {
@@ -344,6 +359,14 @@ namespace TrueCraft.Core.World
         {
             foreach (var region in Regions)
                 region.Value.Dispose();
+            BlockChanged = null;
+            ChunkGenerated = null;
+        }
+
+        protected internal void OnChunkGenerated(ChunkGeneratedEventArgs e)
+        {
+            if (ChunkGenerated != null)
+                ChunkGenerated(this, e);
         }
     }
 }

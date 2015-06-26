@@ -296,5 +296,13 @@ namespace TrueCraft.API
                 return (this.Min + this.Max) / 2;
             }
         }
+
+        public double Volume
+        {
+            get
+            {
+                return Width * Height * Depth;
+            }
+        }
     }
 }

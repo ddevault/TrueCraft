@@ -19,11 +19,15 @@ namespace TrueCraft.API.World
         long Time { get; set; }
 
         event EventHandler<BlockChangeEventArgs> BlockChanged;
+        event EventHandler<ChunkGeneratedEventArgs> ChunkGenerated;
 
-        IChunk GetChunk(Coordinates2D coordinates);
+        IChunk GetChunk(Coordinates2D coordinates, bool generate = true);
+        IChunk FindChunk(Coordinates3D coordinates, bool generate = true);
         byte GetBlockID(Coordinates3D coordinates);
         byte GetMetadata(Coordinates3D coordinates);
+        byte GetBlockLight(Coordinates3D coordinates);
         byte GetSkyLight(Coordinates3D coordinates);
+        Coordinates3D FindBlockPosition(Coordinates3D coordinates, out IChunk chunk, bool generate = true);
         NbtCompound GetTileEntity(Coordinates3D coordinates);
         BlockDescriptor GetBlockData(Coordinates3D coordinates);
         void SetBlockData(Coordinates3D coordinates, BlockDescriptor block);

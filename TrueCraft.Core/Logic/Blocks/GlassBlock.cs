@@ -20,6 +20,8 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override string DisplayName { get { return "Glass"; } }
 
+        public override byte LightModifier { get { return 0; } }
+
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(1, 3);

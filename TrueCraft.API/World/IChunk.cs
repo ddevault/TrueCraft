@@ -10,10 +10,12 @@ namespace TrueCraft.API.World
         int Z { get; }
         Coordinates2D Coordinates { get; set; }
         bool IsModified { get; set; }
+        bool LightPopulated { get; set; }
         int[] HeightMap { get; }
         byte[] Biomes { get; }
         DateTime LastAccessed { get; set; }
         byte[] Blocks { get; }
+        bool TerrainPopulated { get; set; }
         Dictionary<Coordinates3D, NbtCompound> TileEntities { get; set; }
         NibbleArray Metadata { get; }
         NibbleArray BlockLight { get; }

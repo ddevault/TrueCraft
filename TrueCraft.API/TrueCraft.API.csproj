@@ -105,6 +105,7 @@
     <Compile Include="Logic\BlockDescriptor.cs" />
     <Compile Include="ArmorMaterial.cs" />
     <Compile Include="Server\PlayerJoinedQuitEventArgs.cs" />
+    <Compile Include="World\ChunkGeneratedEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
