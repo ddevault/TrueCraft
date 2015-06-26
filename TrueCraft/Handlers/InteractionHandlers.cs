@@ -11,6 +11,7 @@ using TrueCraft.Core.Entities;
 using fNbt;
 using TrueCraft.Core.Logic.Blocks;
 using System.Linq;
+using TrueCraft.Core.Logic.Items;
 
 namespace TrueCraft.Handlers
 {
@@ -50,7 +51,21 @@ namespace TrueCraft.Handlers
                         server.SendMessage(ChatColor.Red + "WARNING: block provider for ID {0} is null (player digging)", descriptor.ID);
                     else
                         provider.BlockLeftClicked(descriptor, packet.Face, world, client);
-                    if (provider != null && provider.Hardness == 0)
+
+                    // "But why on Earth does this behavior change if you use shears on leaves?"
+                    // "This is poor seperation of concerns"
+                    // "Let me do a git blame and flame whoever wrote the next line"
+                    // To answer all of those questions, here:
+                    // Minecraft sends a player digging packet when the player starts and stops digging a block (two packets)
+                    // However, it only sends ONE packet if the block would be mined immediately - which usually is only the case
+                    // for blocks that have a hardness equal to zero.
+                    // The exception to this rule is shears on leaves. Leaves normally have a hardness of 0.2, but when you mine them
+                    // using shears the client only sends the start digging packet and expects them to be mined immediately.
+                    // So if you want to blame anyone, send flames to Notch for the stupid idea of not sending "stop digging" packets
+                    // for hardness == 0 blocks.
+
+                    if (provider != null && provider.Hardness == 0
+                        || (client.SelectedItem.ID == ShearsItem.ItemID || provider is LeavesBlock))
                         provider.BlockMined(descriptor, packet.Face, world, client);
                     break;
                 case PlayerDiggingPacket.Action.StopDigging:
