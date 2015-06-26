@@ -80,7 +80,7 @@ namespace TrueCraft.Core.World
                             {
                                 if (World.ChunkProvider == null)
                                     throw new ArgumentException("The requested chunk is not loaded.", "position");
-                                if (!generate)
+                                if (generate)
                                     GenerateChunk(position);
                                 else
                                     return null;

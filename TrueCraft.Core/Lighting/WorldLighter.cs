@@ -107,7 +107,7 @@ namespace TrueCraft.Core.Lighting
                     if (World.IsValidPosition(coords + Neighbors[i]))
                     {
                         IChunk c;
-                        var adjusted = World.FindBlockPosition(coords + Neighbors[i], out c, generate: false);
+                        var adjusted = World.FindBlockPosition(coords + Neighbors[i], out c, false);
                         if (c != null)
                         {
                             int val;
