@@ -58,6 +58,14 @@ namespace TrueCraft.Core.Logic.Items
                 return false;
             }
         }
+
+        public override ToolType ToolType
+        {
+            get
+            {
+                return ToolType.Shovel;
+            }
+        }
     }
 
     public class WoodenShovelItem : ShovelItem

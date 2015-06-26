@@ -44,7 +44,24 @@ namespace TrueCraft.Core.Logic
         public void GenerateDropEntity(BlockDescriptor descriptor, IWorld world, IMultiplayerServer server, ItemStack item)
         {
             var entityManager = server.GetEntityManagerForWorld(world);
-            var items = GetDrop(descriptor, item);
+            var items = new ItemStack[0];
+            var type = ToolType.None;
+            var material = ToolMaterial.None;
+            var held = ItemRepository.GetItemProvider(item.ID);
+
+            if (held is ToolItem)
+            {
+                var tool = held as ToolItem;
+                material = tool.Material;
+                type = tool.ToolType;
+            }
+
+            if ((EffectiveTools & type) > 0)
+            {
+                if ((EffectiveToolMaterials & material) > 0)
+                    items = GetDrop(descriptor, item);
+            }
+
             foreach (var i in items)
             {
                 if (i.Empty) continue;
@@ -199,6 +216,10 @@ namespace TrueCraft.Core.Logic
         /// The name of the block as it would appear to players.
         /// </summary>
         public virtual string DisplayName { get { return string.Empty; } }
+
+        public virtual ToolMaterial EffectiveToolMaterials { get { return ToolMaterial.All; } }
+
+        public virtual ToolType EffectiveTools { get { return ToolType.All; } }
 
         public virtual Tuple<int, int> GetTextureMap(byte metadata)
         {

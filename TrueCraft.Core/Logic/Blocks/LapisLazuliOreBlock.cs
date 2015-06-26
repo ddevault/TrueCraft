@@ -28,5 +28,21 @@ namespace TrueCraft.Core.Logic.Blocks
         {
             return new[] { new ItemStack(DyeItem.ItemID, (sbyte)new Random().Next(4, 8), (short)DyeItem.DyeType.LapisLazuli) };
         }
+
+        public override ToolMaterial EffectiveToolMaterials
+        {
+            get
+            {
+                return ToolMaterial.Stone | ToolMaterial.Iron | ToolMaterial.Diamond;
+            }
+        }
+
+        public override ToolType EffectiveTools
+        {
+            get
+            {
+                return ToolType.Pickaxe;
+            }
+        }
     }
 }

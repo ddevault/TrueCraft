@@ -16,6 +16,8 @@ namespace TrueCraft.API.Logic
         bool RenderOpaque { get; }
         byte LightModifier { get; }
         bool DiffuseSkyLight { get; }
+        ToolMaterial EffectiveToolMaterials { get; }
+        ToolType EffectiveTools { get; }
         string DisplayName { get; }
         BoundingBox? BoundingBox { get; } // NOTE: Will this eventually need to be metadata-aware?
         Tuple<int, int> GetTextureMap(byte metadata);

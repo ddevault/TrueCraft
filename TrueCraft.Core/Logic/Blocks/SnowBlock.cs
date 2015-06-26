@@ -78,13 +78,17 @@ namespace TrueCraft.Core.Logic.Blocks
             return new Tuple<int, int>(2, 4);
         }
 
+        public override ToolType EffectiveTools
+        {
+            get
+            {
+                return ToolType.Shovel;
+            }
+        }
+
         protected override ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
-            var provider = ItemRepository.GetItemProvider(item.ID);
-            if (provider is ShovelItem)
-                return new[] { new ItemStack(SnowballItem.ItemID) };
-            else
-                return new ItemStack[0];
+            return new[] { new ItemStack(SnowballItem.ItemID) };
         }
     }
 }

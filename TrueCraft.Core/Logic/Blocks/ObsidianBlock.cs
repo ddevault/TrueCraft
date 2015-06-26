@@ -1,5 +1,6 @@
 using System;
 using TrueCraft.API.Logic;
+using TrueCraft.API;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
@@ -20,6 +21,22 @@ namespace TrueCraft.Core.Logic.Blocks
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(5, 2);
+        }
+
+        public override ToolMaterial EffectiveToolMaterials
+        {
+            get
+            {
+                return ToolMaterial.Diamond;
+            }
+        }
+
+        public override ToolType EffectiveTools
+        {
+            get
+            {
+                return ToolType.Pickaxe;
+            }
         }
     }
 }

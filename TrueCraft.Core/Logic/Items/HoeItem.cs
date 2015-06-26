@@ -61,6 +61,14 @@ namespace TrueCraft.Core.Logic.Items
             }
         }
 
+        public override ToolType ToolType
+        {
+            get
+            {
+                return ToolType.Hoe;
+            }
+        }
+
         public override void ItemUsedOnBlock(Coordinates3D coordinates, ItemStack item, BlockFace face, IWorld world, IRemoteClient user)
         {
             var id = world.GetBlockID(coordinates);

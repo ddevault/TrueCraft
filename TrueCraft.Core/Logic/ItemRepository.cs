@@ -6,7 +6,7 @@ using TrueCraft.API.Entities;
 using TrueCraft.API;
 using TrueCraft.API.World;
 
-namespace TrueCraft
+namespace TrueCraft.Core.Logic
 {
     public class ItemRepository : IItemRepository
     {
@@ -44,7 +44,7 @@ namespace TrueCraft
             ItemProviders.Insert(i + 1, provider);
         }
 
-        internal void DiscoverItemProviders()
+        public void DiscoverItemProviders()
         {
             var providerTypes = new List<Type>();
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())

@@ -54,7 +54,6 @@
     <Compile Include="Handlers\InteractionHandlers.cs" />
     <Compile Include="Commands\DebugCommands.cs" />
     <Compile Include="Exceptions\PlayerDisconnectException.cs" />
-    <Compile Include="ItemRepository.cs" />
     <Compile Include="CraftingRepository.cs" />
     <Compile Include="ServerConfiguration.cs" />
     <Compile Include="PhysicsEngine.cs" />

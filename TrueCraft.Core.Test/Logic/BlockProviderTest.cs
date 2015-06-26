@@ -31,6 +31,9 @@ namespace TrueCraft.Core.Test.Logic
             EntityManager = new Mock<IEntityManager>();
             User = new Mock<IRemoteClient>();
             BlockRepository = new Mock<IBlockRepository>();
+            var itemRepository = new ItemRepository();
+            BlockProvider.BlockRepository = BlockRepository.Object;
+            BlockProvider.ItemRepository = itemRepository;
 
             User.SetupGet(u => u.World).Returns(World.Object);
             User.SetupGet(u => u.Server).Returns(Server.Object);
@@ -67,7 +70,7 @@ namespace TrueCraft.Core.Test.Logic
             EntityManager.Verify(m => m.SpawnEntity(It.Is<ItemEntity>(e => e.Item.ID == 10)));
             World.Verify(w => w.SetBlockID(Coordinates3D.Zero, 0));
 
-            blockProvider.Protected().Setup<ItemStack[]>("GetDrop", ItExpr.IsAny<BlockDescriptor>())
+            blockProvider.Protected().Setup<ItemStack[]>("GetDrop", ItExpr.IsAny<BlockDescriptor>(), ItExpr.IsAny<ItemStack>())
                 .Returns(() => new[] { new ItemStack(12) });
             blockProvider.Object.BlockMined(descriptor, BlockFace.PositiveY, World.Object, User.Object);
             EntityManager.Verify(m => m.SpawnEntity(It.Is<ItemEntity>(e => e.Item.ID == 12)));

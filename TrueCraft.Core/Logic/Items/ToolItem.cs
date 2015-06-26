@@ -10,6 +10,8 @@ namespace TrueCraft.Core.Logic
     {
         public virtual ToolMaterial Material { get { return ToolMaterial.None; } }
 
+        public virtual ToolType ToolType { get { return ToolType.None; } }
+
         public virtual short BaseDurability { get { return 0; } }
 
         public override sbyte MaximumStack { get { return 1; } }

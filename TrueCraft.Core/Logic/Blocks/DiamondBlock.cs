@@ -46,5 +46,21 @@ namespace TrueCraft.Core.Logic.Blocks
         {
             get { return false; }
         }
+
+        public override ToolMaterial EffectiveToolMaterials
+        {
+            get
+            {
+                return ToolMaterial.Iron | ToolMaterial.Diamond;
+            }
+        }
+
+        public override ToolType EffectiveTools
+        {
+            get
+            {
+                return ToolType.Pickaxe;
+            }
+        }
     }
 }

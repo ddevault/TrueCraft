@@ -60,6 +60,14 @@ namespace TrueCraft.Core.Logic.Items
                 return false;
             }
         }
+
+        public override ToolType ToolType
+        {
+            get
+            {
+                return ToolType.Sword;
+            }
+        }
     }
 
     public class WoodenSwordItem : SwordItem

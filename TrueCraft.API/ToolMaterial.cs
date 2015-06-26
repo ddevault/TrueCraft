@@ -8,36 +8,42 @@ namespace TrueCraft.API
     /// <summary>
     /// Enumerates the materials tools can be crafted from.
     /// </summary>
+    [Flags]
     public enum ToolMaterial
     {
         /// <summary>
         /// The tool is crafted from no material (special).
         /// </summary>
-        None,
+        None = 1,
 
         /// <summary>
         /// The tool is crafted from wood.
         /// </summary>
-        Wood,
+        Wood = 2,
 
         /// <summary>
         /// The tool is crafted from cobblestone.
         /// </summary>
-        Stone,
+        Stone = 4,
 
         /// <summary>
         /// The tool is crafted from iron ingots.
         /// </summary>
-        Iron,
+        Iron = 8,
 
         /// <summary>
         /// The tool is crafted from gold ingots.
         /// </summary>
-        Gold,
+        Gold = 16,
 
         /// <summary>
         /// The tool is crafted from diamonds.
         /// </summary>
-        Diamond
+        Diamond = 32,
+
+        /// <summary>
+        /// Any tool material is valid in these circumstances.
+        /// </summary>
+        All = None | Wood | Stone | Iron | Gold | Diamond
     }
 }
