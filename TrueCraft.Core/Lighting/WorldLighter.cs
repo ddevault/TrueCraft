@@ -110,12 +110,14 @@ namespace TrueCraft.Core.Lighting
                         var adjusted = World.FindBlockPosition(coords + Neighbors[i], out c, generate: false);
                         if (c != null)
                         {
-                            byte val;
+                            int val;
                             if (op.SkyLight)
                                 val = c.GetSkyLight(adjusted);
                             else
                                 val = c.GetBlockLight(adjusted);
-                            max = Math.Max(max, val);
+                            var p = BlockRepository.GetBlockProvider(c.GetBlockID(adjusted));
+                            val -= p.LightModifier;
+                            max = (byte)Math.Max(max, val);
                         }
                     }
                 }
