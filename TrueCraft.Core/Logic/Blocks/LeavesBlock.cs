@@ -20,7 +20,9 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override bool Opaque { get { return false; } }
 
-        //TODO: Mark this as a block that diffuses sun light.
+        public override bool DiffuseSkyLight { get { return true; } }
+
+        public override byte LightModifier { get { return 2; } }
         
         public override string DisplayName { get { return "Leaves"; } }
 

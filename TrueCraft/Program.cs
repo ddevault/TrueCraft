@@ -89,6 +89,7 @@ namespace TrueCraft
                         Server.Log(LogCategory.Notice, "{0}% complete", progress + 10);
                 }
             }
+            world.Save();
             CommandManager = new CommandManager();
             Server.ChatMessageReceived += HandleChatMessageReceived;
             Server.Start(new IPEndPoint(IPAddress.Parse(ServerConfiguration.ServerAddress), ServerConfiguration.ServerPort));

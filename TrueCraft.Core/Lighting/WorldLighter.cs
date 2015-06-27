@@ -93,12 +93,14 @@ namespace TrueCraft.Core.Lighting
             byte current = op.SkyLight ? data.SkyLight : data.BlockLight;
             byte newLight = 0;
             byte opacity = Math.Max(provider.LightModifier, (byte)1);
-            byte emissiveness = Math.Max(provider.Luminance, op.SkyLight ? data.SkyLight : data.BlockLight);
+            byte emissiveness = provider.Luminance;
             if (op.SkyLight)
             {
-                if (chunk.GetHeight((byte)adjustedCoords.X, (byte)adjustedCoords.Z) <= y)
+                if (y >= chunk.GetHeight((byte)adjustedCoords.X, (byte)adjustedCoords.Z))
                     emissiveness = 15;
             }
+            else
+                emissiveness = provider.Luminance;
             if (opacity < 15 || emissiveness != 0)
             {
                 byte max = 0;
@@ -116,7 +118,7 @@ namespace TrueCraft.Core.Lighting
                             else
                                 val = c.GetBlockLight(adjusted);
                             var p = BlockRepository.GetBlockProvider(c.GetBlockID(adjusted));
-                            val -= p.LightModifier;
+                            val -= Math.Max(0, p.LightModifier - 1);
                             max = (byte)Math.Max(max, val);
                         }
                     }
@@ -171,9 +173,9 @@ namespace TrueCraft.Core.Lighting
                     if (op.Box.Min.DistanceTo(box.Min) <= 2 && op.Box.Max.DistanceTo(box.Max) <= 2
                         && op.Box.Volume - box.Volume <= 2)
                     {
-                        // Merge
-                        op.Box = new BoundingBox(Vector3.Min(op.Box.Min, box.Min), Vector3.Max(op.Box.Max, box.Max));
-                        return;
+                        // TODO: Merge
+                        //op.Box = new BoundingBox(Vector3.Min(op.Box.Min, box.Min), Vector3.Max(op.Box.Max, box.Max));
+                        //return;
                     }
                 }
                 PendingOperations.Add(new LightingOperation { SkyLight = skyLight, Box = box, Initial = initial });

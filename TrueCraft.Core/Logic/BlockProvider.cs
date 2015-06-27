@@ -208,7 +208,16 @@ namespace TrueCraft.Core.Logic
         /// - This isn't needed for opaque blocks
         /// - This is needed since some "partial" transparent blocks remove more than 1 level from light passing through such as Ice.
         /// </summary>
-        public virtual byte LightModifier { get { return 255; } }
+        public virtual byte LightModifier
+        {
+            get
+            {
+                if (Opaque)
+                    return 255;
+                else
+                    return 0;
+            }
+        }
 
         public virtual bool DiffuseSkyLight { get { return false; } }
 

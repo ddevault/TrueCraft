@@ -232,6 +232,94 @@ namespace TrueCraft.Core.Test.Lighting
                 expected--;
             }
         }
+
+        [Test]
+        public void TestLeavesAndEtc()
+        {
+            var repository = new BlockRepository();
+            repository.RegisterBlockProvider(new GrassBlock());
+            repository.RegisterBlockProvider(new DirtBlock());
+            repository.RegisterBlockProvider(new AirBlock());
+            repository.RegisterBlockProvider(new BedrockBlock());
+            repository.RegisterBlockProvider(new LeavesBlock());
+            var world = new TrueCraft.Core.World.World("TEST", new FlatlandGenerator());
+            world.BlockRepository = repository;
+            var lighter = new WorldLighter(world, repository);
+            world.GetBlockID(Coordinates3D.Zero); // Generate a chunk
+
+            for (int y = 1; y <= 16; y++)
+            {
+                var coords = new Coordinates3D(5, y, 5);
+                world.SetBlockID(coords, 0);
+                world.SetBlockID(coords + Coordinates3D.East, DirtBlock.BlockID);
+                world.SetBlockID(coords + Coordinates3D.West, DirtBlock.BlockID);
+                world.SetBlockID(coords + Coordinates3D.North, DirtBlock.BlockID);
+                world.SetBlockID(coords + Coordinates3D.South, DirtBlock.BlockID);
+            }
+            world.GetChunk(Coordinates2D.Zero).UpdateHeightMap();
+
+            lighter.EnqueueOperation(new BoundingBox(
+                    new Vector3(0, 0, 0),
+                    new Vector3(16, 128, 16)), true, true);
+            while (lighter.TryLightNext()) // Initial lighting
+            {
+            }
+
+            // Test this layout:
+            // xox      o == leaves
+            // x x
+            // xox
+            // x x
+            // xox ...
+
+            for (int y = 1; y <= 16; y++)
+            {
+                if (y % 2 == 1)
+                    world.SetBlockID(new Coordinates3D(5, y, 5), LeavesBlock.BlockID);
+            }
+            world.GetChunk(Coordinates2D.Zero).UpdateHeightMap();
+
+            lighter.EnqueueOperation(new BoundingBox(new Vector3(5, 0, 5),
+                    new Vector3(6, 16, 6)), true);
+
+            while (lighter.TryLightNext()) // Test lighting
+            {
+            }
+
+            // Output lighting
+            for (int y = 16; y >= 0; y--)
+            {
+                Console.Write(world.GetBlockID(new Coordinates3D(5, y, 5)).ToString("D2"));
+                Console.Write(" " + world.GetSkyLight(new Coordinates3D(5, y, 5)).ToString("D2"));
+                Console.WriteLine("   Y={0}", y);
+            }                
+
+            var expected = new byte[]
+            {
+                15, // air
+                15, // leaves
+                13, // air
+                11, // leaves
+                9, // air
+                7,  // leaves
+                5,  // air
+                3,  // leaves
+                1,  // air
+                0,  // leaves
+                0,  // air
+                0,  // leaves
+            };
+
+            for (int y = 16, i = 0; y >= 0; y--, i++)
+            {
+                byte ex;
+                if (i < expected.Length)
+                    ex = expected[i];
+                else
+                    ex = 0;
+                Assert.AreEqual(ex, world.GetSkyLight(new Coordinates3D(5, y, 5)));
+            }
+        }
     }
 }
 
