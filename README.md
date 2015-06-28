@@ -24,7 +24,7 @@ From the root directory of the git repository. Then run:
 
     xbuild
 
-To compile it and you'll receive binaries in `TrueCraft/bin/Debug/`.
+To compile it and you'll receive binaries in `TrueCraft.Launcher/bin/Debug/`. Run `[mono] TrueCraft.Launcher.exe` to run the client and connect to servers and play singleplayer and so on. Run `[mono] TrueCraft.Server.exe` to host a server for others to play on.
 
 Note: if you have a problem with nuget connecting, run `mozroots --import --sync`.
 
