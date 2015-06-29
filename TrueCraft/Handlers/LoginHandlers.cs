@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using TrueCraft.API.Server;
 using TrueCraft.API.Networking;
 using TrueCraft.Core.Networking.Packets;
@@ -29,6 +30,8 @@ namespace TrueCraft.Handlers
                 remoteClient.QueuePacket(new DisconnectPacket("Server has no worlds configured."));
             else if (!server.PlayerIsWhitelisted(remoteClient.Username) && server.PlayerIsBlacklisted(remoteClient.Username))
                 remoteClient.QueuePacket(new DisconnectPacket("You're banned from this server"));
+            else if (server.Clients.Count(c => c.Username == client.Username) > 1)
+                remoteClient.QueuePacket(new DisconnectPacket("The player with this username is already logged in"));
             else
             {
                 remoteClient.LoggedIn = true;
