@@ -28,7 +28,7 @@ To compile it and you'll receive binaries in `TrueCraft.Launcher/bin/Debug/`. Ru
 
 Note: if you have a problem with nuget connecting, run `mozroots --import --sync`.
 
-Note: TrueCraft requires mono 3.10 or newer.
+Note: TrueCraft requires mono 4.0 or newer.
 
 ## Get Involved
 
