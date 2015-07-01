@@ -181,7 +181,7 @@ namespace TrueCraft
             }
         }
 
-        void HandleChunkGenerated(object sender, ChunkGeneratedEventArgs e)
+        void HandleChunkGenerated(object sender, ChunkLoadedEventArgs e)
         {
             var lighter = new WorldLighter(sender as IWorld, BlockRepository);
             var coords = e.Coordinates * new Coordinates2D(Chunk.Width, Chunk.Depth);

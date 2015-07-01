@@ -99,6 +99,7 @@ namespace TrueCraft.Core.World
                                     nbt.LoadFromStream(regionFile, NbtCompression.ZLib, null);
                                     var chunk = Chunk.FromNbt(nbt);
                                     Chunks.Add(position, chunk);
+                                    World.OnChunkLoaded(new ChunkLoadedEventArgs(chunk));
                                     break;
                                 default:
                                     throw new InvalidDataException("Invalid compression scheme provided by region file.");
@@ -126,7 +127,7 @@ namespace TrueCraft.Core.World
             chunk.IsModified = true;
             chunk.Coordinates = globalPosition;
             Chunks.Add(position, chunk);
-            World.OnChunkGenerated(new ChunkGeneratedEventArgs(chunk));
+            World.OnChunkGenerated(new ChunkLoadedEventArgs(chunk));
         }
 
         /// <summary>

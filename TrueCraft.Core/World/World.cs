@@ -50,7 +50,8 @@ namespace TrueCraft.Core.World
         }
 
         public event EventHandler<BlockChangeEventArgs> BlockChanged;
-        public event EventHandler<ChunkGeneratedEventArgs> ChunkGenerated;
+        public event EventHandler<ChunkLoadedEventArgs> ChunkGenerated;
+        public event EventHandler<ChunkLoadedEventArgs> ChunkLoaded;
 
         public World()
         {
@@ -363,10 +364,16 @@ namespace TrueCraft.Core.World
             ChunkGenerated = null;
         }
 
-        protected internal void OnChunkGenerated(ChunkGeneratedEventArgs e)
+        protected internal void OnChunkGenerated(ChunkLoadedEventArgs e)
         {
             if (ChunkGenerated != null)
                 ChunkGenerated(this, e);
+        }
+
+        protected internal void OnChunkLoaded(ChunkLoadedEventArgs e)
+        {
+            if (ChunkLoaded != null)
+                ChunkLoaded(this, e);
         }
     }
 }

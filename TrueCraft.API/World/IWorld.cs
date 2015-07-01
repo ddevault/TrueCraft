@@ -19,7 +19,8 @@ namespace TrueCraft.API.World
         long Time { get; set; }
 
         event EventHandler<BlockChangeEventArgs> BlockChanged;
-        event EventHandler<ChunkGeneratedEventArgs> ChunkGenerated;
+        event EventHandler<ChunkLoadedEventArgs> ChunkGenerated;
+        event EventHandler<ChunkLoadedEventArgs> ChunkLoaded;
 
         IChunk GetChunk(Coordinates2D coordinates, bool generate = true);
         IChunk FindChunk(Coordinates3D coordinates, bool generate = true);

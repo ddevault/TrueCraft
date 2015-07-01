@@ -33,12 +33,20 @@ namespace TrueCraft.Core.Lighting
 
         private object _Lock = new object();
         private List<LightingOperation> PendingOperations { get; set; }
+        private Dictionary<Coordinates2D, byte[,]> HeightMaps { get; set; }
 
         public WorldLighter(IWorld world, IBlockRepository blockRepository)
         {
             BlockRepository = blockRepository;
             World = world;
             PendingOperations = new List<LightingOperation>();
+            HeightMaps = new Dictionary<Coordinates2D, byte[,]>();
+            world.ChunkGenerated += (sender, e) => GenerateHeightMap(e.Chunk);
+        }
+
+        private void GenerateHeightMap(IChunk chunk)
+        {
+            
         }
 
         private void LightBox(LightingOperation op)
