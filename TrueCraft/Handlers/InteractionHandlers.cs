@@ -65,7 +65,7 @@ namespace TrueCraft.Handlers
                     // for hardness == 0 blocks.
 
                     if (provider != null && provider.Hardness == 0
-                        || (client.SelectedItem.ID == ShearsItem.ItemID || provider is LeavesBlock))
+                        || (client.SelectedItem.ID == ShearsItem.ItemID && provider is LeavesBlock))
                         provider.BlockMined(descriptor, packet.Face, world, client);
                     break;
                 case PlayerDiggingPacket.Action.StopDigging:
