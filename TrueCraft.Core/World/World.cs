@@ -381,18 +381,16 @@ namespace TrueCraft.Core.World
         {
             public World World { get; set; }
             private int Index { get; set; }
-            private IList<Chunk> Chunks { get; set; }
+            private IList<IChunk> Chunks { get; set; }
 
             public ChunkEnumerator(World world)
             {
                 World = world;
-                Index = 0;
+                Index = -1;
                 var regions = world.Regions.Values.ToList();
-                var chunks = new List<Chunk>();
+                var chunks = new List<IChunk>();
                 foreach (var region in regions)
-                {
-                    chunks.AddRange((IEnumerable<Chunk>)region.Chunks.Values);
-                }
+                    chunks.AddRange(region.Chunks.Values);
                 Chunks = chunks;
             }
 
@@ -404,7 +402,7 @@ namespace TrueCraft.Core.World
 
             public void Reset()
             {
-                Index = 0;
+                Index = -1;
             }
 
             public void Dispose()

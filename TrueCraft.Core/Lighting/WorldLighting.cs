@@ -43,7 +43,11 @@ namespace TrueCraft.Core.Lighting
             HeightMaps = new Dictionary<Coordinates2D, byte[,]>();
             world.ChunkGenerated += (sender, e) => GenerateHeightMap(e.Chunk);
             world.ChunkLoaded += (sender, e) => GenerateHeightMap(e.Chunk);
-            world.BlockChanged += (sender, e) => UpdateHeightMap(e.Position);
+            world.BlockChanged += (sender, e) =>
+            {
+                if (e.NewBlock.ID != e.OldBlock.ID)
+                    UpdateHeightMap(e.Position);
+            };
             foreach (var chunk in world)
                 GenerateHeightMap(chunk);
         }
@@ -74,6 +78,8 @@ namespace TrueCraft.Core.Lighting
         {
             IChunk chunk;
             var adjusted = World.FindBlockPosition(coords, out chunk, generate: false);
+            if (!HeightMaps.ContainsKey(chunk.Coordinates))
+                return;
             var map = HeightMaps[chunk.Coordinates];
             int x = adjusted.X; int z = adjusted.Z;
             for (byte y = Chunk.Height - 1; y > 0; y--)
@@ -241,12 +247,10 @@ namespace TrueCraft.Core.Lighting
                 for (int i = PendingOperations.Count - 1; i > PendingOperations.Count - 5 && i > 0; i--)
                 {
                     var op = PendingOperations[i];
-                    if (op.Box.Min.DistanceTo(box.Min) <= 2 && op.Box.Max.DistanceTo(box.Max) <= 2
-                        && op.Box.Volume - box.Volume <= 2)
+                    if (op.Box.Intersects(box))
                     {
-                        // TODO: Merge
-                        //op.Box = new BoundingBox(Vector3.Min(op.Box.Min, box.Min), Vector3.Max(op.Box.Max, box.Max));
-                        //return;
+                        op.Box = new BoundingBox(Vector3.Min(op.Box.Min, box.Min), Vector3.Max(op.Box.Max, box.Max));
+                        return;
                     }
                 }
                 PendingOperations.Add(new LightingOperation { SkyLight = skyLight, Box = box, Initial = initial });
