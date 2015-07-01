@@ -23,7 +23,7 @@ namespace TrueCraft.Core.Test.Lighting
             repository.RegisterBlockProvider(new BedrockBlock());
             var world = new TrueCraft.Core.World.World("TEST", new FlatlandGenerator());
             world.BlockRepository = repository;
-            var lighter = new WorldLighter(world, repository);
+            var lighter = new WorldLighting(world, repository);
             world.GetBlockID(Coordinates3D.Zero); // Generate a chunk
             lighter.EnqueueOperation(new BoundingBox(
                     new Vector3(0, 0, 0),
@@ -67,7 +67,7 @@ namespace TrueCraft.Core.Test.Lighting
             repository.RegisterBlockProvider(new BedrockBlock());
             var world = new TrueCraft.Core.World.World("TEST", new FlatlandGenerator());
             world.BlockRepository = repository;
-            var lighter = new WorldLighter(world, repository);
+            var lighter = new WorldLighting(world, repository);
             world.GetBlockID(Coordinates3D.Zero); // Generate a chunk
             lighter.EnqueueOperation(new BoundingBox(
                     new Vector3(0, 0, 0),
@@ -108,7 +108,7 @@ namespace TrueCraft.Core.Test.Lighting
             repository.RegisterBlockProvider(new BedrockBlock());
             var world = new TrueCraft.Core.World.World("TEST", new FlatlandGenerator());
             world.BlockRepository = repository;
-            var lighter = new WorldLighter(world, repository);
+            var lighter = new WorldLighting(world, repository);
             world.GetBlockID(Coordinates3D.Zero); // Generate a chunk
             lighter.EnqueueOperation(new BoundingBox(
                     new Vector3(0, 0, 0),
@@ -163,7 +163,7 @@ namespace TrueCraft.Core.Test.Lighting
             repository.RegisterBlockProvider(new BedrockBlock());
             var world = new TrueCraft.Core.World.World("TEST", new FlatlandGenerator());
             world.BlockRepository = repository;
-            var lighter = new WorldLighter(world, repository);
+            var lighter = new WorldLighting(world, repository);
             world.GetBlockID(Coordinates3D.Zero); // Generate a chunk
             lighter.EnqueueOperation(new BoundingBox(
                     new Vector3(0, 0, 0),
@@ -251,7 +251,7 @@ namespace TrueCraft.Core.Test.Lighting
             repository.RegisterBlockProvider(new LeavesBlock());
             var world = new TrueCraft.Core.World.World("TEST", new FlatlandGenerator());
             world.BlockRepository = repository;
-            var lighter = new WorldLighter(world, repository);
+            var lighter = new WorldLighting(world, repository);
             world.GetBlockID(Coordinates3D.Zero); // Generate a chunk
 
             for (int y = 1; y <= 16; y++)

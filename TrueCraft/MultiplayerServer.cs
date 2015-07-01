@@ -32,7 +32,7 @@ namespace TrueCraft
         public IList<IRemoteClient> Clients { get; private set; }
         public IList<IWorld> Worlds { get; private set; }
         public IList<IEntityManager> EntityManagers { get; private set; }
-        public IList<WorldLighter> WorldLighters { get; set; }
+        public IList<WorldLighting> WorldLighters { get; set; }
         public IEventScheduler Scheduler { get; private set; }
         public IBlockRepository BlockRepository { get; private set; }
         public IItemRepository ItemRepository { get; private set; }
@@ -99,7 +99,7 @@ namespace TrueCraft
             PendingBlockUpdates = new Queue<BlockUpdate>();
             EnableClientLogging = false;
             QueryProtocol = new TrueCraft.QueryProtocol(this);
-            WorldLighters = new List<WorldLighter>();
+            WorldLighters = new List<WorldLighting>();
 
             AccessConfiguration = Configuration.LoadConfiguration<AccessConfiguration>("access.yaml");
 
@@ -151,7 +151,7 @@ namespace TrueCraft
             world.BlockChanged += HandleBlockChanged;
             var manager = new EntityManager(this, world);
             EntityManagers.Add(manager);
-            var lighter = new WorldLighter(world, BlockRepository);
+            var lighter = new WorldLighting(world, BlockRepository);
             WorldLighters.Add(lighter);
         }
 
@@ -183,7 +183,7 @@ namespace TrueCraft
 
         void HandleChunkGenerated(object sender, ChunkLoadedEventArgs e)
         {
-            var lighter = new WorldLighter(sender as IWorld, BlockRepository);
+            var lighter = new WorldLighting(sender as IWorld, BlockRepository);
             var coords = e.Coordinates * new Coordinates2D(Chunk.Width, Chunk.Depth);
             lighter.EnqueueOperation(new BoundingBox(new Vector3(coords.X, 0, coords.Z),
                     new Vector3(coords.X + Chunk.Width, Chunk.Height, coords.Z + Chunk.Depth)), true, true);

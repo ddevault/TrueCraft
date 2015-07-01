@@ -326,8 +326,8 @@
     <Compile Include="Logic\Blocks\DandelionBlock.cs" />
     <Compile Include="Windows\ChestWindow.cs" />
     <Compile Include="TerrainGen\EmptyGenerator.cs" />
-    <Compile Include="Lighting\WorldLighter.cs" />
     <Compile Include="Logic\ItemRepository.cs" />
+    <Compile Include="Lighting\WorldLighting.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -3,15 +3,13 @@ using TrueCraft.API.World;
 using TrueCraft.Core.World;
 using TrueCraft.API.Logic;
 using TrueCraft.API;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 
 // https://github.com/SirCmpwn/TrueCraft/wiki/Lighting
 
 namespace TrueCraft.Core.Lighting
 {
-    public class WorldLighter
+    public class WorldLighting
     {
         private static readonly Coordinates3D[] Neighbors =
         {
@@ -37,7 +35,7 @@ namespace TrueCraft.Core.Lighting
         private List<LightingOperation> PendingOperations { get; set; }
         private Dictionary<Coordinates2D, byte[,]> HeightMaps { get; set; }
 
-        public WorldLighter(IWorld world, IBlockRepository blockRepository)
+        public WorldLighting(IWorld world, IBlockRepository blockRepository)
         {
             BlockRepository = blockRepository;
             World = world;
