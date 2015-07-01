@@ -191,7 +191,11 @@ namespace TrueCraft.Core.World
                     regionFile.Flush();
                     // Unload idle chunks
                     foreach (var chunk in toRemove)
+                    {
+                        var c = Chunks[chunk];
                         Chunks.Remove(chunk);
+                        c.Dispose();
+                    }
                 }
             }
         }

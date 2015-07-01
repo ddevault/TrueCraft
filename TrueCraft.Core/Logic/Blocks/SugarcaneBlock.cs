@@ -100,15 +100,18 @@ namespace TrueCraft.Core.Logic.Blocks
                 var meta = world.GetMetadata(coords);
                 meta++;
                 world.SetMetadata(coords, meta);
+                var chunk = world.FindChunk(coords);
                 if (meta == 15)
                 {
                     world.SetBlockID(coords + Coordinates3D.Up, BlockID);
-                    server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
+                    server.Scheduler.ScheduleEvent(chunk,
+                        DateTime.Now.AddSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
                         (_server) => TryGrowth(_server, coords + Coordinates3D.Up, world));
                 }
                 else
                 {
-                    server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
+                    server.Scheduler.ScheduleEvent(chunk,
+                        DateTime.Now.AddSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
                         (_server) => TryGrowth(_server, coords, world));
                 }
             }
@@ -116,7 +119,9 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
-            user.Server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
+            var chunk = world.FindChunk(descriptor.Coordinates);
+            user.Server.Scheduler.ScheduleEvent(chunk,
+                DateTime.Now.AddSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
                 (server) => TryGrowth(server, descriptor.Coordinates, world));
         }
     }

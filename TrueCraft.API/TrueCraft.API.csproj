@@ -32,7 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="YamlDotNet">
-      <HintPath>..\packages\YamlDotNet.3.6.0\lib\net35\YamlDotNet.dll</HintPath>
+      <HintPath>..\packages\YamlDotNet.3.6.1\lib\net35\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -108,6 +108,7 @@
     <Compile Include="Server\PlayerJoinedQuitEventArgs.cs" />
     <Compile Include="ToolType.cs" />
     <Compile Include="World\ChunkLoadedEventArgs.cs" />
+    <Compile Include="IEventSubject.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

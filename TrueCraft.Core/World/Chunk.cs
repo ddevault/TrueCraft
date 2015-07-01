@@ -12,6 +12,14 @@ namespace TrueCraft.Core.World
     {
         public const int Width = 16, Height = 128, Depth = 16;
 
+        public event EventHandler Disposed;
+
+        public void Dispose()
+        {
+            if (Disposed != null)
+                Disposed(this, null);
+        }
+
         [NbtIgnore]
         public DateTime LastAccessed { get; set; }
         [NbtIgnore]
@@ -283,7 +291,6 @@ namespace TrueCraft.Core.World
 
         public void Deserialize(NbtTag value)
         {
-            var chunk = new Chunk();
             var tag = (NbtCompound)value;
 
             X = tag["X"].IntValue;

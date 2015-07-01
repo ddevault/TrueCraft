@@ -25,7 +25,7 @@ using TrueCraft.Exceptions;
 
 namespace TrueCraft
 {
-    public class RemoteClient : IRemoteClient, IDisposable
+    public class RemoteClient : IRemoteClient, IEventSubject, IDisposable
     {
         public RemoteClient(IMultiplayerServer server, IPacketReader packetReader, PacketHandler[] packetHandlers, Socket connection)
         {
@@ -49,6 +49,8 @@ namespace TrueCraft
 
             StartReceive();
         }
+
+        public event EventHandler Disposed;
 
         /// <summary>
         /// A list of entities that this client is aware of.
@@ -386,7 +388,7 @@ namespace TrueCraft
                 {
                     ChunkRadius++;
                     UpdateChunks();
-                    server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(1), ExpandChunkRadius);
+                    server.Scheduler.ScheduleEvent(this, DateTime.Now.AddSeconds(1), ExpandChunkRadius);
                 }
             });
         }
@@ -394,7 +396,7 @@ namespace TrueCraft
         internal void SendKeepAlive(IMultiplayerServer server)
         {
             QueuePacket(new KeepAlivePacket());
-            server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(1), SendKeepAlive);
+            server.Scheduler.ScheduleEvent(this, DateTime.Now.AddSeconds(1), SendKeepAlive);
         }
 
         internal void UpdateChunks()
@@ -525,6 +527,9 @@ namespace TrueCraft
                 Disconnect();
 
                 sem.Dispose();
+
+                if (Disposed != null)
+                    Disposed(this, null);
             }
 
             sem = null;

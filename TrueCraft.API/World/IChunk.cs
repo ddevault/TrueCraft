@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace TrueCraft.API.World
 {
-    public interface IChunk
+    public interface IChunk : IEventSubject, IDisposable
     {
         int X { get; }
         int Z { get; }

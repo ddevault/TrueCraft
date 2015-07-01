@@ -48,7 +48,9 @@ namespace TrueCraft.Core.Logic.Blocks
             world.SetMetadata(coords, meta);
             if (meta < 7)
             {
-                server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(MathHelper.Random.Next(30, 60)),
+                var chunk = world.FindChunk(coords);
+                server.Scheduler.ScheduleEvent(
+                    chunk, DateTime.Now.AddSeconds(MathHelper.Random.Next(30, 60)),
                    (_server) => GrowBlock(_server, world, coords));
             }
         }
@@ -64,7 +66,8 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
-            user.Server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(MathHelper.Random.Next(30, 60)),
+            var chunk = world.FindChunk(descriptor.Coordinates);
+            user.Server.Scheduler.ScheduleEvent(chunk, DateTime.Now.AddSeconds(MathHelper.Random.Next(30, 60)),
                 (server) => GrowBlock(server, world, descriptor.Coordinates + MathHelper.BlockFaceToCoordinates(face)));
         }
     }

@@ -85,7 +85,10 @@ namespace TrueCraft.Core.Logic.Blocks
                 }
                 world.SetMetadata(coords, meta);
             }
-            server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(UpdateIntervalSeconds), (_server) => HydrationCheckEvent(_server, coords, world));
+            var chunk = world.FindChunk(coords);
+            server.Scheduler.ScheduleEvent(chunk,
+                DateTime.Now.AddSeconds(UpdateIntervalSeconds),
+                _server => HydrationCheckEvent(_server, coords, world));
         }
 
         public override void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
@@ -94,7 +97,10 @@ namespace TrueCraft.Core.Logic.Blocks
             {
                 world.SetMetadata(descriptor.Coordinates, 1);
             }
-            user.Server.Scheduler.ScheduleEvent(DateTime.Now.AddSeconds(UpdateIntervalSeconds), (server) => HydrationCheckEvent(server, descriptor.Coordinates, world));
+            var chunk = world.FindChunk(descriptor.Coordinates);
+            user.Server.Scheduler.ScheduleEvent(chunk,
+                DateTime.Now.AddSeconds(UpdateIntervalSeconds),
+                server => HydrationCheckEvent(server, descriptor.Coordinates, world));
         }
     }
 }
