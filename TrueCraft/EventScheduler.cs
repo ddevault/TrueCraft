@@ -47,6 +47,7 @@ namespace TrueCraft
                         i--;
                     }
                 }
+                Subjects.Remove((IEventSubject)sender);
             }
         }
 
