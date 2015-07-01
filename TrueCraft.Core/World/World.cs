@@ -7,10 +7,11 @@ using TrueCraft.API;
 using TrueCraft.API.World;
 using TrueCraft.API.Logic;
 using fNbt;
+using System.Collections;
 
 namespace TrueCraft.Core.World
 {
-    public class World : IDisposable, IWorld
+    public class World : IDisposable, IWorld, IEnumerable<IChunk>
     {
         public static readonly int Height = 128;
 
@@ -374,6 +375,66 @@ namespace TrueCraft.Core.World
         {
             if (ChunkLoaded != null)
                 ChunkLoaded(this, e);
+        }
+
+        public class ChunkEnumerator : IEnumerator<IChunk>
+        {
+            public World World { get; set; }
+            private int Index { get; set; }
+            private IList<Chunk> Chunks { get; set; }
+
+            public ChunkEnumerator(World world)
+            {
+                World = world;
+                Index = 0;
+                var regions = world.Regions.Values.ToList();
+                var chunks = new List<Chunk>();
+                foreach (var region in regions)
+                {
+                    chunks.AddRange((IEnumerable<Chunk>)region.Chunks.Values);
+                }
+            }
+
+            public bool MoveNext()
+            {
+                Index++;
+                return Index < Chunks.Count;
+            }
+
+            public void Reset()
+            {
+                Index = 0;
+            }
+
+            public void Dispose()
+            {
+            }
+
+            public IChunk Current
+            {
+                get
+                {
+                    return Chunks[Index];
+                }
+            }
+
+            object IEnumerator.Current
+            {
+                get
+                {
+                    return Current;
+                }
+            }
+        }
+
+        public IEnumerator<IChunk> GetEnumerator()
+        {
+            return new ChunkEnumerator(this);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
         }
     }
 }

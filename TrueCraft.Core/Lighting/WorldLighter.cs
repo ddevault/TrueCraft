@@ -42,11 +42,31 @@ namespace TrueCraft.Core.Lighting
             PendingOperations = new List<LightingOperation>();
             HeightMaps = new Dictionary<Coordinates2D, byte[,]>();
             world.ChunkGenerated += (sender, e) => GenerateHeightMap(e.Chunk);
+            world.ChunkLoaded += (sender, e) => GenerateHeightMap(e.Chunk);
+            foreach (var chunk in world)
+                GenerateHeightMap(chunk);
         }
 
         private void GenerateHeightMap(IChunk chunk)
         {
-            
+            var map = new byte[Chunk.Width, Chunk.Depth];
+            for (int x = 0; x < Chunk.Width; x++)
+            {
+                for (int z = 0; z < Chunk.Depth; z++)
+                {
+                    for (byte y = Chunk.Height - 1; y > 0; y--)
+                    {
+                        var id = chunk.GetBlockID(new Coordinates3D(x, y - 1, z));
+                        var provider = BlockRepository.GetBlockProvider(id);
+                        if (provider.LightModifier != 0)
+                        {
+                            map[x, z] = y;
+                            break;
+                        }
+                    }
+                }
+            }
+            HeightMaps[chunk.Coordinates] = map;
         }
 
         private void LightBox(LightingOperation op)

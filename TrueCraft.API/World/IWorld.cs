@@ -1,6 +1,7 @@
 ﻿using System;
 using TrueCraft.API.Logic;
 using fNbt;
+using System.Collections.Generic;
 
 namespace TrueCraft.API.World
 {
@@ -8,7 +9,7 @@ namespace TrueCraft.API.World
     /// <summary>
     /// An in-game world composed of chunks and blocks.
     /// </summary>
-    public interface IWorld
+    public interface IWorld : IEnumerable<IChunk>
     {
         string Name { get; set; }
         IBlockRepository BlockRepository { get; set; }
