@@ -43,6 +43,7 @@ namespace TrueCraft.Core.Lighting
             HeightMaps = new Dictionary<Coordinates2D, byte[,]>();
             world.ChunkGenerated += (sender, e) => GenerateHeightMap(e.Chunk);
             world.ChunkLoaded += (sender, e) => GenerateHeightMap(e.Chunk);
+            world.BlockChanged += (sender, e) => UpdateHeightMap(e.Position);
             foreach (var chunk in world)
                 GenerateHeightMap(chunk);
         }
@@ -67,6 +68,24 @@ namespace TrueCraft.Core.Lighting
                 }
             }
             HeightMaps[chunk.Coordinates] = map;
+        }
+
+        private void UpdateHeightMap(Coordinates3D coords)
+        {
+            IChunk chunk;
+            var adjusted = World.FindBlockPosition(coords, out chunk, generate: false);
+            var map = HeightMaps[chunk.Coordinates];
+            int x = adjusted.X; int z = adjusted.Z;
+            for (byte y = Chunk.Height - 1; y > 0; y--)
+            {
+                var id = chunk.GetBlockID(new Coordinates3D(x, y - 1, z));
+                var provider = BlockRepository.GetBlockProvider(id);
+                if (provider.LightModifier != 0)
+                {
+                    map[x, z] = y;
+                    break;
+                }
+            }
         }
 
         private void LightBox(LightingOperation op)
