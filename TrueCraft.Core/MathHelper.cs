@@ -82,7 +82,7 @@ namespace TrueCraft.Core
         public static Direction DirectionByRotation(Vector3 source, float yaw, Vector3 position, bool invert = false)
         {
             // TODO: Figure out some algorithm based on player's look yaw
-            double d = Math.Asin((position.Y - position.Y) / position.DistanceTo(source));
+            double d = Math.Asin((source.Y - position.Y) / position.DistanceTo(source));
             if (d > (Math.PI / 4)) return invert ? (Direction)1 : (Direction)0;
             if (d < -(Math.PI / 4)) return invert ? (Direction)0 : (Direction)1;
             return DirectionByRotationFlat(yaw, invert);

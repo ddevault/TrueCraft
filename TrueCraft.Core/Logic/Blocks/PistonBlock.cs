@@ -2,6 +2,8 @@ using System;
 using TrueCraft.API.Logic;
 using TrueCraft.API;
 using TrueCraft.Core.Logic.Items;
+using TrueCraft.API.World;
+using TrueCraft.API.Networking;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
@@ -60,6 +62,13 @@ namespace TrueCraft.Core.Logic.Blocks
         {
             get { return false; }
         }
+
+        public override void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            world.SetMetadata(descriptor.Coordinates,
+                (byte)MathHelper.DirectionByRotation(user.Entity.Position, user.Entity.Yaw,
+                descriptor.Coordinates, true));
+        }
     }
 
     public class StickyPistonBlock : BlockProvider, ICraftingRecipe
@@ -103,6 +112,13 @@ namespace TrueCraft.Core.Logic.Blocks
         public bool SignificantMetadata
         {
             get { return false; }
+        }
+
+        public override void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            world.SetMetadata(descriptor.Coordinates,
+                (byte)MathHelper.DirectionByRotation(user.Entity.Position, user.Entity.Yaw,
+                descriptor.Coordinates, true));
         }
     }
 

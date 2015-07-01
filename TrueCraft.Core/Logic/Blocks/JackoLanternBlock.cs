@@ -1,6 +1,8 @@
 using System;
 using TrueCraft.API.Logic;
 using TrueCraft.API;
+using TrueCraft.API.World;
+using TrueCraft.API.Networking;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
@@ -53,6 +55,11 @@ namespace TrueCraft.Core.Logic.Blocks
             {
                 return false;
             }
+        }
+
+        public override void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            world.SetMetadata(descriptor.Coordinates, (byte)MathHelper.DirectionByRotationFlat(user.Entity.Yaw, true));
         }
     }
 }
