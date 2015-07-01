@@ -9,6 +9,7 @@ using TrueCraft.API.Server;
 using TrueCraft.Core.Logic.Blocks;
 using System.Linq;
 using fNbt;
+using TrueCraft.Core.Logic.Items;
 
 namespace TrueCraft.Core.Logic
 {
@@ -241,6 +242,92 @@ namespace TrueCraft.Core.Logic
             {
                 return new BoundingBox(Vector3.Zero, Vector3.One);
             }
+        }
+
+        /// <summary>
+        /// Gets the time required to mine the given block with the given item.
+        /// </summary>
+        /// <returns>The harvest time in milliseconds.</returns>
+        /// <param name="blockId">Block identifier.</param>
+        /// <param name="itemId">Item identifier.</param>
+        /// <param name="damage">Damage sustained by the item.</param>
+        public static int GetHarvestTime(byte blockId, short itemId, out short damage)
+        {
+            // Reference:
+            // http://minecraft.gamepedia.com/index.php?title=Breaking&oldid=138286
+
+            damage = 0;
+
+            var block = BlockRepository.GetBlockProvider(blockId);
+            var item = ItemRepository.GetItemProvider(itemId);
+
+            double hardness = block.Hardness;
+            if (hardness == -1)
+                return -1;
+
+            double time = hardness * 1.5;
+
+            var tool = ToolType.None;
+            var material = ToolMaterial.None;
+
+            if (item is ToolItem)
+            {
+                var _ = item as ToolItem;
+                tool = _.ToolType;
+                material = _.Material;
+
+                if ((block.EffectiveTools & tool) == 0 || (block.EffectiveToolMaterials & material) == 0)
+                {
+                    time *= 3.33; // Add time for ineffective tools
+                }
+                if (material != ToolMaterial.None)
+                {
+                    switch (material)
+                    {
+                        case ToolMaterial.Wood:
+                            time /= 2;
+                            break;
+                        case ToolMaterial.Stone:
+                            time /= 4;
+                            break;
+                        case ToolMaterial.Iron:
+                            time /= 6;
+                            break;
+                        case ToolMaterial.Diamond:
+                            time /= 8;
+                            break;
+                        case ToolMaterial.Gold:
+                            time /= 12;
+                            break;
+                    }
+                }
+                damage = 1;
+                if (tool == ToolType.Shovel || tool == ToolType.Axe || tool == ToolType.Pickaxe)
+                {
+                    damage = (short)(hardness != 0 ? 1 : 0);
+                }
+                else if (tool == ToolType.Sword)
+                {
+                    damage = (short)(hardness != 0 ? 2 : 0);
+                    time /= 1.5;
+                    if (block is CobwebBlock)
+                        time /= 1.5;
+                }
+                else if (tool == ToolType.Hoe)
+                    damage = 0; // What? This doesn't seem right
+                else if (item is ShearsItem)
+                {
+                    if (block is WoolBlock)
+                        time /= 5;
+                    else if (block is LeavesBlock || block is CobwebBlock)
+                        time /= 15;
+                    if (block is LeavesBlock || block is CobwebBlock || block is TallGrassBlock)
+                        damage = 1;
+                    else
+                        damage = 0;
+                }
+            }
+            return (int)(time * 1000);
         }
     }
 }

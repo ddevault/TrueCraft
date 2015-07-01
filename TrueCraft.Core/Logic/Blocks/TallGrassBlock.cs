@@ -30,6 +30,11 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override BoundingBox? BoundingBox { get { return null; } }
 
+        public override Coordinates3D GetSupportDirection(BlockDescriptor descriptor)
+        {
+            return Coordinates3D.Down;
+        }
+
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(7, 2);

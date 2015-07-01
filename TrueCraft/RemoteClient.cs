@@ -70,6 +70,7 @@ namespace TrueCraft
         public IWindow CurrentWindow { get; internal set; }
         public bool EnableLogging { get; set; }
         public IPacket LastSuccessfulPacket { get; set; }
+        public DateTime ExpectedDigComplete { get; set; }
 
         public Socket Connection { get; private set; }
 

@@ -12,6 +12,7 @@ using fNbt;
 using TrueCraft.Core.Logic.Blocks;
 using System.Linq;
 using TrueCraft.Core.Logic.Items;
+using TrueCraft.Core.Logic;
 
 namespace TrueCraft.Handlers
 {
@@ -25,6 +26,8 @@ namespace TrueCraft.Handlers
             var position = new Coordinates3D(packet.X, packet.Y, packet.Z);
             var descriptor = world.GetBlockData(position);
             var provider = server.BlockRepository.GetBlockProvider(descriptor.ID);
+            short damage;
+            int time;
             switch (packet.PlayerAction)
             {
                 case PlayerDiggingPacket.Action.DropItem:
@@ -64,9 +67,13 @@ namespace TrueCraft.Handlers
                     // So if you want to blame anyone, send flames to Notch for the stupid idea of not sending "stop digging" packets
                     // for hardness == 0 blocks.
 
-                    if (provider != null && provider.Hardness == 0
-                        || (client.SelectedItem.ID == ShearsItem.ItemID && provider is LeavesBlock))
+                    time = BlockProvider.GetHarvestTime(descriptor.ID, client.SelectedItem.ID, out damage);
+                    if (time <= 20)
+                    {
                         provider.BlockMined(descriptor, packet.Face, world, client);
+                        break;
+                    }
+                    client.ExpectedDigComplete = DateTime.UtcNow.AddMilliseconds(time);
                     break;
                 case PlayerDiggingPacket.Action.StopDigging:
                     foreach (var nearbyClient in server.Clients)
@@ -76,7 +83,29 @@ namespace TrueCraft.Handlers
                             c.QueuePacket(new AnimationPacket(client.Entity.EntityID, AnimationPacket.PlayerAnimation.None));
                     }
                     if (provider != null && descriptor.ID != 0)
-                        provider.BlockMined(descriptor, packet.Face, world, client);
+                    {
+                        time = BlockProvider.GetHarvestTime(descriptor.ID, client.SelectedItem.ID, out damage);
+                        if (time <= 20)
+                            break; // Already handled earlier
+                        var diff = (DateTime.UtcNow - client.ExpectedDigComplete).TotalMilliseconds;
+                        if (diff > -100) // Allow a small tolerance
+                        {
+                            provider.BlockMined(descriptor, packet.Face, world, client);
+                            // Damage the item
+                            if (damage != 0)
+                            {
+                                var tool = server.ItemRepository.GetItemProvider(client.SelectedItem.ID) as ToolItem;
+                                if (tool != null && tool.Uses != -1)
+                                {
+                                    var slot = client.SelectedItem;
+                                    slot.Metadata += damage;
+                                    if (slot.Metadata >= tool.Uses)
+                                        slot.Count = 0; // Destroy item
+                                    client.Inventory[client.SelectedSlot] = slot;
+                                }
+                            }
+                        }
+                    }
                     break;
             }
         }

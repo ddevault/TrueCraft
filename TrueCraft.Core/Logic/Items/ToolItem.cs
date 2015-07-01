@@ -15,5 +15,27 @@ namespace TrueCraft.Core.Logic
         public virtual short BaseDurability { get { return 0; } }
 
         public override sbyte MaximumStack { get { return 1; } }
+
+        public virtual int Uses
+        {
+            get
+            {
+                switch (Material)
+                {
+                    case ToolMaterial.Gold:
+                        return 33;
+                    case ToolMaterial.Wood:
+                        return 60;
+                    case ToolMaterial.Stone:
+                        return 132;
+                    case ToolMaterial.Iron:
+                        return 251;
+                    case ToolMaterial.Diamond:
+                        return 1562;
+                    default:
+                        return -1;
+                }
+            }
+        }
     }
 }
