@@ -14,7 +14,7 @@ namespace TrueCraft.API.Logic
         byte Luminance { get; }
         bool Opaque { get; }
         bool RenderOpaque { get; }
-        byte LightModifier { get; }
+        byte LightOpacity { get; }
         bool DiffuseSkyLight { get; }
         ToolMaterial EffectiveToolMaterials { get; }
         ToolType EffectiveTools { get; }

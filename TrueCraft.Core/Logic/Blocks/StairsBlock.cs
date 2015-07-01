@@ -22,7 +22,7 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override bool Opaque { get { return false; } }
 
-        public override byte LightModifier { get { return 255; } }
+        public override byte LightOpacity { get { return 255; } }
 
         public virtual bool SignificantMetadata
         {

@@ -7,6 +7,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
+// https://github.com/SirCmpwn/TrueCraft/wiki/Lighting
+
 namespace TrueCraft.Core.Lighting
 {
     public class WorldLighter
@@ -59,7 +61,7 @@ namespace TrueCraft.Core.Lighting
                     {
                         var id = chunk.GetBlockID(new Coordinates3D(x, y - 1, z));
                         var provider = BlockRepository.GetBlockProvider(id);
-                        if (provider.LightModifier != 0)
+                        if (provider.LightOpacity != 0)
                         {
                             map[x, z] = y;
                             break;
@@ -80,7 +82,7 @@ namespace TrueCraft.Core.Lighting
             {
                 var id = chunk.GetBlockID(new Coordinates3D(x, y - 1, z));
                 var provider = BlockRepository.GetBlockProvider(id);
-                if (provider.LightModifier != 0)
+                if (provider.LightOpacity != 0)
                 {
                     map[x, z] = y;
                     break;
@@ -101,6 +103,9 @@ namespace TrueCraft.Core.Lighting
             }
         }
 
+        /// <summary>
+        /// Propegates a lighting change to an adjacent voxel (if neccesary)
+        /// </summary>
         private void PropegateLightEvent(int x, int y, int z, byte value, LightingOperation op)
         {
             var coords = new Coordinates3D(x, y, z);
@@ -127,60 +132,81 @@ namespace TrueCraft.Core.Lighting
             EnqueueOperation(new BoundingBox(new Vector3(x, y, z), new Vector3(x, y, z) + 1), op.SkyLight, op.Initial);
         }
 
+        /// <summary>
+        /// Computes the correct lighting value for a given voxel.
+        /// </summary>
         private void LightVoxel(int x, int y, int z, LightingOperation op)
         {
-            // https://github.com/SirCmpwn/TrueCraft/wiki/Lighting
             var coords = new Coordinates3D(x, y, z);
+
             IChunk chunk;
             var adjustedCoords = World.FindBlockPosition(coords, out chunk, generate: false);
-            if (chunk == null || !chunk.TerrainPopulated)
+
+            if (chunk == null || !chunk.TerrainPopulated) // Move on if this chunk is empty
                 return;
+
             var data = World.GetBlockData(coords);
             var provider = BlockRepository.GetBlockProvider(data.ID);
+
+            // The opacity of the block determines the amount of light it receives from
+            // neighboring blocks. This is subtracted from the max of the neighboring
+            // block values. We must subtract at least 1.
+            byte opacity = Math.Max(provider.LightOpacity, (byte)1);
+
             byte current = op.SkyLight ? data.SkyLight : data.BlockLight;
-            byte newLight = 0;
-            byte opacity = Math.Max(provider.LightModifier, (byte)1);
+            byte final = 0;
+
+            // Calculate emissiveness
             byte emissiveness = provider.Luminance;
             if (op.SkyLight)
             {
-                if (y >= chunk.GetHeight((byte)adjustedCoords.X, (byte)adjustedCoords.Z))
+                var height = HeightMaps[chunk.Coordinates][adjustedCoords.X, adjustedCoords.Z];
+                // For skylight, the emissiveness is 15 if y >= height
+                if (y >= height)
                     emissiveness = 15;
+                else
+                {
+                    if (provider.LightOpacity >= 15)
+                        emissiveness = 0;
+                }
             }
-            else
-                emissiveness = provider.Luminance;
+            
             if (opacity < 15 || emissiveness != 0)
             {
+                // Compute the light based on the max of the neighbors
                 byte max = 0;
                 for (int i = 0; i < Neighbors.Length; i++)
                 {
                     if (World.IsValidPosition(coords + Neighbors[i]))
                     {
                         IChunk c;
-                        var adjusted = World.FindBlockPosition(coords + Neighbors[i], out c, false);
-                        if (c != null)
+                        var adjusted = World.FindBlockPosition(coords + Neighbors[i], out c, generate: false);
+                        if (c != null) // We don't want to generate new chunks just to light this voxel
                         {
-                            int val;
+                            byte val;
                             if (op.SkyLight)
                                 val = c.GetSkyLight(adjusted);
                             else
                                 val = c.GetBlockLight(adjusted);
-                            var p = BlockRepository.GetBlockProvider(c.GetBlockID(adjusted));
-                            val -= Math.Max(0, p.LightModifier - 1);
-                            max = (byte)Math.Max(max, val);
+                            max = Math.Max(max, val);
                         }
                     }
                 }
-                newLight = (byte)Math.Max(max - opacity, emissiveness);
-                if (newLight < 0)
-                    newLight = 0;
+                // final = MAX(max - opacity, emissiveness, 0)
+                final = (byte)Math.Max(max - opacity, emissiveness);
+                if (final < 0)
+                    final = 0;
             }
-            if (newLight != current)
+
+            if (final != current)
             {
+                // Apply changes
                 if (op.SkyLight)
-                    World.SetSkyLight(coords, newLight);
+                    World.SetSkyLight(coords, final);
                 else
-                    World.SetBlockLight(coords, newLight);
-                byte propegated = (byte)Math.Max(newLight - 1, 0);
+                    World.SetBlockLight(coords, final);
+                
+                byte propegated = (byte)Math.Max(final - 1, 0);
 
                 // Propegate lighting change to neighboring blocks
                 PropegateLightEvent(x - 1, y, z, propegated, op);

@@ -22,7 +22,7 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override bool DiffuseSkyLight { get { return true; } }
 
-        public override byte LightModifier { get { return 2; } }
+        public override byte LightOpacity { get { return 2; } }
         
         public override string DisplayName { get { return "Leaves"; } }
 

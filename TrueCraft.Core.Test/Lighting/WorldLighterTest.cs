@@ -32,6 +32,13 @@ namespace TrueCraft.Core.Test.Lighting
             {
             }
 
+            for (int y = 5; y >= 0; y--)
+            {
+                Console.Write(world.GetBlockID(new Coordinates3D(0, y, 0)));
+                Console.Write(" ");
+                Console.WriteLine(world.GetSkyLight(new Coordinates3D(0, y, 0)));
+            }
+
             // Validate behavior
             for (int y = 0; y < Chunk.Height; y++)
             {
@@ -41,7 +48,7 @@ namespace TrueCraft.Core.Test.Lighting
                     {
                         var coords = new Coordinates3D(x, y, z);
                         var sky = world.GetSkyLight(coords);
-                        if (y < 3)
+                        if (y < 4)
                             Assert.AreEqual(0, sky);
                         else
                             Assert.AreEqual(15, sky);
@@ -297,15 +304,15 @@ namespace TrueCraft.Core.Test.Lighting
             var expected = new byte[]
             {
                 15, // air
-                15, // leaves
-                13, // air
-                11, // leaves
+                13, // leaves
+                12, // air
+                10, // leaves
                 9, // air
                 7,  // leaves
-                5,  // air
-                3,  // leaves
-                1,  // air
-                0,  // leaves
+                6,  // air
+                4,  // leaves
+                3,  // air
+                1,  // leaves
                 0,  // air
                 0,  // leaves
             };
