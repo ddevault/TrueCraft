@@ -35,6 +35,8 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override string DisplayName { get { return "Torch"; } }
 
+        public override BoundingBox? BoundingBox { get { return null; } }
+
         public override void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
             TorchDirection[] preferredDirections =
