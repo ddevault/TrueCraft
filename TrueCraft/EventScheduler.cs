@@ -18,6 +18,7 @@ namespace TrueCraft
         {
             Events = new List<ScheduledEvent>();
             Server = server;
+            Subjects = new HashSet<IEventSubject>();
         }
 
         public void ScheduleEvent(IEventSubject subject, DateTime when, Action<IMultiplayerServer> action)
