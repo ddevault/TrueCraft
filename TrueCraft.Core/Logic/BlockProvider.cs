@@ -120,15 +120,37 @@ namespace TrueCraft.Core.Logic
             coordinates += MathHelper.BlockFaceToCoordinates(face);
             var old = world.GetBlockData(coordinates);
             byte[] overwritable =
-            {
-                AirBlock.BlockID,
-                WaterBlock.BlockID,
-                StationaryWaterBlock.BlockID,
-                LavaBlock.BlockID,
-                StationaryLavaBlock.BlockID
-            };
+                {
+                    AirBlock.BlockID,
+                    WaterBlock.BlockID,
+                    StationaryWaterBlock.BlockID,
+                    LavaBlock.BlockID,
+                    StationaryLavaBlock.BlockID
+                };
             if (overwritable.Any(b => b == old.ID))
             {
+                // Test for entities
+                var em = user.Server.GetEntityManagerForWorld(world);
+                var entities = em.EntitiesInRange(coordinates, 1);
+                var box = new BoundingBox(coordinates, coordinates + Vector3.One);
+                foreach (var entity in entities)
+                {
+                    var aabb = entity as IAABBEntity;
+                    if (aabb != null && !(entity is ItemEntity))
+                    {
+                        if (aabb.BoundingBox.Intersects(box))
+                            return;
+                    }
+                    var player = entity as PlayerEntity; // Players do not implement IAABBEntity
+                    if (player != null)
+                    {
+                        if (new BoundingBox(player.Position, player.Position + player.Size)
+                            .Intersects(box))
+                            return;
+                    }
+                }
+
+                // Place block
                 world.SetBlockID(coordinates, ID);
                 world.SetMetadata(coordinates, (byte)item.Metadata);
 
