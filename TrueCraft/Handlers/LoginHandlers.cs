@@ -5,6 +5,7 @@ using TrueCraft.API.Networking;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.API;
 using TrueCraft.Core.Entities;
+using TrueCraft.API.World;
 
 namespace TrueCraft.Handlers
 {
@@ -41,6 +42,17 @@ namespace TrueCraft.Handlers
 
                 if (!remoteClient.Load())
                     remoteClient.Entity.Position = remoteClient.World.SpawnPoint;
+                // Make sure they don't spawn in the ground
+                var collision = new Func<bool>(() =>
+                {
+                    var feet = client.World.GetBlockID((Coordinates3D)client.Entity.Position);
+                    var head = client.World.GetBlockID((Coordinates3D)(client.Entity.Position + Vector3.Up));
+                    var feetBox = server.BlockRepository.GetBlockProvider(feet).BoundingBox;
+                    var headBox = server.BlockRepository.GetBlockProvider(head).BoundingBox;
+                    return feetBox != null || headBox != null;
+                });
+                while (collision())
+                    client.Entity.Position += Vector3.Up;
 
                 // Send setup packets
                 remoteClient.QueuePacket(new LoginResponsePacket(0, 0, Dimension.Overworld));

@@ -20,6 +20,8 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override string DisplayName { get { return "Air"; } }
 
+        public override BoundingBox? BoundingBox { get { return null; } }
+
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(0, 0);
