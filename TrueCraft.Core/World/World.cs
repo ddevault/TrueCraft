@@ -393,6 +393,7 @@ namespace TrueCraft.Core.World
                 {
                     chunks.AddRange((IEnumerable<Chunk>)region.Chunks.Values);
                 }
+                Chunks = chunks;
             }
 
             public bool MoveNext()

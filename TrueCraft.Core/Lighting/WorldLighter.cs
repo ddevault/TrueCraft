@@ -94,8 +94,8 @@ namespace TrueCraft.Core.Lighting
             if (chunk == null || !chunk.TerrainPopulated)
                 return;
             for (int x = (int)op.Box.Min.X; x < (int)op.Box.Max.X; x++)
-            for (int y = (int)op.Box.Min.Y; y < (int)op.Box.Max.Y; y++)
             for (int z = (int)op.Box.Min.Z; z < (int)op.Box.Max.Z; z++)
+            for (int y = (int)op.Box.Max.Y - 1; y >= (int)op.Box.Min.Y; y--)
             {
                 LightVoxel(x, y, z, op);
             }
