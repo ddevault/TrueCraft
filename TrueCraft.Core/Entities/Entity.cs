@@ -17,7 +17,7 @@ namespace TrueCraft.Core.Entities
         {
             EnablePropertyChange = true;
             EntityID = -1;
-            SpawnTime = DateTime.Now;
+            SpawnTime = DateTime.UtcNow;
         }
 
         public DateTime SpawnTime { get; set; }

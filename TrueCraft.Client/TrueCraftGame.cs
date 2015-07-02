@@ -343,7 +343,7 @@ namespace TrueCraft.Client
             if (PendingMainThreadActions.TryTake(out action))
                 action();
 
-            if (NextPhysicsUpdate < DateTime.Now && Client.LoggedIn)
+            if (NextPhysicsUpdate < DateTime.UtcNow && Client.LoggedIn)
             {
                 IChunk chunk;
                 var adjusted = Client.World.World.FindBlockPosition(new Coordinates3D((int)Client.Position.X, 0, (int)Client.Position.Z), out chunk);
@@ -358,7 +358,7 @@ namespace TrueCraft.Client
                 Client.QueuePacket(new PlayerGroundedPacket { OnGround = true });
                 Client.QueuePacket(new PlayerPositionAndLookPacket(Client.Position.X, Client.Position.Y,
                     Client.Position.Y + MultiplayerClient.Height, Client.Position.Z, Client.Yaw, Client.Pitch, false));
-                NextPhysicsUpdate = DateTime.Now.AddMilliseconds(1000 / 20);
+                NextPhysicsUpdate = DateTime.UtcNow.AddMilliseconds(1000 / 20);
             }
 
             if (Delta != Microsoft.Xna.Framework.Vector3.Zero)

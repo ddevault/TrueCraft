@@ -42,11 +42,11 @@ namespace TrueCraft.Core.World
         {
             get
             {
-                return (long)((DateTime.Now - BaseTime).TotalSeconds * 20) % 24000;
+                return (long)((DateTime.UtcNow - BaseTime).TotalSeconds * 20) % 24000;
             }
             set
             {
-                BaseTime = DateTime.Now.AddSeconds(-value / 20);
+                BaseTime = DateTime.UtcNow.AddSeconds(-value / 20);
             }
         }
 
@@ -57,7 +57,7 @@ namespace TrueCraft.Core.World
         public World()
         {
             Regions = new Dictionary<Coordinates2D, IRegion>();
-            BaseTime = DateTime.Now;
+            BaseTime = DateTime.UtcNow;
         }
 
         public World(string name) : this()

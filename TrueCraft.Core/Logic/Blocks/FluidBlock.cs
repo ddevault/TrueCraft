@@ -71,7 +71,7 @@ namespace TrueCraft.Core.Logic.Blocks
         {
             var chunk = world.FindChunk(coords);
             server.Scheduler.ScheduleEvent(chunk,
-                DateTime.Now.AddSeconds(SecondsBetweenUpdates), (_server) =>
+                DateTime.UtcNow.AddSeconds(SecondsBetweenUpdates), (_server) =>
                 AutomataUpdate(_server, world, coords));
         }
 
@@ -106,7 +106,7 @@ namespace TrueCraft.Core.Logic.Blocks
             {
                 var chunk = world.FindChunk(coords);
                 server.Scheduler.ScheduleEvent(chunk,
-                    DateTime.Now.AddSeconds(SecondsBetweenUpdates), (_server) =>
+                    DateTime.UtcNow.AddSeconds(SecondsBetweenUpdates), (_server) =>
                     AutomataUpdate(_server, world, coords));
             }
         }
@@ -161,7 +161,7 @@ namespace TrueCraft.Core.Logic.Blocks
             world.SetMetadata(target.TargetBlock, target.Level);
             var chunk = world.FindChunk(target.TargetBlock);
             server.Scheduler.ScheduleEvent(chunk,
-                DateTime.Now.AddSeconds(SecondsBetweenUpdates),
+                DateTime.UtcNow.AddSeconds(SecondsBetweenUpdates),
                 s => AutomataUpdate(s, world, target.TargetBlock));
         }
 

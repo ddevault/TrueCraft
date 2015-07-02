@@ -105,13 +105,13 @@ namespace TrueCraft.Core.Logic.Blocks
                 {
                     world.SetBlockID(coords + Coordinates3D.Up, BlockID);
                     server.Scheduler.ScheduleEvent(chunk,
-                        DateTime.Now.AddSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
+                        DateTime.UtcNow.AddSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
                         (_server) => TryGrowth(_server, coords + Coordinates3D.Up, world));
                 }
                 else
                 {
                     server.Scheduler.ScheduleEvent(chunk,
-                        DateTime.Now.AddSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
+                        DateTime.UtcNow.AddSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
                         (_server) => TryGrowth(_server, coords, world));
                 }
             }
@@ -121,7 +121,7 @@ namespace TrueCraft.Core.Logic.Blocks
         {
             var chunk = world.FindChunk(descriptor.Coordinates);
             user.Server.Scheduler.ScheduleEvent(chunk,
-                DateTime.Now.AddSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
+                DateTime.UtcNow.AddSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
                 (server) => TryGrowth(server, descriptor.Coordinates, world));
         }
     }

@@ -30,7 +30,13 @@ namespace TrueCraft
                     Subjects.Add(subject);
                     subject.Disposed += Subject_Disposed;
                 }
-                Events.Add(new ScheduledEvent { Subject = subject, When = when, Action = action });
+                int i;
+                for (i = 0; i < Events.Count; i++)
+                {
+                    if (Events[i].When > when)
+                        break;
+                }
+                Events.Insert(i, new ScheduledEvent { Subject = subject, When = when, Action = action });
             }
         }
 
@@ -55,7 +61,7 @@ namespace TrueCraft
         {
             lock (EventLock)
             {
-                var start = DateTime.Now;
+                var start = DateTime.UtcNow;
                 for (int i = 0; i < Events.Count; i++)
                 {
                     var e = Events[i];

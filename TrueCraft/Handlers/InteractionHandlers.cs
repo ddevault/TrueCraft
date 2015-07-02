@@ -137,7 +137,7 @@ namespace TrueCraft.Handlers
                 {
                     server.SendMessage(ChatColor.Red + "WARNING: block provider for ID {0} is null (player placing)", block.Value.ID);
                     server.SendMessage(ChatColor.Red + "Error occured from client {0} at coordinates {1}", client.Username, block.Value.Coordinates);
-                    server.SendMessage(ChatColor.Red + "Packet logged at {0}, please report upstream", DateTime.Now);
+                    server.SendMessage(ChatColor.Red + "Packet logged at {0}, please report upstream", DateTime.UtcNow);
                     return;
                 }
                 if (!provider.BlockRightClicked(block.Value, packet.Face, client.World, client))
@@ -159,7 +159,7 @@ namespace TrueCraft.Handlers
                     {
                         server.SendMessage(ChatColor.Red + "WARNING: item provider for ID {0} is null (player placing)", block.Value.ID);
                         server.SendMessage(ChatColor.Red + "Error occured from client {0} at coordinates {1}", client.Username, block.Value.Coordinates);
-                        server.SendMessage(ChatColor.Red + "Packet logged at {0}, please report upstream", DateTime.Now);
+                        server.SendMessage(ChatColor.Red + "Packet logged at {0}, please report upstream", DateTime.UtcNow);
                     }
                     if (block != null)
                     {

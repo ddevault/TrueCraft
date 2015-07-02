@@ -96,7 +96,7 @@ namespace TrueCraft.Client.Interface
             public ChatMessage(string message)
             {
                 Message = message;
-                Time = DateTime.Now;
+                Time = DateTime.UtcNow;
             }
         }
 
@@ -135,7 +135,7 @@ namespace TrueCraft.Client.Interface
                 for (int i = 0; i < Messages.Count; i++)
                 {
                     var message = Messages[i];
-                    if ((DateTime.Now - message.Time).TotalSeconds > 10)
+                    if ((DateTime.UtcNow - message.Time).TotalSeconds > 10)
                     {
                         Messages.RemoveAt(i);
                         i--;

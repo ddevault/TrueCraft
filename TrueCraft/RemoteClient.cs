@@ -226,7 +226,7 @@ namespace TrueCraft
         public void Log(string message, params object[] parameters)
         {
             if (EnableLogging)
-                SendMessage(ChatColor.Gray + string.Format("[" + DateTime.Now.ToShortTimeString() + "] " + message, parameters));
+                SendMessage(ChatColor.Gray + string.Format("[" + DateTime.UtcNow.ToShortTimeString() + "] " + message, parameters));
         }
 
         public void QueuePacket(IPacket packet)
@@ -389,7 +389,7 @@ namespace TrueCraft
                 {
                     ChunkRadius++;
                     UpdateChunks();
-                    server.Scheduler.ScheduleEvent(this, DateTime.Now.AddSeconds(1), ExpandChunkRadius);
+                    server.Scheduler.ScheduleEvent(this, DateTime.UtcNow.AddSeconds(1), ExpandChunkRadius);
                 }
             });
         }
@@ -397,7 +397,7 @@ namespace TrueCraft
         internal void SendKeepAlive(IMultiplayerServer server)
         {
             QueuePacket(new KeepAlivePacket());
-            server.Scheduler.ScheduleEvent(this, DateTime.Now.AddSeconds(1), SendKeepAlive);
+            server.Scheduler.ScheduleEvent(this, DateTime.UtcNow.AddSeconds(1), SendKeepAlive);
         }
 
         internal void UpdateChunks()

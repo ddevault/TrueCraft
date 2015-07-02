@@ -49,7 +49,7 @@ namespace TrueCraft.Client
         private BoundingBox TempBoundingBox;
         public void Update()
         {
-            double multipler = (DateTime.Now - LastUpdate).TotalMilliseconds / MillisecondsBetweenUpdates;
+            double multipler = (DateTime.UtcNow - LastUpdate).TotalMilliseconds / MillisecondsBetweenUpdates;
             if (LastUpdate == DateTime.MinValue)
                 multipler = 1;
             if (multipler > 5) multipler = 5;
@@ -69,7 +69,7 @@ namespace TrueCraft.Client
                     }
                 }
             }
-            LastUpdate = DateTime.Now;
+            LastUpdate = DateTime.UtcNow;
         }
 
         private void CheckWithTerrain(IAABBEntity entity, ReadOnlyWorld world)
