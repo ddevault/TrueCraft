@@ -7,14 +7,14 @@ namespace TrueCraft.Core.AI
     // Thanks to www.redblobgames.com/pathfinding/a-star/implementation.html
     public class PriorityQueue<T>
     {
-        private List<Tuple<T, int>> elements = new List<Tuple<T, int>>();
+        private List<Tuple<T, double>> elements = new List<Tuple<T, double>>();
 
         public int Count
         {
             get { return elements.Count; }
         }
         
-        public void Enqueue(T item, int priority)
+        public void Enqueue(T item, double priority)
         {
             elements.Add(Tuple.Create(item, priority));
         }

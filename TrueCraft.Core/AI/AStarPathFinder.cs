@@ -33,30 +33,38 @@ namespace TrueCraft.Core.AI
             // Thanks to www.redblobgames.com/pathfinding/a-star/implementation.html
             
             var parents = new Dictionary<Coordinates3D, Coordinates3D>();
-            var costs = new Dictionary<Coordinates3D, int>();
-            var frontier = new PriorityQueue<Coordinates3D>();
+            var costs = new Dictionary<Coordinates3D, double>();
+            var openset = new PriorityQueue<Coordinates3D>();
+            var closedset = new HashSet<Coordinates3D>();
 
-            frontier.Enqueue(start, 0);
+            openset.Enqueue(start, 0);
             parents[start] = start;
-            costs[start] = 0;
+            costs[start] = start.DistanceTo(goal);
 
-            while (frontier.Count > 0)
+            while (openset.Count > 0)
             {
-                var current = frontier.Dequeue();
+                var current = openset.Dequeue();
                 if (current == goal)
                     return TracePath(start, goal, parents);
+
+                closedset.Add(current);
+
                 for (int i = 0; i < Neighbors.Length; i++)
                 {
                     var next = Neighbors[i] + current;
+                    if (closedset.Contains(next))
+                        continue;
+
                     var id = world.GetBlockID(next);
                     if (id != 0)
                         continue; // TODO: Make this more sophisticated
+
                     var cost = (int)(costs[current] + current.DistanceTo(next));
                     if (!costs.ContainsKey(next) || cost < costs[next])
                     {
                         costs[next] = cost;
-                        var priority = (int)(cost + next.DistanceTo(goal));
-                        frontier.Enqueue(next, priority);
+                        var priority = cost + next.DistanceTo(goal);
+                        openset.Enqueue(next, priority);
                         parents[next] = current;
                     }
                 }
