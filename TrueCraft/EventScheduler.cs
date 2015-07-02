@@ -7,9 +7,7 @@ namespace TrueCraft
 {
     public class EventScheduler : IEventScheduler
     {
-        // TODO: This could be done more efficiently if the list were kept sorted
-        
-        private IList<ScheduledEvent> Events { get; set; }
+        private IList<ScheduledEvent> Events { get; set; } // Sorted
         private readonly object EventLock = new object();
         private IMultiplayerServer Server { get; set; }
         private HashSet<IEventSubject> Subjects { get; set; }
@@ -71,6 +69,8 @@ namespace TrueCraft
                         Events.RemoveAt(i);
                         i--;
                     }
+                    if (e.When > start)
+                        break; // List is sorted, we can exit early
                 }
             }
         }
