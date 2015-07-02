@@ -35,7 +35,7 @@
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="Moq">
-      <HintPath>..\packages\Moq.4.2.1502.0911\lib\net40\Moq.dll</HintPath>
+      <HintPath>..\packages\Moq.4.2.1507.0118\lib\net40\Moq.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -83,6 +83,7 @@
     <Compile Include="Windows\CraftingWindowAreaTest.cs" />
     <Compile Include="Logic\BlockProviderTest.cs" />
     <Compile Include="Lighting\WorldLighterTest.cs" />
+    <Compile Include="AI\PathFindingTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="World\" />
@@ -90,5 +91,6 @@
     <Folder Include="Windows\" />
     <Folder Include="Logic\" />
     <Folder Include="Lighting\" />
+    <Folder Include="AI\" />
   </ItemGroup>
 </Project>

@@ -109,6 +109,7 @@
     <Compile Include="ToolType.cs" />
     <Compile Include="World\ChunkLoadedEventArgs.cs" />
     <Compile Include="IEventSubject.cs" />
+    <Compile Include="PathResult.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

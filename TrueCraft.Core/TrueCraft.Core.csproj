@@ -328,6 +328,8 @@
     <Compile Include="TerrainGen\EmptyGenerator.cs" />
     <Compile Include="Logic\ItemRepository.cs" />
     <Compile Include="Lighting\WorldLighting.cs" />
+    <Compile Include="AI\AStarPathFinder.cs" />
+    <Compile Include="AI\PriorityQueue.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -352,6 +354,7 @@
   </ProjectExtensions>
   <ItemGroup>
     <Folder Include="Lighting\" />
+    <Folder Include="AI\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
