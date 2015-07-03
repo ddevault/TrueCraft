@@ -125,12 +125,6 @@ namespace TrueCraft.Core.Entities
         public override void Update(IEntityManager entityManager)
         {
             AdvancePath();
-            var nearby = entityManager.EntitiesInRange(Position, 30);
-            var player = nearby.FirstOrDefault(e => e is PlayerEntity);
-            if (player != null)
-            {
-                Face(player.Position);
-            }
             base.Update(entityManager);
         }
     }
