@@ -15,7 +15,7 @@ namespace TrueCraft.Core.AI
             Coordinates3D.West
         };
 
-        private readonly Coordinates3D[][] DiagonalNeighbors = new Coordinates3D[][]
+        private readonly Coordinates3D[][] DiagonalNeighbors =
         {
             new[] { Coordinates3D.North, Coordinates3D.East },
             new[] { Coordinates3D.North, Coordinates3D.West },

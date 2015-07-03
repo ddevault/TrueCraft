@@ -101,5 +101,57 @@ namespace TrueCraft.Core.Test.AI
             var path = astar.FindPath(world, new BoundingBox(), start, end);
             Assert.IsNull(path);
         }
+
+        [Test]
+        public void TestAStarExitRoom()
+        {
+            var world = new TrueCraft.Core.World.World("default", new FlatlandGenerator());
+            var astar = new AStarPathFinder();
+            var start = new Coordinates3D(0, 4, 0);
+            var end = new Coordinates3D(5, 4, 0);
+
+            // North wall
+            for (int x = -4; x < 4; x++)
+                world.SetBlockID(new Coordinates3D(x, 4, -4), 1);
+            // East wall
+            for (int z = -4; z < 4; z++)
+                world.SetBlockID(new Coordinates3D(3, 4, z), 1);
+            // South wall
+            for (int x = -4; x < 4; x++)
+                world.SetBlockID(new Coordinates3D(x, 4, 4), 1);
+
+            var path = astar.FindPath(world, new BoundingBox(), start, end);
+            DrawGrid(path, world);
+
+            // Just test the start and end, the exact results need to be eyeballed
+            Assert.AreEqual(start, path.Waypoints[0]);
+            Assert.AreEqual(end, path.Waypoints[path.Waypoints.Count - 1]);
+        }
+
+        [Test]
+        public void TestAStarAvoidRoom()
+        {
+            var world = new TrueCraft.Core.World.World("default", new FlatlandGenerator());
+            var astar = new AStarPathFinder();
+            var start = new Coordinates3D(-5, 4, 0);
+            var end = new Coordinates3D(5, 4, 0);
+
+            // North wall
+            for (int x = -4; x < 4; x++)
+                world.SetBlockID(new Coordinates3D(x, 4, -4), 1);
+            // East wall
+            for (int z = -4; z < 4; z++)
+                world.SetBlockID(new Coordinates3D(3, 4, z), 1);
+            // South wall
+            for (int x = -4; x < 4; x++)
+                world.SetBlockID(new Coordinates3D(x, 4, 4), 1);
+
+            var path = astar.FindPath(world, new BoundingBox(), start, end);
+            DrawGrid(path, world);
+
+            // Just test the start and end, the exact results need to be eyeballed
+            Assert.AreEqual(start, path.Waypoints[0]);
+            Assert.AreEqual(end, path.Waypoints[path.Waypoints.Count - 1]);
+        }
     }
 }
