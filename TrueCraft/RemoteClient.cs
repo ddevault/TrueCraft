@@ -316,6 +316,9 @@ namespace TrueCraft
                 catch (OperationCanceledException)
                 {
                 }
+                catch (NullReferenceException)
+                {
+                }
 
                 var packets = PacketReader.ReadPackets(this, e.Buffer, e.Offset, e.BytesTransferred);
 

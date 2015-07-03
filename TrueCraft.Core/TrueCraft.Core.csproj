@@ -330,6 +330,20 @@
     <Compile Include="Lighting\WorldLighting.cs" />
     <Compile Include="AI\AStarPathFinder.cs" />
     <Compile Include="AI\PriorityQueue.cs" />
+    <Compile Include="Entities\SpiderEntity.cs" />
+    <Compile Include="Entities\MobEntity.cs" />
+    <Compile Include="Entities\CreeperEntity.cs" />
+    <Compile Include="Entities\SkeletonEntity.cs" />
+    <Compile Include="Entities\GiantZombieEntity.cs" />
+    <Compile Include="Entities\ZombieEntity.cs" />
+    <Compile Include="Entities\SlimeEntity.cs" />
+    <Compile Include="Entities\GhastEntity.cs" />
+    <Compile Include="Entities\ZombiePigmanEntity.cs" />
+    <Compile Include="Entities\PigEntity.cs" />
+    <Compile Include="Entities\SheepEntity.cs" />
+    <Compile Include="Entities\CowEntity.cs" />
+    <Compile Include="Entities\HenEntity.cs" />
+    <Compile Include="Entities\SquidEntity.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

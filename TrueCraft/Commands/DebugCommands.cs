@@ -1,6 +1,14 @@
 ﻿using TrueCraft.API.Networking;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.API;
+using System;
+using TrueCraft.API.Entities;
+using TrueCraft.Core;
+using System.Collections.Generic;
+using System.Linq;
+using TrueCraft.Core.AI;
+using TrueCraft.Core.Entities;
+using System.Threading.Tasks;
 
 namespace TrueCraft.Commands
 {
@@ -34,6 +42,167 @@ namespace TrueCraft.Commands
         public override void Help(IRemoteClient client, string alias, string[] arguments)
         {
             client.SendMessage("/pos: Shows your position.");
+        }
+    }
+
+    public class SpawnCommand : Command
+    {
+        public override string Name
+        {
+            get { return "spawn"; }
+        }
+
+        public override string Description
+        {
+            get { return "Spawns a mob."; }
+        }
+
+        public override string[] Aliases
+        {
+            get { return new string[0]; }
+        }
+
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
+        {
+            if (arguments.Length != 1)
+            {
+                Help(client, alias, arguments);
+                return;
+            }
+            var entityTypes = new List<Type>();
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                foreach (var t in assembly.GetTypes())
+                {
+                    if (typeof(IEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface)
+                        entityTypes.Add(t);
+                }
+            }
+
+            arguments[0] = arguments[0].ToUpper();
+            var type = entityTypes.SingleOrDefault(t => t.Name.ToUpper() == arguments[0] + "ENTITY");
+            if (type == null)
+            {
+                client.SendMessage(ChatColor.Red + "Unknown entity type.");
+                return;
+            }
+            var entity = (IEntity)Activator.CreateInstance(type);
+            var em = client.Server.GetEntityManagerForWorld(client.World);
+            entity.Position = client.Entity.Position + MathHelper.FowardVector(client.Entity.Yaw) * 3;
+            em.SpawnEntity(entity);
+        }
+
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
+        {
+            client.SendMessage("/spawn [type]: Spawns a mob of that type.");
+        }
+    }
+
+    public class ToMeCommand : Command
+    {
+        public override string Name
+        {
+            get { return "tome"; }
+        }
+
+        public override string Description
+        {
+            get { return "Moves a mob towards your position."; }
+        }
+
+        public override string[] Aliases
+        {
+            get { return new string[0]; }
+        }
+
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
+        {
+            if (arguments.Length != 1)
+            {
+                Help(client, alias, arguments);
+                return;
+            }
+
+            int id;
+            if (!int.TryParse(arguments[0], out id))
+            {
+                Help(client, alias, arguments);
+                return;
+            }
+
+            var manager = client.Server.GetEntityManagerForWorld(client.World);
+            var entity = manager.GetEntityByID(id) as MobEntity;
+            if (entity == null)
+            {
+                client.SendMessage(ChatColor.Red + "An entity with that ID does not exist in this world.");
+                return;
+            }
+
+            Task.Factory.StartNew(() =>
+            {
+                var astar = new AStarPathFinder();
+                var path = astar.FindPath(client.World, entity.BoundingBox, (Coordinates3D)entity.Position, (Coordinates3D)client.Entity.Position);
+                if (path == null)
+                {
+                    client.SendMessage(ChatColor.Red + "It is impossible for this entity to reach you.");
+                    return;
+                }
+                entity.CurrentPath = path;
+            });
+        }
+
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
+        {
+            client.SendMessage("/tome [id]: Moves a mob to your position.");
+        }
+    }
+
+    public class DestroyCommand : Command
+    {
+        public override string Name
+        {
+            get { return "destroy"; }
+        }
+
+        public override string Description
+        {
+            get { return "Destroys a mob. Violently."; }
+        }
+
+        public override string[] Aliases
+        {
+            get { return new string[0]; }
+        }
+
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
+        {
+            if (arguments.Length != 1)
+            {
+                Help(client, alias, arguments);
+                return;
+            }
+
+            int id;
+            if (!int.TryParse(arguments[0], out id))
+            {
+                Help(client, alias, arguments);
+                return;
+            }
+
+            var manager = client.Server.GetEntityManagerForWorld(client.World);
+            var entity = manager.GetEntityByID(id) as MobEntity;
+            if (entity == null)
+            {
+                client.SendMessage(ChatColor.Red + "An entity with that ID does not exist in this world.");
+                return;
+            }
+
+            manager.DespawnEntity(entity);
+        }
+
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
+        {
+            client.SendMessage("/destroy [id]: " + Description);
         }
     }
 

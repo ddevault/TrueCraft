@@ -11,11 +11,23 @@ namespace TrueCraft.Core.Networking.Packets
     {
         public byte ID { get { return 0x18; } }
 
+        public SpawnMobPacket(int entityId, sbyte type, int x, int y, int z, sbyte yaw, sbyte pitch, MetadataDictionary metadata)
+        {
+            EntityID = entityId;
+            MobType = type;
+            X = x;
+            Y = y;
+            Z = z;
+            Yaw = yaw;
+            Pitch = pitch;
+            Metadata = metadata;
+        }
+
         public int EntityID;
         public sbyte MobType;
         public int X, Y, Z;
         public sbyte Yaw, Pitch;
-        public MetadataDictionary Metadata; // TODO: Import metadata implementation from Craft.Net
+        public MetadataDictionary Metadata;
 
         public void ReadPacket(IMinecraftStream stream)
         {
