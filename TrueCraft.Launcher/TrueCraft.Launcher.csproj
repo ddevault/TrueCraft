@@ -111,6 +111,7 @@
   <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
     <PostBuildEvent>del $(TargetDir)MonoGame.Framework.dll
 copy $(SolutionDir)packages\MonoGame.Framework.Linux.3.4.0.459\lib\net40\MonoGame.Framework.dll $(TargetDir)MonoGame.Framework.Linux.dll
-copy $(SolutionDir)packages\MonoGame.Framework.WindowsGL.3.4.0.459\lib\net40\MonoGame.Framework.dll $(TargetDir)MonoGame.Framework.Windows.dll</PostBuildEvent>
+copy $(SolutionDir)packages\MonoGame.Framework.WindowsGL.3.4.0.459\lib\net40\MonoGame.Framework.dll $(TargetDir)MonoGame.Framework.Windows.dll
+copy $(SolutionDir)packages\MonoGame.Framework.MacOS.3.4.0.459\lib\net40\MonoGame.Framework.dll $(TargetDir)MonoGame.Framework.MacOS.dll </PostBuildEvent>
   </PropertyGroup>
 </Project>
