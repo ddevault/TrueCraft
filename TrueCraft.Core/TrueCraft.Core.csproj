@@ -344,6 +344,7 @@
     <Compile Include="Entities\CowEntity.cs" />
     <Compile Include="Entities\HenEntity.cs" />
     <Compile Include="Entities\SquidEntity.cs" />
+    <Compile Include="AI\WanderState.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

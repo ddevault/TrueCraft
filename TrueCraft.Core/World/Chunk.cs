@@ -316,6 +316,7 @@ namespace TrueCraft.Core.World
                         entity["coordinates"][2].IntValue)] = entity["value"][0] as NbtCompound;
                 }
             }
+            UpdateHeightMap();
 
             // TODO: Entities
         }

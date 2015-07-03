@@ -20,6 +20,7 @@ namespace TrueCraft
 {
     public class EntityManager : IEntityManager
     {
+        public TimeSpan TimeSinceLastUpdate { get; private set; }
         public IWorld World { get; set; }
         public IMultiplayerServer Server { get; set; }
         public PhysicsEngine PhysicsEngine { get; set; }
@@ -28,6 +29,7 @@ namespace TrueCraft
         private List<IEntity> Entities { get; set; } // TODO: Persist to disk
         private object EntityLock = new object();
         private ConcurrentBag<IEntity> PendingDespawns { get; set; }
+        private DateTime LastUpdate { get; set; }
 
         public EntityManager(IMultiplayerServer server, IWorld world)
         {
@@ -39,6 +41,8 @@ namespace TrueCraft
             // TODO: Handle loading worlds that already have entities
             // Note: probably not the concern of EntityManager. The server could manually set this?
             NextEntityID = 1;
+            LastUpdate = DateTime.UtcNow;
+            TimeSinceLastUpdate = TimeSpan.Zero;
         }
 
         private void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -290,6 +294,8 @@ namespace TrueCraft
 
         public void Update()
         {
+            TimeSinceLastUpdate = DateTime.UtcNow - LastUpdate;
+            LastUpdate = DateTime.UtcNow;
             PhysicsEngine.Update();
             try
             {

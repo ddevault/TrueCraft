@@ -7,6 +7,7 @@ namespace TrueCraft.API.Server
 {
     public interface IEntityManager
     {
+        TimeSpan TimeSinceLastUpdate { get; }
         /// <summary>
         /// Adds an entity to the world and assigns it an entity ID.
         /// </summary>

@@ -5,14 +5,17 @@ using TrueCraft.API.Entities;
 using TrueCraft.API;
 using TrueCraft.API.Server;
 using System.Linq;
+using TrueCraft.API.AI;
+using TrueCraft.Core.AI;
 
 namespace TrueCraft.Core.Entities
 {
-    public abstract class MobEntity : LivingEntity, IAABBEntity
+    public abstract class MobEntity : LivingEntity, IAABBEntity, IMobEntity
     {
         public MobEntity()
         {
-            Speed = 1; // TODO: WTF
+            Speed = 4;
+            CurrentState = new WanderState();
         }
 
         public override IPacket SpawnPacket
@@ -87,7 +90,12 @@ namespace TrueCraft.Core.Entities
         /// </summary>
         public virtual double Speed { get; }
 
-        protected DateTime CurrentNodeStart = DateTime.MinValue;
+        public IMobState CurrentState { get; set; }
+
+        public void ChangeState(IMobState state)
+        {
+            CurrentState = state;
+        }
 
         public void Face(Vector3 target)
         {
@@ -95,36 +103,38 @@ namespace TrueCraft.Core.Entities
             Yaw = (float)MathHelper.RadiansToDegrees(-(Math.Atan2(diff.X, diff.Z) - Math.PI) + Math.PI); // "Flip" over the 180 mark
         }
 
-        protected void AdvancePath(bool faceRoute = true)
+        public bool AdvancePath(TimeSpan time, bool faceRoute = true)
         {
+            var modifier = time.TotalSeconds * Speed;
             if (CurrentPath != null)
             {
-                if (CurrentNodeStart == DateTime.MinValue)
-                    CurrentNodeStart = DateTime.UtcNow;
                 // Advance along path
                 var target = (Vector3)CurrentPath.Waypoints[CurrentPath.Index];
+                target.Y = Position.Y; // TODO: Find better way of doing this
                 var diff = target - Position;
-                var max = (DateTime.UtcNow - CurrentNodeStart).TotalSeconds * Speed;
+                diff *= modifier;
                 if (faceRoute)
                     Face(target);
-                diff.Clamp(max);
                 Position += diff;
-                if (Position == target)
+                if (Position.DistanceTo(target) < 0.1)
                 {
                     CurrentPath.Index++;
                     if (CurrentPath.Index >= CurrentPath.Waypoints.Count)
                     {
-                        CurrentPath = null;
-                        CurrentNodeStart = DateTime.MinValue;
-                        // TODO: Raise path complete event or something?
+                        CurrentPath = null; // TODO: Raise path complete event or something?
+                        return true;
                     }
                 }
             }
+            return false;
         }
 
         public override void Update(IEntityManager entityManager)
         {
-            AdvancePath();
+            if (CurrentState != null)
+                CurrentState.Update(this, entityManager);
+            else
+                AdvancePath(entityManager.TimeSinceLastUpdate);
             base.Update(entityManager);
         }
     }

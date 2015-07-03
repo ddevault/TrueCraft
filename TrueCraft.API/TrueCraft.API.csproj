@@ -110,6 +110,8 @@
     <Compile Include="World\ChunkLoadedEventArgs.cs" />
     <Compile Include="IEventSubject.cs" />
     <Compile Include="PathResult.cs" />
+    <Compile Include="AI\IMobState.cs" />
+    <Compile Include="Entities\IMobEntity.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -121,5 +123,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="AI\" />
   </ItemGroup>
 </Project>
