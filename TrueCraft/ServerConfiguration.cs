@@ -30,6 +30,7 @@ namespace TrueCraft
             Singleplayer = false;
             Query = true;
             QueryPort = 25566;
+            EnableLighting = false;
         }
 
         [YamlMember(Alias = "motd")]
@@ -55,5 +56,8 @@ namespace TrueCraft
 
         [YamlMember(Alias = "queryPort")]
         public int QueryPort { get; set; }
+
+        [YamlMember(Alias = "enable-lighting")]
+        public bool EnableLighting { get; set; }
     }
 }

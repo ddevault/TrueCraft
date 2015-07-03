@@ -24,8 +24,8 @@ namespace TrueCraft.Core.AI
 
         public WanderState()
         {
-            IdleChance = 5;
-            Distance = 16;
+            IdleChance = 20;
+            Distance = 25;
             PathFinder = new AStarPathFinder();
         }
 

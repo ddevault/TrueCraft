@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TrueCraft.API;
 using TrueCraft.API.World;
+using System.Diagnostics;
 
 namespace TrueCraft.Core.AI
 {
@@ -66,7 +67,6 @@ namespace TrueCraft.Core.AI
         public PathResult FindPath(IWorld world, BoundingBox subject, Coordinates3D start, Coordinates3D goal)
         {
             // Thanks to www.redblobgames.com/pathfinding/a-star/implementation.html
-            
             var parents = new Dictionary<Coordinates3D, Coordinates3D>();
             var costs = new Dictionary<Coordinates3D, double>();
             var openset = new PriorityQueue<Coordinates3D>();

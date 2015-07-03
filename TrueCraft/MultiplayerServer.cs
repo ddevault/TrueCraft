@@ -17,6 +17,8 @@ using TrueCraft.Exceptions;
 using TrueCraft.Core.Logic;
 using TrueCraft.Core.Lighting;
 using TrueCraft.Core.World;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace TrueCraft
 {
@@ -172,23 +174,36 @@ namespace TrueCraft
                 }
                 PendingBlockUpdates.Enqueue(new BlockUpdate { Coordinates = e.Position, World = sender as IWorld });
                 ProcessBlockUpdates();
-                var lighter = WorldLighters.SingleOrDefault(l => l.World == sender);
-                if (lighter != null)
+                if (Program.ServerConfiguration.EnableLighting)
                 {
-                    lighter.EnqueueOperation(new BoundingBox(e.Position, e.Position + Vector3.One), true);
-                    lighter.EnqueueOperation(new BoundingBox(e.Position, e.Position + Vector3.One), false);
+                    var lighter = WorldLighters.SingleOrDefault(l => l.World == sender);
+                    if (lighter != null)
+                    {
+                        lighter.EnqueueOperation(new BoundingBox(e.Position, e.Position + Vector3.One), true);
+                        lighter.EnqueueOperation(new BoundingBox(e.Position, e.Position + Vector3.One), false);
+                    }
                 }
             }
         }
 
         void HandleChunkGenerated(object sender, ChunkLoadedEventArgs e)
         {
-            var lighter = new WorldLighting(sender as IWorld, BlockRepository);
-            var coords = e.Coordinates * new Coordinates2D(Chunk.Width, Chunk.Depth);
-            lighter.EnqueueOperation(new BoundingBox(new Vector3(coords.X, 0, coords.Z),
-                    new Vector3(coords.X + Chunk.Width, Chunk.Height, coords.Z + Chunk.Depth)), true, true);
-            while (lighter.TryLightNext()) // Initial lighting
+            if (Program.ServerConfiguration.EnableLighting)
             {
+                var lighter = new WorldLighting(sender as IWorld, BlockRepository);
+                var coords = e.Coordinates * new Coordinates2D(Chunk.Width, Chunk.Depth);
+                lighter.EnqueueOperation(new BoundingBox(new Vector3(coords.X, 0, coords.Z),
+                        new Vector3(coords.X + Chunk.Width, Chunk.Height, coords.Z + Chunk.Depth)), true, true);
+                while (lighter.TryLightNext()) // Initial lighting
+                {
+                }
+            }
+            else
+            {
+                for (int i = 0; i < e.Chunk.SkyLight.Data.Length; i++)
+                {
+                    e.Chunk.SkyLight.Data[i] = 0xFF;
+                }
             }
         }
 
