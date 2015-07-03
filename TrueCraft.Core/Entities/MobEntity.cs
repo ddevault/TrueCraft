@@ -12,7 +12,7 @@ namespace TrueCraft.Core.Entities
 {
     public abstract class MobEntity : LivingEntity, IAABBEntity, IMobEntity
     {
-        public MobEntity()
+        protected MobEntity()
         {
             Speed = 4;
             CurrentState = new WanderState();
@@ -33,6 +33,8 @@ namespace TrueCraft.Core.Entities
         }
 
         public abstract sbyte MobType { get; }
+
+        public virtual bool Friendly { get { return true; } }
 
         public virtual void TerrainCollision(Vector3 collisionPoint, Vector3 collisionDirection)
         {
@@ -88,7 +90,7 @@ namespace TrueCraft.Core.Entities
         /// <summary>
         /// Mob's current speed in m/s.
         /// </summary>
-        public virtual double Speed { get; }
+        public virtual double Speed { get; set; }
 
         public IMobState CurrentState { get; set; }
 

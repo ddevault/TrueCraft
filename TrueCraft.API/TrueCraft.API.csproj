@@ -112,6 +112,7 @@
     <Compile Include="PathResult.cs" />
     <Compile Include="AI\IMobState.cs" />
     <Compile Include="Entities\IMobEntity.cs" />
+    <Compile Include="AI\ISpawnRule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

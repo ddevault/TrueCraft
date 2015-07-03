@@ -35,5 +35,13 @@ namespace TrueCraft.Core.Entities
             // TODO: Think about how to deal with walls and such
             return false;
         }
+
+        public override bool Friendly
+        {
+            get
+            {
+                return false;
+            }
+        }
     }
 }

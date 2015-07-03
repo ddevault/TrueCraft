@@ -58,6 +58,8 @@
     <Compile Include="CraftingRepository.cs" />
     <Compile Include="ServerConfiguration.cs" />
     <Compile Include="PhysicsEngine.cs" />
+    <Compile Include="MobManager.cs" />
+    <Compile Include="Rules\OverworldSpawnRules.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -76,5 +78,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Rules\" />
   </ItemGroup>
 </Project>

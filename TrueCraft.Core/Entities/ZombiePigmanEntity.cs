@@ -28,5 +28,13 @@ namespace TrueCraft.Core.Entities
                 return 57;
             }
         }
+
+        public override bool Friendly
+        {
+            get
+            {
+                return false;
+            }
+        }
     }
 }
