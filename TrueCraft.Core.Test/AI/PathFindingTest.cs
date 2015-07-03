@@ -6,6 +6,7 @@ using TrueCraft.Core.AI;
 using TrueCraft.API.World;
 using TrueCraft.Core.World;
 using System.Linq;
+using System.Diagnostics;
 
 namespace TrueCraft.Core.Test.AI
 {
@@ -39,9 +40,15 @@ namespace TrueCraft.Core.Test.AI
         {
             var world = new TrueCraft.Core.World.World("default", new FlatlandGenerator());
             var astar = new AStarPathFinder();
+
+            var watch = new Stopwatch();
+            watch.Start();
             var path = astar.FindPath(world, new BoundingBox(),
                new Coordinates3D(0, 4, 0), new Coordinates3D(5, 4, 0));
+            watch.Stop();
             DrawGrid(path, world);
+            Console.WriteLine(watch.ElapsedMilliseconds + "ms");
+
             var expected = new[]
             {
                 new Coordinates3D(0, 4, 0),
@@ -62,8 +69,14 @@ namespace TrueCraft.Core.Test.AI
             var astar = new AStarPathFinder();
             var start = new Coordinates3D(0, 4, 0);
             var end = new Coordinates3D(5, 4, 5);
+
+            var watch = new Stopwatch();
+            watch.Start();
             var path = astar.FindPath(world, new BoundingBox(), start, end);
+            watch.Stop();
             DrawGrid(path, world);
+            Console.WriteLine(watch.ElapsedMilliseconds + "ms");
+
             // Just test the start and end, the exact results need to be eyeballed
             Assert.AreEqual(start, path.Waypoints[0]);
             Assert.AreEqual(end, path.Waypoints[path.Waypoints.Count - 1]);
@@ -77,8 +90,14 @@ namespace TrueCraft.Core.Test.AI
             var start = new Coordinates3D(0, 4, 0);
             var end = new Coordinates3D(5, 4, 0);
             world.SetBlockID(new Coordinates3D(3, 4, 0), 1); // Obstacle
+
+            var watch = new Stopwatch();
+            watch.Start();
             var path = astar.FindPath(world, new BoundingBox(), start, end);
+            watch.Stop();
             DrawGrid(path, world);
+            Console.WriteLine(watch.ElapsedMilliseconds + "ms");
+
             // Just test the start and end, the exact results need to be eyeballed
             Assert.AreEqual(start, path.Waypoints[0]);
             Assert.AreEqual(end, path.Waypoints[path.Waypoints.Count - 1]);
@@ -98,7 +117,12 @@ namespace TrueCraft.Core.Test.AI
             world.SetBlockID(start + Coordinates3D.North, 1);
             world.SetBlockID(start + Coordinates3D.South, 1);
 
+            var watch = new Stopwatch();
+            watch.Start();
             var path = astar.FindPath(world, new BoundingBox(), start, end);
+            watch.Stop();
+            Console.WriteLine(watch.ElapsedMilliseconds + "ms");
+
             Assert.IsNull(path);
         }
 
@@ -120,8 +144,12 @@ namespace TrueCraft.Core.Test.AI
             for (int x = -4; x < 4; x++)
                 world.SetBlockID(new Coordinates3D(x, 4, 4), 1);
 
+            var watch = new Stopwatch();
+            watch.Start();
             var path = astar.FindPath(world, new BoundingBox(), start, end);
+            watch.Stop();
             DrawGrid(path, world);
+            Console.WriteLine(watch.ElapsedMilliseconds + "ms");
 
             // Just test the start and end, the exact results need to be eyeballed
             Assert.AreEqual(start, path.Waypoints[0]);
@@ -146,8 +174,12 @@ namespace TrueCraft.Core.Test.AI
             for (int x = -4; x < 4; x++)
                 world.SetBlockID(new Coordinates3D(x, 4, 4), 1);
 
+            var watch = new Stopwatch();
+            watch.Start();
             var path = astar.FindPath(world, new BoundingBox(), start, end);
+            watch.Stop();
             DrawGrid(path, world);
+            Console.WriteLine(watch.ElapsedMilliseconds + "ms");
 
             // Just test the start and end, the exact results need to be eyeballed
             Assert.AreEqual(start, path.Waypoints[0]);

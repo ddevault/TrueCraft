@@ -43,6 +43,26 @@ namespace TrueCraft.Core.AI
             return id == 0;
         }
 
+        private IEnumerable<Coordinates3D> GetNeighbors(IWorld world, BoundingBox subject, Coordinates3D current)
+        {
+            for (int i = 0; i < Neighbors.Length; i++)
+            {
+                var next = Neighbors[i] + current;
+                if (CanOccupyVoxel(world, subject, next))
+                    yield return next;
+            }
+            for (int i = 0; i < DiagonalNeighbors.Length; i++)
+            {
+                var pair = DiagonalNeighbors[i];
+                var next = pair[0] + pair[1] + current;
+
+                if (CanOccupyVoxel(world, subject, next)
+                    && CanOccupyVoxel(world, subject, pair[0] + current)
+                    && CanOccupyVoxel(world, subject, pair[1] + current))
+                    yield return next;
+            }
+        }
+
         public PathResult FindPath(IWorld world, BoundingBox subject, Coordinates3D start, Coordinates3D goal)
         {
             // Thanks to www.redblobgames.com/pathfinding/a-star/implementation.html
@@ -64,41 +84,10 @@ namespace TrueCraft.Core.AI
 
                 closedset.Add(current);
 
-                // Test directly adjacent voxels
-                for (int i = 0; i < Neighbors.Length; i++)
+                foreach (var next in GetNeighbors(world, subject, current))
                 {
-                    var next = Neighbors[i] + current;
                     if (closedset.Contains(next))
                         continue;
-
-                    if (!CanOccupyVoxel(world, subject, next))
-                        continue;
-
-                    var cost = (int)(costs[current] + current.DistanceTo(next));
-                    if (!costs.ContainsKey(next) || cost < costs[next])
-                    {
-                        costs[next] = cost;
-                        var priority = cost + next.DistanceTo(goal);
-                        openset.Enqueue(next, priority);
-                        parents[next] = current;
-                    }
-                }
-
-                // Test diagonally
-                for (int i = 0; i < DiagonalNeighbors.Length; i++)
-                {
-                    var pair = DiagonalNeighbors[i];
-                    var next = pair[0] + pair[1] + current;
-                    if (closedset.Contains(next))
-                        continue;
-
-                    if (!CanOccupyVoxel(world, subject, next))
-                        continue;
-                    if (!CanOccupyVoxel(world, subject, pair[0] + current))
-                        continue;
-                    if (!CanOccupyVoxel(world, subject, pair[1] + current))
-                        continue;
-
                     var cost = (int)(costs[current] + current.DistanceTo(next));
                     if (!costs.ContainsKey(next) || cost < costs[next])
                     {
