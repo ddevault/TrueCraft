@@ -34,7 +34,11 @@ namespace TrueCraft.Client
                 var fileInfo = new FileInfo("MonoGame.Framework.Windows.dll");
                 return Assembly.LoadFile(fileInfo.FullName);
             }
-            // TODO: OSX support
+            if (RuntimeInfo.IsMacOSX)
+            {
+                var fileInfo = new FileInfo("MonoGame.Framework.MacOS.dll");
+                return Assembly.LoadFile(fileInfo.FullName);
+            }
             return null;
         }
 
