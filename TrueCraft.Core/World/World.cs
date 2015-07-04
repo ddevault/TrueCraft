@@ -315,24 +315,7 @@ namespace TrueCraft.Core.World
             Save();
         }
 
-        public Coordinates3D AdjustCoordinates(Coordinates3D coordinates)
-        {
-            if (coordinates.Y < 0 || coordinates.Y >= Chunk.Height)
-                throw new ArgumentOutOfRangeException("coordinates", "Coordinates are out of range");
-
-            int chunkX = coordinates.X / Chunk.Width;
-            int chunkZ = coordinates.Z / Chunk.Depth;
-
-            if (coordinates.X < 0)
-                chunkX--;
-            if (coordinates.Z < 0)
-                chunkZ--;
-
-            return new Coordinates3D(
-                (coordinates.X - chunkX * Chunk.Width) % Chunk.Width,
-                coordinates.Y,
-                (coordinates.Z - chunkZ * Chunk.Depth) % Chunk.Depth);
-        }
+        private IChunk CachedChunk;
 
         public Coordinates3D FindBlockPosition(Coordinates3D coordinates, out IChunk chunk, bool generate = true)
         {
@@ -343,15 +326,23 @@ namespace TrueCraft.Core.World
             int chunkZ = coordinates.Z / Chunk.Depth;
 
             if (coordinates.X < 0)
-                chunkX--;
+                chunkX = (coordinates.X + 1) / Chunk.Width - 1;
             if (coordinates.Z < 0)
-                chunkZ--;
+                chunkZ = (coordinates.Z + 1) / Chunk.Depth - 1;
+
+            if (CachedChunk != null && chunkX == CachedChunk.Coordinates.X && chunkZ == CachedChunk.Coordinates.Z)
+                chunk = CachedChunk;
+            else
+            {
+                CachedChunk = GetChunk(new Coordinates2D(chunkX, chunkZ), generate);
+                chunk = CachedChunk;
+            }
 
             chunk = GetChunk(new Coordinates2D(chunkX, chunkZ), generate);
             return new Coordinates3D(
-                (coordinates.X - chunkX * Chunk.Width) % Chunk.Width,
+                (coordinates.X % Chunk.Width + Chunk.Width) % Chunk.Width,
                 coordinates.Y,
-                (coordinates.Z - chunkZ * Chunk.Depth) % Chunk.Depth);
+                (coordinates.Z % Chunk.Depth + Chunk.Depth) % Chunk.Depth);
         }
 
         public bool IsValidPosition(Coordinates3D position)

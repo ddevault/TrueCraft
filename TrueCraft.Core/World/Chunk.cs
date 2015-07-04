@@ -34,6 +34,7 @@ namespace TrueCraft.Core.World
         public NibbleArray SkyLight { get; set; }
         public byte[] Biomes { get; set; }
         public int[] HeightMap { get; set; }
+        public int MaxHeight { get; private set; }
         [TagName("xPos")]
         public int X { get; set; }
         [TagName("zPos")]
@@ -81,6 +82,7 @@ namespace TrueCraft.Core.World
             TileEntities = new Dictionary<Coordinates3D, NbtCompound>();
             TerrainPopulated = false;
             LightPopulated = false;
+            MaxHeight = 0;
         }
 
         public Chunk(Coordinates2D coordinates) : this()
@@ -139,7 +141,11 @@ namespace TrueCraft.Core.World
                     {
                         coordinates.Y--;
                         if (GetBlockID(coordinates) != 0)
+                        {
                             SetHeight((byte)coordinates.X, (byte)coordinates.Z, coordinates.Y);
+                            if (coordinates.Y > MaxHeight)
+                                MaxHeight = coordinates.Y;
+                        }
                     }
                 }
             }
@@ -232,6 +238,8 @@ namespace TrueCraft.Core.World
                         if (Blocks[index] != 0)
                         {
                             SetHeight(x, z, y);
+                            if (y > MaxHeight)
+                                MaxHeight = y;
                             break;
                         }
                     }

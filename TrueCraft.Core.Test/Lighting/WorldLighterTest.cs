@@ -26,17 +26,13 @@ namespace TrueCraft.Core.Test.Lighting
             world.BlockRepository = repository;
             var lighter = new WorldLighting(world, repository);
             world.GetBlockID(Coordinates3D.Zero); // Generate a chunk
-            lighter.EnqueueOperation(new BoundingBox(
-                    new Vector3(0, 0, 0),
-                    new Vector3(16, 128, 16)), true, true);
-            while (lighter.TryLightNext())
-            {
-            }
+            lighter.InitialLighting(world.GetChunk(Coordinates2D.Zero));
 
             for (int y = 5; y >= 0; y--)
             {
+                Console.Write("Y: {0} ", y);
                 Console.Write(world.GetBlockID(new Coordinates3D(0, y, 0)));
-                Console.Write(" ");
+                Console.Write(" -> ");
                 Console.WriteLine(world.GetSkyLight(new Coordinates3D(0, y, 0)));
             }
 
@@ -50,9 +46,9 @@ namespace TrueCraft.Core.Test.Lighting
                         var coords = new Coordinates3D(x, y, z);
                         var sky = world.GetSkyLight(coords);
                         if (y < 4)
-                            Assert.AreEqual(0, sky);
+                            Assert.AreEqual(0, sky, coords.ToString());
                         else
-                            Assert.AreEqual(15, sky);
+                            Assert.AreEqual(15, sky, coords.ToString());
                     }
                 }
             }
@@ -70,12 +66,7 @@ namespace TrueCraft.Core.Test.Lighting
             world.BlockRepository = repository;
             var lighter = new WorldLighting(world, repository);
             world.GetBlockID(Coordinates3D.Zero); // Generate a chunk
-            lighter.EnqueueOperation(new BoundingBox(
-                    new Vector3(0, 0, 0),
-                    new Vector3(16, 128, 16)), true, true);
-            while (lighter.TryLightNext()) // Initial lighting
-            {
-            }
+            lighter.InitialLighting(world.GetChunk(Coordinates2D.Zero));
 
             world.SetBlockID(new Coordinates3D(5, 3, 5), 0); // Create area that looks like so:
             world.SetBlockID(new Coordinates3D(5, 2, 5), 0); // x x  Light goes like so: |
@@ -111,12 +102,7 @@ namespace TrueCraft.Core.Test.Lighting
             world.BlockRepository = repository;
             var lighter = new WorldLighting(world, repository);
             world.GetBlockID(Coordinates3D.Zero); // Generate a chunk
-            lighter.EnqueueOperation(new BoundingBox(
-                    new Vector3(0, 0, 0),
-                    new Vector3(16, 128, 16)), true, true);
-            while (lighter.TryLightNext()) // Initial lighting
-            {
-            }
+            lighter.InitialLighting(world.GetChunk(Coordinates2D.Zero));
 
             world.SetBlockID(new Coordinates3D(5, 3, 5), 0); // Create area that looks like so:
             world.SetBlockID(new Coordinates3D(5, 2, 5), 0); // x x  Light goes like so: |
@@ -166,12 +152,7 @@ namespace TrueCraft.Core.Test.Lighting
             world.BlockRepository = repository;
             var lighter = new WorldLighting(world, repository);
             world.GetBlockID(Coordinates3D.Zero); // Generate a chunk
-            lighter.EnqueueOperation(new BoundingBox(
-                    new Vector3(0, 0, 0),
-                    new Vector3(16, 128, 16)), true, true);
-            while (lighter.TryLightNext()) // Initial lighting
-            {
-            }
+            lighter.InitialLighting(world.GetChunk(Coordinates2D.Zero));
 
             // Test this layout:
             // xxx x    y=3
@@ -273,12 +254,7 @@ namespace TrueCraft.Core.Test.Lighting
             }
             world.GetChunk(Coordinates2D.Zero).UpdateHeightMap();
 
-            lighter.EnqueueOperation(new BoundingBox(
-                    new Vector3(0, 0, 0),
-                    new Vector3(16, 128, 16)), true, true);
-            while (lighter.TryLightNext()) // Initial lighting
-            {
-            }
+            lighter.InitialLighting(world.GetChunk(Coordinates2D.Zero));
 
             // Test this layout:
             // xox      o == leaves

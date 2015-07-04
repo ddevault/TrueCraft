@@ -8,6 +8,7 @@ namespace TrueCraft.API.World
     {
         int X { get; }
         int Z { get; }
+        int MaxHeight { get; }
         Coordinates2D Coordinates { get; set; }
         bool IsModified { get; set; }
         bool LightPopulated { get; set; }

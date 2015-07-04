@@ -29,7 +29,6 @@ namespace TrueCraft.API.World
         byte GetMetadata(Coordinates3D coordinates);
         byte GetBlockLight(Coordinates3D coordinates);
         byte GetSkyLight(Coordinates3D coordinates);
-        Coordinates3D AdjustCoordinates(Coordinates3D coordinates);
         Coordinates3D FindBlockPosition(Coordinates3D coordinates, out IChunk chunk, bool generate = true);
         NbtCompound GetTileEntity(Coordinates3D coordinates);
         BlockDescriptor GetBlockData(Coordinates3D coordinates);

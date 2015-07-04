@@ -30,31 +30,31 @@ namespace TrueCraft
             Singleplayer = false;
             Query = true;
             QueryPort = 25566;
-            EnableLighting = false;
+            EnableLighting = true;
         }
 
         [YamlMember(Alias = "motd")]
         public string MOTD { get; set; }
 
-        [YamlMember(Alias = "serverPort")]
+        [YamlMember(Alias = "bind-port")]
         public int ServerPort {get; set; }
 
-        [YamlMember(Alias = "serverAddress")]
+        [YamlMember(Alias = "bind-endpoint")]
         public string ServerAddress { get; set; }
 
         [YamlMember(Alias = "debug")]
         public DebugConfiguration Debug { get; set; }
 
-        [YamlMember(Alias = "worldSaveInterval")]
+        [YamlMember(Alias = "save-interval")]
         public int WorldSaveInterval { get; set; }
 
         [YamlIgnore]
         public bool Singleplayer { get; set; }
 
-        [YamlMember(Alias = "query")]
+        [YamlMember(Alias = "query-enabled")]
         public bool Query { get; set; }
 
-        [YamlMember(Alias = "queryPort")]
+        [YamlMember(Alias = "query-port")]
         public int QueryPort { get; set; }
 
         [YamlMember(Alias = "enable-lighting")]

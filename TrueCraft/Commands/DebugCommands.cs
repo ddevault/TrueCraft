@@ -45,6 +45,38 @@ namespace TrueCraft.Commands
         }
     }
 
+    public class SkyLightCommand : Command
+    {
+        public override string Name
+        {
+            get { return "sl"; }
+        }
+
+        public override string Description
+        {
+            get { return "Shows sky light at your current position."; }
+        }
+
+        public override string[] Aliases
+        {
+            get { return new string[0]; }
+        }
+
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
+        {
+            int mod = 0;
+            if (arguments.Length == 1)
+                int.TryParse(arguments[0], out mod);
+            client.SendMessage(client.World.GetSkyLight(
+                (Coordinates3D)(client.Entity.Position + new Vector3(0, -mod, 0))).ToString());
+        }
+
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
+        {
+            client.SendMessage("/sl");
+        }
+    }
+
     public class SpawnCommand : Command
     {
         public override string Name

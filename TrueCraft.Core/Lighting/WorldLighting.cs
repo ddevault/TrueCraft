@@ -4,12 +4,13 @@ using TrueCraft.Core.World;
 using TrueCraft.API.Logic;
 using TrueCraft.API;
 using System.Collections.Generic;
-
-// https://github.com/SirCmpwn/TrueCraft/wiki/Lighting
 using System.Diagnostics;
 
 namespace TrueCraft.Core.Lighting
 {
+    // https://github.com/SirCmpwn/TrueCraft/wiki/Lighting
+
+    // Note: Speed-critical code
     public class WorldLighting
     {
         private static readonly Coordinates3D[] Neighbors =
@@ -57,11 +58,11 @@ namespace TrueCraft.Core.Lighting
         {
             Coordinates3D coords;
             var map = new byte[Chunk.Width, Chunk.Depth];
-            for (int x = 0; x < Chunk.Width; x++)
+            for (byte x = 0; x < Chunk.Width; x++)
             {
-                for (int z = 0; z < Chunk.Depth; z++)
+                for (byte z = 0; z < Chunk.Depth; z++)
                 {
-                    for (byte y = (byte)(chunk.GetHeight((byte)x, (byte)z) + 2); y > 0; y--)
+                    for (byte y = (byte)(chunk.GetHeight(x, z) + 2); y > 0; y--)
                     {
                         if (y >= Chunk.Height)
                             continue;
@@ -88,9 +89,9 @@ namespace TrueCraft.Core.Lighting
             if (!HeightMaps.ContainsKey(chunk.Coordinates))
                 return;
             var map = HeightMaps[chunk.Coordinates];
-            int x = adjusted.X; int z = adjusted.Z;
+            byte x = (byte)adjusted.X; byte z = (byte)adjusted.Z;
             Coordinates3D _;
-            for (byte y = (byte)(chunk.GetHeight((byte)x, (byte)z) + 2); y > 0; y--)
+            for (byte y = (byte)(chunk.GetHeight(x, z) + 2); y > 0; y--)
             {
                 if (y >= Chunk.Height)
                     continue;
@@ -120,33 +121,6 @@ namespace TrueCraft.Core.Lighting
             }
         }
 
-        private IChunk CurrentChunk;
-
-        private Coordinates3D AdjustCoordinates(Coordinates3D coords, out IChunk chunk)
-        {
-            int chunkX = coords.X / Chunk.Width;
-            int chunkZ = coords.Z / Chunk.Depth;
-
-            if (coords.X < 0)
-                chunkX--;
-            if (coords.Z < 0)
-                chunkZ--;
-
-            // Use a cached chunk if possible
-            if (CurrentChunk != null && chunkX == CurrentChunk.Coordinates.X && chunkZ == CurrentChunk.Coordinates.Z)
-                chunk = CurrentChunk;
-            else
-            {
-                CurrentChunk = World.GetChunk(new Coordinates2D(chunkX, chunkZ), generate: false);
-                chunk = CurrentChunk;
-            }
-
-            return new Coordinates3D(
-                (coords.X - chunkX * Chunk.Width) % Chunk.Width,
-                coords.Y,
-                (coords.Z - chunkZ * Chunk.Depth) % Chunk.Depth);
-        }
-
         /// <summary>
         /// Propegates a lighting change to an adjacent voxel (if neccesary)
         /// </summary>
@@ -156,7 +130,7 @@ namespace TrueCraft.Core.Lighting
             if (!World.IsValidPosition(coords))
                 return;
             IChunk chunk;
-            var adjustedCoords = AdjustCoordinates(coords, out chunk);
+            var adjustedCoords = World.FindBlockPosition(coords, out chunk, generate: false);
             if (chunk == null || !chunk.TerrainPopulated)
                 return;
             byte current = op.SkyLight ? World.GetSkyLight(coords) : World.GetBlockLight(coords);
@@ -167,9 +141,7 @@ namespace TrueCraft.Core.Lighting
             {
                 byte emissiveness = provider.Luminance;
                 if (chunk.GetHeight((byte)adjustedCoords.X, (byte)adjustedCoords.Z) <= y)
-                {
                     emissiveness = 15;
-                }
                 if (emissiveness >= current)
                     return;
             }
@@ -184,7 +156,7 @@ namespace TrueCraft.Core.Lighting
             var coords = new Coordinates3D(x, y, z);
 
             IChunk chunk;
-            var adjustedCoords = AdjustCoordinates(coords, out chunk);
+            var adjustedCoords = World.FindBlockPosition(coords, out chunk, generate: false);
 
             if (chunk == null || !chunk.TerrainPopulated) // Move on if this chunk is empty
                 return;
@@ -246,9 +218,9 @@ namespace TrueCraft.Core.Lighting
             {
                 // Apply changes
                 if (op.SkyLight)
-                    World.SetSkyLight(coords, final);
+                    chunk.SetSkyLight(adjustedCoords, final);
                 else
-                    World.SetBlockLight(coords, final);
+                    chunk.SetBlockLight(adjustedCoords, final);
                 
                 byte propegated = (byte)Math.Max(final - 1, 0);
 
@@ -294,6 +266,30 @@ namespace TrueCraft.Core.Lighting
                     }
                 }
                 PendingOperations.Add(new LightingOperation { SkyLight = skyLight, Box = box, Initial = initial });
+            }
+        }
+
+        private void SetUpperVoxels(IChunk chunk)
+        {
+            for (int x = 0; x < Chunk.Width; x++)
+            for (int z = 0; z < Chunk.Depth; z++)
+            for (int y = chunk.MaxHeight + 1; y < Chunk.Height; y++)
+                chunk.SetSkyLight(new Coordinates3D(x, y, z), 15);
+        }
+
+        /// <summary>
+        /// Queues the initial lighting pass for a newly generated chunk.
+        /// </summary>
+        public void InitialLighting(IChunk chunk, bool flush = true)
+        {
+            // Set voxels above max height to 0xFF
+            SetUpperVoxels(chunk);
+            var coords = chunk.Coordinates * new Coordinates2D(Chunk.Width, Chunk.Depth);
+            EnqueueOperation(new BoundingBox(new Vector3(coords.X, 0, coords.Z),
+                new Vector3(coords.X + Chunk.Width, chunk.MaxHeight + 2, coords.Z + Chunk.Depth)),
+                true, true);
+            while (flush && TryLightNext())
+            {
             }
         }
     }
