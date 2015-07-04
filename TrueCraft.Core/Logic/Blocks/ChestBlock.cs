@@ -127,7 +127,7 @@ namespace TrueCraft.Core.Logic.Blocks
                 }
             }
             var upSelf = world.BlockRepository.GetBlockProvider(world.GetBlockID(self + Coordinates3D.Up));
-            if (upSelf.Opaque && !(up is WallSignBlock))
+            if (upSelf.Opaque && !(upSelf is WallSignBlock))
                 return false; // Obstructed
 
             if (adjacent != -Coordinates3D.One)
