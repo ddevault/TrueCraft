@@ -6,6 +6,7 @@ using TrueCraft.API;
 using System.Collections.Generic;
 
 // https://github.com/SirCmpwn/TrueCraft/wiki/Lighting
+using System.Diagnostics;
 
 namespace TrueCraft.Core.Lighting
 {
@@ -161,15 +162,15 @@ namespace TrueCraft.Core.Lighting
             if (chunk == null || !chunk.TerrainPopulated) // Move on if this chunk is empty
                 return;
 
-            var data = World.GetBlockData(coords);
-            var provider = BlockRepository.GetBlockProvider(data.ID);
+            var id = World.GetBlockID(coords);
+            var provider = BlockRepository.GetBlockProvider(id);
 
             // The opacity of the block determines the amount of light it receives from
             // neighboring blocks. This is subtracted from the max of the neighboring
             // block values. We must subtract at least 1.
             byte opacity = Math.Max(provider.LightOpacity, (byte)1);
 
-            byte current = op.SkyLight ? data.SkyLight : data.BlockLight;
+            byte current = op.SkyLight ? World.GetSkyLight(coords) : World.GetBlockLight(coords);
             byte final = 0;
 
             // Calculate emissiveness
