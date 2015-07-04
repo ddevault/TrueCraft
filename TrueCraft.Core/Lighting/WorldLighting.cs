@@ -120,6 +120,33 @@ namespace TrueCraft.Core.Lighting
             }
         }
 
+        private IChunk CurrentChunk;
+
+        private Coordinates3D AdjustCoordinates(Coordinates3D coords, out IChunk chunk)
+        {
+            int chunkX = coords.X / Chunk.Width;
+            int chunkZ = coords.Z / Chunk.Depth;
+
+            if (coords.X < 0)
+                chunkX--;
+            if (coords.Z < 0)
+                chunkZ--;
+
+            // Use a cached chunk if possible
+            if (CurrentChunk != null && chunkX == CurrentChunk.Coordinates.X && chunkZ == CurrentChunk.Coordinates.Z)
+                chunk = CurrentChunk;
+            else
+            {
+                CurrentChunk = World.GetChunk(new Coordinates2D(chunkX, chunkZ), generate: false);
+                chunk = CurrentChunk;
+            }
+
+            return new Coordinates3D(
+                (coords.X - chunkX * Chunk.Width) % Chunk.Width,
+                coords.Y,
+                (coords.Z - chunkZ * Chunk.Depth) % Chunk.Depth);
+        }
+
         /// <summary>
         /// Propegates a lighting change to an adjacent voxel (if neccesary)
         /// </summary>
@@ -129,7 +156,7 @@ namespace TrueCraft.Core.Lighting
             if (!World.IsValidPosition(coords))
                 return;
             IChunk chunk;
-            var adjustedCoords = World.FindBlockPosition(coords, out chunk, generate: false);
+            var adjustedCoords = AdjustCoordinates(coords, out chunk);
             if (chunk == null || !chunk.TerrainPopulated)
                 return;
             byte current = op.SkyLight ? World.GetSkyLight(coords) : World.GetBlockLight(coords);
@@ -157,7 +184,7 @@ namespace TrueCraft.Core.Lighting
             var coords = new Coordinates3D(x, y, z);
 
             IChunk chunk;
-            var adjustedCoords = World.FindBlockPosition(coords, out chunk, generate: false);
+            var adjustedCoords = AdjustCoordinates(coords, out chunk);
 
             if (chunk == null || !chunk.TerrainPopulated) // Move on if this chunk is empty
                 return;

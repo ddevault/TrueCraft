@@ -315,13 +315,37 @@ namespace TrueCraft.Core.World
             Save();
         }
 
+        public Coordinates3D AdjustCoordinates(Coordinates3D coordinates)
+        {
+            if (coordinates.Y < 0 || coordinates.Y >= Chunk.Height)
+                throw new ArgumentOutOfRangeException("coordinates", "Coordinates are out of range");
+
+            int chunkX = coordinates.X / Chunk.Width;
+            int chunkZ = coordinates.Z / Chunk.Depth;
+
+            if (coordinates.X < 0)
+                chunkX--;
+            if (coordinates.Z < 0)
+                chunkZ--;
+
+            return new Coordinates3D(
+                (coordinates.X - chunkX * Chunk.Width) % Chunk.Width,
+                coordinates.Y,
+                (coordinates.Z - chunkZ * Chunk.Depth) % Chunk.Depth);
+        }
+
         public Coordinates3D FindBlockPosition(Coordinates3D coordinates, out IChunk chunk, bool generate = true)
         {
             if (coordinates.Y < 0 || coordinates.Y >= Chunk.Height)
                 throw new ArgumentOutOfRangeException("coordinates", "Coordinates are out of range");
 
-            var chunkX = (int)Math.Floor((double)coordinates.X / Chunk.Width);
-            var chunkZ = (int)Math.Floor((double)coordinates.Z / Chunk.Depth);
+            int chunkX = coordinates.X / Chunk.Width;
+            int chunkZ = coordinates.Z / Chunk.Depth;
+
+            if (coordinates.X < 0)
+                chunkX--;
+            if (coordinates.Z < 0)
+                chunkZ--;
 
             chunk = GetChunk(new Coordinates2D(chunkX, chunkZ), generate);
             return new Coordinates3D(
