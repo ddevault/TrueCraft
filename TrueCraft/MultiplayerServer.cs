@@ -192,11 +192,15 @@ namespace TrueCraft
             {
                 var lighter = new WorldLighting(sender as IWorld, BlockRepository);
                 var coords = e.Coordinates * new Coordinates2D(Chunk.Width, Chunk.Depth);
+                var watch = new Stopwatch();
+                watch.Start();
                 lighter.EnqueueOperation(new BoundingBox(new Vector3(coords.X, 0, coords.Z),
                         new Vector3(coords.X + Chunk.Width, Chunk.Height, coords.Z + Chunk.Depth)), true, true);
                 while (lighter.TryLightNext()) // Initial lighting
                 {
                 }
+                watch.Stop();
+                Console.WriteLine("Initial chunk lighting took {0}ms", watch.ElapsedMilliseconds);
             }
             else
             {

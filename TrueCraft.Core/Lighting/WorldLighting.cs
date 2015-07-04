@@ -54,14 +54,20 @@ namespace TrueCraft.Core.Lighting
 
         private void GenerateHeightMap(IChunk chunk)
         {
+            Coordinates3D coords;
             var map = new byte[Chunk.Width, Chunk.Depth];
             for (int x = 0; x < Chunk.Width; x++)
             {
                 for (int z = 0; z < Chunk.Depth; z++)
                 {
-                    for (byte y = Chunk.Height - 1; y > 0; y--)
+                    for (byte y = (byte)(chunk.GetHeight((byte)x, (byte)z) + 2); y > 0; y--)
                     {
-                        var id = chunk.GetBlockID(new Coordinates3D(x, y - 1, z));
+                        if (y >= Chunk.Height)
+                            continue;
+                        coords.X = x; coords.Y = y - 1; coords.Z = z;
+                        var id = chunk.GetBlockID(coords);
+                        if (id == 0)
+                            continue;
                         var provider = BlockRepository.GetBlockProvider(id);
                         if (provider.LightOpacity != 0)
                         {
@@ -82,9 +88,15 @@ namespace TrueCraft.Core.Lighting
                 return;
             var map = HeightMaps[chunk.Coordinates];
             int x = adjusted.X; int z = adjusted.Z;
-            for (byte y = Chunk.Height - 1; y > 0; y--)
+            Coordinates3D _;
+            for (byte y = (byte)(chunk.GetHeight((byte)x, (byte)z) + 2); y > 0; y--)
             {
-                var id = chunk.GetBlockID(new Coordinates3D(x, y - 1, z));
+                if (y >= Chunk.Height)
+                    continue;
+                _.X = x; _.Y = y - 1; _.Z = z;
+                var id = chunk.GetBlockID(_);
+                if (id == 0)
+                    continue;
                 var provider = BlockRepository.GetBlockProvider(id);
                 if (provider.LightOpacity != 0)
                 {

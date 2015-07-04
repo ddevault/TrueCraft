@@ -7,6 +7,7 @@ using TrueCraft.Core.Logic;
 using TrueCraft.API;
 using TrueCraft.Core.World;
 using TrueCraft.Core.Logic.Blocks;
+using System.Diagnostics;
 
 namespace TrueCraft.Core.Test.Lighting
 {
@@ -191,12 +192,17 @@ namespace TrueCraft.Core.Test.Lighting
                 world.SetBlockID(new Coordinates3D(x, 1, 5), 0); // Dig a tunnel
             }
 
+            var watch = new Stopwatch();
+            watch.Start();
+
             lighter.EnqueueOperation(new BoundingBox(new Vector3(5, 2, 5),
                     new Vector3(6, 4, 6)), true);
 
             while (lighter.TryLightNext()) // Test lighting
             {
             }
+
+            watch.Stop();
 
             // Output lighting
             for (int y = 3; y >= 0; y--)
@@ -238,6 +244,8 @@ namespace TrueCraft.Core.Test.Lighting
                 Assert.AreEqual(expected, world.GetSkyLight(new Coordinates3D(x, 1, 5)));
                 expected--;
             }
+
+            Console.WriteLine("{0}ms", watch.ElapsedMilliseconds);
         }
 
         [Test]
