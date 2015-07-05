@@ -93,7 +93,7 @@ namespace TrueCraft.Launcher.Views
 
         private class LogInAsyncState
         {
-            public HttpWebRequest Request { get; set; }
+            public WebRequest Request { get; set; }
             public string Username { get; set; }
             public string Password { get; set; }
         }
@@ -110,7 +110,7 @@ namespace TrueCraft.Launcher.Views
             DisableForm();
 
             Window.User.Username = UsernameText.Text;
-            var request = WebRequest.CreateHttp(TrueCraftUser.AuthServer + "/api/login");
+            var request = WebRequest.Create(TrueCraftUser.AuthServer + "/api/login");
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded";
             request.BeginGetRequestStream(HandleLoginRequestReady, new LogInAsyncState
