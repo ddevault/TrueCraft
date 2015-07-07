@@ -150,6 +150,15 @@ namespace TrueCraft.Core.Logic
                     }
                 }
 
+                // Prevent the user from placing blocks on themselves
+                var userPlayer = user.Entity as PlayerEntity;
+                if (userPlayer != null){
+                    if (new BoundingBox(userPlayer.Position, userPlayer.Position + userPlayer.Size)
+                        .Intersects(box)){
+                        return; 
+                    }
+                }
+
                 // Place block
                 world.SetBlockID(coordinates, ID);
                 world.SetMetadata(coordinates, (byte)item.Metadata);
