@@ -134,14 +134,14 @@ namespace TrueCraft.Core.Logic
                     var aabb = entity as IAABBEntity;
                     if (aabb != null && !(entity is ItemEntity))
                     {
-                        if (aabb.BoundingBox.Intersects(box))
+                        if (aabb.BoundingBox.Intersects(box) && false) // TODO: Figure out
                             return;
                     }
                     var player = entity as PlayerEntity; // Players do not implement IAABBEntity
                     if (player != null)
                     {
                         if (new BoundingBox(player.Position, player.Position + player.Size)
-                            .Intersects(box))
+                            .Intersects(box) && false)
                             return;
                     }
                 }

@@ -3,11 +3,15 @@ using TrueCraft.API.Logic;
 using TrueCraft.API;
 using TrueCraft.API.World;
 using TrueCraft.API.Server;
+using TrueCraft.API.Networking;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
     public class GrassBlock : BlockProvider
     {
+        public static readonly int MinGrowthTime = 60 * 5;
+        public static readonly int MaxGrowthTime = 60 * 10;
+
         static GrassBlock()
         {
             GrowthCandidates = new Coordinates3D[3 * 3 * 5];
@@ -77,6 +81,53 @@ namespace TrueCraft.Core.Logic.Blocks
                     });
                 }
             }
+        }
+
+        public void TrySpread(Coordinates3D coords, IWorld world, IMultiplayerServer server)
+        {
+            if (!world.IsValidPosition(coords + Coordinates3D.Up))
+                return;
+            var sky = world.GetSkyLight(coords + Coordinates3D.Up);
+            var block = world.GetBlockLight(coords + Coordinates3D.Up);
+            if (sky < 9 && block < 9)
+                return;
+            for (int i = 0, j = MathHelper.Random.Next(GrowthCandidates.Length); i < GrowthCandidates.Length; i++, j++)
+            {
+                var candidate = GrowthCandidates[j % GrowthCandidates.Length] + coords;
+                if (!world.IsValidPosition(candidate) || !world.IsValidPosition(candidate + Coordinates3D.Up))
+                    continue;
+                var id = world.GetBlockID(candidate);
+                if (id == DirtBlock.BlockID)
+                {
+                    var _sky = world.GetSkyLight(candidate + Coordinates3D.Up);
+                    var _block = world.GetBlockLight(candidate + Coordinates3D.Up);
+                    if (_sky < 4 && _block < 4)
+                        continue;
+                    // TODO: Check for blocks above this one with light modifier >= 2 (and if so skip this block)
+                    world.SetBlockID(candidate, GrassBlock.BlockID);
+                    var chunk = world.FindChunk(candidate);
+                    server.Scheduler.ScheduleEvent(chunk,
+                        DateTime.UtcNow.AddSeconds(MathHelper.Random.Next(MinGrowthTime, MaxGrowthTime)),
+                        s => TrySpread(candidate, world, server));
+                    break;
+                }
+            }
+        }
+
+        public override void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            var chunk = world.FindChunk(descriptor.Coordinates);
+            user.Server.Scheduler.ScheduleEvent(chunk,
+                DateTime.UtcNow.AddSeconds(MathHelper.Random.Next(MinGrowthTime, MaxGrowthTime)),
+                s => TrySpread(descriptor.Coordinates, world, user.Server));
+        }
+
+        public override void BlockLoadedFromChunk(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world)
+        {
+            var chunk = world.FindChunk(descriptor.Coordinates);
+            server.Scheduler.ScheduleEvent(chunk,
+                DateTime.UtcNow.AddSeconds(MathHelper.Random.Next(MinGrowthTime, MaxGrowthTime)),
+                s => TrySpread(descriptor.Coordinates, world, server));
         }
     }
 }
