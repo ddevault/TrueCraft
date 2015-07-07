@@ -132,7 +132,7 @@ namespace TrueCraft.Core.Logic
             {
                 // Test for entities
                 var em = user.Server.GetEntityManagerForWorld(world);
-                var entities = em.EntitiesInRange(coordinates, 1);
+                var entities = em.EntitiesInRange(coordinates, 2);
                 var box = new BoundingBox(coordinates, coordinates + Vector3.One);
                 foreach (var entity in entities)
                 {
