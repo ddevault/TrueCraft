@@ -145,6 +145,7 @@ namespace TrueCraft.Core.World
                             SetHeight((byte)coordinates.X, (byte)coordinates.Z, coordinates.Y);
                             if (coordinates.Y > MaxHeight)
                                 MaxHeight = coordinates.Y;
+                            break;
                         }
                     }
                 }
