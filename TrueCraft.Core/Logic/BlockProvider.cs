@@ -162,7 +162,7 @@ namespace TrueCraft.Core.Logic
             }
         }
 
-        public virtual void BlockLoadedFromChunk(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world)
+        public virtual void BlockLoadedFromChunk(Coordinates3D coords, IMultiplayerServer server, IWorld world)
         {
             // This space intentionally left blank
         }

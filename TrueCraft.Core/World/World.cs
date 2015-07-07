@@ -315,8 +315,8 @@ namespace TrueCraft.Core.World
             Save();
         }
 
-        private IChunk CachedChunk;
-        private object CachedChunkLock = new object();
+        private Dictionary<Thread, IChunk> ChunkCache = new Dictionary<Thread, IChunk>();
+        private object ChunkCacheLock = new object();
 
         public Coordinates3D FindBlockPosition(Coordinates3D coordinates, out IChunk chunk, bool generate = true)
         {
@@ -331,15 +331,23 @@ namespace TrueCraft.Core.World
             if (coordinates.Z < 0)
                 chunkZ = (coordinates.Z + 1) / Chunk.Depth - 1;
 
-            lock (CachedChunkLock)
+            if (ChunkCache.ContainsKey(Thread.CurrentThread))
             {
-                if (CachedChunk != null && chunkX == CachedChunk.Coordinates.X && chunkZ == CachedChunk.Coordinates.Z)
-                    chunk = CachedChunk;
+                var cache = ChunkCache[Thread.CurrentThread];
+                if (cache != null && chunkX == cache.Coordinates.X && chunkZ == cache.Coordinates.Z)
+                    chunk = cache;
                 else
                 {
-                    CachedChunk = GetChunk(new Coordinates2D(chunkX, chunkZ), generate);
-                    chunk = CachedChunk;
+                    cache = GetChunk(new Coordinates2D(chunkX, chunkZ), generate);
+                    lock (ChunkCacheLock)
+                        ChunkCache[Thread.CurrentThread] = cache;
                 }
+            }
+            else
+            {
+                var cache = GetChunk(new Coordinates2D(chunkX, chunkZ), generate);
+                lock (ChunkCacheLock)
+                    ChunkCache[Thread.CurrentThread] = cache;
             }
 
             chunk = GetChunk(new Coordinates2D(chunkX, chunkZ), generate);

@@ -211,24 +211,25 @@ namespace TrueCraft
                     e.Chunk.SkyLight.Data[i] = 0xFF;
                 }
             }
-            Task.Factory.StartNew(() => HandleChunkLoaded(sender, e));
+            HandleChunkLoaded(sender, e);
         }
 
         void ScheduleUpdatesForChunk(IWorld world, IChunk chunk)
         {
-            for (int x = 0; x < Chunk.Width; x++)
+            int _x = chunk.Coordinates.X * Chunk.Width;
+            int _z = chunk.Coordinates.Z * Chunk.Depth;
+            for (byte x = 0; x < Chunk.Width; x++)
             {
-                for (int z = 0; z < Chunk.Depth; z++)
+                for (byte z = 0; z < Chunk.Depth; z++)
                 {
-                    for (int y = 0; y < chunk.MaxHeight; y++)
+                    for (int y = 0; y < chunk.GetHeight(x, z); y++)
                     {
-                        var coords = new Coordinates3D(
-                            chunk.Coordinates.X * Chunk.Width + x,
-                            y,
-                            chunk.Coordinates.Z * Chunk.Depth + z);
-                        var data = world.GetBlockData(coords);
-                        var provider = BlockRepository.GetBlockProvider(data.ID);
-                        provider.BlockLoadedFromChunk(data, this, world);
+                        var coords = new Coordinates3D(_x + x, y, _z + z);
+                        var id = world.GetBlockID(coords);
+                        if (id == 0)
+                            continue;
+                        var provider = BlockRepository.GetBlockProvider(id);
+                        provider.BlockLoadedFromChunk(coords, this, world);
                     }
                 }
             }

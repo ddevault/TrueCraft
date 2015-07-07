@@ -103,12 +103,12 @@ namespace TrueCraft.Core.Logic.Blocks
                 server => HydrationCheckEvent(server, descriptor.Coordinates, world));
         }
 
-        public override void BlockLoadedFromChunk(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world)
+        public override void BlockLoadedFromChunk(Coordinates3D coords, IMultiplayerServer server, IWorld world)
         {
-            var chunk = world.FindChunk(descriptor.Coordinates);
+            var chunk = world.FindChunk(coords);
             server.Scheduler.ScheduleEvent(chunk,
                 DateTime.UtcNow.AddSeconds(UpdateIntervalSeconds),
-                s => HydrationCheckEvent(s, descriptor.Coordinates, world));
+                s => HydrationCheckEvent(s, coords, world));
         }
     }
 }

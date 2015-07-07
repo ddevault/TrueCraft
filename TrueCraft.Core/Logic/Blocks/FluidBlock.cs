@@ -95,9 +95,9 @@ namespace TrueCraft.Core.Logic.Blocks
             }
         }
 
-        public override void BlockLoadedFromChunk(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world)
+        public override void BlockLoadedFromChunk(Coordinates3D coords, IMultiplayerServer server, IWorld world)
         {
-            ScheduleNextEvent(descriptor.Coordinates, world, server);
+            ScheduleNextEvent(coords, world, server);
         }
 
         private void AutomataUpdate(IMultiplayerServer server, IWorld world, Coordinates3D coords)
