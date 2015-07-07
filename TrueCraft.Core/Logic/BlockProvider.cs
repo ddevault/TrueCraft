@@ -131,7 +131,7 @@ namespace TrueCraft.Core.Logic
             {
                 // Test for entities
                 var em = user.Server.GetEntityManagerForWorld(world);
-                var entities = em.EntitiesInRange(coordinates, 1);
+                var entities = em.EntitiesInRange(coordinates, 2);
                 var box = new BoundingBox(coordinates, coordinates + Vector3.One);
                 foreach (var entity in entities)
                 {
@@ -147,15 +147,6 @@ namespace TrueCraft.Core.Logic
                         if (new BoundingBox(player.Position, player.Position + player.Size)
                             .Intersects(box))
                             return;
-                    }
-                }
-
-                // Prevent the user from placing blocks on themselves
-                var userPlayer = user.Entity as PlayerEntity;
-                if (userPlayer != null){
-                    if (new BoundingBox(userPlayer.Position, userPlayer.Position + userPlayer.Size)
-                        .Intersects(box)){
-                        return; 
                     }
                 }
 
