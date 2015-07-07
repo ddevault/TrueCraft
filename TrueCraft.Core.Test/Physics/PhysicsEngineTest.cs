@@ -118,7 +118,8 @@ namespace TrueCraft.Core.Test.Physics
             var world = new TrueCraft.Core.World.World("default", new FlatlandGenerator());
             var physics = new PhysicsEngine(world, repository);
             var entity = new TestEntity();
-            entity.Position = new Vector3(0, 4, 0);
+            entity.Size = new Size(0.6, 1.8, 0.6);
+            entity.Position = new Vector3(-10.9, 4, -10.9);
             entity.AccelerationDueToGravity = 1;
             physics.AddEntity(entity);
 

@@ -66,9 +66,12 @@ namespace TrueCraft.Core.Physics
                                 aabbEntity.TerrainCollision(collision, before.Y < 0 ? Vector3.Down : Vector3.Up);
                             if (TestTerrainCollisionX(aabbEntity, out collision))
                                 aabbEntity.TerrainCollision(collision, before.X < 0 ? Vector3.Left : Vector3.Right);
+                            if (TestTerrainCollisionZ(aabbEntity, out collision))
+                                aabbEntity.TerrainCollision(collision, before.Z < 0 ? Vector3.Backwards : Vector3.Forwards);
                         }
 
                         entity.EndUpdate(entity.Position + entity.Velocity);
+                        TestTerrainCollisionY(aabbEntity, out collision);
                     }
                 }
             }
@@ -109,11 +112,11 @@ namespace TrueCraft.Core.Physics
             }
 
             double? collisionExtent = null;
-            for (int x = (int)(testBox.Min.X); x <= (int)(testBox.Max.X); x++)
+            for (int x = (int)(Math.Floor(testBox.Min.X)); x <= (int)(Math.Ceiling(testBox.Max.X)); x++)
             {
-                for (int z = (int)(testBox.Min.Z); z <= (int)(testBox.Max.Z); z++)
+                for (int z = (int)(Math.Floor(testBox.Min.Z)); z <= (int)(Math.Ceiling(testBox.Max.Z)); z++)
                 {
-                    for (int y = (int)(testBox.Min.Y); y <= (int)(testBox.Max.Y); y++)
+                    for (int y = (int)(Math.Floor(testBox.Min.Y)); y <= (int)(Math.Ceiling(testBox.Max.Y)); y++)
                     {
                         var coords = new Coordinates3D(x, y, z);
                         if (!World.IsValidPosition(coords))
@@ -198,11 +201,11 @@ namespace TrueCraft.Core.Physics
             }
 
             double? collisionExtent = null;
-            for (int x = (int)(testBox.Min.X); x <= (int)(testBox.Max.X); x++)
+            for (int x = (int)(Math.Floor(testBox.Min.X)); x <= (int)(Math.Ceiling(testBox.Max.X)); x++)
             {
-                for (int z = (int)(testBox.Min.Z); z <= (int)(testBox.Max.Z); z++)
+                for (int z = (int)(Math.Floor(testBox.Min.Z)); z <= (int)(Math.Ceiling(testBox.Max.Z)); z++)
                 {
-                    for (int y = (int)(testBox.Min.Y); y <= (int)(testBox.Max.Y); y++)
+                    for (int y = (int)(Math.Floor(testBox.Min.Y)); y <= (int)(Math.Ceiling(testBox.Max.Y)); y++)
                     {
                         var coords = new Coordinates3D(x, y, z);
                         if (!World.IsValidPosition(coords))
@@ -287,11 +290,11 @@ namespace TrueCraft.Core.Physics
             }
 
             double? collisionExtent = null;
-            for (int x = (int)(testBox.Min.X); x <= (int)(testBox.Max.X); x++)
+            for (int x = (int)(Math.Floor(testBox.Min.X)); x <= (int)(Math.Ceiling(testBox.Max.X)); x++)
             {
-                for (int z = (int)(testBox.Min.Z); z <= (int)(testBox.Max.Z); z++)
+                for (int z = (int)(Math.Floor(testBox.Min.Z)); z <= (int)(Math.Ceiling(testBox.Max.Z)); z++)
                 {
-                    for (int y = (int)(testBox.Min.Y); y <= (int)(testBox.Max.Y); y++)
+                    for (int y = (int)(Math.Floor(testBox.Min.Y)); y <= (int)(Math.Ceiling(testBox.Max.Y)); y++)
                     {
                         var coords = new Coordinates3D(x, y, z);
                         if (!World.IsValidPosition(coords))
