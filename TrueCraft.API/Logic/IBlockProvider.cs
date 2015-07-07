@@ -27,7 +27,6 @@ namespace TrueCraft.API.Logic
         void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user);
         void BlockMined(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user);
         void BlockUpdate(BlockDescriptor descriptor, BlockDescriptor source, IMultiplayerServer server, IWorld world);
-        void BlockScheduledEvent(BlockDescriptor descriptor, IWorld world, object data);
         void BlockLoadedFromChunk(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world);
         void TileEntityLoadedForClient(BlockDescriptor descriptor, IWorld world, NbtCompound compound, IRemoteClient client);
     }

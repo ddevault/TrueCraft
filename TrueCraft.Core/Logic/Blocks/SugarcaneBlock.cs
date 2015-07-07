@@ -124,5 +124,13 @@ namespace TrueCraft.Core.Logic.Blocks
                 DateTime.UtcNow.AddSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
                 (server) => TryGrowth(server, descriptor.Coordinates, world));
         }
+
+        public override void BlockLoadedFromChunk(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world)
+        {
+            var chunk = world.FindChunk(descriptor.Coordinates);
+            server.Scheduler.ScheduleEvent(chunk,
+                DateTime.UtcNow.AddSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
+                s => TryGrowth(s, descriptor.Coordinates, world));
+        }
     }
 }

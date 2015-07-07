@@ -45,6 +45,39 @@ namespace TrueCraft.Commands
         }
     }
 
+    public class SaveCommand : Command
+    {
+        public override string Name
+        {
+            get { return "save"; }
+        }
+
+        public override string Description
+        {
+            get { return "Saves the world!"; }
+        }
+
+        public override string[] Aliases
+        {
+            get { return new string[0]; }
+        }
+
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
+        {
+            if (arguments.Length != 0)
+            {
+                Help(client, alias, arguments);
+                return;
+            }
+            client.World.Save();
+        }
+
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
+        {
+            client.SendMessage("/save: Saves the world!");
+        }
+    }
+
     public class SkyLightCommand : Command
     {
         public override string Name

@@ -93,11 +93,6 @@ namespace TrueCraft.Core.Logic
             }
         }
 
-        public virtual void BlockScheduledEvent(BlockDescriptor descriptor, IWorld world, object data)
-        {
-            // This space intentionally left blank
-        }
-
         protected virtual ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
             short meta = 0;
