@@ -15,6 +15,8 @@ using TrueCraft.API;
 using System.Collections.Concurrent;
 using TrueCraft.API.Logging;
 using TrueCraft.Core.Logic;
+using TrueCraft.Core.Physics;
+using TrueCraft.API.Physics;
 
 namespace TrueCraft
 {
@@ -296,7 +298,7 @@ namespace TrueCraft
         {
             TimeSinceLastUpdate = DateTime.UtcNow - LastUpdate;
             LastUpdate = DateTime.UtcNow;
-            PhysicsEngine.Update();
+            PhysicsEngine.Update(TimeSinceLastUpdate);
             try
             {
                 lock (Entities)

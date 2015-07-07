@@ -9,6 +9,7 @@ using TrueCraft.Core.Networking.Packets;
 using TrueCraft.Core;
 using TrueCraft.API.Server;
 using TrueCraft.Core.Logic.Blocks;
+using TrueCraft.API.Physics;
 
 namespace TrueCraft.Core.Entities
 {
@@ -117,17 +118,17 @@ namespace TrueCraft.Core.Entities
 
         public float AccelerationDueToGravity
         {
-            get { return 0.04f; }
+            get { return 16f; }
         }
 
         public float Drag
         {
-            get { return 0.02f; }
+            get { return 0.40f; }
         }
 
         public float TerminalVelocity
         {
-            get { return 1.96f; }
+            get { return 39.2f; }
         }
     }
 }

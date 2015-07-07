@@ -345,6 +345,7 @@
     <Compile Include="Entities\HenEntity.cs" />
     <Compile Include="Entities\SquidEntity.cs" />
     <Compile Include="AI\WanderState.cs" />
+    <Compile Include="Physics\PhysicsEngine.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -370,6 +371,7 @@
   <ItemGroup>
     <Folder Include="Lighting\" />
     <Folder Include="AI\" />
+    <Folder Include="Physics\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

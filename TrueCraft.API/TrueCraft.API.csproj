@@ -99,9 +99,7 @@
     <Compile Include="Server\ChatMessageEventArgs.cs" />
     <Compile Include="BlockFace.cs" />
     <Compile Include="Logic\IBlockRepository.cs" />
-    <Compile Include="Entities\IAABBEntity.cs" />
     <Compile Include="Entities\IBlockPhysicsProvider.cs" />
-    <Compile Include="Entities\IPhysicsEntity.cs" />
     <Compile Include="Logic\IItemRepository.cs" />
     <Compile Include="Logic\BlockDescriptor.cs" />
     <Compile Include="ArmorMaterial.cs" />
@@ -113,6 +111,9 @@
     <Compile Include="AI\IMobState.cs" />
     <Compile Include="Entities\IMobEntity.cs" />
     <Compile Include="AI\ISpawnRule.cs" />
+    <Compile Include="Physics\IPhysicsEngine.cs" />
+    <Compile Include="Physics\IPhysicsEntity.cs" />
+    <Compile Include="Physics\IAABBEntity.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -127,5 +128,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AI\" />
+    <Folder Include="Physics\" />
   </ItemGroup>
 </Project>

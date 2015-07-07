@@ -84,6 +84,7 @@
     <Compile Include="Logic\BlockProviderTest.cs" />
     <Compile Include="Lighting\WorldLighterTest.cs" />
     <Compile Include="AI\PathFindingTest.cs" />
+    <Compile Include="Physics\PhysicsEngineTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="World\" />
@@ -92,5 +93,6 @@
     <Folder Include="Logic\" />
     <Folder Include="Lighting\" />
     <Folder Include="AI\" />
+    <Folder Include="Physics\" />
   </ItemGroup>
 </Project>

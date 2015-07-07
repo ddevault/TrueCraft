@@ -57,7 +57,6 @@
     <Compile Include="Exceptions\PlayerDisconnectException.cs" />
     <Compile Include="CraftingRepository.cs" />
     <Compile Include="ServerConfiguration.cs" />
-    <Compile Include="PhysicsEngine.cs" />
     <Compile Include="MobManager.cs" />
     <Compile Include="Rules\OverworldSpawnRules.cs" />
   </ItemGroup>

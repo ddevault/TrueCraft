@@ -14,6 +14,7 @@ using TrueCraft.API;
 using System.ComponentModel;
 using System.IO;
 using TrueCraft.Core;
+using TrueCraft.API.Physics;
 
 namespace TrueCraft.Client
 {

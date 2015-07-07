@@ -7,6 +7,7 @@ using TrueCraft.API.Server;
 using System.Linq;
 using TrueCraft.API.AI;
 using TrueCraft.Core.AI;
+using TrueCraft.API.Physics;
 
 namespace TrueCraft.Core.Entities
 {
@@ -65,7 +66,7 @@ namespace TrueCraft.Core.Entities
         {
             get
             {
-                return 0.08f;
+                return 32f;
             }
         }
 
@@ -73,7 +74,7 @@ namespace TrueCraft.Core.Entities
         {
             get
             {
-                return 0.02f;
+                return 0.40f;
             }
         }
 
@@ -81,7 +82,7 @@ namespace TrueCraft.Core.Entities
         {
             get
             {
-                return 3.92f;
+                return 78.4f;
             }
         }
 

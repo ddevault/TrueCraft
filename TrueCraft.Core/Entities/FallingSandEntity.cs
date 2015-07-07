@@ -6,6 +6,7 @@ using TrueCraft.API.Entities;
 using TrueCraft.API.Server;
 using TrueCraft.API.World;
 using TrueCraft.Core.Logic.Blocks;
+using TrueCraft.API.Physics;
 
 namespace TrueCraft.Core.Entities
 {
@@ -22,7 +23,7 @@ namespace TrueCraft.Core.Entities
         {
             get
             {
-                return new Size(1);
+                return new Size(0.98);
             }
         }
 
@@ -48,7 +49,7 @@ namespace TrueCraft.Core.Entities
                 if (EntityType == 71)
                     id = GravelBlock.BlockID;
                 EntityManager.DespawnEntity(this);
-                World.SetBlockID((Coordinates3D)_Position, id);
+                World.SetBlockID((Coordinates3D)collisionPoint, id);
             }
         }
 
@@ -76,7 +77,7 @@ namespace TrueCraft.Core.Entities
         {
             get
             {
-                return 0.04f;
+                return 16f;
             }
         }
 
@@ -84,7 +85,7 @@ namespace TrueCraft.Core.Entities
         {
             get
             {
-                return 0.02f;
+                return 0.40f;
             }
         }
 
@@ -92,7 +93,7 @@ namespace TrueCraft.Core.Entities
         {
             get
             {
-                return 1.96f;
+                return 39.2f;
             }
         }
     }
