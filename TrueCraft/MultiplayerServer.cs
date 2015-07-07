@@ -378,16 +378,9 @@ namespace TrueCraft
                 {
                 }
             }
-            if (ChunksToSchedule.Count != 0)
-            {
-                int attempts = 50;
-                while (attempts-- > 0)
-                {
-                    Tuple<IWorld, IChunk> t;
-                    if (ChunksToSchedule.TryTake(out t))
-                        ScheduleUpdatesForChunk(t.Item1, t.Item2);
-                }
-            }
+            Tuple<IWorld, IChunk> t;
+            if (ChunksToSchedule.TryTake(out t))
+                ScheduleUpdatesForChunk(t.Item1, t.Item2);
             EnvironmentWorker.Change(1000 / 20, 0);
         }
 
