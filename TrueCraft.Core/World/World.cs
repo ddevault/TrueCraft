@@ -316,6 +316,7 @@ namespace TrueCraft.Core.World
         }
 
         private IChunk CachedChunk;
+        private object CachedChunkLock = new object();
 
         public Coordinates3D FindBlockPosition(Coordinates3D coordinates, out IChunk chunk, bool generate = true)
         {
@@ -330,12 +331,15 @@ namespace TrueCraft.Core.World
             if (coordinates.Z < 0)
                 chunkZ = (coordinates.Z + 1) / Chunk.Depth - 1;
 
-            if (CachedChunk != null && chunkX == CachedChunk.Coordinates.X && chunkZ == CachedChunk.Coordinates.Z)
-                chunk = CachedChunk;
-            else
+            lock (CachedChunkLock)
             {
-                CachedChunk = GetChunk(new Coordinates2D(chunkX, chunkZ), generate);
-                chunk = CachedChunk;
+                if (CachedChunk != null && chunkX == CachedChunk.Coordinates.X && chunkZ == CachedChunk.Coordinates.Z)
+                    chunk = CachedChunk;
+                else
+                {
+                    CachedChunk = GetChunk(new Coordinates2D(chunkX, chunkZ), generate);
+                    chunk = CachedChunk;
+                }
             }
 
             chunk = GetChunk(new Coordinates2D(chunkX, chunkZ), generate);
