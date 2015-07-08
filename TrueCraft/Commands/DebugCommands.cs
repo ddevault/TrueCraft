@@ -280,7 +280,7 @@ namespace TrueCraft.Commands
 
         public override string Description
         {
-            get { return "Discards selected item."; }
+            get { return "Discards selected item, hotbar, or entire inventory."; }
         }
 
         public override string[] Aliases
@@ -292,15 +292,38 @@ namespace TrueCraft.Commands
         {
             if (arguments.Length != 0)
             {
-                Help(client, alias, arguments);
-                return;
+                if (arguments[0] == "hotbar")
+                {
+                    // Discard hotbar items
+                    for (short i = 36; i <= 44; i++)
+                    {
+                        client.Inventory[i] = ItemStack.EmptyStack;
+                    }
+                }
+                else if (arguments[0] == "all")
+                {
+                    // Discard all inventory items, including armor and crafting area contents
+                    for (short i = 0; i <= 44; i++)
+                    {
+                        client.Inventory[i] = ItemStack.EmptyStack;
+                    }
+                }
+                else
+                {
+                    Help(client, alias, arguments);
+                    return;
+                }
             }
-            client.Inventory[client.SelectedSlot] = ItemStack.EmptyStack;
+            else
+            {
+                // Discards selected item.
+                client.Inventory[client.SelectedSlot] = ItemStack.EmptyStack;
+            }
         }
 
         public override void Help(IRemoteClient client, string alias, string[] arguments)
         {
-            client.SendMessage("/trash: Discards selected item.");
+            client.SendMessage("Correct usage is /trash <hotbar/all> or leave blank to clear\nselected slot.");
         }
     }
 
