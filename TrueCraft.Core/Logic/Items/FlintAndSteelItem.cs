@@ -1,7 +1,9 @@
 ﻿using System;
 using TrueCraft.API.Logic;
 using TrueCraft.API;
-
+using TrueCraft.API.Networking;
+using TrueCraft.API.World;
+using TrueCraft.Core.Logic.Blocks;
 
 namespace TrueCraft.Core.Logic.Items
 {
@@ -37,6 +39,15 @@ namespace TrueCraft.Core.Logic.Items
             get
             {
                 return false;
+            }
+        }
+
+        public override void ItemUsedOnBlock(Coordinates3D coordinates, ItemStack item, BlockFace face, IWorld world, IRemoteClient user)
+        {
+            coordinates += MathHelper.BlockFaceToCoordinates(face);
+            if (world.GetBlockID(coordinates) == AirBlock.BlockID)
+            {
+                world.SetBlockID(coordinates, FireBlock.BlockID);
             }
         }
     }
