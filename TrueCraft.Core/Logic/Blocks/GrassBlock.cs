@@ -2,6 +2,7 @@ using System;
 using TrueCraft.API.Logic;
 using TrueCraft.API;
 using TrueCraft.API.World;
+using TrueCraft.Core.World;
 using TrueCraft.API.Server;
 using TrueCraft.API.Networking;
 
@@ -103,9 +104,19 @@ namespace TrueCraft.Core.Logic.Blocks
                     var _block = world.GetBlockLight(candidate + Coordinates3D.Up);
                     if (_sky < 4 && _block < 4)
                         continue;
-                    // TODO: Check for blocks above this one with light modifier >= 2 (and if so skip this block)
+                    IChunk chunk = world.FindChunk(candidate);
+                    bool grow = true;
+                    for (int y = candidate.Y; y < chunk.GetHeight((byte)candidate.X, (byte)candidate.Z); y++)
+                    {
+                        var b = world.GetBlockID(new Coordinates3D(candidate.X, y, candidate.Z));
+                        var p = world.BlockRepository.GetBlockProvider(b);
+                        if (p.LightOpacity >= 2)
+                        {
+                            grow = false;
+                            break;
+                        }
+                    }
                     world.SetBlockID(candidate, GrassBlock.BlockID);
-                    var chunk = world.FindChunk(candidate);
                     server.Scheduler.ScheduleEvent(chunk,
                         DateTime.UtcNow.AddSeconds(MathHelper.Random.Next(MinGrowthTime, MaxGrowthTime)),
                         s => TrySpread(candidate, world, server));

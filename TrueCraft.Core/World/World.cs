@@ -210,7 +210,6 @@ namespace TrueCraft.Core.World
 
         public void SetBlockData(Coordinates3D coordinates, BlockDescriptor descriptor)
         {
-            // TODO: Figure out the best way to handle light in this scenario
             IChunk chunk;
             var adjustedCoordinates = FindBlockPosition(coordinates, out chunk);
             var old = GetBlockDataFromChunk(adjustedCoordinates, chunk, coordinates);
