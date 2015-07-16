@@ -19,6 +19,8 @@ namespace TrueCraft.Core.Entities
             CurrentState = new WanderState();
         }
 
+        public event EventHandler PathComplete;
+
         public override IPacket SpawnPacket
         {
             get
@@ -124,7 +126,9 @@ namespace TrueCraft.Core.Entities
                     CurrentPath.Index++;
                     if (CurrentPath.Index >= CurrentPath.Waypoints.Count)
                     {
-                        CurrentPath = null; // TODO: Raise path complete event or something?
+                        CurrentPath = null;
+                        if (PathComplete != null)
+                            PathComplete(this, null);
                         return true;
                     }
                 }
