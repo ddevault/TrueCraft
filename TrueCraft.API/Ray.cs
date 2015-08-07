@@ -94,18 +94,29 @@ namespace TrueCraft.API
             Vector3 maxT = new Vector3(-1.0f);
             //Vector3 minT = new Vector3(-1.0f);
             //calcul intersection with each faces
-            if (Position.X < box.Min.X && Direction.X != 0.0f)
-                maxT.X = (box.Min.X - Position.X) / Direction.X;
-            else if (Position.X > box.Max.X && Direction.X != 0.0f)
-                maxT.X = (box.Max.X - Position.X) / Direction.X;
-            if (Position.Y < box.Min.Y && Direction.Y != 0.0f)
-                maxT.Y = (box.Min.Y - Position.Y) / Direction.Y;
-            else if (Position.Y > box.Max.Y && Direction.Y != 0.0f)
-                maxT.Y = (box.Max.Y - Position.Y) / Direction.Y;
-            if (Position.Z < box.Min.Z && Direction.Z != 0.0f)
-                maxT.Z = (box.Min.Z - Position.Z) / Direction.Z;
-            else if (Position.Z > box.Max.Z && Direction.Z != 0.0f)
-                maxT.Z = (box.Max.Z - Position.Z) / Direction.Z;
+            if (Direction.X != 0.0f)
+            {
+                if (Position.X < box.Min.X)
+                    maxT.X = (box.Min.X - Position.X) / Direction.X;
+                else if (Position.X > box.Max.X)
+                    maxT.X = (box.Max.X - Position.X) / Direction.X;
+            }
+
+            if (Direction.Y != 0.0f)
+            {
+                if (Position.Y < box.Min.Y)
+                    maxT.Y = (box.Min.Y - Position.Y) / Direction.Y;
+                else if (Position.Y > box.Max.Y)
+                    maxT.Y = (box.Max.Y - Position.Y) / Direction.Y;
+            }
+
+            if (Direction.Z != 0.0f)
+            {
+                if (Position.Z < box.Min.Z)
+                    maxT.Z = (box.Min.Z - Position.Z) / Direction.Z;
+                else if (Position.Z > box.Max.Z)
+                    maxT.Z = (box.Max.Z - Position.Z) / Direction.Z;
+            }
 
             //get the maximum maxT
             if (maxT.X > maxT.Y && maxT.X > maxT.Z)

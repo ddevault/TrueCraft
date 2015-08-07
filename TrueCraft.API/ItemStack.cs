@@ -252,11 +252,14 @@ namespace TrueCraft.API
         {
             if (Empty)
                 return "(Empty)";
-            string result = "ID: " + ID;
-            if (Count != 1) result += "; Count: " + Count;
-            if (Metadata != 0) result += "; Metadata: " + Metadata;
-            if (Nbt != null) result += Environment.NewLine + Nbt.ToString();
-            return "(" + result + ")";
+
+            StringBuilder resultBuilder = new StringBuilder("ID: " + ID);
+
+            if (Count != 1) resultBuilder.Append("; Count: " + Count);
+            if (Metadata != 0) resultBuilder.Append("; Metadata: " + Metadata);
+            if (Nbt != null) resultBuilder.Append(Environment.NewLine + Nbt.ToString());
+
+            return "(" + resultBuilder.ToString() + ")";
         }
 
         /// <summary>

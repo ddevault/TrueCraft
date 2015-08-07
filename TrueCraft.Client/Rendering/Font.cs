@@ -73,6 +73,14 @@ namespace TrueCraft.Client.Rendering
             using (var contents = File.OpenRead(Path.Combine(contentManager.RootDirectory, definitionPath)))
                 _definition = FontLoader.Load(contents);
 
+            if (_textures != null)
+            {
+                for (int i = 0; i < _textures.Length; i++)
+                {
+                    _textures[i].Dispose();
+                }
+            }
+
             // We need to support multiple texture pages for more than plain ASCII text.
             _textures = new Texture2D[_definition.Pages.Count];
             for (int i = 0; i < _definition.Pages.Count; i++)
