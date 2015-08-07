@@ -185,7 +185,6 @@ namespace TrueCraft.Client.Rendering
             foreach (var pair in Customs)
                 pair.Value.Dispose();
 
-            Customs.Clear();
             Customs = null;
             Device = null;
             IsDisposed = true;
