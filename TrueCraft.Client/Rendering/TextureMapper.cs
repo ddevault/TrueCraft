@@ -101,11 +101,12 @@ namespace TrueCraft.Client.Rendering
                         {
                             try
                             {
-                                var ms = new MemoryStream();
-                                CopyStream(stream, ms);
-                                ms.Seek(0, SeekOrigin.Begin);
-                                AddTexture(key, new PngReader().Read(ms, Device));
-                                ms.Dispose();
+                                using (var ms = new MemoryStream())
+                                {
+                                    CopyStream(stream, ms);
+                                    ms.Seek(0, SeekOrigin.Begin);
+                                    AddTexture(key, new PngReader().Read(ms, Device));
+                                }
                             }
                             catch (Exception ex) { Console.WriteLine("Exception occured while loading {0} from texture pack:\n\n{1}", key, ex); }
                         }
