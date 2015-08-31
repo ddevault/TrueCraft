@@ -72,8 +72,8 @@ namespace TrueCraft.Launcher.Views
             };
             BackButton.Clicked += (sender, e) =>
             {
-                Window.MainContainer.Remove(this);
-                Window.MainContainer.PackEnd(Window.MainMenuView);
+                Window.InteractionBox.Remove(this);
+                Window.InteractionBox.PackEnd(Window.MainMenuView);
             };
             ConnectButton.Clicked += ConnectButton_Clicked;
             ServerListView.SelectionChanged += (sender, e) => 

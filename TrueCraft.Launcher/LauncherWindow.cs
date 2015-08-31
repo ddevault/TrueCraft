@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Xwt.Drawing;
 using TrueCraft.Launcher.Views;
 using TrueCraft.Core;
+using System.Reflection;
 
 namespace TrueCraft.Launcher
 {
@@ -20,6 +21,8 @@ namespace TrueCraft.Launcher
         public OptionView OptionView { get; set; }
         public MultiplayerView MultiplayerView { get; set; }
         public SingleplayerView SingleplayerView { get; set; }
+        public VBox InteractionBox { get; set; }
+        public ImageView TrueCraftLogoImage { get; set; }
 
         public LauncherWindow()
         {
@@ -35,10 +38,16 @@ namespace TrueCraft.Launcher
             OptionView = new OptionView(this);
             MultiplayerView = new MultiplayerView(this);
             SingleplayerView = new SingleplayerView(this);
+            InteractionBox = new VBox();
+
+            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TrueCraft.Launcher.Content.truecraft_logo.svg"))
+                TrueCraftLogoImage = new ImageView(Image.FromStream(stream));
 
             WebScrollView.Content = WebView;
             MainContainer.PackStart(WebScrollView, true);
-            MainContainer.PackEnd(LoginView);
+            InteractionBox.PackStart(TrueCraftLogoImage);
+            InteractionBox.PackEnd(LoginView);
+            MainContainer.PackEnd(InteractionBox);
 
             this.Content = MainContainer;
         }

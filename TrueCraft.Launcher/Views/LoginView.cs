@@ -43,7 +43,7 @@ namespace TrueCraft.Launcher.Views
                 RememberCheckBox.Active = true;
             }
 
-            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TrueCraft.Launcher.Content.truecraft-logo.png"))
+            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TrueCraft.Launcher.Content.truecraft_logo.svg"))
                 TrueCraftLogoImage = new ImageView(Image.FromStream(stream));
 
             UsernameText.PlaceholderText = "Username";
@@ -72,7 +72,6 @@ namespace TrueCraft.Launcher.Views
             };
             LogInButton.Clicked += LogInButton_Clicked;
 
-            this.PackStart(TrueCraftLogoImage);
             this.PackEnd(RegisterButton);
             this.PackEnd(LogInButton);
             this.PackEnd(RememberCheckBox);
@@ -161,8 +160,8 @@ namespace TrueCraft.Launcher.Views
                         Window.User.Username = parts[2];
                         Window.User.SessionId = parts[3];
                         EnableForm();
-                        Window.MainContainer.Remove(this);
-                        Window.MainContainer.PackEnd(Window.MainMenuView = new MainMenuView(Window));
+                        Window.InteractionBox.Remove(this);
+                        Window.InteractionBox.PackEnd(Window.MainMenuView = new MainMenuView(Window));
                         UserSettings.Local.AutoLogin = RememberCheckBox.Active;
                         UserSettings.Local.Username = Window.User.Username;
                         if (UserSettings.Local.AutoLogin)

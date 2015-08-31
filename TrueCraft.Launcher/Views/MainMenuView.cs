@@ -29,18 +29,18 @@ namespace TrueCraft.Launcher.Views
 
             SingleplayerButton.Clicked += (sender, e) =>
             {
-                Window.MainContainer.Remove(this);
-                Window.MainContainer.PackEnd(Window.SingleplayerView);
+                Window.InteractionBox.Remove(this);
+                Window.InteractionBox.PackEnd(Window.SingleplayerView);
             };
             MultiplayerButton.Clicked += (sender, e) =>
             {
-                Window.MainContainer.Remove(this);
-                Window.MainContainer.PackEnd(Window.MultiplayerView);
+                Window.InteractionBox.Remove(this);
+                Window.InteractionBox.PackEnd(Window.MultiplayerView);
             };
             OptionsButton.Clicked += (sender, e) =>
             {
-                Window.MainContainer.Remove(this);
-                window.MainContainer.PackEnd(Window.OptionView);
+                Window.InteractionBox.Remove(this);
+                window.InteractionBox.PackEnd(Window.OptionView);
             };
             QuitButton.Clicked += (sender, e) => Application.Exit();
 

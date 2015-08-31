@@ -124,8 +124,8 @@ namespace TrueCraft.Launcher.Views
 
             BackButton.Clicked += (sender, e) =>
             {
-                Window.MainContainer.Remove(this);
-                Window.MainContainer.PackEnd(Window.MainMenuView);
+                Window.InteractionBox.Remove(this);
+                Window.InteractionBox.PackEnd(Window.MainMenuView);
             };
 
             OfficialAssetsButton = new Button("Download Minecraft assets") { Visible = false };
