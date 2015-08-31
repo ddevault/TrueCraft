@@ -1,6 +1,6 @@
-# TrueCraft [![Build Status](https://travis-ci.org/SirCmpwn/TrueCraft.svg?branch=master)](https://travis-ci.org/SirCmpwn/TrueCraft)
+![](https://sr.ht/64L9.png)
 
-http://truecraft.io - blog, account registration, etc
+http://truecraft.io - blog, account registration, etc [![Build Status](https://travis-ci.org/SirCmpwn/TrueCraft.svg?branch=master)](https://travis-ci.org/SirCmpwn/TrueCraft)
 
 A completely [clean-room](https://en.wikipedia.org/wiki/Clean_room_design) implementation of Minecraft beta 1.7.3 (circa September 2011). No decompiled code has been used in the development of this software. This is an **implementation** - not a clone. TrueCraft is compatible with Minecraft beta 1.7.3 clients and servers.
 
