@@ -1,4 +1,4 @@
-![](https://sr.ht/64L9.png)
+![](https://sr.ht/3O-k.png)
 
 http://truecraft.io - blog, account registration, etc [![Build Status](https://travis-ci.org/SirCmpwn/TrueCraft.svg?branch=master)](https://travis-ci.org/SirCmpwn/TrueCraft)
 
