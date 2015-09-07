@@ -20,6 +20,7 @@ using TrueCraft.Core.World;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Collections.Concurrent;
+using TrueCraft.Profiling;
 
 namespace TrueCraft
 {
@@ -42,6 +43,8 @@ namespace TrueCraft
         public ICraftingRepository CraftingRepository { get; private set; }
         public bool EnableClientLogging { get; set; }
         public IPEndPoint EndPoint { get; private set; }
+
+        private static readonly int MillisecondsPerTick = 1000 / 20;
 
         private bool _BlockUpdatesEnabled = true;
 
@@ -131,7 +134,7 @@ namespace TrueCraft
                 AcceptClient(this, args);
             
             Log(LogCategory.Notice, "Running TrueCraft server on {0}", EndPoint);
-            EnvironmentWorker.Change(1000 / 20, 0);
+            EnvironmentWorker.Change(MillisecondsPerTick, 0);
             if(Program.ServerConfiguration.Query)
                 QueryProtocol.Start();
         }
@@ -367,11 +370,19 @@ namespace TrueCraft
         {
             if (ShuttingDown)
                 return;
+
+            Profiler.Start("environment");
+
             Scheduler.Update();
+
+            Profiler.Start("environment.entities");
             foreach (var manager in EntityManagers)
             {
                 manager.Update();
             }
+            Profiler.Done();
+
+            Profiler.Start("environment.lighting");
             foreach (var lighter in WorldLighters)
             {
                 int attempts = 500;
@@ -379,10 +390,17 @@ namespace TrueCraft
                 {
                 }
             }
+            Profiler.Done();
+
+            Profiler.Start("environment.chunks");
             Tuple<IWorld, IChunk> t;
             if (ChunksToSchedule.TryTake(out t))
                 ScheduleUpdatesForChunk(t.Item1, t.Item2);
-            EnvironmentWorker.Change(1000 / 20, 0);
+            Profiler.Done();
+
+            Profiler.Done();
+
+            EnvironmentWorker.Change(MillisecondsPerTick, 0);
         }
 
         public bool PlayerIsWhitelisted(string client)

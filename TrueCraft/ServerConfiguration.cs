@@ -7,6 +7,17 @@ namespace TrueCraft
     {
         public class DebugConfiguration
         {
+            public class ProfilerConfiguration
+            {
+                public ProfilerConfiguration()
+                {
+                    Buckets = "";
+                }
+
+                [YamlMember(Alias = "buckets")]
+                public string Buckets { get; set; }
+            }
+
             public DebugConfiguration()
             {
                 DeleteWorldOnStartup = false;
@@ -18,6 +29,9 @@ namespace TrueCraft
 
             [YamlMember(Alias = "deletePlayersOnStartup")]
             public bool DeletePlayersOnStartup { get; set; }
+
+            [YamlMember(Alias = "profiler")]
+            public ProfilerConfiguration Profiler { get; set; }
         }
 
         public ServerConfiguration()

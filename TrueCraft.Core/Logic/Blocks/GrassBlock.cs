@@ -76,7 +76,7 @@ namespace TrueCraft.Core.Logic.Blocks
                 {
                     var chunk = world.FindChunk(descriptor.Coordinates, generate: false);
                     server.Scheduler.ScheduleEvent(chunk,
-                    DateTime.UtcNow.AddSeconds(MathHelper.Random.Next(MinDecayTime, MaxDecayTime)), s =>
+                    TimeSpan.FromSeconds(MathHelper.Random.Next(MinDecayTime, MaxDecayTime)), s =>
                     {
                         ScheduledUpdate(world, descriptor.Coordinates);
                     });
@@ -118,7 +118,7 @@ namespace TrueCraft.Core.Logic.Blocks
                     }
                     world.SetBlockID(candidate, GrassBlock.BlockID);
                     server.Scheduler.ScheduleEvent(chunk,
-                        DateTime.UtcNow.AddSeconds(MathHelper.Random.Next(MinGrowthTime, MaxGrowthTime)),
+                        TimeSpan.FromSeconds(MathHelper.Random.Next(MinGrowthTime, MaxGrowthTime)),
                         s => TrySpread(candidate, world, server));
                     break;
                 }
@@ -129,7 +129,7 @@ namespace TrueCraft.Core.Logic.Blocks
         {
             var chunk = world.FindChunk(descriptor.Coordinates);
             user.Server.Scheduler.ScheduleEvent(chunk,
-                DateTime.UtcNow.AddSeconds(MathHelper.Random.Next(MinGrowthTime, MaxGrowthTime)),
+                TimeSpan.FromSeconds(MathHelper.Random.Next(MinGrowthTime, MaxGrowthTime)),
                 s => TrySpread(descriptor.Coordinates, world, user.Server));
         }
 
@@ -137,7 +137,7 @@ namespace TrueCraft.Core.Logic.Blocks
         {
             var chunk = world.FindChunk(coords);
             server.Scheduler.ScheduleEvent(chunk,
-                DateTime.UtcNow.AddSeconds(MathHelper.Random.Next(MinGrowthTime, MaxGrowthTime)),
+                TimeSpan.FromSeconds(MathHelper.Random.Next(MinGrowthTime, MaxGrowthTime)),
                 s => TrySpread(coords, world, server));
         }
     }

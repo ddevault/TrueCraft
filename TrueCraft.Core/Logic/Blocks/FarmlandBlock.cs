@@ -87,7 +87,7 @@ namespace TrueCraft.Core.Logic.Blocks
             }
             var chunk = world.FindChunk(coords);
             server.Scheduler.ScheduleEvent(chunk,
-                DateTime.UtcNow.AddSeconds(UpdateIntervalSeconds),
+                TimeSpan.FromSeconds(UpdateIntervalSeconds),
                 _server => HydrationCheckEvent(_server, coords, world));
         }
 
@@ -99,7 +99,7 @@ namespace TrueCraft.Core.Logic.Blocks
             }
             var chunk = world.FindChunk(descriptor.Coordinates);
             user.Server.Scheduler.ScheduleEvent(chunk,
-                DateTime.UtcNow.AddSeconds(UpdateIntervalSeconds),
+                TimeSpan.FromSeconds(UpdateIntervalSeconds),
                 server => HydrationCheckEvent(server, descriptor.Coordinates, world));
         }
 
@@ -107,7 +107,7 @@ namespace TrueCraft.Core.Logic.Blocks
         {
             var chunk = world.FindChunk(coords);
             server.Scheduler.ScheduleEvent(chunk,
-                DateTime.UtcNow.AddSeconds(UpdateIntervalSeconds),
+                TimeSpan.FromSeconds(UpdateIntervalSeconds),
                 s => HydrationCheckEvent(s, coords, world));
         }
     }

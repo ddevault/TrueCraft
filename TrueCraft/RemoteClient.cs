@@ -392,7 +392,7 @@ namespace TrueCraft
                 {
                     ChunkRadius++;
                     UpdateChunks();
-                    server.Scheduler.ScheduleEvent(this, DateTime.UtcNow.AddSeconds(1), ExpandChunkRadius);
+                    server.Scheduler.ScheduleEvent(this, TimeSpan.FromSeconds(1), ExpandChunkRadius);
                 }
             });
         }
@@ -400,7 +400,7 @@ namespace TrueCraft
         internal void SendKeepAlive(IMultiplayerServer server)
         {
             QueuePacket(new KeepAlivePacket());
-            server.Scheduler.ScheduleEvent(this, DateTime.UtcNow.AddSeconds(1), SendKeepAlive);
+            server.Scheduler.ScheduleEvent(this, TimeSpan.FromSeconds(1), SendKeepAlive);
         }
 
         internal void UpdateChunks()

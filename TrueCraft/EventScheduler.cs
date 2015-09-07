@@ -2,6 +2,8 @@
 using TrueCraft.API.Server;
 using System.Collections.Generic;
 using TrueCraft.API;
+using System.Diagnostics;
+using TrueCraft.Profiling;
 
 namespace TrueCraft
 {
@@ -11,18 +13,22 @@ namespace TrueCraft
         private readonly object EventLock = new object();
         private IMultiplayerServer Server { get; set; }
         private HashSet<IEventSubject> Subjects { get; set; }
+        private Stopwatch Stopwatch { get; set; }
 
         public EventScheduler(IMultiplayerServer server)
         {
             Events = new List<ScheduledEvent>();
             Server = server;
             Subjects = new HashSet<IEventSubject>();
+            Stopwatch = new Stopwatch();
+            Stopwatch.Start();
         }
 
-        public void ScheduleEvent(IEventSubject subject, DateTime when, Action<IMultiplayerServer> action)
+        public void ScheduleEvent(IEventSubject subject, TimeSpan when, Action<IMultiplayerServer> action)
         {
             lock (EventLock)
             {
+                long _when = Stopwatch.ElapsedTicks + when.Ticks;
                 if (!Subjects.Contains(subject))
                 {
                     Subjects.Add(subject);
@@ -31,10 +37,15 @@ namespace TrueCraft
                 int i;
                 for (i = 0; i < Events.Count; i++)
                 {
-                    if (Events[i].When > when)
+                    if (Events[i].When > _when)
                         break;
                 }
-                Events.Insert(i, new ScheduledEvent { Subject = subject, When = when, Action = action });
+                Events.Insert(i, new ScheduledEvent
+                {
+                    Subject = subject,
+                    When = _when,
+                    Action = action
+                });
             }
         }
 
@@ -57,9 +68,10 @@ namespace TrueCraft
 
         public void Update()
         {
+            Profiler.Start("scheduler");
             lock (EventLock)
             {
-                var start = DateTime.UtcNow;
+                var start = Stopwatch.ElapsedTicks;
                 for (int i = 0; i < Events.Count; i++)
                 {
                     var e = Events[i];
@@ -73,11 +85,12 @@ namespace TrueCraft
                         break; // List is sorted, we can exit early
                 }
             }
+            Profiler.Done();
         }
 
         private struct ScheduledEvent
         {
-            public DateTime When;
+            public long When;
             public Action<IMultiplayerServer> Action;
             public IEventSubject Subject;
         }

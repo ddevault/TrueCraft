@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{6756B61E-5
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueCraft.Core.Test", "TrueCraft.Core.Test\TrueCraft.Core.Test.csproj", "{BCFDCD93-C23E-49E6-9767-A887B3C2A709}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueCraft.Profiling", "TrueCraft.Profiling\TrueCraft.Profiling.csproj", "{BCA0E139-CF47-43B3-9DC9-D4611C0A2AAD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{A6516869-A2FB-4E31-85C8-2285490CB32C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6516869-A2FB-4E31-85C8-2285490CB32C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6516869-A2FB-4E31-85C8-2285490CB32C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCA0E139-CF47-43B3-9DC9-D4611C0A2AAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCA0E139-CF47-43B3-9DC9-D4611C0A2AAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCA0E139-CF47-43B3-9DC9-D4611C0A2AAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCA0E139-CF47-43B3-9DC9-D4611C0A2AAD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BCFDCD93-C23E-49E6-9767-A887B3C2A709}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BCFDCD93-C23E-49E6-9767-A887B3C2A709}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCFDCD93-C23E-49E6-9767-A887B3C2A709}.Release|Any CPU.ActiveCfg = Release|Any CPU

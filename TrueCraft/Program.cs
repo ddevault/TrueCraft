@@ -11,6 +11,7 @@ using TrueCraft.API.World;
 using System;
 using TrueCraft.API;
 using YamlDotNet.Serialization;
+using TrueCraft.Profiling;
 
 namespace TrueCraft
 {
@@ -32,6 +33,15 @@ namespace TrueCraft
 #endif
 
             ServerConfiguration = Configuration.LoadConfiguration<ServerConfiguration>("config.yaml");
+
+            var buckets = ServerConfiguration.Debug?.Profiler?.Buckets?.Split(',');
+            if (buckets != null)
+            {
+                foreach (var bucket in buckets)
+                {
+                    Profiler.EnableBucket(bucket.Trim());
+                }
+            }
 
             if (ServerConfiguration.Debug.DeleteWorldOnStartup)
             {
