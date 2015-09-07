@@ -12,6 +12,10 @@ namespace TrueCraft.Core.Logic.Blocks
 {
     public class CactusBlock : BlockProvider
     {
+        public static readonly int MinGrowthSeconds = 180;
+        public static readonly int MaxGrowthSeconds = 240;
+        public static readonly int MaxGrowHeight = 3;
+
         public static readonly byte BlockID = 0x51;
         
         public override byte ID { get { return 0x51; } }
@@ -56,6 +60,42 @@ namespace TrueCraft.Core.Logic.Blocks
             }
 
             return true;
+        }
+
+        private void TryGrowth(IMultiplayerServer server, Coordinates3D coords, IWorld world)
+        {
+            if (world.GetBlockID(coords) != BlockID)
+                return;
+            // Find current height of stalk
+            int height = 0;
+            for (int y = -MaxGrowHeight; y <= MaxGrowHeight; y++)
+            {
+                if (world.GetBlockID(coords + (Coordinates3D.Down * y)) == BlockID)
+                    height++;
+            }
+            if (height < MaxGrowHeight)
+            {
+                var meta = world.GetMetadata(coords);
+                meta++;
+                world.SetMetadata(coords, meta);
+                var chunk = world.FindChunk(coords);
+                if (meta == 15)
+                {
+                    if (world.GetBlockID(coords + Coordinates3D.Up) == 0)
+                    {
+                        world.SetBlockID(coords + Coordinates3D.Up, BlockID);
+                        server.Scheduler.ScheduleEvent("cactus", chunk,
+                            TimeSpan.FromSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
+                            (_server) => TryGrowth(_server, coords + Coordinates3D.Up, world));
+                    }
+                }
+                else
+                {
+                    server.Scheduler.ScheduleEvent("cactus", chunk,
+                        TimeSpan.FromSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
+                        (_server) => TryGrowth(_server, coords, world));
+                }
+            }
         }
 
         public void DestroyCactus(BlockDescriptor descriptor, IMultiplayerServer server, IWorld world)
@@ -104,6 +144,11 @@ namespace TrueCraft.Core.Logic.Blocks
                         new ItemStack(CactusBlock.BlockID, (sbyte)1)));
                 // user.Inventory.PickUpStack() wasn't working?
             }
+
+            var chunk = world.FindChunk(descriptor.Coordinates);
+            user.Server.Scheduler.ScheduleEvent("cactus", chunk,
+                TimeSpan.FromSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
+                (server) => TryGrowth(server, descriptor.Coordinates, world));
         }
 
         public override void BlockUpdate(BlockDescriptor descriptor, BlockDescriptor source, IMultiplayerServer server, IWorld world)
@@ -111,6 +156,14 @@ namespace TrueCraft.Core.Logic.Blocks
             if (!ValidCactusPosition(descriptor, server.BlockRepository, world))
                 DestroyCactus(descriptor, server, world);
             base.BlockUpdate(descriptor, source, server, world);
+        }
+
+        public override void BlockLoadedFromChunk(Coordinates3D coords, IMultiplayerServer server, IWorld world)
+        {
+            var chunk = world.FindChunk(coords);
+            server.Scheduler.ScheduleEvent("cactus", chunk,
+                TimeSpan.FromSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
+                s => TryGrowth(s, coords, world));
         }
     }
 }
