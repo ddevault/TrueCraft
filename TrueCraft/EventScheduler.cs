@@ -24,7 +24,7 @@ namespace TrueCraft
             Stopwatch.Start();
         }
 
-        public void ScheduleEvent(IEventSubject subject, TimeSpan when, Action<IMultiplayerServer> action)
+        public void ScheduleEvent(string name, IEventSubject subject, TimeSpan when, Action<IMultiplayerServer> action)
         {
             lock (EventLock)
             {
@@ -42,6 +42,7 @@ namespace TrueCraft
                 }
                 Events.Insert(i, new ScheduledEvent
                 {
+                    Name = name,
                     Subject = subject,
                     When = _when,
                     Action = action
@@ -77,9 +78,11 @@ namespace TrueCraft
                     var e = Events[i];
                     if (e.When <= start)
                     {
+                        Profiler.Start("scheduler." + e.Name);
                         e.Action(Server);
                         Events.RemoveAt(i);
                         i--;
+                        Profiler.Done();
                     }
                     if (e.When > start)
                         break; // List is sorted, we can exit early
@@ -93,6 +96,7 @@ namespace TrueCraft
             public long When;
             public Action<IMultiplayerServer> Action;
             public IEventSubject Subject;
+            public string Name;
         }
     }
 }

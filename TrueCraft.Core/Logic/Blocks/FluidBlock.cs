@@ -70,7 +70,7 @@ namespace TrueCraft.Core.Logic.Blocks
         public void ScheduleNextEvent(Coordinates3D coords, IWorld world, IMultiplayerServer server)
         {
             var chunk = world.FindChunk(coords);
-            server.Scheduler.ScheduleEvent(chunk,
+            server.Scheduler.ScheduleEvent("fluid", chunk,
                 TimeSpan.FromSeconds(SecondsBetweenUpdates), (_server) =>
                 AutomataUpdate(_server, world, coords));
         }
@@ -110,7 +110,7 @@ namespace TrueCraft.Core.Logic.Blocks
             if (again)
             {
                 var chunk = world.FindChunk(coords);
-                server.Scheduler.ScheduleEvent(chunk,
+                server.Scheduler.ScheduleEvent("fluid", chunk,
                     TimeSpan.FromSeconds(SecondsBetweenUpdates), (_server) =>
                     AutomataUpdate(_server, world, coords));
             }
@@ -165,7 +165,7 @@ namespace TrueCraft.Core.Logic.Blocks
             world.SetBlockID(target.TargetBlock, FlowingID);
             world.SetMetadata(target.TargetBlock, target.Level);
             var chunk = world.FindChunk(target.TargetBlock);
-            server.Scheduler.ScheduleEvent(chunk,
+            server.Scheduler.ScheduleEvent("fluid", chunk,
                 TimeSpan.FromSeconds(SecondsBetweenUpdates),
                 s => AutomataUpdate(s, world, target.TargetBlock));
         }

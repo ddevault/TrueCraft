@@ -70,8 +70,8 @@ namespace TrueCraft.Handlers
                 var entityManager = server.GetEntityManagerForWorld(remoteClient.World);
                 entityManager.SpawnEntity(remoteClient.Entity);
                 entityManager.SendEntitiesToClient(remoteClient);
-                server.Scheduler.ScheduleEvent(remoteClient, TimeSpan.FromSeconds(10), remoteClient.SendKeepAlive);
-                server.Scheduler.ScheduleEvent(remoteClient, TimeSpan.FromSeconds(1), remoteClient.ExpandChunkRadius);
+                server.Scheduler.ScheduleEvent("remote.keepalive", remoteClient, TimeSpan.FromSeconds(10), remoteClient.SendKeepAlive);
+                server.Scheduler.ScheduleEvent("remote.chunks", remoteClient, TimeSpan.FromSeconds(1), remoteClient.ExpandChunkRadius);
 
                 if (!string.IsNullOrEmpty(Program.ServerConfiguration.MOTD))
                     remoteClient.SendMessage(Program.ServerConfiguration.MOTD);

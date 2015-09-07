@@ -75,7 +75,7 @@ namespace TrueCraft.Core.Logic.Blocks
                 if (provider.Opaque)
                 {
                     var chunk = world.FindChunk(descriptor.Coordinates, generate: false);
-                    server.Scheduler.ScheduleEvent(chunk,
+                    server.Scheduler.ScheduleEvent("grass", chunk,
                     TimeSpan.FromSeconds(MathHelper.Random.Next(MinDecayTime, MaxDecayTime)), s =>
                     {
                         ScheduledUpdate(world, descriptor.Coordinates);
@@ -117,7 +117,7 @@ namespace TrueCraft.Core.Logic.Blocks
                         }
                     }
                     world.SetBlockID(candidate, GrassBlock.BlockID);
-                    server.Scheduler.ScheduleEvent(chunk,
+                    server.Scheduler.ScheduleEvent("grass", chunk,
                         TimeSpan.FromSeconds(MathHelper.Random.Next(MinGrowthTime, MaxGrowthTime)),
                         s => TrySpread(candidate, world, server));
                     break;
@@ -128,7 +128,7 @@ namespace TrueCraft.Core.Logic.Blocks
         public override void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
             var chunk = world.FindChunk(descriptor.Coordinates);
-            user.Server.Scheduler.ScheduleEvent(chunk,
+            user.Server.Scheduler.ScheduleEvent("grass", chunk,
                 TimeSpan.FromSeconds(MathHelper.Random.Next(MinGrowthTime, MaxGrowthTime)),
                 s => TrySpread(descriptor.Coordinates, world, user.Server));
         }
@@ -136,7 +136,7 @@ namespace TrueCraft.Core.Logic.Blocks
         public override void BlockLoadedFromChunk(Coordinates3D coords, IMultiplayerServer server, IWorld world)
         {
             var chunk = world.FindChunk(coords);
-            server.Scheduler.ScheduleEvent(chunk,
+            server.Scheduler.ScheduleEvent("grass", chunk,
                 TimeSpan.FromSeconds(MathHelper.Random.Next(MinGrowthTime, MaxGrowthTime)),
                 s => TrySpread(coords, world, server));
         }

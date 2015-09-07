@@ -86,7 +86,7 @@ namespace TrueCraft.Core.Logic.Blocks
                 world.SetMetadata(coords, meta);
             }
             var chunk = world.FindChunk(coords);
-            server.Scheduler.ScheduleEvent(chunk,
+            server.Scheduler.ScheduleEvent("farmland", chunk,
                 TimeSpan.FromSeconds(UpdateIntervalSeconds),
                 _server => HydrationCheckEvent(_server, coords, world));
         }
@@ -98,7 +98,7 @@ namespace TrueCraft.Core.Logic.Blocks
                 world.SetMetadata(descriptor.Coordinates, 1);
             }
             var chunk = world.FindChunk(descriptor.Coordinates);
-            user.Server.Scheduler.ScheduleEvent(chunk,
+            user.Server.Scheduler.ScheduleEvent("farmland", chunk,
                 TimeSpan.FromSeconds(UpdateIntervalSeconds),
                 server => HydrationCheckEvent(server, descriptor.Coordinates, world));
         }
@@ -106,7 +106,7 @@ namespace TrueCraft.Core.Logic.Blocks
         public override void BlockLoadedFromChunk(Coordinates3D coords, IMultiplayerServer server, IWorld world)
         {
             var chunk = world.FindChunk(coords);
-            server.Scheduler.ScheduleEvent(chunk,
+            server.Scheduler.ScheduleEvent("farmland", chunk,
                 TimeSpan.FromSeconds(UpdateIntervalSeconds),
                 s => HydrationCheckEvent(s, coords, world));
         }

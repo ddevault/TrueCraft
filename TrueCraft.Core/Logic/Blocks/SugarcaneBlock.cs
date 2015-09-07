@@ -107,14 +107,14 @@ namespace TrueCraft.Core.Logic.Blocks
                     if (world.GetBlockID(coords + Coordinates3D.Up) == 0)
                     {
                         world.SetBlockID(coords + Coordinates3D.Up, BlockID);
-                        server.Scheduler.ScheduleEvent(chunk,
+                        server.Scheduler.ScheduleEvent("sugarcane", chunk,
                             TimeSpan.FromSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
                             (_server) => TryGrowth(_server, coords + Coordinates3D.Up, world));
                     }
                 }
                 else
                 {
-                    server.Scheduler.ScheduleEvent(chunk,
+                    server.Scheduler.ScheduleEvent("sugarcane", chunk,
                         TimeSpan.FromSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
                         (_server) => TryGrowth(_server, coords, world));
                 }
@@ -124,7 +124,7 @@ namespace TrueCraft.Core.Logic.Blocks
         public override void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
             var chunk = world.FindChunk(descriptor.Coordinates);
-            user.Server.Scheduler.ScheduleEvent(chunk,
+            user.Server.Scheduler.ScheduleEvent("sugarcane", chunk,
                 TimeSpan.FromSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
                 (server) => TryGrowth(server, descriptor.Coordinates, world));
         }
@@ -132,7 +132,7 @@ namespace TrueCraft.Core.Logic.Blocks
         public override void BlockLoadedFromChunk(Coordinates3D coords, IMultiplayerServer server, IWorld world)
         {
             var chunk = world.FindChunk(coords);
-            server.Scheduler.ScheduleEvent(chunk,
+            server.Scheduler.ScheduleEvent("sugarcane", chunk,
                 TimeSpan.FromSeconds(MathHelper.Random.Next(MinGrowthSeconds, MaxGrowthSeconds)),
                 s => TryGrowth(s, coords, world));
         }
