@@ -221,16 +221,18 @@ namespace TrueCraft
         {
             int _x = chunk.Coordinates.X * Chunk.Width;
             int _z = chunk.Coordinates.Z * Chunk.Depth;
+            Coordinates3D coords, _coords;
             for (byte x = 0; x < Chunk.Width; x++)
             {
                 for (byte z = 0; z < Chunk.Depth; z++)
                 {
                     for (int y = 0; y < chunk.GetHeight(x, z); y++)
                     {
-                        var coords = new Coordinates3D(_x + x, y, _z + z);
-                        var id = world.GetBlockID(coords);
+                        _coords.X = x; _coords.Y = y; _coords.Z = z;
+                        var id = chunk.GetBlockID(_coords);
                         if (id == 0)
                             continue;
+                        coords.X = _x + x; coords.Y = y; coords.Z = _z + z;
                         var provider = BlockRepository.GetBlockProvider(id);
                         provider.BlockLoadedFromChunk(coords, this, world);
                     }
@@ -398,7 +400,7 @@ namespace TrueCraft
                 ScheduleUpdatesForChunk(t.Item1, t.Item2);
             Profiler.Done();
 
-            Profiler.Done();
+            Profiler.Done(MillisecondsPerTick);
 
             EnvironmentWorker.Change(MillisecondsPerTick, 0);
         }

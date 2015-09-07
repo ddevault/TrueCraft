@@ -30,6 +30,13 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Optimized Debug|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Optimized Debug</OutputPath>
+    <WarningLevel>4</WarningLevel>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Ionic.Zip.Reduced">
@@ -357,6 +364,10 @@
     <ProjectReference Include="..\externals\fNbt\fNbt\fNbt.csproj">
       <Project>{4488498D-976D-4DA3-BF72-109531AF0488}</Project>
       <Name>fNbt</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TrueCraft.Profiling\TrueCraft.Profiling.csproj">
+      <Project>{BCA0E139-CF47-43B3-9DC9-D4611C0A2AAD}</Project>
+      <Name>TrueCraft.Profiling</Name>
     </ProjectReference>
   </ItemGroup>
   <ProjectExtensions>

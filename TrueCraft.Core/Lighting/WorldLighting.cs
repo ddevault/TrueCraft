@@ -5,6 +5,7 @@ using TrueCraft.API.Logic;
 using TrueCraft.API;
 using System.Collections.Generic;
 using System.Diagnostics;
+using TrueCraft.Profiling;
 
 namespace TrueCraft.Core.Lighting
 {
@@ -113,12 +114,14 @@ namespace TrueCraft.Core.Lighting
             var chunk = World.FindChunk((Coordinates3D)op.Box.Center, generate: false);
             if (chunk == null || !chunk.TerrainPopulated)
                 return;
+            Profiler.Start("lighting.box");
             for (int x = (int)op.Box.Min.X; x < (int)op.Box.Max.X; x++)
             for (int z = (int)op.Box.Min.Z; z < (int)op.Box.Max.Z; z++)
             for (int y = (int)op.Box.Max.Y - 1; y >= (int)op.Box.Min.Y; y--)
             {
                 LightVoxel(x, y, z, op);
             }
+            Profiler.Done();
         }
 
         /// <summary>
@@ -160,6 +163,8 @@ namespace TrueCraft.Core.Lighting
 
             if (chunk == null || !chunk.TerrainPopulated) // Move on if this chunk is empty
                 return;
+
+            Profiler.Start("lighting.voxel");
 
             var id = World.GetBlockID(coords);
             var provider = BlockRepository.GetBlockProvider(id);
@@ -235,6 +240,7 @@ namespace TrueCraft.Core.Lighting
                 if (z + 1 >= op.Box.Max.Z)
                     PropegateLightEvent(x, y, z + 1, propegated, op);
             }
+            Profiler.Done();
         }
 
         public bool TryLightNext()

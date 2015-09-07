@@ -12,12 +12,15 @@ namespace TrueCraft.Profiling
             Stopwatch = new Stopwatch();
             EnabledBuckets = new List<string>();
             ActiveTimers = new Stack<ActiveTimer>();
+            LogLag = false;
             Stopwatch.Start();
         }
 
         private static Stopwatch Stopwatch { get; set; }
         private static List<string> EnabledBuckets { get; set; }
         private static Stack<ActiveTimer> ActiveTimers { get; set; }
+
+        public static bool LogLag { get; set; }
 
         private struct ActiveTimer
         {
@@ -49,21 +52,23 @@ namespace TrueCraft.Profiling
         }
 
         [Conditional("DEBUG")]
-        public static void Done()
+        public static void Done(long lag = -1)
         {
             if (ActiveTimers.Count > 0)
             {
                 var timer = ActiveTimers.Pop();
                 timer.Finished = Stopwatch.ElapsedTicks;
+                double elapsed = (timer.Finished - timer.Started) / 10000.0;
                 for (int i = 0; i < EnabledBuckets.Count; i++)
                 {
                     if (Match(EnabledBuckets[i], timer.Bucket))
                     {
-                        Console.WriteLine("{0} took {1}ms", timer.Bucket,
-                            (timer.Finished - timer.Started) / 10000.0);
+                        Console.WriteLine("{0} took {1}ms", timer.Bucket, elapsed);
                         break;
                     }
                 }
+                if (LogLag && lag != -1 && elapsed > lag)
+                    Console.WriteLine("{0} is lagging by {1}ms", timer.Bucket, elapsed);
             }
         }
 

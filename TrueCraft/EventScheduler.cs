@@ -86,9 +86,11 @@ namespace TrueCraft
                     }
                     if (e.When > start)
                         break; // List is sorted, we can exit early
+                    if (start > Stopwatch.ElapsedTicks + 200000)
+                        break; // We're falling behind
                 }
             }
-            Profiler.Done();
+            Profiler.Done(20);
         }
 
         private struct ScheduledEvent

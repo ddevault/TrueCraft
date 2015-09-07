@@ -16,6 +16,9 @@ namespace TrueCraft
 
                 [YamlMember(Alias = "buckets")]
                 public string Buckets { get; set; }
+
+                [YamlMember(Alias = "lag")]
+                public bool Lag { get; set; }
             }
 
             public DebugConfiguration()

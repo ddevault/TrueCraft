@@ -5,6 +5,7 @@ using TrueCraft.API.Logging;
 using TrueCraft.API;
 using System.Net;
 using TrueCraft.Core.Logging;
+using TrueCraft;
 
 namespace TrueCraft.Launcher.Singleplayer
 {

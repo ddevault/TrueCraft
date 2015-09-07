@@ -104,9 +104,10 @@ namespace TrueCraft.Core.Logic.Blocks
                     var _block = world.GetBlockLight(candidate + Coordinates3D.Up);
                     if (_sky < 4 && _block < 4)
                         continue;
-                    IChunk chunk = world.FindChunk(candidate);
+                    IChunk chunk;
+                    var _candidate = world.FindBlockPosition(candidate, out chunk);
                     bool grow = true;
-                    for (int y = candidate.Y; y < chunk.GetHeight((byte)candidate.X, (byte)candidate.Z); y++)
+                    for (int y = candidate.Y; y < chunk.GetHeight((byte)_candidate.X, (byte)_candidate.Z); y++)
                     {
                         var b = world.GetBlockID(new Coordinates3D(candidate.X, y, candidate.Z));
                         var p = world.BlockRepository.GetBlockProvider(b);
@@ -116,10 +117,13 @@ namespace TrueCraft.Core.Logic.Blocks
                             break;
                         }
                     }
-                    world.SetBlockID(candidate, GrassBlock.BlockID);
-                    server.Scheduler.ScheduleEvent("grass", chunk,
-                        TimeSpan.FromSeconds(MathHelper.Random.Next(MinGrowthTime, MaxGrowthTime)),
-                        s => TrySpread(candidate, world, server));
+                    if (grow)
+                    {
+                        world.SetBlockID(candidate, GrassBlock.BlockID);
+                        server.Scheduler.ScheduleEvent("grass", chunk,
+                            TimeSpan.FromSeconds(MathHelper.Random.Next(MinGrowthTime, MaxGrowthTime)),
+                            s => TrySpread(candidate, world, server));
+                    }
                     break;
                 }
             }
