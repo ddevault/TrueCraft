@@ -42,7 +42,7 @@ namespace TrueCraft.Profiling
         {
             ActiveTimers.Push(new ActiveTimer
             {
-                Started = Stopwatch.ElapsedMilliseconds,
+                Started = Stopwatch.ElapsedTicks,
                 Finished = -1,
                 Bucket = bucket
             });
@@ -54,12 +54,13 @@ namespace TrueCraft.Profiling
             if (ActiveTimers.Count > 0)
             {
                 var timer = ActiveTimers.Pop();
-                timer.Finished = Stopwatch.ElapsedMilliseconds;
+                timer.Finished = Stopwatch.ElapsedTicks;
                 for (int i = 0; i < EnabledBuckets.Count; i++)
                 {
                     if (Match(EnabledBuckets[i], timer.Bucket))
                     {
-                        Console.WriteLine("{0} took {1}ms", timer.Bucket, timer.Finished - timer.Started);
+                        Console.WriteLine("{0} took {1}ms", timer.Bucket,
+                            (timer.Finished - timer.Started) / 10000.0);
                         break;
                     }
                 }

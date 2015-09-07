@@ -69,6 +69,8 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public void ScheduleNextEvent(Coordinates3D coords, IWorld world, IMultiplayerServer server)
         {
+            if (world.GetBlockID(coords) == StillID)
+                return;
             var chunk = world.FindChunk(coords);
             server.Scheduler.ScheduleEvent("fluid", chunk,
                 TimeSpan.FromSeconds(SecondsBetweenUpdates), (_server) =>
