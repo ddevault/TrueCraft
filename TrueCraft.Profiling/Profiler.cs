@@ -19,6 +19,7 @@ namespace TrueCraft.Profiling
         private static Stopwatch Stopwatch { get; set; }
         private static List<string> EnabledBuckets { get; set; }
         private static Stack<ActiveTimer> ActiveTimers { get; set; }
+        private static object Lock = new object();
 
         public static bool LogLag { get; set; }
 
@@ -43,32 +44,38 @@ namespace TrueCraft.Profiling
         [Conditional("DEBUG")]
         public static void Start(string bucket)
         {
-            ActiveTimers.Push(new ActiveTimer
+            lock (Lock)
             {
-                Started = Stopwatch.ElapsedTicks,
-                Finished = -1,
-                Bucket = bucket
-            });
+                ActiveTimers.Push(new ActiveTimer
+                {
+                    Started = Stopwatch.ElapsedTicks,
+                    Finished = -1,
+                    Bucket = bucket
+                });
+            }
         }
 
         [Conditional("DEBUG")]
         public static void Done(long lag = -1)
         {
-            if (ActiveTimers.Count > 0)
+            lock (Lock)
             {
-                var timer = ActiveTimers.Pop();
-                timer.Finished = Stopwatch.ElapsedTicks;
-                double elapsed = (timer.Finished - timer.Started) / 10000.0;
-                for (int i = 0; i < EnabledBuckets.Count; i++)
+                if (ActiveTimers.Count > 0)
                 {
-                    if (Match(EnabledBuckets[i], timer.Bucket))
+                    var timer = ActiveTimers.Pop();
+                    timer.Finished = Stopwatch.ElapsedTicks;
+                    double elapsed = (timer.Finished - timer.Started) / 10000.0;
+                    for (int i = 0; i < EnabledBuckets.Count; i++)
                     {
-                        Console.WriteLine("{0} took {1}ms", timer.Bucket, elapsed);
-                        break;
+                        if (Match(EnabledBuckets[i], timer.Bucket))
+                        {
+                            Console.WriteLine("{0} took {1}ms", timer.Bucket, elapsed);
+                            break;
+                        }
                     }
+                    if (LogLag && lag != -1 && elapsed > lag)
+                        Console.WriteLine("{0} is lagging by {1}ms", timer.Bucket, elapsed);
                 }
-                if (LogLag && lag != -1 && elapsed > lag)
-                    Console.WriteLine("{0} is lagging by {1}ms", timer.Bucket, elapsed);
             }
         }
 

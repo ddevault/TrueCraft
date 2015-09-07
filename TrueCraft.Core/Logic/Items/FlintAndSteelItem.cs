@@ -48,6 +48,14 @@ namespace TrueCraft.Core.Logic.Items
             if (world.GetBlockID(coordinates) == AirBlock.BlockID)
             {
                 world.SetBlockID(coordinates, FireBlock.BlockID);
+                world.BlockRepository.GetBlockProvider(FireBlock.BlockID)
+                    .BlockPlaced(world.GetBlockData(coordinates), face, world, user);
+
+                var slot = user.SelectedItem;
+                slot.Metadata += 1;
+                if (slot.Metadata >= Uses)
+                    slot.Count = 0; // Destroy item
+                user.Inventory[user.SelectedSlot] = slot;
             }
         }
     }

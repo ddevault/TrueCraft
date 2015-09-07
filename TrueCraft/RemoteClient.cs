@@ -400,7 +400,7 @@ namespace TrueCraft
         internal void SendKeepAlive(IMultiplayerServer server)
         {
             QueuePacket(new KeepAlivePacket());
-            server.Scheduler.ScheduleEvent("remote.keepalive", this, TimeSpan.FromSeconds(1), SendKeepAlive);
+            server.Scheduler.ScheduleEvent("remote.keepalive", this, TimeSpan.FromSeconds(10), SendKeepAlive);
         }
 
         internal void UpdateChunks()

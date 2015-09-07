@@ -16,6 +16,7 @@ namespace TrueCraft.API.Logic
         bool RenderOpaque { get; }
         byte LightOpacity { get; }
         bool DiffuseSkyLight { get; }
+        bool Flammable { get; }
         ToolMaterial EffectiveToolMaterials { get; }
         ToolType EffectiveTools { get; }
         string DisplayName { get; }

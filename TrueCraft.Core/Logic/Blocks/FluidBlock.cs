@@ -170,6 +170,11 @@ namespace TrueCraft.Core.Logic.Blocks
             server.Scheduler.ScheduleEvent("fluid", chunk,
                 TimeSpan.FromSeconds(SecondsBetweenUpdates),
                 s => AutomataUpdate(s, world, target.TargetBlock));
+            if (FlowingID == LavaBlock.BlockID)
+            {
+                (BlockRepository.GetBlockProvider(FireBlock.BlockID) as FireBlock).ScheduleUpdate(
+                    server, world, world.GetBlockData(target.TargetBlock));
+            }
         }
 
         /// <summary>

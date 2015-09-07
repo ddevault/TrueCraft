@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using TrueCraft.API;
 
-namespace TrueCraft.Core.Logic
+namespace TrueCraft.Core.Logic.Items
 {
     public abstract class ToolItem : ItemProvider
     {
@@ -20,21 +20,7 @@ namespace TrueCraft.Core.Logic
         {
             get
             {
-                switch (Material)
-                {
-                    case ToolMaterial.Gold:
-                        return 33;
-                    case ToolMaterial.Wood:
-                        return 60;
-                    case ToolMaterial.Stone:
-                        return 132;
-                    case ToolMaterial.Iron:
-                        return 251;
-                    case ToolMaterial.Diamond:
-                        return 1562;
-                    default:
-                        return -1;
-                }
+                return BaseDurability;
             }
         }
     }

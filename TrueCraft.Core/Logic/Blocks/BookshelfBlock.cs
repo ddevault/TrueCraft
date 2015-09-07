@@ -19,6 +19,8 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override string DisplayName { get { return "Bookshelf"; } }
 
+        public override bool Flammable { get { return true; } }
+
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(3, 2);

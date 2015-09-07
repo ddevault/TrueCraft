@@ -24,7 +24,9 @@ namespace TrueCraft.Core.Logic
 
         public virtual void BlockLeftClicked(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
-            // This space intentionally left blank
+            var coords = descriptor.Coordinates + MathHelper.BlockFaceToCoordinates(face);
+            if (world.IsValidPosition(coords) && world.GetBlockID(coords) == FireBlock.BlockID)
+                world.SetBlockID(coords, 0);
         }
 
         public virtual bool BlockRightClicked(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
@@ -219,6 +221,8 @@ namespace TrueCraft.Core.Logic
         /// Whether or not the block is rendered opaque
         /// </summary>
         public virtual bool RenderOpaque { get { return Opaque; } }
+
+        public virtual bool Flammable { get { return false; } }
 
         /// <summary>
         /// The amount removed from the light level as it passes through this block.

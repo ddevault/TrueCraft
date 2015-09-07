@@ -28,6 +28,8 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override string DisplayName { get { return "Tall Grass"; } }
 
+        public override bool Flammable { get { return true; } }
+
         public override BoundingBox? BoundingBox { get { return null; } }
 
         public override Coordinates3D GetSupportDirection(BlockDescriptor descriptor)

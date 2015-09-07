@@ -32,6 +32,7 @@ namespace TrueCraft.Core.Logic.Blocks
         public override void BlockMined(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
             world.SetBlockID(descriptor.Coordinates, WaterBlock.BlockID);
+            BlockRepository.GetBlockProvider(WaterBlock.BlockID).BlockPlaced(descriptor, face, world, user);
         }
     }
 }

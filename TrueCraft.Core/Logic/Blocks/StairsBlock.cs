@@ -67,6 +67,8 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override string DisplayName { get { return "Wooden Stairs"; } }
 
+        public override bool Flammable { get { return true; } }
+
         public ItemStack[,] Pattern
         {
             get
