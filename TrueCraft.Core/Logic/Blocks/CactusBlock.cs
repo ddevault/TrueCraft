@@ -12,8 +12,8 @@ namespace TrueCraft.Core.Logic.Blocks
 {
     public class CactusBlock : BlockProvider
     {
-        public static readonly int MinGrowthSeconds = 180;
-        public static readonly int MaxGrowthSeconds = 240;
+        public static readonly int MinGrowthSeconds = 30;
+        public static readonly int MaxGrowthSeconds = 120;
         public static readonly int MaxGrowHeight = 3;
 
         public static readonly byte BlockID = 0x51;
