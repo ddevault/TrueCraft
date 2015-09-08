@@ -193,8 +193,13 @@ namespace TrueCraft
                     var lighter = WorldLighters.SingleOrDefault(l => l.World == sender);
                     if (lighter != null)
                     {
-                        lighter.EnqueueOperation(new BoundingBox(e.Position, e.Position + Vector3.One), true);
-                        lighter.EnqueueOperation(new BoundingBox(e.Position, e.Position + Vector3.One), false);
+                        var posA = e.Position;
+                        posA.Y = 0;
+                        var posB = e.Position;
+                        posB.Y = World.Height;
+                        posB.X++; posB.Z++;
+                        lighter.EnqueueOperation(new BoundingBox(posA, posB), true);
+                        lighter.EnqueueOperation(new BoundingBox(posA, posB), false);
                     }
                 }
             }
