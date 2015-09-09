@@ -56,7 +56,8 @@ namespace TrueCraft.Core.Logic.Blocks
             return new Tuple<int, int>(4, 3);
         }
 
-        public void TryDecay(Coordinates3D coords, IMultiplayerServer server, IWorld world){
+        public void TryDecay(Coordinates3D coords, IMultiplayerServer server, IWorld world)
+        {
             foreach (Coordinates3D a in Adjacent)
             {
                 var c = a + coords;
@@ -66,11 +67,9 @@ namespace TrueCraft.Core.Logic.Blocks
                     world.SetMetadata(coords, 0x0);
                     return;
                 }
-                else
-                {
-                    continue;
+                else continue;
                 }
-            }
+
             world.SetBlockID(coords, AirBlock.BlockID);
         }
 
