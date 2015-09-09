@@ -58,6 +58,8 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public void TryDecay(Coordinates3D coords, IMultiplayerServer server, IWorld world)
         {
+            if (world.GetMetadata(coords) == 0x8) return;
+
             foreach (Coordinates3D a in Adjacent)
             {
                 var c = a + coords;
@@ -89,12 +91,8 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
-            world.SetMetadata(descriptor.Coordinates, 0x4);
-
-            var chunk = world.FindChunk(descriptor.Coordinates);
-            user.Server.Scheduler.ScheduleEvent("leaves", chunk,
-                TimeSpan.FromSeconds(MathHelper.Random.Next(MinDecayTime, MaxDecayTime)),
-                s => TryDecay(descriptor.Coordinates, user.Server, world));
+            // Block placed by player never decay.
+            world.SetMetadata(descriptor.Coordinates, 0x8);
         }
 
         public override void BlockLoadedFromChunk(Coordinates3D coords, IMultiplayerServer server, IWorld world)
