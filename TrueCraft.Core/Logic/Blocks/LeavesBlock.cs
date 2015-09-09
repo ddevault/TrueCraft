@@ -10,6 +10,8 @@ namespace TrueCraft.Core.Logic.Blocks
 {
     public class LeavesBlock : BlockProvider
     {
+        enum LeafDecay { CheckDecay = 0x4, PlayerPlaced = 0x8 }
+
         public static readonly int MinDecayTime = 30;
         public static readonly int MaxDecayTime = 120;
 
@@ -58,7 +60,7 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public void TryDecay(Coordinates3D coords, IMultiplayerServer server, IWorld world)
         {
-            if (world.GetMetadata(coords) == 0x8) return;
+            if (world.GetMetadata(coords) == LeafDecay.PlayerPlaced) return;
 
             foreach (Coordinates3D a in Adjacent)
             {
@@ -66,7 +68,9 @@ namespace TrueCraft.Core.Logic.Blocks
                 var id = world.GetBlockID(c);
                 if (id == WoodBlock.BlockID)
                 {
-                    world.SetMetadata(coords, 0x0);
+                    byte meta = world.GetMetadata(coords);
+                    meta &= ~LeafDecay.CheckDecay;
+                    world.SetMetadata(coords, meta);
                     return;
                 }
                 else continue;
@@ -92,12 +96,12 @@ namespace TrueCraft.Core.Logic.Blocks
         public override void BlockPlaced(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
             // Block placed by player never decay.
-            world.SetMetadata(descriptor.Coordinates, 0x8);
+            world.SetMetadata(descriptor.Coordinates, LeafDecay.PlayerPlaced);
         }
 
         public override void BlockLoadedFromChunk(Coordinates3D coords, IMultiplayerServer server, IWorld world)
         {
-            if (world.GetMetadata(coords) == 0x4)
+            if ((world.GetMetadata(coords) & LeafDecay.CheckDecay) > 0)
             {
                 var chunk = world.FindChunk(coords);
                 server.Scheduler.ScheduleEvent("leaves", chunk,
