@@ -28,6 +28,7 @@ namespace TrueCraft.Client
         private SpriteBatch SpriteBatch { get; set; }
         private IPEndPoint EndPoint { get; set; }
         private ChunkRenderer ChunkConverter { get; set; }
+        private DateTime LastPhysicsUpdate { get; set; }
         private DateTime NextPhysicsUpdate { get; set; }
         private List<Mesh> ChunkMeshes { get; set; }
         public ConcurrentBag<Action> PendingMainThreadActions { get; set; }
@@ -58,6 +59,7 @@ namespace TrueCraft.Client
             Graphics.PreferredBackBufferHeight = UserSettings.Local.WindowResolution.Height;
             Client = client;
             EndPoint = endPoint;
+            LastPhysicsUpdate = DateTime.MinValue;
             NextPhysicsUpdate = DateTime.MinValue;
             ChunkMeshes = new List<Mesh>();
             IncomingChunks = new ConcurrentBag<Mesh>();
@@ -219,36 +221,48 @@ namespace TrueCraft.Client
                     foreach (var item in Interfaces)
                     {
                         item.Scale = (InterfaceScale)(item.Scale + 1);
-                        if ((int)item.Scale > 2) item.Scale = InterfaceScale.Small;
+                        if ((int)item.Scale > 2)
+                            item.Scale = InterfaceScale.Small;
                     }
                     break;
 
                 // Move to the left.
                 case Keys.A:
                 case Keys.Left:
-                    if (ChatInterface.HasFocus) break;
+                    if (ChatInterface.HasFocus)
+                        break;
                     Delta += Microsoft.Xna.Framework.Vector3.Left;
                     break;
 
                 // Move to the right.
                 case Keys.D:
                 case Keys.Right:
-                    if (ChatInterface.HasFocus) break;
+                    if (ChatInterface.HasFocus)
+                        break;
                     Delta += Microsoft.Xna.Framework.Vector3.Right;
                     break;
 
                 // Move forwards.
                 case Keys.W:
                 case Keys.Up:
-                    if (ChatInterface.HasFocus) break;
+                    if (ChatInterface.HasFocus)
+                        break;
                     Delta += Microsoft.Xna.Framework.Vector3.Forward;
                     break;
 
                 // Move backwards.
                 case Keys.S:
                 case Keys.Down:
-                    if (ChatInterface.HasFocus) break;
+                    if (ChatInterface.HasFocus)
+                        break;
                     Delta += Microsoft.Xna.Framework.Vector3.Backward;
+                    break;
+
+                case Keys.Space:
+                    if (ChatInterface.HasFocus)
+                        break;
+                    if (Math.Floor(Client.Position.Y) == Client.Position.Y) // Crappy onground substitute
+                        Client.Velocity += TrueCraft.API.Vector3.Up * 0.3;
                     break;
 
                 // Toggle mouse capture.
@@ -343,15 +357,15 @@ namespace TrueCraft.Client
             if (PendingMainThreadActions.TryTake(out action))
                 action();
 
+            IChunk chunk;
+            var adjusted = Client.World.World.FindBlockPosition(new Coordinates3D((int)Client.Position.X, 0, (int)Client.Position.Z), out chunk);
+            if (chunk != null)
+            {
+                if (chunk.GetHeight((byte)adjusted.X, (byte)adjusted.Z) != 0)
+                    Client.Physics.Update(gameTime.ElapsedGameTime);
+            }
             if (NextPhysicsUpdate < DateTime.UtcNow && Client.LoggedIn)
             {
-                IChunk chunk;
-                var adjusted = Client.World.World.FindBlockPosition(new Coordinates3D((int)Client.Position.X, 0, (int)Client.Position.Z), out chunk);
-                if (chunk != null)
-                {
-                    if (chunk.GetHeight((byte)adjusted.X, (byte)adjusted.Z) != 0)
-                        Client.Physics.Update();
-                }
                 // NOTE: This is to make the vanilla server send us chunk packets
                 // We should eventually make some means of detecing that we're on a vanilla server to enable this
                 // It's a waste of bandwidth to do it on a TrueCraft server
@@ -364,12 +378,19 @@ namespace TrueCraft.Client
             if (Delta != Microsoft.Xna.Framework.Vector3.Zero)
             {
                 var lookAt = Microsoft.Xna.Framework.Vector3.Transform(
-                             Delta, Matrix.CreateRotationY(Microsoft.Xna.Framework.MathHelper.ToRadians(Client.Yaw)));
+                     Delta, Matrix.CreateRotationY(Microsoft.Xna.Framework.MathHelper.ToRadians(Client.Yaw)));
 
-                Client.Position += new TrueCraft.API.Vector3(lookAt.X, lookAt.Y, lookAt.Z)
-                    * (gameTime.ElapsedGameTime.TotalSeconds * 4.3717);
+                lookAt.X *= (float)(gameTime.ElapsedGameTime.TotalSeconds * 4.3717);
+                lookAt.Z *= (float)(gameTime.ElapsedGameTime.TotalSeconds * 4.3717);
+
+                Client.Velocity = new TrueCraft.API.Vector3(lookAt.X, Client.Velocity.Y, lookAt.Z);
+            }
+            else
+            {
+                Client.Velocity *= new TrueCraft.API.Vector3(0, 1, 0);
             }
 
+            UpdateCamera();
             base.Update(gameTime);
         }
 
@@ -377,7 +398,7 @@ namespace TrueCraft.Client
         {
             Camera.Position = new TrueCraft.API.Vector3(
                 Client.Position.X,
-                Client.Position.Y + (Client.Size.Height / 2),
+                Client.Position.Y + (Client.Size.Height - 0.3),
                 Client.Position.Z);
 
             Camera.Pitch = Client.Pitch;

@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.IO;
 using TrueCraft.Core;
 using TrueCraft.API.Physics;
+using TrueCraft.Core.Physics;
 
 namespace TrueCraft.Client
 {
@@ -68,7 +69,7 @@ namespace TrueCraft.Client
             repo.DiscoverBlockProviders();
             World.World.BlockRepository = repo;
             World.World.ChunkProvider = new EmptyGenerator();
-            Physics = new PhysicsEngine(World, repo);
+            Physics = new PhysicsEngine(World.World, repo);
             SocketPool = new SocketAsyncEventArgsPool(100, 200, 65536);
             connected = 0;
             cancel = new CancellationTokenSource();
@@ -292,7 +293,8 @@ namespace TrueCraft.Client
             {
                 if (_Position != value)
                 {
-                    QueuePacket(new PlayerPositionAndLookPacket(value.X, value.Y, value.Y + Height, value.Z, Yaw, Pitch, false));
+                    QueuePacket(new PlayerPositionAndLookPacket(value.X, value.Y, value.Y + Height,
+                        value.Z, Yaw, Pitch, false));
                     if (PropertyChanged != null)
                         PropertyChanged(this, new PropertyChangedEventArgs("Position"));
                 }
@@ -306,7 +308,7 @@ namespace TrueCraft.Client
         {
             get
             {
-                return 0.08f;
+                return 1.98f;
             }
         }
 
@@ -314,7 +316,7 @@ namespace TrueCraft.Client
         {
             get
             {
-                return 0.02f;
+                return 0.40f;
             }
         }
 
@@ -322,7 +324,7 @@ namespace TrueCraft.Client
         {
             get
             {
-                return 3.92f;
+                return 78.4f;
             }
         }
 

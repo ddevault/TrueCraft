@@ -127,6 +127,10 @@ namespace TrueCraft.Core.Test.Physics
             physics.Update(TimeSpan.FromSeconds(1));
 
             Assert.AreEqual(4, entity.Position.Y);
+
+            physics.Update(TimeSpan.FromSeconds(5));
+
+            Assert.AreEqual(4, entity.Position.Y);
         }
 
         [Test]

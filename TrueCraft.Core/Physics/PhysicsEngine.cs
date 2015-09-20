@@ -155,7 +155,7 @@ namespace TrueCraft.Core.Physics
                 var extent = collisionExtent.Value;
                 double diff;
                 if (negative)
-                    diff = entity.BoundingBox.Min.Y - extent;
+                    diff = -(entity.BoundingBox.Min.Y - extent);
                 else
                     diff = extent - entity.BoundingBox.Max.Y;
                 entity.Velocity = new Vector3(entity.Velocity.X, diff, entity.Velocity.Z);
@@ -244,7 +244,7 @@ namespace TrueCraft.Core.Physics
                 var extent = collisionExtent.Value;
                 double diff;
                 if (negative)
-                    diff = entity.BoundingBox.Min.X - extent;
+                    diff = -(entity.BoundingBox.Min.X - extent);
                 else
                     diff = extent - entity.BoundingBox.Max.X;
                 entity.Velocity = new Vector3(diff, entity.Velocity.Y, entity.Velocity.Z);
@@ -333,7 +333,7 @@ namespace TrueCraft.Core.Physics
                 var extent = collisionExtent.Value;
                 double diff;
                 if (negative)
-                    diff = entity.BoundingBox.Min.Z - extent;
+                    diff = -(entity.BoundingBox.Min.Z - extent);
                 else
                     diff = extent - entity.BoundingBox.Max.Z;
                 entity.Velocity = new Vector3(entity.Velocity.X, entity.Velocity.Y, diff);

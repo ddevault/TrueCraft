@@ -109,7 +109,6 @@
     <Compile Include="Handlers\ChunkHandler.cs" />
     <Compile Include="ReadOnlyWorld.cs" />
     <Compile Include="Events\ChunkEventArgs.cs" />
-    <Compile Include="PhysicsEngine.cs" />
     <Compile Include="Rendering\Mesh.cs" />
     <Compile Include="Rendering\BlockRenderer.cs" />
     <Compile Include="Rendering\ChunkMesh.cs" />
