@@ -24,7 +24,7 @@ namespace TrueCraft.Client.Rendering
         }
 
         public override VertexPositionNormalColorTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
-            Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
+            VisibleFaces faces, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
             return RenderQuads(descriptor, offset, Texture, indiciesOffset, out indicies, Color.White);
         }

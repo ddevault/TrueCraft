@@ -188,7 +188,8 @@ namespace TrueCraft.Client.Rendering.Blocks
             }
         }
 
-        public override VertexPositionNormalColorTexture[] Render(BlockDescriptor descriptor, Vector3 offset, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
+        public override VertexPositionNormalColorTexture[] Render(BlockDescriptor descriptor, Vector3 offset, 
+            VisibleFaces faces, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
             if (descriptor.ID == SlabBlock.BlockID)
                 return RenderSlab(descriptor, offset, textureMap, indiciesOffset, out indicies);
@@ -198,7 +199,9 @@ namespace TrueCraft.Client.Rendering.Blocks
 
         protected virtual VertexPositionNormalColorTexture[] RenderSlab(BlockDescriptor descriptor, Vector3 offset, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
-            var result = CreateUniformCube(offset, GetTextureMap((SlabBlock.SlabMaterial)descriptor.Metadata), indiciesOffset, out indicies, Color.White);
+            var result = CreateUniformCube(offset,
+                GetTextureMap((SlabBlock.SlabMaterial)descriptor.Metadata), VisibleFaces.All,
+                indiciesOffset, out indicies, Color.White);
             for (int i = 0; i < 6; i++)
             {
                 var face = (CubeFace)i;
@@ -227,9 +230,11 @@ namespace TrueCraft.Client.Rendering.Blocks
             return result;
         }
 
-        protected virtual VertexPositionNormalColorTexture[] RenderDoubleSlab(BlockDescriptor descriptor, Vector3 offset, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
+        protected virtual VertexPositionNormalColorTexture[] RenderDoubleSlab(BlockDescriptor descriptor,
+            Vector3 offset, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
-            return CreateUniformCube(offset, GetTextureMap((SlabBlock.SlabMaterial)descriptor.Metadata), indiciesOffset, out indicies, Color.White);
+            return CreateUniformCube(offset, GetTextureMap((SlabBlock.SlabMaterial)descriptor.Metadata),
+                VisibleFaces.All, indiciesOffset, out indicies, Color.White);
         }
     }
 }

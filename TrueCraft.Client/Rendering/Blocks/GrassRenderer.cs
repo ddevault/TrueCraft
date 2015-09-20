@@ -93,7 +93,7 @@ namespace TrueCraft.Client.Rendering.Blocks
         public static readonly Color BiomeColor = new Color(105, 169, 63);
 
         public override VertexPositionNormalColorTexture[] Render(BlockDescriptor descriptor, Microsoft.Xna.Framework.Vector3 offset,
-            Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
+            VisibleFaces faces, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
             var texture = Texture;
             if (descriptor.Coordinates.Y < World.Height)
@@ -103,7 +103,7 @@ namespace TrueCraft.Client.Rendering.Blocks
                     texture = SnowTexture;
                 }
             }
-            var cube = CreateUniformCube(offset, texture, indiciesOffset, out indicies, Color.White);
+            var cube = CreateUniformCube(offset, texture, faces, indiciesOffset, out indicies, Color.White);
             // Apply biome colors to top of cube
             for (int i = (int)(CubeFace.PositiveY) * 4; i < (int)(CubeFace.PositiveY) * 4 + 4; i++)
             {

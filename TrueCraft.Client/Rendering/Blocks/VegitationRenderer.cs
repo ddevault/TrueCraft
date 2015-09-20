@@ -101,7 +101,7 @@ namespace TrueCraft.Client.Rendering.Blocks
         }
 
         public override VertexPositionNormalColorTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
-            Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
+            VisibleFaces faces, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
             if (descriptor.ID == RoseBlock.BlockID)
                 return RenderQuads(descriptor, offset, RoseTexture, indiciesOffset, out indicies, Color.White);

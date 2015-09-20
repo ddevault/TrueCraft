@@ -25,7 +25,7 @@ namespace TrueCraft.Client.Rendering.Blocks
         };
 
         public override VertexPositionNormalColorTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
-                                                             Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
+            VisibleFaces faces, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
             VertexPositionNormalColorTexture[] verticies;
             Vector3 correction;
@@ -54,7 +54,8 @@ namespace TrueCraft.Client.Rendering.Blocks
                     break;
                 default:
                     // Should never happen
-                    verticies = CreateUniformCube(offset, Texture, indiciesOffset, out indicies, Color.White);
+                    verticies = CreateUniformCube(offset, Texture, VisibleFaces.All,
+                        indiciesOffset, out indicies, Color.White);
                     correction = Vector3.Zero;
                     break;
             }

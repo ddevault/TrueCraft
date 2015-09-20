@@ -82,19 +82,6 @@ namespace TrueCraft.Client.Rendering
             return (result != null);
         }
 
-        [Flags]
-        public enum VisibleFaces
-        {
-            None = 0,
-            North = 1,
-            South = 2,
-            East = 4,
-            West = 8,
-            Top = 16,
-            Bottom = 32,
-            All = North | South | East | West | Top | Bottom
-        }
-
         private class RenderState
         {
             public readonly List<VertexPositionNormalColorTexture> Verticies 
@@ -139,14 +126,37 @@ namespace TrueCraft.Client.Rendering
                 {
                     continue;
                 }
-                if (chunk.GetBlockId(next) != 0)
+                var provider = BlockRepository.GetBlockProvider(chunk.GetBlockId(next));
+                if (provider.Opaque)
                 {
                     VisibleFaces faces;
-                    state.DrawableCoordinates.TryGetValue(next, out faces);
+                    if (!state.DrawableCoordinates.TryGetValue(next, out faces))
+                        faces = VisibleFaces.None;
                     faces |= AdjacentCoordFaces[i];
                     state.DrawableCoordinates[next] = faces;
                 }
             }
+        }
+
+        private void AddTransparentBlock(Coordinates3D coords, RenderState state, ReadOnlyChunk chunk)
+        {
+            // Add adjacent blocks
+            VisibleFaces faces = VisibleFaces.None;
+            for (int i = 0; i < AdjacentCoordinates.Length; i++)
+            {
+                var next = coords + AdjacentCoordinates[i];
+                if (next.X < 0 || next.X >= Chunk.Width
+                    || next.Y < 0 || next.Y >= Chunk.Height
+                    || next.Z < 0 || next.Z >= Chunk.Depth)
+                {
+                    faces |= AdjacentCoordFaces[i];
+                    continue;
+                }
+                if (chunk.GetBlockId(next) == 0)
+                    faces |= AdjacentCoordFaces[i];
+            }
+            if (faces != VisibleFaces.None)
+                state.DrawableCoordinates[coords] = faces;
         }
 
         private void UpdateFacesFromAdjacent(Coordinates3D adjacent, ReadOnlyChunk chunk,
@@ -219,7 +229,11 @@ namespace TrueCraft.Client.Rendering
                         if (id != 0 && coords.Y == 0)
                             AddBottomBlock(coords, state, chunk);
                         if (!provider.Opaque)
+                        {
                             AddAdjacentBlocks(coords, state, chunk);
+                            if (id != 0)
+                                AddTransparentBlock(coords, state, chunk);
+                        }
                         else
                         {
                             if (coords.X == 0 || coords.X == Chunk.Width - 1 ||
@@ -250,7 +264,7 @@ namespace TrueCraft.Client.Rendering
                 if (provider.RenderOpaque)
                 {
                     int[] i;
-                    var v = BlockRenderer.RenderBlock(provider, descriptor,
+                    var v = BlockRenderer.RenderBlock(provider, descriptor, coords.Value,
                         new Vector3(chunk.X * Chunk.Width + c.X, c.Y, chunk.Z * Chunk.Depth + c.Z),
                         state.Verticies.Count, out i);
                     state.Verticies.AddRange(v);
@@ -259,7 +273,7 @@ namespace TrueCraft.Client.Rendering
                 else
                 {
                     int[] i;
-                    var v = BlockRenderer.RenderBlock(provider, descriptor,
+                    var v = BlockRenderer.RenderBlock(provider, descriptor, coords.Value,
                         new Vector3(chunk.X * Chunk.Width + c.X, c.Y, chunk.Z * Chunk.Depth + c.Z),
                         state.Verticies.Count, out i);
                     state.Verticies.AddRange(v);
@@ -267,5 +281,18 @@ namespace TrueCraft.Client.Rendering
                 }
             }
         }
+    }
+
+    [Flags]
+    public enum VisibleFaces
+    {
+        None = 0,
+        North = 1,
+        South = 2,
+        East = 4,
+        West = 8,
+        Top = 16,
+        Bottom = 32,
+        All = North | South | East | West | Top | Bottom
     }
 }

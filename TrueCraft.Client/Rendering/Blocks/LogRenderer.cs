@@ -124,17 +124,17 @@ namespace TrueCraft.Client.Rendering.Blocks
         };
 
         public override VertexPositionNormalColorTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
-             Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
+            VisibleFaces faces, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
             switch ((WoodBlock.WoodType)descriptor.Metadata)
             {
                 case WoodBlock.WoodType.Spruce:
-                    return CreateUniformCube(offset, SpruceTexture, indiciesOffset, out indicies, Color.White);
+                    return CreateUniformCube(offset, SpruceTexture, faces, indiciesOffset, out indicies, Color.White);
                 case WoodBlock.WoodType.Birch:
-                    return CreateUniformCube(offset, BirchTexture, indiciesOffset, out indicies, Color.White);
+                    return CreateUniformCube(offset, BirchTexture, faces, indiciesOffset, out indicies, Color.White);
                 case WoodBlock.WoodType.Oak:
                 default:
-                    return CreateUniformCube(offset, BaseTexture, indiciesOffset, out indicies, Color.White);
+                    return CreateUniformCube(offset, BaseTexture, faces, indiciesOffset, out indicies, Color.White);
             }
         }
     }

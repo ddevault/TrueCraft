@@ -35,7 +35,7 @@ namespace TrueCraft.Client.Rendering
         }
 
         public override VertexPositionNormalColorTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
-            Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
+            VisibleFaces faces, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
             // Wheat is rendered by rendering the four vertical faces of a cube, then moving them
             // towards the middle. We also render a second set of four faces so that you can see

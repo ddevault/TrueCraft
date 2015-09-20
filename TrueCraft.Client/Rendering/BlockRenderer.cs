@@ -18,16 +18,16 @@ namespace TrueCraft.Client.Rendering
         }
 
         public static VertexPositionNormalColorTexture[] RenderBlock(IBlockProvider provider, BlockDescriptor descriptor,
-            Vector3 offset, int indiciesOffset, out int[] indicies)
+            VisibleFaces faces, Vector3 offset, int indiciesOffset, out int[] indicies)
         {
             var textureMap = provider.GetTextureMap(descriptor.Metadata);
             if (textureMap == null)
                 textureMap = new Tuple<int, int>(0, 0); // TODO: handle this better
-            return Renderers[descriptor.ID].Render(descriptor, offset, textureMap, indiciesOffset, out indicies);
+            return Renderers[descriptor.ID].Render(descriptor, offset, faces, textureMap, indiciesOffset, out indicies);
         }
 
         public virtual VertexPositionNormalColorTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
-            Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
+            VisibleFaces faces, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
             var texCoords = new Vector2(textureMap.Item1, textureMap.Item2);
             var texture = new[]
@@ -39,23 +39,42 @@ namespace TrueCraft.Client.Rendering
             };
             for (int i = 0; i < texture.Length; i++)
                 texture[i] *= new Vector2(16f / 256f);
-            return CreateUniformCube(offset, texture, indiciesOffset, out indicies, Color.White);
+            return CreateUniformCube(offset, texture, faces, indiciesOffset, out indicies, Color.White);
         }
 
-        protected VertexPositionNormalColorTexture[] CreateUniformCube(Vector3 offset, Vector2[] texture, int indiciesOffset, out int[] indicies, Color color)
+        protected VertexPositionNormalColorTexture[] CreateUniformCube(Vector3 offset, Vector2[] texture,
+            VisibleFaces faces, int indiciesOffset, out int[] indicies, Color color)
         {
-            indicies = new int[6 * 6];
-            var verticies = new VertexPositionNormalColorTexture[4 * 6];
+            faces = VisibleFaces.All; // Temporary
+
+            int totalFaces = 0;
+            uint f = (uint)faces;
+            while (f != 0)
+            {
+                if ((f & 1) == 1)
+                    totalFaces++;
+                f >>= 1;
+            }
+
+            indicies = new int[6 * totalFaces];
+            var verticies = new VertexPositionNormalColorTexture[4 * totalFaces];
             int[] _indicies;
             int textureIndex = 0;
+            int sidesSoFar = 0;
             for (int _side = 0; _side < 6; _side++)
             {
+                if ((faces & VisibleForCubeFace[_side]) == 0)
+                {
+                    textureIndex += 4;
+                    continue;
+                }
                 var side = (CubeFace)_side;
                 var quad = CreateQuad(side, offset, texture, textureIndex % texture.Length, indiciesOffset,
                     out _indicies, color);
-                Array.Copy(quad, 0, verticies, _side * 4, 4);
-                Array.Copy(_indicies, 0, indicies, _side * 6, 6);
+                Array.Copy(quad, 0, verticies, sidesSoFar * 4, 4);
+                Array.Copy(_indicies, 0, indicies, sidesSoFar * 6, 6);
                 textureIndex += 4;
+                sidesSoFar++;
             }
             return verticies;
         }
@@ -85,6 +104,16 @@ namespace TrueCraft.Client.Rendering
             PositiveY = 4,
             NegativeY = 5
         }
+
+        protected static readonly VisibleFaces[] VisibleForCubeFace =
+        {
+            VisibleFaces.South,
+            VisibleFaces.North,
+            VisibleFaces.East,
+            VisibleFaces.West,
+            VisibleFaces.Top,
+            VisibleFaces.Bottom
+        };
 
         protected static readonly Vector3[][] CubeMesh;
 
@@ -163,6 +192,12 @@ namespace TrueCraft.Client.Rendering
                 new Vector3(-0.5f, -0.5f, 0.5f),
                 new Vector3(0.5f, -0.5f, 0.5f)
             };
+
+            // TEMP
+            return;
+            for (int i = 0; i < CubeMesh.Length; i++)
+                for (int j = 0; j < CubeMesh[0].Length; j++)
+                    CubeMesh[i][j] *= new Vector3(0.5f);
         }
     }
 }
