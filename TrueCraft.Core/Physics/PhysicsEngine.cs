@@ -185,7 +185,7 @@ namespace TrueCraft.Core.Physics
             {
                 testBox = new BoundingBox(
                     new Vector3(
-                        entity.BoundingBox.Min.X + entity.Velocity.X - entity.Size.Width,
+                        entity.BoundingBox.Min.X + entity.Velocity.X,
                         entity.BoundingBox.Min.Y,
                         entity.BoundingBox.Min.Z),
                     entity.BoundingBox.Max);
@@ -276,7 +276,7 @@ namespace TrueCraft.Core.Physics
                     new Vector3(
                         entity.BoundingBox.Min.X,
                         entity.BoundingBox.Min.Y,
-                        entity.BoundingBox.Min.Z + entity.Velocity.Z - entity.Size.Depth),
+                        entity.BoundingBox.Min.Z + entity.Velocity.Z),
                     entity.BoundingBox.Max);
                 negative = true;
             }
