@@ -16,6 +16,7 @@ using System.Collections.Concurrent;
 using TrueCraft.Client.Input;
 using TrueCraft.Core;
 using MonoGame.Utilities.Png;
+using System.Diagnostics;
 
 namespace TrueCraft.Client
 {
@@ -44,6 +45,7 @@ namespace TrueCraft.Client
         private GameTime GameTime { get; set; }
         private Microsoft.Xna.Framework.Vector3 Delta { get; set; }
         private TextureMapper TextureMapper { get; set; }
+        private double Bobbing { get; set; }
 
         private BasicEffect OpaqueEffect;
         private AlphaTestEffect TransparentEffect;
@@ -65,6 +67,7 @@ namespace TrueCraft.Client
             IncomingChunks = new ConcurrentBag<Mesh>();
             PendingMainThreadActions = new ConcurrentBag<Action>();
             MouseCaptured = true;
+            Bobbing = 0;
 
             var keyboardComponent = new KeyboardComponent(this);
             KeyboardComponent = keyboardComponent;
@@ -185,7 +188,7 @@ namespace TrueCraft.Client
                     if (ChatInterface.HasFocus)
                         ChatInterface.HasFocus = false;
                     else
-                        Exit();
+                        Process.GetCurrentProcess().Kill();
                     break;
 
                 // Open chat window.
@@ -383,12 +386,12 @@ namespace TrueCraft.Client
                 lookAt.X *= (float)(gameTime.ElapsedGameTime.TotalSeconds * 4.3717);
                 lookAt.Z *= (float)(gameTime.ElapsedGameTime.TotalSeconds * 4.3717);
 
+                Bobbing += Math.Max(Math.Abs(lookAt.X), Math.Abs(lookAt.Z));
+
                 Client.Velocity = new TrueCraft.API.Vector3(lookAt.X, Client.Velocity.Y, lookAt.Z);
             }
             else
-            {
                 Client.Velocity *= new TrueCraft.API.Vector3(0, 1, 0);
-            }
 
             UpdateCamera();
             base.Update(gameTime);
@@ -396,9 +399,12 @@ namespace TrueCraft.Client
 
         private void UpdateCamera()
         {
+            const double bobbingMultiplier = 0.025;
+            var bobbing = Bobbing * 2;
             Camera.Position = new TrueCraft.API.Vector3(
-                Client.Position.X,
-                Client.Position.Y + (Client.Size.Height - 0.3),
+                Client.Position.X + Math.Cos(bobbing + Math.PI / 2) * bobbingMultiplier,
+                Client.Position.Y + (Client.Size.Height - 0.3)
+                    + Math.Sin(Math.PI / 2 - (2 * bobbing)) * bobbingMultiplier,
                 Client.Position.Z);
 
             Camera.Pitch = Client.Pitch;
