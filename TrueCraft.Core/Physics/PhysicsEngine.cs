@@ -44,6 +44,8 @@ namespace TrueCraft.Core.Physics
         public void Update(TimeSpan time)
         {
             double multiplier = time.TotalSeconds;
+            if (multiplier == 0)
+                return;
             lock (EntityLock)
             {
                 for (int i = 0; i < Entities.Count; i++)
@@ -96,7 +98,7 @@ namespace TrueCraft.Core.Physics
             {
                 testBox = new BoundingBox(
                     new Vector3(entity.BoundingBox.Min.X,
-                        entity.BoundingBox.Min.Y + entity.Velocity.Y - entity.Size.Height,
+                        entity.BoundingBox.Min.Y + entity.Velocity.Y,
                         entity.BoundingBox.Min.Z),
                     entity.BoundingBox.Max);
                 negative = true;

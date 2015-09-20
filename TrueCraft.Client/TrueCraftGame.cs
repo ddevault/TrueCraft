@@ -359,7 +359,7 @@ namespace TrueCraft.Client
 
             IChunk chunk;
             var adjusted = Client.World.World.FindBlockPosition(new Coordinates3D((int)Client.Position.X, 0, (int)Client.Position.Z), out chunk);
-            if (chunk != null)
+            if (chunk != null && Client.LoggedIn)
             {
                 if (chunk.GetHeight((byte)adjusted.X, (byte)adjusted.Z) != 0)
                     Client.Physics.Update(gameTime.ElapsedGameTime);
