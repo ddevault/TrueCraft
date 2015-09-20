@@ -51,7 +51,8 @@ namespace TrueCraft.Client.Rendering
             for (int _side = 0; _side < 6; _side++)
             {
                 var side = (CubeFace)_side;
-                var quad = CreateQuad(side, offset, texture, textureIndex % texture.Length, indiciesOffset, out _indicies, color);
+                var quad = CreateQuad(side, offset, texture, textureIndex % texture.Length, indiciesOffset,
+                    out _indicies, color);
                 Array.Copy(quad, 0, verticies, _side * 4, 4);
                 Array.Copy(_indicies, 0, indicies, _side * 6, 6);
                 textureIndex += 4;
@@ -59,8 +60,8 @@ namespace TrueCraft.Client.Rendering
             return verticies;
         }
 
-        protected static VertexPositionNormalColorTexture[] CreateQuad(CubeFace face, Vector3 offset, Vector2[] texture, int textureOffset,
-            int indiciesOffset, out int[] indicies, Color color)
+        protected static VertexPositionNormalColorTexture[] CreateQuad(CubeFace face, Vector3 offset,
+            Vector2[] texture, int textureOffset, int indiciesOffset, out int[] indicies, Color color)
         {
             indicies = new[] { 0, 1, 3, 1, 2, 3 };
             for (int i = 0; i < indicies.Length; i++)

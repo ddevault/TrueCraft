@@ -250,6 +250,26 @@ namespace TrueCraft.API
         /// </summary>
         public static readonly Coordinates2D Right = new Coordinates2D(1, 0);
 
+        /// <summary>
+        /// A trio of 3D coordinates facing to the east.
+        /// </summary>
+        public static readonly Coordinates2D East = new Coordinates2D(1, 0);
+
+        /// <summary>
+        /// A trio of 3D coordinates facing to the west.
+        /// </summary>
+        public static readonly Coordinates2D West = new Coordinates2D(-1, 0);
+
+        /// <summary>
+        /// A trio of 3D coordinates facing to the north.
+        /// </summary>
+        public static readonly Coordinates2D North = new Coordinates2D(0, -1);
+
+        /// <summary>
+        /// A trio of 3D coordinates facing to the south.
+        /// </summary>
+        public static readonly Coordinates2D South = new Coordinates2D(0, 1);
+
         #endregion
 
         /// <summary>

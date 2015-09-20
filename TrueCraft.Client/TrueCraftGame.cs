@@ -78,7 +78,7 @@ namespace TrueCraft.Client
             Interfaces = new List<IGameInterface>();
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             base.Initialize(); // (calls LoadContent)
-            ChunkConverter = new ChunkRenderer(this, Client.World.World.BlockRepository);
+            ChunkConverter = new ChunkRenderer(Client.World, this, Client.World.World.BlockRepository);
             Client.ChunkLoaded += (sender, e) => ChunkConverter.Enqueue(e.Chunk);
             //Client.ChunkModified += (sender, e) => ChunkConverter.Enqueue(e.Chunk, true);
             ChunkConverter.MeshCompleted += ChunkConverter_MeshGenerated;
@@ -302,7 +302,7 @@ namespace TrueCraft.Client
                 Mouse.SetPosition(centerX, centerY);
 
                 var look = new Vector2((centerX - e.X), (centerY - e.Y))
-                    * (float)(GameTime.ElapsedGameTime.TotalSeconds * 70);
+                    * (float)(GameTime.ElapsedGameTime.TotalSeconds * 90);
 
                 Client.Yaw += look.X;
                 Client.Pitch += look.Y;
