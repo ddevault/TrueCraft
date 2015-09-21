@@ -152,11 +152,11 @@ namespace TrueCraft.Launcher.Views
                     process.EnableRaisingEvents = true;
                     process.Exited += (s, a) => Application.Invoke(() =>
                     {
-                        Server.Stop();
-                        Server.World.Save();
                         ProgressBar.Visible = ProgressLabel.Visible = false;
                         Window.Show();
                         Window.ShowInTaskbar = true;
+                        Server.Stop();
+                        Server.World.Save();
                     });
                     process.Start();
                     Window.ShowInTaskbar = false;
