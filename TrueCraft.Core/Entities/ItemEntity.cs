@@ -118,7 +118,7 @@ namespace TrueCraft.Core.Entities
 
         public float AccelerationDueToGravity
         {
-            get { return 16f; }
+            get { return 1.98f; }
         }
 
         public float Drag

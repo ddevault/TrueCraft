@@ -77,7 +77,7 @@ namespace TrueCraft.Core.Entities
         {
             get
             {
-                return 16f;
+                return 1.98f;
             }
         }
 
