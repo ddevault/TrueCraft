@@ -93,7 +93,7 @@ namespace TrueCraft.Client
             var centerX = GraphicsDevice.Viewport.Width / 2;
             var centerY = GraphicsDevice.Viewport.Height / 2;
             Mouse.SetPosition(centerX, centerY);
-            Camera = new Camera(GraphicsDevice.Viewport.AspectRatio, 70.0f, 0.25f, 1000.0f);
+            Camera = new Camera(GraphicsDevice.Viewport.AspectRatio, 70.0f, 0.1f, 1000.0f);
             UpdateCamera();
             Window.ClientSizeChanged += (sender, e) => CreateRenderTarget();
             MouseComponent.Move += OnMouseComponentMove;
@@ -402,10 +402,11 @@ namespace TrueCraft.Client
             const double bobbingMultiplier = 0.025;
             var bobbing = Bobbing * 2;
             Camera.Position = new TrueCraft.API.Vector3(
-                Client.Position.X + Math.Cos(bobbing + Math.PI / 2) * bobbingMultiplier,
-                Client.Position.Y + (Client.Size.Height - 0.3)
+                Client.Position.X + Math.Cos(bobbing + Math.PI / 2) * bobbingMultiplier
+                    - (Client.Size.Width / 2),
+                Client.Position.Y + (Client.Size.Height - 0.5)
                     + Math.Sin(Math.PI / 2 - (2 * bobbing)) * bobbingMultiplier,
-                Client.Position.Z);
+                Client.Position.Z - (Client.Size.Depth / 2));
 
             Camera.Pitch = Client.Pitch;
             Camera.Yaw = Client.Yaw;
