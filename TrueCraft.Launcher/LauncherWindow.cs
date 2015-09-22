@@ -39,9 +39,9 @@ namespace TrueCraft.Launcher
             MultiplayerView = new MultiplayerView(this);
             SingleplayerView = new SingleplayerView(this);
             InteractionBox = new VBox();
-
-            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TrueCraft.Launcher.Content.truecraft_logo.svg"))
-                TrueCraftLogoImage = new ImageView(Image.FromStream(stream));
+            
+            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TrueCraft.Launcher.Content.truecraft_logo.png"))
+                TrueCraftLogoImage = new ImageView(Image.FromStream(stream).WithBoxSize(350, 75));
 
             WebScrollView.Content = WebView;
             MainContainer.PackStart(WebScrollView, true);

@@ -67,6 +67,7 @@
     <Content Include="Content\default-pack.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="Content\truecraft_logo.png" />
     <Content Include="Xwt.Gtk.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -106,7 +107,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Content\truecraft-logo.png" />
     <EmbeddedResource Include="Content\default-server-icon.png" />
-    <EmbeddedResource Include="Content\truecraft_logo.svg" />
+    <None Include="Content\truecraft_logo.svg" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(OS)' == 'UNIX' ">
     <PostBuildEvent>rm $(TargetDir)/MonoGame.Framework.dll &amp;&amp; cp $(SolutionDir)/packages/MonoGame.Framework.Linux.3.4.0.459/lib/net40/MonoGame.Framework.dll $(TargetDir)/MonoGame.Framework.Linux.dll &amp;&amp; cp $(SolutionDir)/packages/MonoGame.Framework.WindowsGL.3.4.0.459/lib/net40/MonoGame.Framework.dll $(TargetDir)/MonoGame.Framework.Windows.dll &amp;&amp; cp $(SolutionDir)/packages/MonoGame.Framework.MacOS.3.4.0.459/lib/net40/MonoGame.Framework.dll $(TargetDir)/MonoGame.Framework.MacOS.dll</PostBuildEvent>
