@@ -126,28 +126,14 @@ namespace TrueCraft.Client.Rendering
         /// Applies this camera to the specified effect.
         /// </summary>
         /// <param name="effect">The effect to apply this camera to.</param>
-        public void ApplyTo(BasicEffect effect)
+        public void ApplyTo(IEffectMatrices effectMatrices)
         {
             if (_isDirty)
                 Recalculate();
 
-            effect.View = _view;
-            effect.Projection = _projection;
-            effect.World = Matrix.Identity;
-        }
-
-        /// <summary>
-        /// Applies this camera to the specified effect.
-        /// </summary>
-        /// <param name="effect">The effect to apply this camera to.</param>
-        public void ApplyTo(AlphaTestEffect effect)
-        {
-            if (_isDirty)
-                Recalculate();
-
-            effect.View = _view;
-            effect.Projection = _projection;
-            effect.World = Matrix.Identity;
+            effectMatrices.View = _view;
+            effectMatrices.Projection = _projection;
+            effectMatrices.World = Matrix.Identity;
         }
 
         /// <summary>
