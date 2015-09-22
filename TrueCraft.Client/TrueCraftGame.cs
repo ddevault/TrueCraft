@@ -399,8 +399,8 @@ namespace TrueCraft.Client
 
         private void UpdateCamera()
         {
-            const double bobbingMultiplier = 0.025;
-            var bobbing = Bobbing * 2;
+            const double bobbingMultiplier = 0.015;
+            var bobbing = Bobbing * 1.5;
             Camera.Position = new TrueCraft.API.Vector3(
                 Client.Position.X + Math.Cos(bobbing + Math.PI / 2) * bobbingMultiplier
                     - (Client.Size.Width / 2),
