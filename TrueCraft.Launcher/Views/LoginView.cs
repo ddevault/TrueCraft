@@ -43,8 +43,8 @@ namespace TrueCraft.Launcher.Views
                 RememberCheckBox.Active = true;
             }
 
-            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TrueCraft.Launcher.Content.truecraft_logo.svg"))
-                TrueCraftLogoImage = new ImageView(Image.FromStream(stream));
+            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TrueCraft.Launcher.Content.truecraft_logo.png"))
+                TrueCraftLogoImage = new ImageView(Image.FromStream(stream).WithBoxSize(350, 75));
 
             UsernameText.PlaceholderText = "Username";
             PasswordText.PlaceholderText = "Password";
