@@ -187,7 +187,7 @@ namespace TrueCraft.Client.Interface
             if (HasFocus)
             {
                 if (e.Key == Keys.Back)
-                    Input = Input.Substring(0, Input.Length - 1);
+                    Input = Input.Length > 0 ? Input.Substring(0, Input.Length - 1) : Input;
                 else
                 {
                     var shift = (Keyboard.State.IsKeyDown(Keys.LeftShift) || Keyboard.State.IsKeyDown(Keys.RightShift));
