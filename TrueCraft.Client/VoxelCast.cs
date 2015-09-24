@@ -2,6 +2,7 @@
 using TrueCraft.API;
 using TrueCraft.Core.Logic;
 using TrueCraft.Core.Logic.Blocks;
+using TrueCraft.API.Logic;
 
 namespace TrueCraft.Client
 {
@@ -14,11 +15,11 @@ namespace TrueCraft.Client
         // Thanks to http://gamedev.stackexchange.com/questions/47362/cast-ray-to-select-block-in-voxel-game
 
         public static Tuple<Coordinates3D, BlockFace> Cast(ReadOnlyWorld world,
-            Ray ray, BlockRepository repository, double max)
+            Ray ray, IBlockRepository repository, double max)
         {
             var origin = ray.Position.Floor();
             var direction = ray.Direction;
-            var step = new Vector3(SigNum(ray.Position.X), SigNum(ray.Position.Y), SigNum(ray.Position.Z));
+            var step = new Vector3(SigNum(ray.Direction.X), SigNum(ray.Direction.Y), SigNum(ray.Direction.Z));
             var tMax = new Vector3(
                 IntBound(origin.X, direction.X),
                 IntBound(origin.Y, direction.Y),

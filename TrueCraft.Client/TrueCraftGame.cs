@@ -215,12 +215,6 @@ namespace TrueCraft.Client
             HighlightEffect.Texture = HighlightTexture;
             HighlightEffect.VertexColorEnabled = true;
 
-            //HighlightEffect = new AlphaTestEffect(GraphicsDevice);
-            //HighlightEffect.AlphaFunction = CompareFunction.Greater;
-            //HighlightEffect.ReferenceAlpha = 127;
-            //HighlightEffect.Texture = TextureMapper.GetTexture("terrain.png");
-            //HighlightEffect.VertexColorEnabled = true;
-
             base.LoadContent();
         }
 
@@ -457,9 +451,9 @@ namespace TrueCraft.Client
             var bobbing = Bobbing * 1.5;
             Camera.Position = new TrueCraft.API.Vector3(
                 Client.Position.X + Math.Cos(bobbing + Math.PI / 2) * bobbingMultiplier
-                    - (Client.Size.Width / 2),
+                - (Client.Size.Width / 2),
                 Client.Position.Y + (Client.Size.Height - 0.5)
-                    + Math.Sin(Math.PI / 2 - (2 * bobbing)) * bobbingMultiplier,
+                + Math.Sin(Math.PI / 2 - (2 * bobbing)) * bobbingMultiplier,
                 Client.Position.Z - (Client.Size.Depth / 2));
 
             Camera.Pitch = Client.Pitch;
@@ -470,6 +464,25 @@ namespace TrueCraft.Client
             Camera.ApplyTo(HighlightEffect);
             Camera.ApplyTo(OpaqueEffect);
             Camera.ApplyTo(TransparentEffect);
+
+            var direction = Microsoft.Xna.Framework.Vector3.Transform(
+                -Microsoft.Xna.Framework.Vector3.UnitZ,
+                Matrix.CreateRotationX(Microsoft.Xna.Framework.MathHelper.ToRadians(Client.Pitch)) *
+                Matrix.CreateRotationY(Microsoft.Xna.Framework.MathHelper.ToRadians(Client.Yaw)));
+
+            var cast = VoxelCast.Cast(Client.World,
+                new TrueCraft.API.Ray(Camera.Position, new TrueCraft.API.Vector3(
+                    direction.X, direction.Y, direction.Z)),
+                Client.World.World.BlockRepository, Reach);
+
+            if (cast == null)
+                HighlightedBlock = -Coordinates3D.One;
+            else
+            {
+                HighlightEffect.World = Matrix.CreateScale(1.02f) *
+                    Matrix.CreateTranslation(new Microsoft.Xna.Framework.Vector3(
+                        cast.Item1.X, cast.Item1.Y, cast.Item1.Z));
+            }
         }
 
         private static readonly BlendState ColorWriteDisable = new BlendState()
@@ -523,9 +536,8 @@ namespace TrueCraft.Client
 
             DebugInterface.Vertices = verticies;
             DebugInterface.Chunks = chunks;
+            DebugInterface.HighlightedBlock = HighlightedBlock;
 
-            HighlightEffect.World = Matrix.CreateScale(1.02f) *
-                Matrix.CreateTranslation(new Microsoft.Xna.Framework.Vector3(0, 43, 0));
             HighlightMesh.Draw(HighlightEffect);
 
             SpriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, null);
