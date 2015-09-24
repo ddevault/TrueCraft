@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BCA0E139-CF47-43B3-9DC9-D4611C0A2AAD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>TrueCraft.Profiling</RootNamespace>

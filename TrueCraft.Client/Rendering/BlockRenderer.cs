@@ -42,7 +42,7 @@ namespace TrueCraft.Client.Rendering
             return CreateUniformCube(offset, texture, faces, indiciesOffset, out indicies, Color.White);
         }
 
-        protected VertexPositionNormalColorTexture[] CreateUniformCube(Vector3 offset, Vector2[] texture,
+        public static VertexPositionNormalColorTexture[] CreateUniformCube(Vector3 offset, Vector2[] texture,
             VisibleFaces faces, int indiciesOffset, out int[] indicies, Color color)
         {
             faces = VisibleFaces.All; // Temporary

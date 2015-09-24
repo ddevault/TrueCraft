@@ -17,6 +17,7 @@ using TrueCraft.Client.Input;
 using TrueCraft.Core;
 using MonoGame.Utilities.Png;
 using System.Diagnostics;
+using TrueCraft.Core.Logic.Blocks;
 
 namespace TrueCraft.Client
 {
@@ -46,9 +47,13 @@ namespace TrueCraft.Client
         private Microsoft.Xna.Framework.Vector3 Delta { get; set; }
         private TextureMapper TextureMapper { get; set; }
         private double Bobbing { get; set; }
-
-        private BasicEffect OpaqueEffect;
+        private Coordinates3D HighlightedBlock { get; set; }
+        private Mesh HighlightMesh { get; set; }
+        private Texture2D HighlightTexture { get; set; }
+        private BasicEffect OpaqueEffect, HighlightEffect;
         private AlphaTestEffect TransparentEffect;
+
+        public static readonly int Reach = 5;
 
         public TrueCraftGame(MultiplayerClient client, IPEndPoint endPoint)
         {
@@ -100,6 +105,38 @@ namespace TrueCraft.Client
             KeyboardComponent.KeyDown += OnKeyboardKeyDown;
             KeyboardComponent.KeyUp += OnKeyboardKeyUp;
             CreateRenderTarget();
+        }
+
+        private void InitializeHighlightedBlock()
+        {
+            const int size = 64;
+            HighlightedBlock = -Coordinates3D.One;
+            HighlightTexture = new Texture2D(GraphicsDevice, size, size);
+
+            var colors = new Color[size * size];
+            for (int i = 0; i < colors.Length; i++)
+                colors[i] = Color.Transparent;
+            for (int x = 0; x < size; x++)
+                colors[x] = Color.Black; // Top
+            for (int x = 0; x < size; x++)
+                colors[x + (size - 1) * size] = Color.Black; // Bottom
+            for (int y = 0; y < size; y++)
+                colors[y * size] = Color.Black; // Left
+            for (int y = 0; y < size; y++)
+                colors[y * size + (size - 1)] = Color.Black; // Right
+
+            HighlightTexture.SetData<Color>(colors);
+            var texcoords = new[]
+            {
+                Vector2.UnitX + Vector2.UnitY,
+                Vector2.UnitY,
+                Vector2.Zero,
+                Vector2.UnitX
+            };
+            int[] indicies;
+            var verticies = BlockRenderer.CreateUniformCube(Microsoft.Xna.Framework.Vector3.Zero,
+                texcoords, VisibleFaces.All, 0, out indicies, Color.White);
+            HighlightMesh = new Mesh(this, verticies, indicies);
         }
 
         private void CreateRenderTarget()
@@ -166,6 +203,23 @@ namespace TrueCraft.Client
             TransparentEffect.ReferenceAlpha = 127;
             TransparentEffect.Texture = TextureMapper.GetTexture("terrain.png");
             TransparentEffect.VertexColorEnabled = true;
+
+            InitializeHighlightedBlock();
+
+            HighlightEffect = new BasicEffect(GraphicsDevice);
+            HighlightEffect.EnableDefaultLighting();
+            HighlightEffect.DirectionalLight0.SpecularColor = Color.Black.ToVector3();
+            HighlightEffect.DirectionalLight1.SpecularColor = Color.Black.ToVector3();
+            HighlightEffect.DirectionalLight2.SpecularColor = Color.Black.ToVector3();
+            HighlightEffect.TextureEnabled = true;
+            HighlightEffect.Texture = HighlightTexture;
+            HighlightEffect.VertexColorEnabled = true;
+
+            //HighlightEffect = new AlphaTestEffect(GraphicsDevice);
+            //HighlightEffect.AlphaFunction = CompareFunction.Greater;
+            //HighlightEffect.ReferenceAlpha = 127;
+            //HighlightEffect.Texture = TextureMapper.GetTexture("terrain.png");
+            //HighlightEffect.VertexColorEnabled = true;
 
             base.LoadContent();
         }
@@ -413,6 +467,7 @@ namespace TrueCraft.Client
 
             CameraView = Camera.GetFrustum();
 
+            Camera.ApplyTo(HighlightEffect);
             Camera.ApplyTo(OpaqueEffect);
             Camera.ApplyTo(TransparentEffect);
         }
@@ -442,6 +497,7 @@ namespace TrueCraft.Client
                     ChunkMeshes[i].Draw(OpaqueEffect, 0);
                 }
             }
+            HighlightMesh.Draw(HighlightEffect);
 
             GraphicsDevice.BlendState = ColorWriteDisable;
             for (int i = 0; i < ChunkMeshes.Count; i++)
@@ -467,6 +523,10 @@ namespace TrueCraft.Client
 
             DebugInterface.Vertices = verticies;
             DebugInterface.Chunks = chunks;
+
+            HighlightEffect.World = Matrix.CreateScale(1.02f) *
+                Matrix.CreateTranslation(new Microsoft.Xna.Framework.Vector3(0, 43, 0));
+            HighlightMesh.Draw(HighlightEffect);
 
             SpriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, null);
             for (int i = 0; i < Interfaces.Count; i++)

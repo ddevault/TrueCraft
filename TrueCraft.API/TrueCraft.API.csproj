@@ -7,8 +7,6 @@
     <OutputType>Library</OutputType>
     <RootNamespace>TrueCraft.API</RootNamespace>
     <AssemblyName>TrueCraft.API</AssemblyName>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

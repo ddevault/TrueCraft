@@ -52,6 +52,22 @@ namespace TrueCraft.Core
             }
         }
 
+        public static BlockFace CoordinatesToBlockFace(Coordinates3D face)
+        {
+            if (face == Coordinates3D.Down)
+                return BlockFace.NegativeY;
+            else if (face == Coordinates3D.Up)
+                return BlockFace.PositiveY;
+            else if (face == Coordinates3D.Backwards)
+                return BlockFace.NegativeZ;
+            else if (face == Coordinates3D.Forwards)
+                return BlockFace.PositiveZ;
+            else if (face == Coordinates3D.Left)
+                return BlockFace.NegativeX;
+            else
+                return BlockFace.PositiveX;
+        }
+
         public static double Distance2D(double a1, double a2, double b1, double b2)
         {
             return Math.Sqrt(Math.Pow(b1 - a1, 2) + Math.Pow(b2 - a2, 2));

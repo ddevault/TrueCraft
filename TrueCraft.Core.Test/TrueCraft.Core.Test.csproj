@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BCFDCD93-C23E-49E6-9767-A887B3C2A709}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>TrueCraft.Core.Test</RootNamespace>
