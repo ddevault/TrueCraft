@@ -26,7 +26,7 @@ namespace TrueCraft.Client.Modules
         {
             switch (e.Key)
             {
-                case Keys.F2:
+                case Keys.F3:
                     return true;
             }
             return false;
@@ -36,7 +36,7 @@ namespace TrueCraft.Client.Modules
         {
             switch (e.Key)
             {
-                case Keys.F2:
+                case Keys.F3:
                     Enabled = !Enabled;
                     return true;
             }
