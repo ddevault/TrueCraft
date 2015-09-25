@@ -192,12 +192,6 @@ namespace TrueCraft.Client.Rendering
                 new Vector3(-0.5f, -0.5f, 0.5f),
                 new Vector3(0.5f, -0.5f, 0.5f)
             };
-
-            // TEMP
-            return;
-            for (int i = 0; i < CubeMesh.Length; i++)
-                for (int j = 0; j < CubeMesh[0].Length; j++)
-                    CubeMesh[i][j] *= new Vector3(0.5f);
         }
     }
 }

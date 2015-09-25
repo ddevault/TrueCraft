@@ -10,6 +10,15 @@ namespace TrueCraft.Client.Rendering
     /// </summary>
     public class Mesh : IDisposable
     {
+        public static int VerticiesRendered { get; set; }
+        public static int IndiciesRendered { get; set; }
+
+        public static void ResetStats()
+        {
+            VerticiesRendered = 0;
+            IndiciesRendered = 0;
+        }
+
         /// <summary>
         /// The maximum number of submeshes stored in a single mesh.
         /// </summary>
@@ -61,9 +70,6 @@ namespace TrueCraft.Client.Rendering
         /// <summary>
         /// Creates a new mesh.
         /// </summary>
-        /// <param name="graphicsDevice">The graphics device to store the mesh on.</param>
-        /// <param name="submeshes">The number of submeshes in the mesh.</param>
-        /// <param name="recalculateBounds">Whether the mesh should recalculate its bounding box when changed.</param>
         public Mesh(TrueCraftGame game, int submeshes = 1, bool recalculateBounds = true)
         {
             if ((submeshes < 0) || (submeshes >= Mesh.SubmeshLimit))
@@ -78,12 +84,8 @@ namespace TrueCraft.Client.Rendering
         /// <summary>
         /// Creates a new mesh.
         /// </summary>
-        /// <param name="graphicsDevice">The graphics device to store the mesh on.</param>
-        /// <param name="vertices">The vertices in the mesh.</param>
-        /// <param name="submeshes">The number of submeshes in the mesh.</param>
-        /// <param name="recalculateBounds">Whether the mesh should recalculate its bounding box when changed.</param>
-        public Mesh(TrueCraftGame game, VertexPositionNormalColorTexture[] vertices, int submeshes = 1, bool recalculateBounds = true)
-            : this(game, submeshes, recalculateBounds)
+        public Mesh(TrueCraftGame game, VertexPositionNormalColorTexture[] vertices,
+                int submeshes = 1, bool recalculateBounds = true) : this(game, submeshes, recalculateBounds)
         {
             Vertices = vertices;
         }
@@ -91,12 +93,8 @@ namespace TrueCraft.Client.Rendering
         /// <summary>
         /// Creates a new mesh.
         /// </summary>
-        /// <param name="graphicsDevice">The graphics device to store the mesh on.</param>
-        /// <param name="vertices">The vertices in the mesh.</param>
-        /// <param name="indices">The first (and only) submesh in the mesh.</param>
-        /// <param name="recalculateBounds">Whether the mesh should recalculate its bounding box when changed.</param>
-        public Mesh(TrueCraftGame game, VertexPositionNormalColorTexture[] vertices, int[] indices, bool recalculateBounds = true)
-            : this(game, 1, recalculateBounds)
+        public Mesh(TrueCraftGame game, VertexPositionNormalColorTexture[] vertices,
+                int[] indices, bool recalculateBounds = true) : this(game, 1, recalculateBounds)
         {
             Vertices = vertices;
             SetSubmesh(0, indices);
@@ -105,8 +103,6 @@ namespace TrueCraft.Client.Rendering
         /// <summary>
         /// Sets a submesh in this mesh.
         /// </summary>
-        /// <param name="index">The submesh index.</param>
-        /// <param name="data">The indices for the submesh.</param>
         public void SetSubmesh(int index, int[] indices)
         {
             if ((index < 0) || (index > _indices.Length))
@@ -163,12 +159,13 @@ namespace TrueCraft.Client.Rendering
                 effect.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList,
                     0, 0, _indices[index].IndexCount, 0, _indices[index].IndexCount / 3);
             }
+            VerticiesRendered += _vertices.VertexCount;
+            IndiciesRendered += _indices[index].IndexCount;
         }
 
         /// <summary>
         /// Returns the total vertices in this mesh.
         /// </summary>
-        /// <returns></returns>
         public int GetTotalVertices()
         {
             if (_vertices == null)
@@ -181,7 +178,6 @@ namespace TrueCraft.Client.Rendering
         /// <summary>
         /// Returns the total indices for all the submeshes in this mesh.
         /// </summary>
-        /// <returns></returns>
         public int GetTotalIndices()
         {
             lock (_syncLock)

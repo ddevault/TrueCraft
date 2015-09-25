@@ -135,6 +135,7 @@
     <Compile Include="Modules\ChunkModule.cs" />
     <Compile Include="Modules\HighlightModule.cs" />
     <Compile Include="Modules\PlayerControlModule.cs" />
+    <Compile Include="Modules\DebugInfoModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

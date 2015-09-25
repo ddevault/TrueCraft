@@ -13,6 +13,7 @@ namespace TrueCraft.Client.Modules
     {
         public TrueCraftGame Game { get; set; }
         public ChunkRenderer ChunkRenderer { get; set; }
+        public int ChunksRendered { get; set; }
 
         private List<Mesh> ChunkMeshes { get; set; }
         private ConcurrentBag<Mesh> IncomingChunks { get; set; }
@@ -79,7 +80,7 @@ namespace TrueCraft.Client.Modules
             }
         }
 
-        private static readonly BlendState ColorWriteDisable = new BlendState()
+        private static readonly BlendState ColorWriteDisable = new BlendState
         {
             ColorWriteChannels = ColorWriteChannels.None
         };
@@ -89,13 +90,12 @@ namespace TrueCraft.Client.Modules
             Game.Camera.ApplyTo(OpaqueEffect);
             Game.Camera.ApplyTo(TransparentEffect);
 
-            int verticies = 0, chunks = 0;
+            int chunks = 0;
             Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             for (int i = 0; i < ChunkMeshes.Count; i++)
             {
                 if (Game.Camera.Frustum.Intersects(ChunkMeshes[i].BoundingBox))
                 {
-                    verticies += ChunkMeshes[i].GetTotalVertices();
                     chunks++;
                     ChunkMeshes[i].Draw(OpaqueEffect, 0);
                 }
@@ -105,23 +105,17 @@ namespace TrueCraft.Client.Modules
             for (int i = 0; i < ChunkMeshes.Count; i++)
             {
                 if (Game.Camera.Frustum.Intersects(ChunkMeshes[i].BoundingBox))
-                {
-                    if (!ChunkMeshes[i].IsDisposed)
-                        verticies += ChunkMeshes[i].GetTotalVertices();
                     ChunkMeshes[i].Draw(TransparentEffect, 1);
-                }
             }
 
             Game.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             for (int i = 0; i < ChunkMeshes.Count; i++)
             {
                 if (Game.Camera.Frustum.Intersects(ChunkMeshes[i].BoundingBox))
-                {
-                    if (!ChunkMeshes[i].IsDisposed)
-                        verticies += ChunkMeshes[i].GetTotalVertices();
                     ChunkMeshes[i].Draw(TransparentEffect, 1);
-                }
             }
+
+            ChunksRendered = chunks;
         }
     }
 }

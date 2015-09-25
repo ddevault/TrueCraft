@@ -14,7 +14,6 @@ using TrueCraft.API.World;
 using TrueCraft.Core;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.Client.Input;
-using TrueCraft.Client.Interface;
 using TrueCraft.Client.Modules;
 using TrueCraft.Client.Rendering;
 
@@ -28,6 +27,7 @@ namespace TrueCraft.Client
         public Camera Camera { get; private set; }
         public ConcurrentBag<Action> PendingMainThreadActions { get; set; }
         public double Bobbing { get; set; }
+        public ChunkModule ChunkModule { get; set; }
 
         private List<IGameplayModule> Modules { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
@@ -41,7 +41,7 @@ namespace TrueCraft.Client
         private DateTime NextPhysicsUpdate { get; set; }
         private bool MouseCaptured { get; set; }
         private GameTime GameTime { get; set; }
-        private Microsoft.Xna.Framework.Vector3 Delta { get; set; }
+        private DebugInfoModule DebugInfoModule { get; set; }
 
         public static readonly int Reach = 5;
 
@@ -62,6 +62,7 @@ namespace TrueCraft.Client
             Graphics.IsFullScreen = UserSettings.Local.IsFullscreen;
             Graphics.PreferredBackBufferWidth = UserSettings.Local.WindowResolution.Width;
             Graphics.PreferredBackBufferHeight = UserSettings.Local.WindowResolution.Height;
+            Graphics.ApplyChanges();
             Client = client;
             EndPoint = endPoint;
             LastPhysicsUpdate = DateTime.MinValue;
@@ -85,9 +86,13 @@ namespace TrueCraft.Client
 
             base.Initialize(); // (calls LoadContent)
 
-            Modules.Add(new ChunkModule(this));
+            ChunkModule = new ChunkModule(this);
+            DebugInfoModule = new DebugInfoModule(this, Pixel);
+
+            Modules.Add(ChunkModule);
             Modules.Add(new HighlightModule(this));
             Modules.Add(new PlayerControlModule(this));
+            Modules.Add(DebugInfoModule);
 
             Client.PropertyChanged += HandleClientPropertyChanged;
             Client.Connect(EndPoint);
@@ -136,9 +141,7 @@ namespace TrueCraft.Client
 
             Pixel = new FontRenderer(
                 new Font(Content, "Fonts/Pixel"),
-                new Font(Content, "Fonts/Pixel", FontStyle.Bold),
-                null, // No support for underlined or strikethrough yet. The FontRenderer will revert to using the regular font style.
-                null, // (I don't think BMFont has those options?)
+                new Font(Content, "Fonts/Pixel", FontStyle.Bold), null, null,
                 new Font(Content, "Fonts/Pixel", FontStyle.Italic));
 
             base.LoadContent();
@@ -250,6 +253,7 @@ namespace TrueCraft.Client
             GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
             GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
+            Mesh.ResetStats();
             foreach (var module in Modules)
             {
                 var drawable = module as IGraphicalModule;
