@@ -14,7 +14,6 @@ namespace TrueCraft.Client.Interface
 
         public int Vertices { private get; set; }
         public int Chunks { private get; set; }
-        public Coordinates3D HighlightedBlock { private get; set; }
 
         public DebugInterface(MultiplayerClient client, FontRenderer font)
         {
@@ -41,7 +40,6 @@ namespace TrueCraft.Client.Interface
             Font.DrawText(spriteBatch, xOrigin, yOrigin + (yOffset * 1), string.Format("§o{0} vertices", Vertices), scale);
             Font.DrawText(spriteBatch, xOrigin, yOrigin + (yOffset * 2), string.Format("§o{0} chunks", Chunks), scale);
             Font.DrawText(spriteBatch, xOrigin, yOrigin + (yOffset * 3), string.Format("§o<{0:N2}, {1:N2}, {2:N2}>", Client.Position.X, Client.Position.Y, Client.Position.Z), scale);
-            Font.DrawText(spriteBatch, xOrigin, yOrigin + (yOffset * 4), string.Format("§o<{0:N2}, {1:N2}, {2:N2}>", HighlightedBlock.X, HighlightedBlock.Y, HighlightedBlock.Z), scale);
         }
 
         protected override void OnHide() { }

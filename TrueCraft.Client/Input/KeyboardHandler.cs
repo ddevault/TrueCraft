@@ -8,7 +8,7 @@ namespace TrueCraft.Client.Input
     /// <summary>
     /// Encapsulates keyboard input in an event-driven manner.
     /// </summary>
-    public sealed class KeyboardComponent : GameComponent
+    public sealed class KeyboardHandler : GameComponent
     {
         /// <summary>
         /// Raised when a key for this keyboard component is pressed.
@@ -29,7 +29,7 @@ namespace TrueCraft.Client.Input
         /// Creates a new keyboard component.
         /// </summary>
         /// <param name="game">The parent game for the component.</param>
-        public KeyboardComponent(Game game)
+        public KeyboardHandler(Game game)
             : base(game)
         {
         }

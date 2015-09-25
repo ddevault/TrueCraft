@@ -133,18 +133,20 @@ namespace TrueCraft.Client.Rendering
 
             effectMatrices.View = _view;
             effectMatrices.Projection = _projection;
-            effectMatrices.World = Matrix.Identity;
         }
 
         /// <summary>
         /// Returns the bounding frustum calculated for this camera.
         /// </summary>
         /// <returns></returns>
-        public BoundingFrustum GetFrustum()
+        public BoundingFrustum Frustum
         {
-            if (_isDirty)
-                Recalculate();
-            return _frustum;
+            get
+            {
+                if (_isDirty)
+                    Recalculate();
+                return _frustum;
+            }
         }
 
         /// <summary>

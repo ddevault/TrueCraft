@@ -103,7 +103,7 @@ namespace TrueCraft.Client.Interface
         public bool HasFocus { get; set; }
 
         public MultiplayerClient Client { get; set; }
-        public KeyboardComponent Keyboard { get; set; }
+        public KeyboardHandler Keyboard { get; set; }
         public FontRenderer Font { get; set; }
 
         private readonly object Lock = new object();
@@ -111,7 +111,7 @@ namespace TrueCraft.Client.Interface
         private List<ChatMessage> Messages { get; set; }
         private Texture2D DummyTexture { get; set; }
 
-        public ChatInterface(MultiplayerClient client, KeyboardComponent keyboard, FontRenderer font)
+        public ChatInterface(MultiplayerClient client, KeyboardHandler keyboard, FontRenderer font)
         {
             Client = client;
             Keyboard = keyboard;

@@ -7,7 +7,7 @@ namespace TrueCraft.Client.Input
     /// <summary>
     /// Encapsulates mouse input in an event-driven manner.
     /// </summary>
-    public sealed class MouseComponent : GameComponent
+    public sealed class MouseHandler : GameComponent
     {
         /// <summary>
         /// Raised when this mouse component is moved.
@@ -38,7 +38,7 @@ namespace TrueCraft.Client.Input
         /// Creates a new mouse component.
         /// </summary>
         /// <param name="game">The parent game for the component.</param>
-        public MouseComponent(Game game)
+        public MouseHandler(Game game)
             : base(game)
         {
         }

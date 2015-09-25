@@ -1,4 +1,3 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\targets\Client.targets" />
   <PropertyGroup>
@@ -72,14 +71,15 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
+    <Reference Include="MonoGame.Framework">
+      <HintPath>..\packages\MonoGame.Framework.Linux.3.4.0.459\lib\net40\MonoGame.Framework.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Input\KeyboardComponent.cs" />
     <Compile Include="Input\KeyboardEventArgs.cs" />
     <Compile Include="Input\KeyboardKeyEventArgs.cs" />
     <Compile Include="Input\MouseButton.cs" />
     <Compile Include="Input\MouseButtonEventArgs.cs" />
-    <Compile Include="Input\MouseComponent.cs" />
     <Compile Include="Input\MouseEventArgs.cs" />
     <Compile Include="Input\MouseMoveEventArgs.cs" />
     <Compile Include="Input\MouseScrollEventArgs.cs" />
@@ -127,6 +127,14 @@
     <Compile Include="Rendering\Blocks\WaterRenderer.cs" />
     <Compile Include="Rendering\Blocks\FarmlandRenderer.cs" />
     <Compile Include="VoxelCast.cs" />
+    <Compile Include="Input\KeyboardHandler.cs" />
+    <Compile Include="Input\MouseHandler.cs" />
+    <Compile Include="Modules\IGameplayModule.cs" />
+    <Compile Include="Modules\IInputModule.cs" />
+    <Compile Include="Modules\IGraphicalModule.cs" />
+    <Compile Include="Modules\ChunkModule.cs" />
+    <Compile Include="Modules\HighlightModule.cs" />
+    <Compile Include="Modules\PlayerControlModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -222,5 +230,8 @@
     <Content Include="Content\Fonts\DejaVu_Regular_0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Modules\" />
   </ItemGroup>
 </Project>
