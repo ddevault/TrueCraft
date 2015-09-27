@@ -170,9 +170,24 @@ namespace TrueCraft.Launcher.Views
                             var jar = ZipFile.Read(ms);
                             var zip = new ZipFile();
                             zip.AddEntry("pack.txt", "Minecraft textures");
+
+                            string[] dirs = {
+                                "terrain", "gui", "armor", "art",
+                                "environment", "item", "misc", "mob"
+                            };
+
+                            foreach (var entry in jar.Entries)
+                            {
+                                foreach (var c in dirs)
+                                {
+                                    if (entry.FileName.StartsWith(c + "/"))
+                                        CopyBetweenZips(entry.FileName, jar, zip);
+                                }
+                            }
                             CopyBetweenZips("pack.png", jar, zip);
                             CopyBetweenZips("terrain.png", jar, zip);
-                            // TODO: Items, windows, etc
+                            CopyBetweenZips("particles.png", jar, zip);
+
                             zip.Save(Path.Combine(TexturePack.TexturePackPath, "Minecraft.zip"));
                             Application.Invoke(() =>
                                 {
