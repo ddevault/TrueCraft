@@ -46,7 +46,7 @@ namespace TrueCraft.Client
         private GameTime GameTime { get; set; }
         private DebugInfoModule DebugInfoModule { get; set; }
 
-        public static readonly double Reach = 3;
+        public static readonly int Reach = 3;
 
         public IBlockRepository BlockRepository
         {

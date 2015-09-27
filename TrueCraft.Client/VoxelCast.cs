@@ -15,17 +15,17 @@ namespace TrueCraft.Client
         // Thanks to http://gamedev.stackexchange.com/questions/47362/cast-ray-to-select-block-in-voxel-game
 
         public static Tuple<Coordinates3D, BlockFace> Cast(ReadOnlyWorld world,
-            Ray ray, IBlockRepository repository, int max)
+            Ray ray, IBlockRepository repository, int posmax, int negmax)
         {
             // TODO: There are more efficient ways of doing this, fwiw
 
-            double min = max * 2;
+            double min = negmax * 2;
             var pick = -Coordinates3D.One;
-            for (int x = -max; x <= max; x++)
+            for (int x = -posmax; x <= posmax; x++)
             {
-                for (int y = -max; y <= max; y++)
+                for (int y = -negmax; y <= posmax; y++)
                 {
-                    for (int z = -max; z <= max; z++)
+                    for (int z = -posmax; z <= posmax; z++)
                     {
                         var coords = (Coordinates3D)(new Vector3(x, y, z) + ray.Position).Round();
                         if (!world.IsValidPosition(coords))

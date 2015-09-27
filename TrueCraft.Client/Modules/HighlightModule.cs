@@ -56,7 +56,7 @@ namespace TrueCraft.Client.Modules
 
             var cast = VoxelCast.Cast(Game.Client.World,
                 new TRay(Game.Camera.Position, new TVector3(direction.X, direction.Y, direction.Z)),
-                Game.BlockRepository, (int)TrueCraftGame.Reach);
+                Game.BlockRepository, TrueCraftGame.Reach, TrueCraftGame.Reach + 2);
 
             if (cast == null)
                 HighlightedBlock = -Coordinates3D.One;
