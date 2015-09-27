@@ -80,6 +80,14 @@ namespace TrueCraft.API
         }
 
         /// <summary>
+        /// Rounds the decimal component of each part of this Vector3.
+        /// </summary>
+        public Vector3 Round()
+        {
+            return new Vector3(Math.Round(X), Math.Round(Y), Math.Round(Z));
+        }
+
+        /// <summary>
         /// Clamps the vector to within the specified value.
         /// </summary>
         /// <param name="value">Value.</param>

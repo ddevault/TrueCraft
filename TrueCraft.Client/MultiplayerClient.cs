@@ -256,7 +256,8 @@ namespace TrueCraft.Client
         {
             get
             {
-                return new BoundingBox(Position, Position + Size);
+                var pos = Position - new Vector3(Width / 2, 0, Depth / 2);
+                return new BoundingBox(pos, pos + Size);
             }
         }
 

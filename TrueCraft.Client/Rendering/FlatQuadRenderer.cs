@@ -80,34 +80,34 @@ namespace TrueCraft.Client.Rendering
 
             QuadMesh[0] = new[]
             {
-                new Vector3(0.5f, -0.5f, 0.5f),
-                new Vector3(-0.5f, -0.5f, -0.5f),
-                new Vector3(-0.5f, 0.5f, -0.5f),
-                new Vector3(0.5f, 0.5f, 0.5f)
+                new Vector3(1, 0, 1),
+                new Vector3(0, 0, 0),
+                new Vector3(0, 1, 0),
+                new Vector3(1, 1, 1)
             };
 
             QuadMesh[1] = new[]
             {
-                new Vector3(-0.5f, -0.5f, -0.5f),
-                new Vector3(0.5f, -0.5f, 0.5f),
-                new Vector3(0.5f, 0.5f, 0.5f),
-                new Vector3(-0.5f, 0.5f, -0.5f)
+                new Vector3(0, 0, 0),
+                new Vector3(1, 0, 1),
+                new Vector3(1, 1, 1),
+                new Vector3(0, 1, 0)
             };
 
             QuadMesh[2] = new[]
             {
-                new Vector3(-0.5f, -0.5f, 0.5f),
-                new Vector3(0.5f, -0.5f, -0.5f),
-                new Vector3(0.5f, 0.5f, -0.5f),
-                new Vector3(-0.5f, 0.5f, 0.5f)
+                new Vector3(0, 0, 1),
+                new Vector3(1, 0, 0),
+                new Vector3(1, 1, 0),
+                new Vector3(0, 1, 1)
             };
 
             QuadMesh[3] = new[]
             {
-                new Vector3(0.5f, -0.5f, -0.5f),
-                new Vector3(-0.5f, -0.5f, 0.5f),
-                new Vector3(-0.5f, 0.5f, 0.5f),
-                new Vector3(0.5f, 0.5f, -0.5f)
+                new Vector3(1, 0, 0),
+                new Vector3(0, 0, 1),
+                new Vector3(0, 1, 1),
+                new Vector3(1, 1, 0)
             };
         }
     }

@@ -3,6 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 using TrueCraft.API;
 using TrueCraft.Client.Rendering;
 using Microsoft.Xna.Framework;
+using XVector3 = Microsoft.Xna.Framework.Vector3;
+using TVector3 = TrueCraft.API.Vector3;
+using TRay = TrueCraft.API.Ray;
 
 namespace TrueCraft.Client.Modules
 {
@@ -10,51 +13,37 @@ namespace TrueCraft.Client.Modules
     {
         public TrueCraftGame Game { get; set; }
 
-        private Texture2D HighlightTexture { get; set; }
         private Coordinates3D HighlightedBlock { get; set; }
-        private Mesh HighlightMesh { get; set; }
         private BasicEffect HighlightEffect { get; set; }
+        private static readonly VertexPositionColor[] CubeVerticies;
+        private static readonly short[] CubeIndicies;
+
+        static HighlightModule()
+        {
+            var color = Color.Black;
+            CubeVerticies = new[]
+            {
+                new VertexPositionColor(new XVector3(0, 0, 1), color),
+                new VertexPositionColor(new XVector3(1, 0, 1), color),
+                new VertexPositionColor(new XVector3(1, 1, 1), color),
+                new VertexPositionColor(new XVector3(0, 1, 1), color),
+                new VertexPositionColor(new XVector3(0, 0, 0), color),
+                new VertexPositionColor(new XVector3(1, 0, 0), color),
+                new VertexPositionColor(new XVector3(1, 1, 0), color),
+                new VertexPositionColor(new XVector3(0, 1, 0), color)
+            };
+            CubeIndicies = new short[]
+            {
+                0, 1,   1, 2,   2, 3,   3, 0,
+                0, 4,   4, 7,   7, 6,   6, 2,
+                1, 5,   5, 4,   3, 7,   6, 5
+            };
+        }
 
         public HighlightModule(TrueCraftGame game)
         {
             Game = game;
-
-            const int size = 64;
-            HighlightedBlock = -Coordinates3D.One;
-            HighlightTexture = new Texture2D(Game.GraphicsDevice, size, size);
-
-            var colors = new Color[size * size];
-            for (int i = 0; i < colors.Length; i++)
-                colors[i] = Color.Transparent;
-            for (int x = 0; x < size; x++)
-                colors[x] = Color.Black; // Top
-            for (int x = 0; x < size; x++)
-                colors[x + (size - 1) * size] = Color.Black; // Bottom
-            for (int y = 0; y < size; y++)
-                colors[y * size] = Color.Black; // Left
-            for (int y = 0; y < size; y++)
-                colors[y * size + (size - 1)] = Color.Black; // Right
-
-            HighlightTexture.SetData<Color>(colors);
-            var texcoords = new[]
-            {
-                Vector2.UnitX + Vector2.UnitY,
-                Vector2.UnitY,
-                Vector2.Zero,
-                Vector2.UnitX
-            };
-            int[] indicies;
-            var verticies = BlockRenderer.CreateUniformCube(Microsoft.Xna.Framework.Vector3.Zero,
-                texcoords, VisibleFaces.All, 0, out indicies, Color.White);
-            HighlightMesh = new Mesh(Game, verticies, indicies);
-
             HighlightEffect = new BasicEffect(Game.GraphicsDevice);
-            HighlightEffect.EnableDefaultLighting();
-            HighlightEffect.DirectionalLight0.SpecularColor = Color.Black.ToVector3();
-            HighlightEffect.DirectionalLight1.SpecularColor = Color.Black.ToVector3();
-            HighlightEffect.DirectionalLight2.SpecularColor = Color.Black.ToVector3();
-            HighlightEffect.TextureEnabled = true;
-            HighlightEffect.Texture = HighlightTexture;
             HighlightEffect.VertexColorEnabled = true;
         }
 
@@ -66,18 +55,19 @@ namespace TrueCraft.Client.Modules
                 Matrix.CreateRotationY(MathHelper.ToRadians(Game.Client.Yaw)));
 
             var cast = VoxelCast.Cast(Game.Client.World,
-                new TrueCraft.API.Ray(Game.Camera.Position,
-                new TrueCraft.API.Vector3(direction.X, direction.Y, direction.Z)),
-                Game.BlockRepository, TrueCraftGame.Reach);
+                new TRay(Game.Camera.Position, new TVector3(direction.X, direction.Y, direction.Z)),
+                Game.BlockRepository, (int)TrueCraftGame.Reach);
 
             if (cast == null)
                 HighlightedBlock = -Coordinates3D.One;
             else
             {
                 HighlightedBlock = cast.Item1;
-                HighlightEffect.World = Matrix.CreateScale(1.02f) *
-                    Matrix.CreateTranslation(new Microsoft.Xna.Framework.Vector3(
-                        cast.Item1.X, cast.Item1.Y, cast.Item1.Z));
+                HighlightEffect.World =
+                    Matrix.CreateTranslation(new XVector3(-0.5f)) *
+                    Matrix.CreateScale(1.01f) *
+                    Matrix.CreateTranslation(new XVector3(0.5f)) *
+                    Matrix.CreateTranslation(new XVector3(cast.Item1.X, cast.Item1.Y, cast.Item1.Z));
             }
         }
 
@@ -87,8 +77,13 @@ namespace TrueCraft.Client.Modules
 
             if (HighlightedBlock != -Coordinates3D.One)
             {
-                Game.GraphicsDevice.DepthStencilState = DepthStencilState.None;
-                HighlightMesh.Draw(HighlightEffect);
+                foreach (var pass in HighlightEffect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    HighlightEffect.GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(
+                        PrimitiveType.LineList, CubeVerticies, 0,
+                        CubeVerticies.Length, CubeIndicies, 0, CubeIndicies.Length / 2);
+                }
             }
         }
     }

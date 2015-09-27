@@ -28,6 +28,7 @@ namespace TrueCraft.Client
         public ConcurrentBag<Action> PendingMainThreadActions { get; set; }
         public double Bobbing { get; set; }
         public ChunkModule ChunkModule { get; set; }
+        public float ScaleFactor { get; set; }
 
         private List<IGameplayModule> Modules { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
@@ -43,7 +44,7 @@ namespace TrueCraft.Client
         private GameTime GameTime { get; set; }
         private DebugInfoModule DebugInfoModule { get; set; }
 
-        public static readonly int Reach = 5;
+        public static readonly double Reach = 3;
 
         public IBlockRepository BlockRepository
         {
@@ -63,6 +64,7 @@ namespace TrueCraft.Client
             Graphics.PreferredBackBufferWidth = UserSettings.Local.WindowResolution.Width;
             Graphics.PreferredBackBufferHeight = UserSettings.Local.WindowResolution.Height;
             Graphics.ApplyChanges();
+            Window.ClientSizeChanged += Window_ClientSizeChanged;
             Client = client;
             EndPoint = endPoint;
             LastPhysicsUpdate = DateTime.MinValue;
@@ -80,6 +82,16 @@ namespace TrueCraft.Client
             Components.Add(mouseComponent);
         }
 
+        void Window_ClientSizeChanged(object sender, EventArgs e)
+        {
+            if (GraphicsDevice.Viewport.Width < 640 || GraphicsDevice.Viewport.Height < 480)
+                ScaleFactor = 0.5f;
+            else if (GraphicsDevice.Viewport.Width < 978 || GraphicsDevice.Viewport.Height < 720)
+                ScaleFactor = 1.0f;
+            else
+                ScaleFactor = 1.5f;
+        }
+
         protected override void Initialize()
         {
             Modules = new List<IGameplayModule>();
@@ -92,6 +104,7 @@ namespace TrueCraft.Client
             Modules.Add(ChunkModule);
             Modules.Add(new HighlightModule(this));
             Modules.Add(new PlayerControlModule(this));
+            Modules.Add(new HUDModule(this));
             Modules.Add(DebugInfoModule);
 
             Client.PropertyChanged += HandleClientPropertyChanged;
@@ -111,6 +124,8 @@ namespace TrueCraft.Client
             Window.ClientSizeChanged += (sender, e) => CreateRenderTarget();
             CreateRenderTarget();
             SpriteBatch = new SpriteBatch(GraphicsDevice);
+
+            Window_ClientSizeChanged(null, null);
         }
 
         private void CreateRenderTarget()
@@ -235,9 +250,10 @@ namespace TrueCraft.Client
             var bobbing = Bobbing * 1.5;
             var xbob = Math.Cos(bobbing + Math.PI / 2) * bobbingMultiplier;
             var ybob = Math.Sin(Math.PI / 2 - (2 * bobbing)) * bobbingMultiplier;
+
             Camera.Position = new TrueCraft.API.Vector3(
                 Client.Position.X + xbob - (Client.Size.Width / 2),
-                Client.Position.Y + (Client.Size.Height - 0.5) + ybob,
+                Client.Position.Y + Client.Size.Height + ybob,
                 Client.Position.Z - (Client.Size.Depth / 2));
 
             Camera.Pitch = Client.Pitch;

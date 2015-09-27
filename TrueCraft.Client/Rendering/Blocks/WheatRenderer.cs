@@ -46,10 +46,11 @@ namespace TrueCraft.Client.Rendering
             indicies = new int[4 * 2 * 6];
             var verticies = new VertexPositionNormalColorTexture[4 * 2 * 6];
             int[] _indicies;
+            var center = new Vector3(-0.5f, -0.5f, -0.5f);
             for (int _side = 0; _side < 4; _side++) // Y faces are the last two in the CubeFace enum, so we can just iterate to 4
             {
                 var side = (CubeFace)_side;
-                var quad = CreateQuad(side, Vector3.Zero, texture, 0, indiciesOffset, out _indicies, Color.White);
+                var quad = CreateQuad(side, center, texture, 0, indiciesOffset, out _indicies, Color.White);
                 if (side == CubeFace.NegativeX || side == CubeFace.PositiveX)
                 {
                     for (int i = 0; i < quad.Length; i++)
@@ -73,7 +74,7 @@ namespace TrueCraft.Client.Rendering
             for (int _side = 0; _side < 4; _side++)
             {
                 var side = (CubeFace)_side;
-                var quad = CreateQuad(side, Vector3.Zero, texture, 0, indiciesOffset, out _indicies, Color.White);
+                var quad = CreateQuad(side, center, texture, 0, indiciesOffset, out _indicies, Color.White);
                 if (side == CubeFace.NegativeX || side == CubeFace.PositiveX)
                 {
                     for (int i = 0; i < quad.Length; i++)
@@ -98,6 +99,7 @@ namespace TrueCraft.Client.Rendering
             for (int i = 0; i < verticies.Length; i++)
             {
                 verticies[i].Position.Y -= 1 / 16f;
+                verticies[i].Position -= center;
             }
             return verticies;
         }

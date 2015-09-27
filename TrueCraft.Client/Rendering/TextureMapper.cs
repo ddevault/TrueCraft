@@ -31,6 +31,8 @@ namespace TrueCraft.Client.Rendering
 
             Defaults.Add("items.png", new PngReader().Read(File.OpenRead("Content/items.png"), graphicsDevice));
             Defaults.Add("terrain.png", new PngReader().Read(File.OpenRead("Content/terrain.png"), graphicsDevice));
+            Defaults.Add("gui/gui.png", new PngReader().Read(File.OpenRead("Content/gui.png"), graphicsDevice));
+            Defaults.Add("gui/icons.png", new PngReader().Read(File.OpenRead("Content/icons.png"), graphicsDevice));
         }
 
         /// <summary>

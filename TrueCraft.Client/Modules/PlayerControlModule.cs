@@ -11,10 +11,12 @@ namespace TrueCraft.Client.Modules
     {
         private TrueCraftGame Game { get; set; }
         private Vector3 Delta { get; set; }
+        private bool Capture { get; set; }
 
         public PlayerControlModule(TrueCraftGame game)
         {
             Game = game;
+            Capture = true;
         }
 
         public bool KeyDown(GameTime gameTime, KeyboardKeyEventArgs e)
@@ -53,6 +55,14 @@ namespace TrueCraft.Client.Modules
                 case Keys.S:
                 case Keys.Down:
                     Delta += Vector3.Backward;
+                    return true;
+
+                case Keys.I:
+                    Game.Client.Position = Game.Client.Position.Floor();
+                    return true;
+
+                case Keys.Tab:
+                    Capture = !Capture;
                     return true;
 
                 case Keys.Space:
@@ -96,6 +106,8 @@ namespace TrueCraft.Client.Modules
         
         public void MouseMove(GameTime gameTime, MouseMoveEventArgs e)
         {
+            if (!Capture)
+                return;
             var centerX = Game.GraphicsDevice.Viewport.Width / 2;
             var centerY = Game.GraphicsDevice.Viewport.Height / 2;
             Mouse.SetPosition(centerX, centerY);

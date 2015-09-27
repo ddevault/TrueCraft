@@ -147,50 +147,50 @@ namespace TrueCraft.Client.Rendering
 
             CubeMesh[0] = new[] // Positive Z face
             {
-                new Vector3(0.5f, -0.5f, 0.5f),
-                new Vector3(-0.5f, -0.5f, 0.5f),
-                new Vector3(-0.5f, 0.5f, 0.5f),
-                new Vector3(0.5f, 0.5f, 0.5f)
+                new Vector3(1, 0, 1),
+                new Vector3(0, 0, 1),
+                new Vector3(0, 1, 1),
+                new Vector3(1, 1, 1)
             };
 
             CubeMesh[1] = new[] // Negative Z face
             {
-                new Vector3(-0.5f, -0.5f, -0.5f),
-                new Vector3(0.5f, -0.5f, -0.5f),
-                new Vector3(0.5f, 0.5f, -0.5f),
-                new Vector3(-0.5f, 0.5f, -0.5f)
+                new Vector3(0, 0, 0),
+                new Vector3(1, 0, 0),
+                new Vector3(1, 1, 0),
+                new Vector3(0, 1, 0)
             };
 
             CubeMesh[2] = new[] // Positive X face
             {
-                new Vector3(0.5f, -0.5f, -0.5f),
-                new Vector3(0.5f, -0.5f, 0.5f),
-                new Vector3(0.5f, 0.5f, 0.5f),
-                new Vector3(0.5f, 0.5f, -0.5f)
+                new Vector3(1, 0, 0),
+                new Vector3(1, 0, 1),
+                new Vector3(1, 1, 1),
+                new Vector3(1, 1, 0)
             };
 
             CubeMesh[3] = new[] // Negative X face
             {
-                new Vector3(-0.5f, -0.5f, 0.5f),
-                new Vector3(-0.5f, -0.5f, -0.5f),
-                new Vector3(-0.5f, 0.5f, -0.5f),
-                new Vector3(-0.5f, 0.5f, 0.5f)
+                new Vector3(0, 0, 1),
+                new Vector3(0, 0, 0),
+                new Vector3(0, 1, 0),
+                new Vector3(0, 1, 1)
             };
 
             CubeMesh[4] = new[] // Positive Y face
             {
-                new Vector3(0.5f, 0.5f, 0.5f),
-                new Vector3(-0.5f, 0.5f, 0.5f),
-                new Vector3(-0.5f, 0.5f, -0.5f),
-                new Vector3(0.5f, 0.5f, -0.5f)
+                new Vector3(1, 1, 1),
+                new Vector3(0, 1, 1),
+                new Vector3(0, 1, 0),
+                new Vector3(1, 1, 0)
             };
 
             CubeMesh[5] = new[] // Negative Y face
             {
-                new Vector3(0.5f, -0.5f, -0.5f),
-                new Vector3(-0.5f, -0.5f, -0.5f),
-                new Vector3(-0.5f, -0.5f, 0.5f),
-                new Vector3(0.5f, -0.5f, 0.5f)
+                new Vector3(1, 0, 0),
+                new Vector3(0, 0, 0),
+                new Vector3(0, 0, 1),
+                new Vector3(1, 0, 1)
             };
         }
     }
