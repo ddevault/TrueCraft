@@ -6,6 +6,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using TrueCraft.API;
+using System.Linq;
+using System.Threading;
 
 namespace TrueCraft.Client.Modules
 {
@@ -15,7 +17,8 @@ namespace TrueCraft.Client.Modules
         public ChunkRenderer ChunkRenderer { get; set; }
         public int ChunksRendered { get; set; }
 
-        private List<Mesh> ChunkMeshes { get; set; }
+        private HashSet<Coordinates2D> ActiveMeshes { get; set; }
+        private List<ChunkMesh> ChunkMeshes { get; set; }
         private ConcurrentBag<Mesh> IncomingChunks { get; set; }
 
         private BasicEffect OpaqueEffect { get; set; }
@@ -27,7 +30,8 @@ namespace TrueCraft.Client.Modules
 
             ChunkRenderer = new ChunkRenderer(Game.Client.World, Game, Game.BlockRepository);
             Game.Client.ChunkLoaded += (sender, e) => ChunkRenderer.Enqueue(e.Chunk);
-            //Client.ChunkModified += (sender, e) => ChunkRenderer.Enqueue(e.Chunk, true);
+            Game.Client.ChunkUnloaded += (sender, e) => UnloadChunk(e.Chunk);
+            Game.Client.ChunkModified += (sender, e) => ChunkRenderer.Enqueue(e.Chunk, true);
             ChunkRenderer.MeshCompleted += MeshCompleted;
             ChunkRenderer.Start();
 
@@ -50,13 +54,23 @@ namespace TrueCraft.Client.Modules
             TransparentEffect.Texture = Game.TextureMapper.GetTexture("terrain.png");
             TransparentEffect.VertexColorEnabled = true;
 
-            ChunkMeshes = new List<Mesh>();
+            ChunkMeshes = new List<ChunkMesh>();
             IncomingChunks = new ConcurrentBag<Mesh>();
+            ActiveMeshes = new HashSet<Coordinates2D>();
         }
 
         void MeshCompleted(object sender, RendererEventArgs<ReadOnlyChunk> e)
         {
             IncomingChunks.Add(e.Result);
+        }
+
+        void UnloadChunk(ReadOnlyChunk chunk)
+        {
+            Game.PendingMainThreadActions.Add(() =>
+            {
+                ActiveMeshes.Remove(chunk.Coordinates);
+                ChunkMeshes.RemoveAll(m => m.Chunk.Coordinates == chunk.Coordinates);
+            });
         }
 
         void HandleClientPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -73,10 +87,17 @@ namespace TrueCraft.Client.Modules
 
         public void Update(GameTime gameTime)
         {
-            Mesh mesh;
-            while (IncomingChunks.TryTake(out mesh))
+            Mesh _mesh;
+            while (IncomingChunks.TryTake(out _mesh))
             {
+                var mesh = _mesh as ChunkMesh;
+                int existing = -1;
+                if (ActiveMeshes.Contains(mesh.Chunk.Coordinates))
+                    existing = ChunkMeshes.FindIndex(m => m.Chunk.Coordinates == mesh.Chunk.Coordinates);
+                ActiveMeshes.Add(mesh.Chunk.Coordinates);
                 ChunkMeshes.Add(mesh);
+                if (existing != -1)
+                    ChunkMeshes.RemoveAt(existing);
             }
         }
 

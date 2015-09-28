@@ -109,6 +109,8 @@ namespace TrueCraft.Client
             return Chunk.GetBlockLight(coordinates);
         }
 
+        public Coordinates2D Coordinates { get { return Chunk.Coordinates; } }
+
         public int X { get { return Chunk.X; } }
         public int Z { get { return Chunk.Z; } }
 

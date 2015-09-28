@@ -89,6 +89,9 @@ namespace TrueCraft.Client.Modules
                 string.Format(ChatColor.Gray + "Looking at {0} ({1})", Game.HighlightedBlock,
                     Enum.GetName(typeof(BlockFace), Game.HighlightedBlockFace)));
 
+            Font.DrawText(SpriteBatch, xOrigin, yOrigin + (yOffset * 3),
+                string.Format(ChatColor.Gray + "{0} pending chunks", Game.ChunkModule.ChunkRenderer.PendingChunks));
+
             SpriteBatch.End();
         }
 

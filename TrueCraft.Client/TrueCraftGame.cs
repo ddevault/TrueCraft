@@ -269,9 +269,7 @@ namespace TrueCraft.Client
                 // We should eventually make some means of detecing that we're on a vanilla server to enable this
                 // It's a waste of bandwidth to do it on a TrueCraft server
                 Client.QueuePacket(new PlayerGroundedPacket { OnGround = true });
-                Client.QueuePacket(new PlayerPositionAndLookPacket(Client.Position.X, Client.Position.Y,
-                    Client.Position.Y + MultiplayerClient.Height, Client.Position.Z, Client.Yaw, Client.Pitch, false));
-                NextPhysicsUpdate = DateTime.UtcNow.AddMilliseconds(1000 / 20);
+                NextPhysicsUpdate = DateTime.UtcNow.AddMilliseconds(50);
             }
 
             foreach (var module in Modules)

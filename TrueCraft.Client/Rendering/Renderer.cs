@@ -20,8 +20,8 @@ namespace TrueCraft.Client.Rendering
 
         private volatile bool _isRunning;
         private Thread[] _rendererThreads;
-        private ConcurrentQueue<T> _items, _priorityItems;
         private volatile bool _isDisposed;
+        protected ConcurrentQueue<T> _items, _priorityItems;
 
         /// <summary>
         /// Gets whether this renderer is running.
@@ -150,13 +150,10 @@ namespace TrueCraft.Client.Rendering
                 throw new ObjectDisposedException(GetType().Name);
 
             if (!_isRunning) return;
-            lock (_syncLock)
-            {
-                if (hasPriority)
-                    _priorityItems.Enqueue(item);
-                else
-                    _items.Enqueue(item);
-            }
+            if (hasPriority)
+                _priorityItems.Enqueue(item);
+            else
+                _items.Enqueue(item);
         }
 
         /// <summary>

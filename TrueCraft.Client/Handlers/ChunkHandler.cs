@@ -26,7 +26,7 @@ namespace TrueCraft.Client.Handlers
                 // Relevant chunk is not loaded - ignore packet
                 return;
             }
-            chunk.SetBlockID(adjusted, packet.ID);
+            chunk.SetBlockID(adjusted, (byte)packet.BlockID);
             chunk.SetMetadata(adjusted, (byte)packet.Metadata);
             client.OnChunkModified(new ChunkEventArgs(new ReadOnlyChunk(chunk)));
         }
@@ -41,10 +41,10 @@ namespace TrueCraft.Client.Handlers
         public static void HandleChunkData(IPacket _packet, MultiplayerClient client)
         {
             var packet = (ChunkDataPacket)_packet;
+            var coords = new Coordinates3D(packet.X, packet.Y, packet.Z);
             var data = ZlibStream.UncompressBuffer(packet.CompressedData);
             IChunk chunk;
-            var adjustedCoords = client.World.World.FindBlockPosition(
-                 new Coordinates3D(packet.X, packet.Y, packet.Z), out chunk);
+            var adjustedCoords = client.World.World.FindBlockPosition(coords, out chunk);
 
             if (packet.Width == Chunk.Width
                 && packet.Height == Chunk.Height

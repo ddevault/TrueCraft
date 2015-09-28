@@ -39,6 +39,14 @@ namespace TrueCraft.Client.Rendering
             }
         }
 
+        public int PendingChunks
+        {
+            get
+            {
+                return _items.Count + _priorityItems.Count;
+            }
+        }
+
         private ReadOnlyWorld World { get; set; }
         private TrueCraftGame Game { get; set; }
         private IBlockRepository BlockRepository { get; set; }
