@@ -30,7 +30,7 @@ namespace TrueCraft.Client.Rendering.Blocks
         {
             // TODO: Rest of water rendering (shape and level and so on)
             var overhead = new Vector3(0.5f, 0.5f, 0.5f);
-            var cube = CreateUniformCube(overhead, Texture, faces, indiciesOffset, out indicies, Color.DarkBlue);
+            var cube = CreateUniformCube(overhead, Texture, faces, indiciesOffset, out indicies, Color.Blue);
             for (int i = 0; i < cube.Length; i++)
             {
                 if (cube[i].Position.Y > 0)
