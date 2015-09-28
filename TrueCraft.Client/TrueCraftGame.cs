@@ -250,14 +250,17 @@ namespace TrueCraft.Client
         public void FlushMainThreadActions()
         {
             Action action;
-            if (PendingMainThreadActions.TryTake(out action))
+            while (PendingMainThreadActions.TryTake(out action))
                 action();
         }
 
         protected override void Update(GameTime gameTime)
         {
             GameTime = gameTime;
-            FlushMainThreadActions();
+
+            Action action;
+            if (PendingMainThreadActions.TryTake(out action))
+                action();
 
             IChunk chunk;
             var adjusted = Client.World.World.FindBlockPosition(

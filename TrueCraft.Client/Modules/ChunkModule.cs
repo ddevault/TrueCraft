@@ -105,7 +105,6 @@ namespace TrueCraft.Client.Modules
                 }
             }
             if (any)
-                // In theory this would ready the chunks, but it doesn't work for some reason
                 Game.FlushMainThreadActions();
         }
 
