@@ -55,7 +55,8 @@ namespace TrueCraft.Client.Rendering.Blocks
         {
             var overhead = new Vector3(0.5f, 0.5f, 0.5f);
             var centerized = new Vector3(7f / 16f, 0, 7f / 16f);
-            var cube = CreateUniformCube(overhead, Texture, VisibleFaces.All, indiciesOffset, out indicies, Color.White);
+            var cube = CreateUniformCube(Vector3.Zero, Texture, VisibleFaces.All,
+                indiciesOffset, out indicies, Color.White);
             for (int i = 0; i < cube.Length; i++)
             {
                 cube[i].Position.X *= 1f / 8f;
@@ -100,7 +101,6 @@ namespace TrueCraft.Client.Rendering.Blocks
 
                 cube[i].Position += offset;
                 cube[i].Position += centerized;
-                cube[i].Position -= overhead;
             }
             return cube;
         }

@@ -21,6 +21,7 @@ namespace TrueCraft.Client
 
             double min = negmax * 2;
             var pick = -Coordinates3D.One;
+            var face = BlockFace.PositiveY;
             for (int x = -posmax; x <= posmax; x++)
             {
                 for (int y = -negmax; y <= posmax; y++)
@@ -37,11 +38,13 @@ namespace TrueCraft.Client
                             var box = provider.BoundingBox;
                             if (box != null)
                             {
-                                var distance = ray.Intersects(box.Value.OffsetBy(coords));
+                                BlockFace _face;
+                                var distance = ray.Intersects(box.Value.OffsetBy(coords), out _face);
                                 if (distance != null && distance.Value < min)
                                 {
                                     min = distance.Value;
                                     pick = coords;
+                                    face = _face;
                                 }
                             }
                         }
@@ -50,7 +53,7 @@ namespace TrueCraft.Client
             }
             if (pick == -Coordinates3D.One)
                 return null;
-            return new Tuple<Coordinates3D, BlockFace>(pick, BlockFace.PositiveY);
+            return new Tuple<Coordinates3D, BlockFace>(pick, face);
         }
     }
 }

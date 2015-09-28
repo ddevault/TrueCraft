@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using TrueCraft.Client.Input;
 using TrueCraft.Client.Rendering;
+using TrueCraft.API;
+using System;
 
 namespace TrueCraft.Client.Modules
 {
@@ -20,6 +22,9 @@ namespace TrueCraft.Client.Modules
             Game = game;
             Font = font;
             SpriteBatch = new SpriteBatch(Game.GraphicsDevice);
+#if DEBUG
+            Enabled = true;
+#endif
         }
 
         public bool KeyDown(GameTime gameTime, KeyboardKeyEventArgs e)
@@ -63,25 +68,38 @@ namespace TrueCraft.Client.Modules
             const int yOffset = 25;
 
             SpriteBatch.Begin();
-            Font.DrawText(SpriteBatch, xOrigin, yOrigin, string.Format("§lRunning at {0}{1} FPS",
-                GetFPSColor(fps), fps), 1);
-            Font.DrawText(SpriteBatch, xOrigin, yOrigin + (yOffset * 1), string.Format("§o{0} vertices, {1} indicies",
-                Mesh.VerticiesRendered, Mesh.IndiciesRendered), 1);
+            Font.DrawText(SpriteBatch, xOrigin, yOrigin, string.Format(
+                ChatFormat.Bold + "Running at {0}{1} FPS", GetFPSColor(fps), fps));
+
+            Font.DrawText(SpriteBatch, xOrigin, yOrigin + (yOffset * 1),
+                string.Format(ChatFormat.Italic + "{0} vertices, {1} indicies",
+                    Mesh.VerticiesRendered, Mesh.IndiciesRendered));
+
             Font.DrawText(SpriteBatch, xOrigin, yOrigin + (yOffset * 2),
-                string.Format("§o{0} chunks", Game.ChunkModule.ChunksRendered), 1);
+                string.Format(ChatFormat.Italic + "{0} chunks", Game.ChunkModule.ChunksRendered));
+
             Font.DrawText(SpriteBatch, xOrigin, yOrigin + (yOffset * 3),
-                string.Format("§o<{0:N2}, {1:N2}, {2:N2}>",
-                Game.Client.Position.X, Game.Client.Position.Y, Game.Client.Position.Z), 1);
+                string.Format(ChatFormat.Italic + "<{0:N2}, {1:N2}, {2:N2}>",
+                Game.Client.Position.X, Game.Client.Position.Y, Game.Client.Position.Z));
+
+            Font.DrawText(SpriteBatch, xOrigin, yOrigin + (yOffset * 3),
+                string.Format(ChatFormat.Italic + "<{0:N2}, {1:N2}, {2:N2}>",
+                Game.Client.Position.X, Game.Client.Position.Y, Game.Client.Position.Z));
+
+            Font.DrawText(SpriteBatch, xOrigin, yOrigin + (yOffset * 4),
+                string.Format(ChatColor.Gray + "Looking at {0} ({1})", Game.HighlightedBlock,
+                    Enum.GetName(typeof(BlockFace), Game.HighlightedBlockFace)));
+
             SpriteBatch.End();
         }
 
         private string GetFPSColor(int fps)
         {
             if (fps <= 16)
-                return "§c";
+                return ChatColor.Red;
             if (fps <= 32)
-                return "§e";
-            return "§a";
+                return ChatColor.Yellow;
+            return ChatColor.BrightGreen;
         }
     }
 }

@@ -77,10 +77,9 @@ namespace TrueCraft.API
         /// <summary>
         /// Returns the distance along the ray where it intersects the specified bounding box, if it intersects at all.
         /// </summary>
-        /// <param name="box">The bounding box to check intersection with.</param>
-        /// <returns></returns>
-        public double? Intersects(BoundingBox box)
+        public double? Intersects(BoundingBox box, out BlockFace face)
         {
+            face = BlockFace.PositiveY;
             //first test if start in box
             if (Position.X >= box.Min.X
                     && Position.X <= box.Max.X
@@ -131,6 +130,12 @@ namespace TrueCraft.API
                 coord = Position.Y + maxT.X * Direction.Y;
                 if (coord < box.Min.Y || coord > box.Max.Y)
                     return null;
+
+                if (Position.X < box.Min.X)
+                    face = BlockFace.NegativeX;
+                else if (Position.X > box.Max.X)
+                    face = BlockFace.PositiveX;
+
                 return maxT.X;
             }
             if (maxT.Y > maxT.X && maxT.Y > maxT.Z)
@@ -145,6 +150,12 @@ namespace TrueCraft.API
                 coord = Position.X + maxT.Y * Direction.X;
                 if (coord < box.Min.X || coord > box.Max.X)
                     return null;
+
+                if (Position.Y < box.Min.Y)
+                    face = BlockFace.NegativeY;
+                else if (Position.Y > box.Max.Y)
+                    face = BlockFace.PositiveY;
+
                 return maxT.Y;
             }
             else //Z
@@ -159,6 +170,12 @@ namespace TrueCraft.API
                 coord = Position.Y + maxT.Z * Direction.Y;
                 if (coord < box.Min.Y || coord > box.Max.Y)
                     return null;
+
+                if (Position.Z < box.Min.Z)
+                    face = BlockFace.NegativeZ;
+                else if (Position.Z > box.Max.Z)
+                    face = BlockFace.PositiveZ;
+
                 return maxT.Z;
             }
         }

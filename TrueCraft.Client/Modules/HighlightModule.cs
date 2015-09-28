@@ -13,7 +13,6 @@ namespace TrueCraft.Client.Modules
     {
         public TrueCraftGame Game { get; set; }
 
-        private Coordinates3D HighlightedBlock { get; set; }
         private BasicEffect HighlightEffect { get; set; }
         private static readonly VertexPositionColor[] CubeVerticies;
         private static readonly short[] CubeIndicies;
@@ -59,10 +58,11 @@ namespace TrueCraft.Client.Modules
                 Game.BlockRepository, TrueCraftGame.Reach, TrueCraftGame.Reach + 2);
 
             if (cast == null)
-                HighlightedBlock = -Coordinates3D.One;
+                Game.HighlightedBlock = -Coordinates3D.One;
             else
             {
-                HighlightedBlock = cast.Item1;
+                Game.HighlightedBlock = cast.Item1;
+                Game.HighlightedBlockFace = cast.Item2;
                 HighlightEffect.World =
                     Matrix.CreateTranslation(new XVector3(-0.5f)) *
                     Matrix.CreateScale(1.01f) *
@@ -75,7 +75,7 @@ namespace TrueCraft.Client.Modules
         {
             Game.Camera.ApplyTo(HighlightEffect);
 
-            if (HighlightedBlock != -Coordinates3D.One)
+            if (Game.HighlightedBlock != -Coordinates3D.One)
             {
                 foreach (var pass in HighlightEffect.CurrentTechnique.Passes)
                 {

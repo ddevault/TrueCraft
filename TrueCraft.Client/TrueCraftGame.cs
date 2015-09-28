@@ -31,6 +31,8 @@ namespace TrueCraft.Client
         public double Bobbing { get; set; }
         public ChunkModule ChunkModule { get; set; }
         public float ScaleFactor { get; set; }
+        public Coordinates3D HighlightedBlock { get; set; }
+        public BlockFace HighlightedBlockFace { get; set; }
 
         private List<IGameplayModule> Modules { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
