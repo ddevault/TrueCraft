@@ -54,8 +54,11 @@ namespace TrueCraft.Handlers
                 while (collision())
                     client.Entity.Position += Vector3.Up;
 
+                var entityManager = server.GetEntityManagerForWorld(remoteClient.World);
+                entityManager.SpawnEntity(remoteClient.Entity);
+
                 // Send setup packets
-                remoteClient.QueuePacket(new LoginResponsePacket(0, 0, Dimension.Overworld));
+                remoteClient.QueuePacket(new LoginResponsePacket(client.Entity.EntityID, 0, Dimension.Overworld));
                 remoteClient.UpdateChunks();
                 remoteClient.QueuePacket(new WindowItemsPacket(0, remoteClient.Inventory.GetSlots()));
                 remoteClient.QueuePacket(new SpawnPositionPacket((int)remoteClient.Entity.Position.X,
@@ -67,8 +70,6 @@ namespace TrueCraft.Handlers
                 remoteClient.QueuePacket(new TimeUpdatePacket(remoteClient.World.Time));
 
                 // Start housekeeping for this client
-                var entityManager = server.GetEntityManagerForWorld(remoteClient.World);
-                entityManager.SpawnEntity(remoteClient.Entity);
                 entityManager.SendEntitiesToClient(remoteClient);
                 server.Scheduler.ScheduleEvent("remote.keepalive", remoteClient, TimeSpan.FromSeconds(10), remoteClient.SendKeepAlive);
                 server.Scheduler.ScheduleEvent("remote.chunks", remoteClient, TimeSpan.FromSeconds(1), remoteClient.ExpandChunkRadius);

@@ -18,6 +18,7 @@ using TrueCraft.Client.Modules;
 using TrueCraft.Client.Rendering;
 using TVector3 = TrueCraft.API.Vector3;
 using XVector3 = Microsoft.Xna.Framework.Vector3;
+using TrueCraft.Core.Logic;
 
 namespace TrueCraft.Client
 {
@@ -57,6 +58,8 @@ namespace TrueCraft.Client
                 return Client.World.World.BlockRepository;
             }
         }
+
+        public IItemRepository ItemRepository { get; set; }
 
         public TrueCraftGame(MultiplayerClient client, IPEndPoint endPoint)
         {
@@ -111,6 +114,12 @@ namespace TrueCraft.Client
 
             Client.PropertyChanged += HandleClientPropertyChanged;
             Client.Connect(EndPoint);
+
+            BlockProvider.BlockRepository = BlockRepository;
+            var itemRepository = new ItemRepository();
+            itemRepository.DiscoverItemProviders();
+            ItemRepository = itemRepository;
+            BlockProvider.ItemRepository = ItemRepository;
 
             var centerX = GraphicsDevice.Viewport.Width / 2;
             var centerY = GraphicsDevice.Viewport.Height / 2;

@@ -35,6 +35,7 @@ namespace TrueCraft.Client
         public ReadOnlyWorld World { get; private set; }
         public PhysicsEngine Physics { get; set; }
         public bool LoggedIn { get; internal set; }
+        public int EntityID { get; internal set; }
 
         public bool Connected
         {

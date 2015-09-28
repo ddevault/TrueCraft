@@ -42,6 +42,8 @@ namespace TrueCraft.Client.Handlers
 
         public static void HandleLoginResponse(IPacket _packet, MultiplayerClient client)
         {
+            var packet = (LoginResponsePacket)_packet;
+            client.EntityID = packet.EntityID;
             client.QueuePacket(new PlayerGroundedPacket());
         }
 

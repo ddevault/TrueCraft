@@ -16,6 +16,15 @@ namespace TrueCraft.Core.Networking.Packets
             StopDigging = 2,
             DropItem = 4
         }
+
+        public PlayerDiggingPacket(Action playerAction, int x, sbyte y, int z, BlockFace face)
+        {
+            PlayerAction = playerAction;
+            X = x;
+            Y = y;
+            Z = z;
+            Face = face;
+        }
         
         public byte ID { get { return 0x0E; } }
 

@@ -6,6 +6,8 @@ using TrueCraft.Client.Input;
 using TVector3 = TrueCraft.API.Vector3;
 using XVector3 = Microsoft.Xna.Framework.Vector3;
 using TrueCraft.API;
+using TrueCraft.Core.Logic;
+using TrueCraft.Core.Networking.Packets;
 
 namespace TrueCraft.Client.Modules
 {
@@ -13,6 +15,7 @@ namespace TrueCraft.Client.Modules
     {
         private TrueCraftGame Game { get; set; }
         private DateTime StartDigging { get; set; }
+        private DateTime NextAnimation { get; set; }
         private DateTime EndDigging { get; set; }
         private Coordinates3D TargetBlock { get; set; }
         private XVector3 Delta { get; set; }
@@ -22,6 +25,10 @@ namespace TrueCraft.Client.Modules
         {
             Game = game;
             Capture = true;
+            StartDigging = DateTime.MinValue;
+            EndDigging = DateTime.MaxValue;
+            TargetBlock = -Coordinates3D.One;
+            NextAnimation = DateTime.MaxValue;
         }
 
         public bool KeyDown(GameTime gameTime, KeyboardKeyEventArgs e)
@@ -131,9 +138,42 @@ namespace TrueCraft.Client.Modules
             switch (e.Button)
             {
                 case MouseButton.Left:
+                    if (StartDigging == DateTime.MinValue) // Would like to start digging a block
+                    {
+                        var target = Game.HighlightedBlock;
+                        if (target != -Coordinates3D.One)
+                            BeginDigging(target);
+                    }
+                    else // Currently digging a block
+                    {
+                        var target = Game.HighlightedBlock;
+                        if (target == -Coordinates3D.One) // Cancel
+                        {
+                            StartDigging = DateTime.MinValue;
+                            EndDigging = DateTime.MaxValue;
+                            TargetBlock = -Coordinates3D.One;
+                        }
+                        else if (target != TargetBlock) // Change target
+                            BeginDigging(target);
+                    }
                     return true;
             }
             return false;
+        }
+
+        private void BeginDigging(Coordinates3D target)
+        {
+            var block = Game.Client.World.GetBlockID(target);
+            TargetBlock = target;
+            StartDigging = DateTime.UtcNow;
+            short damage;
+            EndDigging = StartDigging.AddMilliseconds(
+                BlockProvider.GetHarvestTime(block, 0, out damage));
+            Game.Client.QueuePacket(new PlayerDiggingPacket(
+                PlayerDiggingPacket.Action.StartDigging,
+                TargetBlock.X, (sbyte)TargetBlock.Y, TargetBlock.Z,
+                Game.HighlightedBlockFace));
+            NextAnimation = DateTime.UtcNow.AddSeconds(0.25);
         }
 
         public bool MouseButtonUp(GameTime gameTime, MouseButtonEventArgs e)
@@ -141,6 +181,9 @@ namespace TrueCraft.Client.Modules
             switch (e.Button)
             {
                 case MouseButton.Left:
+                    StartDigging = DateTime.MinValue;
+                    EndDigging = DateTime.MaxValue;
+                    TargetBlock = -Coordinates3D.One;
                     return true;
             }
             return false;
@@ -151,7 +194,7 @@ namespace TrueCraft.Client.Modules
             if (Delta != XVector3.Zero)
             {
                 var lookAt = XVector3.Transform(-Delta,
-                    Matrix.CreateRotationY(MathHelper.ToRadians(-(Game.Client.Yaw - 180) + 180)));
+                                 Matrix.CreateRotationY(MathHelper.ToRadians(-(Game.Client.Yaw - 180) + 180)));
 
                 lookAt.X *= (float)(gameTime.ElapsedGameTime.TotalSeconds * 4.3717);
                 lookAt.Z *= (float)(gameTime.ElapsedGameTime.TotalSeconds * 4.3717);
@@ -162,6 +205,22 @@ namespace TrueCraft.Client.Modules
             }
             else
                 Game.Client.Velocity *= new TVector3(0, 1, 0);
+            if (EndDigging != DateTime.MaxValue)
+            {
+                if (NextAnimation < DateTime.UtcNow)
+                {
+                    NextAnimation = DateTime.UtcNow.AddSeconds(0.25);
+                    Game.Client.QueuePacket(new AnimationPacket(Game.Client.EntityID,
+                        AnimationPacket.PlayerAnimation.SwingArm));
+                }
+                if (DateTime.UtcNow > EndDigging && Game.HighlightedBlock == TargetBlock)
+                {
+                    Game.Client.QueuePacket(new PlayerDiggingPacket(
+                        PlayerDiggingPacket.Action.StopDigging,
+                        TargetBlock.X, (sbyte)TargetBlock.Y, TargetBlock.Z,
+                        Game.HighlightedBlockFace));
+                }
+            }
         }
     }
 }

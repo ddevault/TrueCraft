@@ -325,6 +325,19 @@ namespace TrueCraft.Handlers
             }
         }
 
+        public static void HandleAnimation(IPacket _packet, IRemoteClient _client, IMultiplayerServer server)
+        {
+            var packet = (AnimationPacket)_packet;
+            var client = (RemoteClient)_client;
+            if (packet.EntityID == client.Entity.EntityID)
+            {
+                var nearby = server.GetEntityManagerForWorld(client.World)
+                    .ClientsForEntity(client.Entity);
+                foreach (var player in nearby)
+                    player.QueuePacket(packet);
+            }
+        }
+
         public static void HandleUpdateSignPacket(IPacket _packet, IRemoteClient _client, IMultiplayerServer server)
         {
             var packet = (UpdateSignPacket)_packet;

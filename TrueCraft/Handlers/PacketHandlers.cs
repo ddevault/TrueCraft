@@ -28,6 +28,7 @@ namespace TrueCraft.Handlers
             server.RegisterPacketHandler(new PlayerBlockPlacementPacket().ID, InteractionHandlers.HandlePlayerBlockPlacementPacket);
             server.RegisterPacketHandler(new ChangeHeldItemPacket().ID, InteractionHandlers.HandleChangeHeldItem);
             server.RegisterPacketHandler(new PlayerActionPacket().ID, InteractionHandlers.HandlePlayerAction);
+            server.RegisterPacketHandler(new AnimationPacket().ID, InteractionHandlers.HandleAnimation);
             server.RegisterPacketHandler(new ClickWindowPacket().ID, InteractionHandlers.HandleClickWindowPacket);
             server.RegisterPacketHandler(new CloseWindowPacket().ID, InteractionHandlers.HandleCloseWindowPacket);
             server.RegisterPacketHandler(new UpdateSignPacket().ID, InteractionHandlers.HandleUpdateSignPacket);
