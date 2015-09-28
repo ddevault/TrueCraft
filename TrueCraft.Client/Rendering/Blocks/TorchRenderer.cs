@@ -39,9 +39,9 @@ namespace TrueCraft.Client.Rendering.Blocks
             TextureMap,
             TextureMap + new Vector2(2, 0),
             // Positive Y
-            TextureMap + new Vector2(2, 10),
-            TextureMap + new Vector2(0, 10),
-            TextureMap,
+            TextureMap + new Vector2(2, 2),
+            TextureMap + new Vector2(0, 2),
+            TextureMap + new Vector2(0, 0),
             TextureMap + new Vector2(2, 0),
             // Negative Y
             TextureMap + new Vector2(2, 4),
@@ -53,7 +53,6 @@ namespace TrueCraft.Client.Rendering.Blocks
         public override VertexPositionNormalColorTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
             VisibleFaces faces, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
-            var overhead = new Vector3(0.5f, 0.5f, 0.5f);
             var centerized = new Vector3(7f / 16f, 0, 7f / 16f);
             var cube = CreateUniformCube(Vector3.Zero, Texture, VisibleFaces.All,
                 indiciesOffset, out indicies, Color.White);
