@@ -87,18 +87,26 @@ namespace TrueCraft.Client.Modules
 
         public void Update(GameTime gameTime)
         {
+            var any = false;
             Mesh _mesh;
             while (IncomingChunks.TryTake(out _mesh))
             {
+                any = true;
                 var mesh = _mesh as ChunkMesh;
-                int existing = -1;
                 if (ActiveMeshes.Contains(mesh.Chunk.Coordinates))
-                    existing = ChunkMeshes.FindIndex(m => m.Chunk.Coordinates == mesh.Chunk.Coordinates);
-                ActiveMeshes.Add(mesh.Chunk.Coordinates);
-                ChunkMeshes.Add(mesh);
-                if (existing != -1)
-                    ChunkMeshes.RemoveAt(existing);
+                {
+                    int existing = ChunkMeshes.FindIndex(m => m.Chunk.Coordinates == mesh.Chunk.Coordinates);
+                    ChunkMeshes[existing] = mesh;
+                }
+                else
+                {
+                    ActiveMeshes.Add(mesh.Chunk.Coordinates);
+                    ChunkMeshes.Add(mesh);
+                }
             }
+            if (any)
+                // In theory this would ready the chunks, but it doesn't work for some reason
+                Game.FlushMainThreadActions();
         }
 
         private static readonly BlendState ColorWriteDisable = new BlendState
@@ -119,6 +127,8 @@ namespace TrueCraft.Client.Modules
                 {
                     chunks++;
                     ChunkMeshes[i].Draw(OpaqueEffect, 0);
+                    if (!ChunkMeshes[i].IsReady || ChunkMeshes[i].Submeshes != 2)
+                        Console.WriteLine("Warning: rendered chunk that was not ready");
                 }
             }
 

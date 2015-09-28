@@ -247,13 +247,17 @@ namespace TrueCraft.Client
                 new PngWriter().Write(RenderTarget, stream);
         }
 
-        protected override void Update(GameTime gameTime)
+        public void FlushMainThreadActions()
         {
-            GameTime = gameTime;
-
             Action action;
             if (PendingMainThreadActions.TryTake(out action))
                 action();
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            GameTime = gameTime;
+            FlushMainThreadActions();
 
             IChunk chunk;
             var adjusted = Client.World.World.FindBlockPosition(

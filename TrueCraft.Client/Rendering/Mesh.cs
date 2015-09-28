@@ -30,6 +30,8 @@ namespace TrueCraft.Client.Rendering
 
         private TrueCraftGame _game;
         private GraphicsDevice _graphicsDevice;
+        private int _submeshes = 0;
+        private bool _isReady = false;
         protected VertexBuffer _vertices; // ChunkMesh uses these but external classes shouldn't, so I've made them protected.
         protected IndexBuffer[] _indices;
 
@@ -47,13 +49,30 @@ namespace TrueCraft.Client.Rendering
 
                 _game.PendingMainThreadActions.Add(() =>
                 {
-                        _vertices = new VertexBuffer(_graphicsDevice, VertexPositionNormalColorTexture.VertexDeclaration,
+                    _vertices = new VertexBuffer(_graphicsDevice, VertexPositionNormalColorTexture.VertexDeclaration,
                         (value.Length + 1), BufferUsage.WriteOnly);
                     _vertices.SetData(value);
+                    _isReady = true;
                 });
 
                 if (_recalculateBounds)
                     BoundingBox = RecalculateBounds(value);
+            }
+        }
+
+        public bool IsReady
+        {
+            get
+            {
+                return _isReady;
+            }
+        }
+
+        public int Submeshes
+        {
+            get
+            {
+                return _submeshes;
             }
         }
 
@@ -118,6 +137,8 @@ namespace TrueCraft.Client.Rendering
                     _indices[index] = new IndexBuffer(_graphicsDevice, typeof(int),
                         (indices.Length + 1), BufferUsage.WriteOnly);
                     _indices[index].SetData(indices);
+                    if (index + 1 > _submeshes)
+                        _submeshes = index + 1;
                 });
             }
         }
