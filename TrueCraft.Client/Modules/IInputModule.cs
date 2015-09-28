@@ -8,5 +8,7 @@ namespace TrueCraft.Client.Modules
         bool KeyDown(GameTime gameTime, KeyboardKeyEventArgs e);
         bool KeyUp(GameTime gameTime, KeyboardKeyEventArgs e);
         void MouseMove(GameTime gameTime, MouseMoveEventArgs e);
+        bool MouseButtonDown(GameTime gameTime, MouseButtonEventArgs e);
+        bool MouseButtonUp(GameTime gameTime, MouseButtonEventArgs e);
     }
 }

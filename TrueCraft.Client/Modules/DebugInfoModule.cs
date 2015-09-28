@@ -52,6 +52,16 @@ namespace TrueCraft.Client.Modules
         {
         }
 
+        public bool MouseButtonDown(GameTime gameTime, MouseButtonEventArgs e)
+        {
+            return false;
+        }
+
+        public bool MouseButtonUp(GameTime gameTime, MouseButtonEventArgs e)
+        {
+            return false;
+        }
+
         public void Update(GameTime gameTime)
         {
         }
@@ -72,21 +82,10 @@ namespace TrueCraft.Client.Modules
                 ChatFormat.Bold + "Running at {0}{1} FPS", GetFPSColor(fps), fps));
 
             Font.DrawText(SpriteBatch, xOrigin, yOrigin + (yOffset * 1),
-                string.Format(ChatFormat.Italic + "{0} vertices, {1} indicies",
-                    Mesh.VerticiesRendered, Mesh.IndiciesRendered));
+                string.Format("Standing at <{0:N2}, {1:N2}, {2:N2}>",
+                Game.Client.Position.X, Game.Client.Position.Y, Game.Client.Position.Z));
 
             Font.DrawText(SpriteBatch, xOrigin, yOrigin + (yOffset * 2),
-                string.Format(ChatFormat.Italic + "{0} chunks", Game.ChunkModule.ChunksRendered));
-
-            Font.DrawText(SpriteBatch, xOrigin, yOrigin + (yOffset * 3),
-                string.Format(ChatFormat.Italic + "<{0:N2}, {1:N2}, {2:N2}>",
-                Game.Client.Position.X, Game.Client.Position.Y, Game.Client.Position.Z));
-
-            Font.DrawText(SpriteBatch, xOrigin, yOrigin + (yOffset * 3),
-                string.Format(ChatFormat.Italic + "<{0:N2}, {1:N2}, {2:N2}>",
-                Game.Client.Position.X, Game.Client.Position.Y, Game.Client.Position.Z));
-
-            Font.DrawText(SpriteBatch, xOrigin, yOrigin + (yOffset * 4),
                 string.Format(ChatColor.Gray + "Looking at {0} ({1})", Game.HighlightedBlock,
                     Enum.GetName(typeof(BlockFace), Game.HighlightedBlockFace)));
 

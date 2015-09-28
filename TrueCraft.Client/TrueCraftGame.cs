@@ -77,13 +77,11 @@ namespace TrueCraft.Client
             MouseCaptured = true;
             Bobbing = 0;
 
-            var keyboardComponent = new KeyboardHandler(this);
-            KeyboardComponent = keyboardComponent;
-            Components.Add(keyboardComponent);
+            KeyboardComponent = new KeyboardHandler(this);
+            Components.Add(KeyboardComponent);
 
-            var mouseComponent = new MouseHandler(this);
-            MouseComponent = mouseComponent;
-            Components.Add(mouseComponent);
+            MouseComponent = new MouseHandler(this);
+            Components.Add(MouseComponent);
         }
 
         void Window_ClientSizeChanged(object sender, EventArgs e)
@@ -122,6 +120,8 @@ namespace TrueCraft.Client
             UpdateCamera();
 
             MouseComponent.Move += OnMouseComponentMove;
+            MouseComponent.ButtonDown += OnMouseComponentButtonDown;
+            MouseComponent.ButtonUp += OnMouseComponentButtonUp;
             KeyboardComponent.KeyDown += OnKeyboardKeyDown;
             KeyboardComponent.KeyUp += OnKeyboardKeyUp;
 
@@ -187,6 +187,32 @@ namespace TrueCraft.Client
                 if (input != null)
                 {
                     if (input.KeyUp(GameTime, e))
+                        break;
+                }
+            }
+        }
+
+        private void OnMouseComponentButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            foreach (var module in Modules)
+            {
+                var input = module as IInputModule;
+                if (input != null)
+                {
+                    if (input.MouseButtonDown(GameTime, e))
+                        break;
+                }
+            }
+        }
+
+        private void OnMouseComponentButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            foreach (var module in Modules)
+            {
+                var input = module as IInputModule;
+                if (input != null)
+                {
+                    if (input.MouseButtonUp(GameTime, e))
                         break;
                 }
             }

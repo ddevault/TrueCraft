@@ -176,17 +176,16 @@ namespace TrueCraft.Client.Rendering
         /// </summary>
         private void Recalculate()
         {
-            var origin = new Microsoft.Xna.Framework.Vector3(
+            var origin = new Vector3(
                 (float)this._position.X,
                 (float)this._position.Y,
                 (float)this._position.Z);
 
-            var direction = Microsoft.Xna.Framework.Vector3.Transform(
-                -Microsoft.Xna.Framework.Vector3.UnitZ,
+            var direction = Vector3.Transform(Vector3.UnitZ,
                 Matrix.CreateRotationX(MathHelper.ToRadians(_pitch)) *
-                Matrix.CreateRotationY(MathHelper.ToRadians(_yaw)));
+                Matrix.CreateRotationY(MathHelper.ToRadians(-(_yaw - 180) + 180)));
 
-            _view = Matrix.CreateLookAt(origin, origin + direction, Microsoft.Xna.Framework.Vector3.Up);
+            _view = Matrix.CreateLookAt(origin, origin + direction, Vector3.Up);
             _projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(_fov), _aspectRatio, _nearZ, _farZ);
             _frustum.Matrix = _view * _projection;
             _isDirty = false;

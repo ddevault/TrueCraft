@@ -48,10 +48,9 @@ namespace TrueCraft.Client.Modules
 
         public void Update(GameTime gameTime)
         {
-            var direction = Microsoft.Xna.Framework.Vector3.Transform(
-                -Microsoft.Xna.Framework.Vector3.UnitZ,
+            var direction = XVector3.Transform(XVector3.UnitZ,
                 Matrix.CreateRotationX(MathHelper.ToRadians(Game.Client.Pitch)) *
-                Matrix.CreateRotationY(MathHelper.ToRadians(Game.Client.Yaw)));
+                Matrix.CreateRotationY(MathHelper.ToRadians(-(Game.Client.Yaw - 180) + 180)));
 
             var cast = VoxelCast.Cast(Game.Client.World,
                 new TRay(Game.Camera.Position, new TVector3(direction.X, direction.Y, direction.Z)),
