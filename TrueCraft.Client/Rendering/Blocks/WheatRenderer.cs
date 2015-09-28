@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using TrueCraft.Core.Logic.Blocks;
 
-namespace TrueCraft.Client.Rendering
+namespace TrueCraft.Client.Rendering.Blocks
 {
     public class WheatRenderer : BlockRenderer
     {

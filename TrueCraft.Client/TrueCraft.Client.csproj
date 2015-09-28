@@ -134,6 +134,7 @@
     <Compile Include="Modules\PlayerControlModule.cs" />
     <Compile Include="Modules\DebugInfoModule.cs" />
     <Compile Include="Modules\HUDModule.cs" />
+    <Compile Include="Rendering\Blocks\CactusRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
