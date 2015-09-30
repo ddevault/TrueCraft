@@ -38,6 +38,7 @@ namespace TrueCraft.Client
         public DateTime StartDigging { get; set; }
         public DateTime EndDigging { get; set; }
         public Coordinates3D TargetBlock { get; set; }
+        public int HotbarSelection { get; set; }
 
         private List<IGameplayModule> Modules { get; set; }
         private SpriteBatch SpriteBatch { get; set; }

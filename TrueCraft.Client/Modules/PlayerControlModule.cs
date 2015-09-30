@@ -78,6 +78,42 @@ namespace TrueCraft.Client.Modules
                     if (Math.Floor(Game.Client.Position.Y) == Game.Client.Position.Y)
                         Game.Client.Velocity += TrueCraft.API.Vector3.Up * 0.3;
                     return true;
+
+                case Keys.NumPad1:
+                    Game.HotbarSelection = 0;
+                    return true;
+
+                case Keys.NumPad2:
+                    Game.HotbarSelection = 1;
+                    return true;
+
+                case Keys.NumPad3:
+                    Game.HotbarSelection = 2;
+                    return true;
+
+                case Keys.NumPad4:
+                    Game.HotbarSelection = 3;
+                    return true;
+
+                case Keys.NumPad5:
+                    Game.HotbarSelection = 4;
+                    return true;
+
+                case Keys.NumPad6:
+                    Game.HotbarSelection = 5;
+                    return true;
+
+                case Keys.NumPad7:
+                    Game.HotbarSelection = 6;
+                    return true;
+
+                case Keys.NumPad8:
+                    Game.HotbarSelection = 7;
+                    return true;
+
+                case Keys.NumPad9:
+                    Game.HotbarSelection = 8;
+                    return true;
             }
             return false;
         }
