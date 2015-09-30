@@ -9,7 +9,7 @@ using TrueCraft.API.World;
 
 namespace TrueCraft.Client.Handlers
 {
-    internal static class ChunkHandler
+    internal static class ChunkHandlers
     {
         public static void HandleBlockChange(IPacket _packet, MultiplayerClient client)
         {

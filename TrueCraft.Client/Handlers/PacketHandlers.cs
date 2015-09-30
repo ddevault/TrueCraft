@@ -17,9 +17,12 @@ namespace TrueCraft.Client.Handlers
             client.RegisterPacketHandler(new SetPlayerPositionPacket().ID, HandlePositionAndLook);
             client.RegisterPacketHandler(new LoginResponsePacket().ID, HandleLoginResponse);
 
-            client.RegisterPacketHandler(new ChunkPreamblePacket().ID, ChunkHandler.HandleChunkPreamble);
-            client.RegisterPacketHandler(new ChunkDataPacket().ID, ChunkHandler.HandleChunkData);
-            client.RegisterPacketHandler(new BlockChangePacket().ID, ChunkHandler.HandleBlockChange);
+            client.RegisterPacketHandler(new ChunkPreamblePacket().ID, ChunkHandlers.HandleChunkPreamble);
+            client.RegisterPacketHandler(new ChunkDataPacket().ID, ChunkHandlers.HandleChunkData);
+            client.RegisterPacketHandler(new BlockChangePacket().ID, ChunkHandlers.HandleBlockChange);
+
+            client.RegisterPacketHandler(new WindowItemsPacket().ID, InventoryHandlers.HandleWindowItems);
+            client.RegisterPacketHandler(new SetSlotPacket().ID, InventoryHandlers.HandleSetSlot);
         }
 
         public static void HandleChatMessage(IPacket _packet, MultiplayerClient client)

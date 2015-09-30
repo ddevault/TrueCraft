@@ -16,6 +16,7 @@ using System.IO;
 using TrueCraft.Core;
 using TrueCraft.API.Physics;
 using TrueCraft.Core.Physics;
+using TrueCraft.Core.Windows;
 
 namespace TrueCraft.Client
 {
@@ -36,6 +37,7 @@ namespace TrueCraft.Client
         public PhysicsEngine Physics { get; set; }
         public bool LoggedIn { get; internal set; }
         public int EntityID { get; internal set; }
+        public InventoryWindow Inventory { get; set; }
 
         public bool Connected
         {
@@ -66,6 +68,7 @@ namespace TrueCraft.Client
             PacketHandlers = new PacketHandler[0x100];
             Handlers.PacketHandlers.RegisterHandlers(this);
             World = new ReadOnlyWorld();
+            Inventory = new InventoryWindow(null);
             var repo = new BlockRepository();
             repo.DiscoverBlockProviders();
             World.World.BlockRepository = repo;

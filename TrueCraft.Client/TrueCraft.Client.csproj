@@ -101,7 +101,6 @@
     <Compile Include="Handlers\PacketHandlers.cs" />
     <Compile Include="Events\ChatMessageEventArgs.cs" />
     <Compile Include="BMFont.cs" />
-    <Compile Include="Handlers\ChunkHandler.cs" />
     <Compile Include="ReadOnlyWorld.cs" />
     <Compile Include="Events\ChunkEventArgs.cs" />
     <Compile Include="Rendering\Mesh.cs" />
@@ -135,6 +134,8 @@
     <Compile Include="Modules\DebugInfoModule.cs" />
     <Compile Include="Modules\HUDModule.cs" />
     <Compile Include="Rendering\Blocks\CactusRenderer.cs" />
+    <Compile Include="Handlers\InventoryHandlers.cs" />
+    <Compile Include="Handlers\ChunkHandlers.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

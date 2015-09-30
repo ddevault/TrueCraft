@@ -5,6 +5,7 @@ using TrueCraft.Client.Input;
 using TrueCraft.Client.Rendering;
 using TrueCraft.API;
 using System;
+using System.Text;
 
 namespace TrueCraft.Client.Modules
 {
@@ -83,7 +84,7 @@ namespace TrueCraft.Client.Modules
 
             Font.DrawText(SpriteBatch, xOrigin, yOrigin + (yOffset * 1),
                 string.Format("Standing at <{0:N2}, {1:N2}, {2:N2}>",
-                Game.Client.Position.X, Game.Client.Position.Y, Game.Client.Position.Z));
+                    Game.Client.Position.X, Game.Client.Position.Y, Game.Client.Position.Z));
 
             Font.DrawText(SpriteBatch, xOrigin, yOrigin + (yOffset * 2),
                 string.Format(ChatColor.Gray + "Looking at {0} ({1})", Game.HighlightedBlock,
@@ -91,6 +92,18 @@ namespace TrueCraft.Client.Modules
 
             Font.DrawText(SpriteBatch, xOrigin, yOrigin + (yOffset * 3),
                 string.Format(ChatColor.Gray + "{0} pending chunks", Game.ChunkModule.ChunkRenderer.PendingChunks));
+
+            var sb = new StringBuilder(ChatColor.DarkGray + "inv: ");
+            for (int i = 0; i < Game.Client.Inventory.Hotbar.Length; i++)
+            {
+                var provider = Game.ItemRepository.GetItemProvider(Game.Client.Inventory.Hotbar[i].ID);
+                if (provider != null)
+                    sb.Append(provider.DisplayName + " ");
+                else
+                    sb.Append("[empty]");
+            }
+
+            Font.DrawText(SpriteBatch, xOrigin, yOrigin + (yOffset * 4), sb.ToString());
 
             SpriteBatch.End();
         }

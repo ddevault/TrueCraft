@@ -18,6 +18,8 @@ namespace TrueCraft.Core.Windows
 
         private void HandleWindowChange(object sender, WindowChangeEventArgs e)
         {
+            if (Repository == null)
+                return;
             var current = Repository.GetRecipe(Bench);
             if (e.SlotIndex == CraftingOutput)
             {
