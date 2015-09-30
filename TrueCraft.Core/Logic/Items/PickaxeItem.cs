@@ -74,6 +74,11 @@ namespace TrueCraft.Core.Logic.Items
 
         public override short ID { get { return 0x10E; } }
 
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(0, 6);
+        }
+
         public override ToolMaterial Material { get { return ToolMaterial.Wood; } }
 
         public override short BaseDurability { get { return 60; } }
@@ -86,6 +91,11 @@ namespace TrueCraft.Core.Logic.Items
         public static readonly short ItemID = 0x112;
 
         public override short ID { get { return 0x112; } }
+
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(1, 6);
+        }
 
         public override ToolMaterial Material { get { return ToolMaterial.Stone; } }
 
@@ -100,6 +110,11 @@ namespace TrueCraft.Core.Logic.Items
 
         public override short ID { get { return 0x101; } }
 
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(2, 6);
+        }
+
         public override ToolMaterial Material { get { return ToolMaterial.Iron; } }
 
         public override short BaseDurability { get { return 251; } }
@@ -113,6 +128,11 @@ namespace TrueCraft.Core.Logic.Items
 
         public override short ID { get { return 0x11D; } }
 
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(4, 6);
+        }
+
         public override ToolMaterial Material { get { return ToolMaterial.Gold; } }
 
         public override short BaseDurability { get { return 33; } }
@@ -125,6 +145,11 @@ namespace TrueCraft.Core.Logic.Items
         public static readonly short ItemID = 0x116;
 
         public override short ID { get { return 0x116; } }
+
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(3, 6);
+        }
 
         public override ToolMaterial Material { get { return ToolMaterial.Diamond; } }
 

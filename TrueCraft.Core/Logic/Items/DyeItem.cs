@@ -30,6 +30,12 @@ namespace TrueCraft.Core.Logic.Items
 
         public override short ID { get { return 0x15F; } }
 
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            // TODO: Support additional textures
+            return new Tuple<int, int>(14, 4);
+        }
+
         public override string DisplayName { get { return "Dye"; } }
 
         public class BoneMealRecipe : ICraftingRecipe

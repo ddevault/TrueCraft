@@ -10,6 +10,11 @@ namespace TrueCraft.Core.Logic.Items
 
         public override short ID { get { return 0x153; } }
 
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(10, 3);
+        }
+
         public override string DisplayName { get { return "Paper"; } }
 
         public ItemStack[,] Pattern

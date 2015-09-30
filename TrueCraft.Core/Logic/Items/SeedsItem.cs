@@ -13,6 +13,11 @@ namespace TrueCraft.Core.Logic.Items
 
         public override short ID { get { return 0x127; } }
 
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(9, 0);
+        }
+
         public override string DisplayName { get { return "Seeds"; } }
 
         public override void ItemUsedOnBlock(Coordinates3D coordinates, ItemStack item, BlockFace face, IWorld world, IRemoteClient user)

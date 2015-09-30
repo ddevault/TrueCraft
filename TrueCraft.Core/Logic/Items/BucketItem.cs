@@ -13,6 +13,11 @@ namespace TrueCraft.Core.Logic.Items
 
         public override short ID { get { return 0x145; } }
 
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(10, 4);
+        }
+
         public override string DisplayName { get { return "Bucket"; } }
 
         protected virtual byte? RelevantBlockType { get { return null; } }

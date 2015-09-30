@@ -63,6 +63,11 @@ namespace TrueCraft.Core.Logic.Items
 
         public override short ID { get { return 0x12D; } }
 
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(0, 3);
+        }
+
         public override ArmorMaterial Material { get { return ArmorMaterial.Leather; } }
 
         public override short BaseDurability { get { return 40; } }
@@ -77,6 +82,11 @@ namespace TrueCraft.Core.Logic.Items
         public static readonly short ItemID = 0x135;
 
         public override short ID { get { return 0x135; } }
+
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(2, 3);
+        }
 
         public override ArmorMaterial Material { get { return ArmorMaterial.Iron; } }
 
@@ -93,6 +103,11 @@ namespace TrueCraft.Core.Logic.Items
 
         public override short ID { get { return 0x13D; } }
 
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(4, 3);
+        }
+
         public override ArmorMaterial Material { get { return ArmorMaterial.Gold; } }
 
         public override short BaseDurability { get { return 80; } }
@@ -108,6 +123,11 @@ namespace TrueCraft.Core.Logic.Items
 
         public override short ID { get { return 0x139; } }
 
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(3, 3);
+        }
+
         public override ArmorMaterial Material { get { return ArmorMaterial.Diamond; } }
 
         public override short BaseDurability { get { return 320; } }
@@ -122,6 +142,11 @@ namespace TrueCraft.Core.Logic.Items
         public static readonly short ItemID = 0x131;
 
         public override short ID { get { return 0x131; } }
+
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(1, 3);
+        }
 
         public override ArmorMaterial Material { get { return ArmorMaterial.Chain; } }
 

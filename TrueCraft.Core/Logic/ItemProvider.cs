@@ -14,6 +14,8 @@ namespace TrueCraft.Core.Logic
     {
         public abstract short ID { get; }
 
+        public abstract Tuple<int, int> GetIconTexture(byte metadata);
+
         public virtual sbyte MaximumStack { get { return 64; } }
 
         public virtual string DisplayName { get { return string.Empty; } }

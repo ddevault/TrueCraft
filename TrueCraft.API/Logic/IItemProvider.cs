@@ -13,5 +13,6 @@ namespace TrueCraft.API.Logic
         void ItemUsedOnNothing(ItemStack item, IWorld world, IRemoteClient user);
         void ItemUsedOnEntity(ItemStack item, IEntity usedOn, IWorld world, IRemoteClient user);
         void ItemUsedOnBlock(Coordinates3D coordinates, ItemStack item, BlockFace face, IWorld world, IRemoteClient user);
+        Tuple<int, int> GetIconTexture(byte metadata);
     }
 }

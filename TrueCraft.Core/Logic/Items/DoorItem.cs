@@ -98,6 +98,11 @@ namespace TrueCraft.Core.Logic.Items
 
         public override short ID { get { return 0x14A; } }
 
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(12, 2);
+        }
+
         public override string DisplayName { get { return "Iron Door"; } }
 
         protected override byte BlockID { get { return IronDoorBlock.BlockID; } }
@@ -108,6 +113,11 @@ namespace TrueCraft.Core.Logic.Items
         public static readonly short ItemID = 0x144;
 
         public override short ID { get { return 0x144; } }
+
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(11, 2);
+        }
 
         public override string DisplayName { get { return "Wooden Door"; } }
 

@@ -187,6 +187,11 @@ namespace TrueCraft.Core.Logic
         /// </summary>
         public abstract byte ID { get; }
 
+        public virtual Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return null; // Blocks are rendered in 3D
+        }
+
         public virtual Coordinates3D GetSupportDirection(BlockDescriptor descriptor)
         {
             return Coordinates3D.Zero;

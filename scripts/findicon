@@ -1,0 +1,12 @@
+#!/bin/bash
+icon=$(cat icons.json | jq ".[] | select(.id==$(printf "%d" $1)) | .icon")
+x=$(printf "%s" $icon | jq ".x")
+y=$(printf "%s" $icon | jq ".y")
+
+cat <<EOF
+
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>($x, $y);
+        }
+EOF

@@ -87,6 +87,11 @@ namespace TrueCraft.Core.Logic.Items
 
         public override short ID { get { return 0x122; } }
 
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(0, 8);
+        }
+
         public override ToolMaterial Material { get { return ToolMaterial.Wood; } }
 
         public override short BaseDurability { get { return 60; } }
@@ -99,6 +104,11 @@ namespace TrueCraft.Core.Logic.Items
         public static readonly short ItemID = 0x123;
 
         public override short ID { get { return 0x123; } }
+
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(1, 8);
+        }
 
         public override ToolMaterial Material { get { return ToolMaterial.Stone; } }
 
@@ -113,6 +123,11 @@ namespace TrueCraft.Core.Logic.Items
 
         public override short ID { get { return 0x124; } }
 
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(2, 8);
+        }
+
         public override ToolMaterial Material { get { return ToolMaterial.Iron; } }
 
         public override short BaseDurability { get { return 251; } }
@@ -126,6 +141,11 @@ namespace TrueCraft.Core.Logic.Items
 
         public override short ID { get { return 0x126; } }
 
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(4, 8);
+        }
+
         public override ToolMaterial Material { get { return ToolMaterial.Gold; } }
 
         public override short BaseDurability { get { return 33; } }
@@ -138,6 +158,11 @@ namespace TrueCraft.Core.Logic.Items
         public static readonly short ItemID = 0x125;
 
         public override short ID { get { return 0x125; } }
+
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(3, 8);
+        }
 
         public override ToolMaterial Material { get { return ToolMaterial.Diamond; } }
 

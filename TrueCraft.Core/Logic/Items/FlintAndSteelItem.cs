@@ -15,6 +15,11 @@ namespace TrueCraft.Core.Logic.Items
         public override short BaseDurability { get { return 65; } }
         public override string DisplayName { get { return "Flint and Steel"; } }
 
+        public override Tuple<int, int> GetIconTexture(byte metadata)
+        {
+            return new Tuple<int, int>(5, 0);
+        }
+
         public ItemStack[,] Pattern
         {
             get
