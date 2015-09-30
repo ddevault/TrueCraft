@@ -31,6 +31,7 @@ namespace TrueCraft.Client
         public event PropertyChangedEventHandler PropertyChanged;
 
         private long connected;
+        private int hotbarSelection;
 
         public TrueCraftUser User { get; set; }
         public ReadOnlyWorld World { get; private set; }
@@ -44,6 +45,16 @@ namespace TrueCraft.Client
             get
             {
                 return Interlocked.Read(ref connected) == 1;
+            }
+        }
+
+        public int HotbarSelection
+        {
+            get { return hotbarSelection; }
+            set
+            {
+                hotbarSelection = value;
+                QueuePacket(new ChangeHeldItemPacket() { Slot = (short)value });
             }
         }
 

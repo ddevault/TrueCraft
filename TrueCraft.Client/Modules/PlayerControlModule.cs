@@ -80,39 +80,39 @@ namespace TrueCraft.Client.Modules
                     return true;
 
                 case Keys.NumPad1:
-                    Game.HotbarSelection = 0;
+                    Game.Client.HotbarSelection = 0;
                     return true;
 
                 case Keys.NumPad2:
-                    Game.HotbarSelection = 1;
+                    Game.Client.HotbarSelection = 1;
                     return true;
 
                 case Keys.NumPad3:
-                    Game.HotbarSelection = 2;
+                    Game.Client.HotbarSelection = 2;
                     return true;
 
                 case Keys.NumPad4:
-                    Game.HotbarSelection = 3;
+                    Game.Client.HotbarSelection = 3;
                     return true;
 
                 case Keys.NumPad5:
-                    Game.HotbarSelection = 4;
+                    Game.Client.HotbarSelection = 4;
                     return true;
 
                 case Keys.NumPad6:
-                    Game.HotbarSelection = 5;
+                    Game.Client.HotbarSelection = 5;
                     return true;
 
                 case Keys.NumPad7:
-                    Game.HotbarSelection = 6;
+                    Game.Client.HotbarSelection = 6;
                     return true;
 
                 case Keys.NumPad8:
-                    Game.HotbarSelection = 7;
+                    Game.Client.HotbarSelection = 7;
                     return true;
 
                 case Keys.NumPad9:
-                    Game.HotbarSelection = 8;
+                    Game.Client.HotbarSelection = 8;
                     return true;
             }
             return false;
