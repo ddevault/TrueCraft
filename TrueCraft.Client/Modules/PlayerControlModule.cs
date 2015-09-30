@@ -14,10 +14,7 @@ namespace TrueCraft.Client.Modules
     public class PlayerControlModule : IInputModule
     {
         private TrueCraftGame Game { get; set; }
-        private DateTime StartDigging { get; set; }
         private DateTime NextAnimation { get; set; }
-        private DateTime EndDigging { get; set; }
-        private Coordinates3D TargetBlock { get; set; }
         private XVector3 Delta { get; set; }
         private bool Capture { get; set; }
 
@@ -25,9 +22,9 @@ namespace TrueCraft.Client.Modules
         {
             Game = game;
             Capture = true;
-            StartDigging = DateTime.MinValue;
-            EndDigging = DateTime.MaxValue;
-            TargetBlock = -Coordinates3D.One;
+            Game.StartDigging = DateTime.MinValue;
+            Game.EndDigging = DateTime.MaxValue;
+            Game.TargetBlock = -Coordinates3D.One;
             NextAnimation = DateTime.MaxValue;
         }
 
@@ -138,7 +135,7 @@ namespace TrueCraft.Client.Modules
             switch (e.Button)
             {
                 case MouseButton.Left:
-                    if (StartDigging == DateTime.MinValue) // Would like to start digging a block
+                    if (Game.StartDigging == DateTime.MinValue) // Would like to start digging a block
                     {
                         var target = Game.HighlightedBlock;
                         if (target != -Coordinates3D.One)
@@ -149,11 +146,11 @@ namespace TrueCraft.Client.Modules
                         var target = Game.HighlightedBlock;
                         if (target == -Coordinates3D.One) // Cancel
                         {
-                            StartDigging = DateTime.MinValue;
-                            EndDigging = DateTime.MaxValue;
-                            TargetBlock = -Coordinates3D.One;
+                            Game.StartDigging = DateTime.MinValue;
+                            Game.EndDigging = DateTime.MaxValue;
+                            Game.TargetBlock = -Coordinates3D.One;
                         }
-                        else if (target != TargetBlock) // Change target
+                        else if (target != Game.TargetBlock) // Change target
                             BeginDigging(target);
                     }
                     return true;
@@ -163,15 +160,16 @@ namespace TrueCraft.Client.Modules
 
         private void BeginDigging(Coordinates3D target)
         {
+            // TODO: Adjust digging time to compensate for latency
             var block = Game.Client.World.GetBlockID(target);
-            TargetBlock = target;
-            StartDigging = DateTime.UtcNow;
+            Game.TargetBlock = target;
+            Game.StartDigging = DateTime.UtcNow;
             short damage;
-            EndDigging = StartDigging.AddMilliseconds(
+            Game.EndDigging = Game.StartDigging.AddMilliseconds(
                 BlockProvider.GetHarvestTime(block, 0, out damage));
             Game.Client.QueuePacket(new PlayerDiggingPacket(
                 PlayerDiggingPacket.Action.StartDigging,
-                TargetBlock.X, (sbyte)TargetBlock.Y, TargetBlock.Z,
+                Game.TargetBlock.X, (sbyte)Game.TargetBlock.Y, Game.TargetBlock.Z,
                 Game.HighlightedBlockFace));
             NextAnimation = DateTime.UtcNow.AddSeconds(0.25);
         }
@@ -181,9 +179,9 @@ namespace TrueCraft.Client.Modules
             switch (e.Button)
             {
                 case MouseButton.Left:
-                    StartDigging = DateTime.MinValue;
-                    EndDigging = DateTime.MaxValue;
-                    TargetBlock = -Coordinates3D.One;
+                    Game.StartDigging = DateTime.MinValue;
+                    Game.EndDigging = DateTime.MaxValue;
+                    Game.TargetBlock = -Coordinates3D.One;
                     return true;
             }
             return false;
@@ -205,7 +203,7 @@ namespace TrueCraft.Client.Modules
             }
             else
                 Game.Client.Velocity *= new TVector3(0, 1, 0);
-            if (EndDigging != DateTime.MaxValue)
+            if (Game.EndDigging != DateTime.MaxValue)
             {
                 if (NextAnimation < DateTime.UtcNow)
                 {
@@ -213,12 +211,13 @@ namespace TrueCraft.Client.Modules
                     Game.Client.QueuePacket(new AnimationPacket(Game.Client.EntityID,
                         AnimationPacket.PlayerAnimation.SwingArm));
                 }
-                if (DateTime.UtcNow > EndDigging && Game.HighlightedBlock == TargetBlock)
+                if (DateTime.UtcNow > Game.EndDigging && Game.HighlightedBlock == Game.TargetBlock)
                 {
                     Game.Client.QueuePacket(new PlayerDiggingPacket(
                         PlayerDiggingPacket.Action.StopDigging,
-                        TargetBlock.X, (sbyte)TargetBlock.Y, TargetBlock.Z,
+                        Game.TargetBlock.X, (sbyte)Game.TargetBlock.Y, Game.TargetBlock.Z,
                         Game.HighlightedBlockFace));
+                    Game.EndDigging = DateTime.MaxValue;
                 }
             }
         }

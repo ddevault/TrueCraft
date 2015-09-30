@@ -47,7 +47,7 @@ namespace TrueCraft.Client.Rendering
                 if (_vertices != null)
                     _vertices.Dispose();
 
-                _game.PendingMainThreadActions.Add(() =>
+                _game.Invoke(() =>
                 {
                     _vertices = new VertexBuffer(_graphicsDevice, VertexPositionNormalColorTexture.VertexDeclaration,
                         (value.Length + 1), BufferUsage.WriteOnly);
@@ -132,7 +132,7 @@ namespace TrueCraft.Client.Rendering
                 if (_indices[index] != null)
                     _indices[index].Dispose();
 
-                _game.PendingMainThreadActions.Add(() =>
+                _game.Invoke(() =>
                 {
                     _indices[index] = new IndexBuffer(_graphicsDevice, typeof(int),
                         (indices.Length + 1), BufferUsage.WriteOnly);

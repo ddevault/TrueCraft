@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using XVector3 = Microsoft.Xna.Framework.Vector3;
 using TVector3 = TrueCraft.API.Vector3;
 using TRay = TrueCraft.API.Ray;
+using TrueCraft.Core.Logic.Blocks;
 
 namespace TrueCraft.Client.Modules
 {
@@ -14,8 +15,13 @@ namespace TrueCraft.Client.Modules
         public TrueCraftGame Game { get; set; }
 
         private BasicEffect HighlightEffect { get; set; }
+        private AlphaTestEffect DestructionEffect { get; set; }
+        private Mesh ProgressMesh { get; set; }
+        private int Progress { get; set; }
+        private static readonly RasterizerState RasterizerState;
         private static readonly VertexPositionColor[] CubeVerticies;
         private static readonly short[] CubeIndicies;
+        private static readonly BlendState DestructionBlendState;
 
         static HighlightModule()
         {
@@ -37,6 +43,18 @@ namespace TrueCraft.Client.Modules
                 0, 4,   4, 7,   7, 6,   6, 2,
                 1, 5,   5, 4,   3, 7,   6, 5
             };
+            DestructionBlendState = new BlendState
+            {
+                ColorSourceBlend = Blend.DestinationColor,
+                ColorDestinationBlend = Blend.SourceColor,
+                AlphaSourceBlend = Blend.DestinationAlpha,
+                AlphaDestinationBlend = Blend.SourceAlpha
+            };
+            RasterizerState = new RasterizerState
+            {
+                DepthBias = -3,
+                SlopeScaleDepthBias = -3
+            };
         }
 
         public HighlightModule(TrueCraftGame game)
@@ -44,6 +62,29 @@ namespace TrueCraft.Client.Modules
             Game = game;
             HighlightEffect = new BasicEffect(Game.GraphicsDevice);
             HighlightEffect.VertexColorEnabled = true;
+            DestructionEffect = new AlphaTestEffect(Game.GraphicsDevice);
+            DestructionEffect.Texture = game.TextureMapper.GetTexture("terrain.png");
+            DestructionEffect.ReferenceAlpha = 1;
+
+            GenerateProgressMesh();
+        }
+
+        private void GenerateProgressMesh()
+        {
+            int[] indicies;
+            var texCoords = new Vector2(Progress, 15);
+            var texture = new[]
+            {
+                texCoords + Vector2.UnitX + Vector2.UnitY,
+                texCoords + Vector2.UnitY,
+                texCoords,
+                texCoords + Vector2.UnitX
+            };
+            for (int i = 0; i < texture.Length; i++)
+                texture[i] *= new Vector2(16f / 256f);
+            var verticies = BlockRenderer.CreateUniformCube(XVector3.Zero,
+                texture, VisibleFaces.All, 0, out indicies, Color.White);
+            ProgressMesh = new Mesh(Game, verticies, indicies);
         }
 
         public void Update(GameTime gameTime)
@@ -62,10 +103,7 @@ namespace TrueCraft.Client.Modules
             {
                 Game.HighlightedBlock = cast.Item1;
                 Game.HighlightedBlockFace = cast.Item2;
-                HighlightEffect.World =
-                    Matrix.CreateTranslation(new XVector3(-0.5f)) *
-                    Matrix.CreateScale(1.01f) *
-                    Matrix.CreateTranslation(new XVector3(0.5f)) *
+                HighlightEffect.World = DestructionEffect.World =
                     Matrix.CreateTranslation(new XVector3(cast.Item1.X, cast.Item1.Y, cast.Item1.Z));
             }
         }
@@ -73,9 +111,11 @@ namespace TrueCraft.Client.Modules
         public void Draw(GameTime gameTime)
         {
             Game.Camera.ApplyTo(HighlightEffect);
+            Game.Camera.ApplyTo(DestructionEffect);
 
             if (Game.HighlightedBlock != -Coordinates3D.One)
             {
+                Game.GraphicsDevice.RasterizerState = RasterizerState;
                 foreach (var pass in HighlightEffect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
@@ -83,6 +123,26 @@ namespace TrueCraft.Client.Modules
                         PrimitiveType.LineList, CubeVerticies, 0,
                         CubeVerticies.Length, CubeIndicies, 0, CubeIndicies.Length / 2);
                 }
+            }
+            if (Game.EndDigging != DateTime.MaxValue)
+            {
+                var diff = Game.EndDigging - DateTime.UtcNow;
+                var total = Game.EndDigging - Game.StartDigging;
+                var progress = (int)(diff.TotalMilliseconds / total.TotalMilliseconds * 10);
+                progress = -(progress - 5) + 5;
+                if (progress > 9)
+                    progress = 9;
+
+                if (progress != Progress)
+                {
+                    Progress = progress;
+                    GenerateProgressMesh();
+                }
+
+                Game.GraphicsDevice.BlendState = DestructionBlendState;
+                ProgressMesh.Draw(DestructionEffect);
+                Game.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+                Game.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             }
         }
     }

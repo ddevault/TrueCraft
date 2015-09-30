@@ -66,7 +66,7 @@ namespace TrueCraft.Client.Modules
 
         void UnloadChunk(ReadOnlyChunk chunk)
         {
-            Game.PendingMainThreadActions.Add(() =>
+            Game.Invoke(() =>
             {
                 ActiveMeshes.Remove(chunk.Coordinates);
                 ChunkMeshes.RemoveAll(m => m.Chunk.Coordinates == chunk.Coordinates);
@@ -80,7 +80,7 @@ namespace TrueCraft.Client.Modules
                 case "Position":
                     var sorter = new ChunkRenderer.ChunkSorter(new Coordinates3D(
                         (int)Game.Client.Position.X, 0, (int)Game.Client.Position.Z));
-                    Game.PendingMainThreadActions.Add(() => ChunkMeshes.Sort(sorter));
+                    Game.Invoke(() => ChunkMeshes.Sort(sorter));
                     break;
             }
         }

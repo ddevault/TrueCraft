@@ -19,6 +19,7 @@ using TrueCraft.Client.Rendering;
 using TVector3 = TrueCraft.API.Vector3;
 using XVector3 = Microsoft.Xna.Framework.Vector3;
 using TrueCraft.Core.Logic;
+using System.Threading;
 
 namespace TrueCraft.Client
 {
@@ -34,12 +35,16 @@ namespace TrueCraft.Client
         public float ScaleFactor { get; set; }
         public Coordinates3D HighlightedBlock { get; set; }
         public BlockFace HighlightedBlockFace { get; set; }
+        public DateTime StartDigging { get; set; }
+        public DateTime EndDigging { get; set; }
+        public Coordinates3D TargetBlock { get; set; }
 
         private List<IGameplayModule> Modules { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
         private KeyboardHandler KeyboardComponent { get; set; }
         private MouseHandler MouseComponent { get; set; }
         private RenderTarget2D RenderTarget { get; set; }
+        private int ThreadID { get; set; }
 
         private FontRenderer Pixel { get; set; }
         private IPEndPoint EndPoint { get; set; }
@@ -139,6 +144,15 @@ namespace TrueCraft.Client
             SpriteBatch = new SpriteBatch(GraphicsDevice);
 
             Window_ClientSizeChanged(null, null);
+            ThreadID = Thread.CurrentThread.ManagedThreadId;
+        }
+
+        public void Invoke(Action action)
+        {
+            if (ThreadID == Thread.CurrentThread.ManagedThreadId)
+                action();
+            else
+                PendingMainThreadActions.Add(action);
         }
 
         private void CreateRenderTarget()
