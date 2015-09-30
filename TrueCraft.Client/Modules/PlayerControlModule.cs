@@ -157,11 +157,23 @@ namespace TrueCraft.Client.Modules
             }
             return false;
         }
+
+        public bool MouseScroll(GameTime gameTime, MouseScrollEventArgs e)
+        {
+            var selected = Game.Client.HotbarSelection;
+            selected += e.DeltaValue > 0 ? -1 : 1;
+            if (selected < 0)
+                selected = 8;
+            if (selected > 8)
+                selected = 0;
+            Game.Client.HotbarSelection = selected;
+            return true;
+        }
         
-        public void MouseMove(GameTime gameTime, MouseMoveEventArgs e)
+        public bool MouseMove(GameTime gameTime, MouseMoveEventArgs e)
         {
             if (!Capture)
-                return;
+                return false;
             var centerX = Game.GraphicsDevice.Viewport.Width / 2;
             var centerY = Game.GraphicsDevice.Viewport.Height / 2;
             Mouse.SetPosition(centerX, centerY);
@@ -173,6 +185,8 @@ namespace TrueCraft.Client.Modules
             Game.Client.Pitch -= look.Y;
             Game.Client.Yaw %= 360;
             Game.Client.Pitch = MathHelper.Clamp(Game.Client.Pitch, -89.9f, 89.9f);
+
+            return true;
         }
 
         public bool MouseButtonDown(GameTime gameTime, MouseButtonEventArgs e)

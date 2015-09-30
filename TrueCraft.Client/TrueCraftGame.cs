@@ -133,6 +133,7 @@ namespace TrueCraft.Client
             Camera = new Camera(GraphicsDevice.Viewport.AspectRatio, 70.0f, 0.1f, 1000.0f);
             UpdateCamera();
 
+            MouseComponent.Scroll += OnMouseComponentScroll;
             MouseComponent.Move += OnMouseComponentMove;
             MouseComponent.ButtonDown += OnMouseComponentButtonDown;
             MouseComponent.ButtonUp += OnMouseComponentButtonUp;
@@ -215,6 +216,19 @@ namespace TrueCraft.Client
             }
         }
 
+        private void OnMouseComponentScroll(object sender, MouseScrollEventArgs e)
+        {
+            foreach (var module in Modules)
+            {
+                var input = module as IInputModule;
+                if (input != null)
+                {
+                    if (input.MouseScroll(GameTime, e))
+                        break;
+                }
+            }
+        }
+
         private void OnMouseComponentButtonDown(object sender, MouseButtonEventArgs e)
         {
             foreach (var module in Modules)
@@ -247,7 +261,10 @@ namespace TrueCraft.Client
             {
                 var input = module as IInputModule;
                 if (input != null)
-                    input.MouseMove(GameTime, e);
+                {
+                    if (input.MouseMove(GameTime, e))
+                        break;
+                }
             }
         }
 

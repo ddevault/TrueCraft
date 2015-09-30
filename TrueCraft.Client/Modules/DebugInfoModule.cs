@@ -49,8 +49,14 @@ namespace TrueCraft.Client.Modules
             return false;
         }
 
-        public void MouseMove(GameTime gameTime, MouseMoveEventArgs e)
+        public bool MouseScroll(GameTime gameTime, MouseScrollEventArgs e)
         {
+            return false;
+        }
+
+        public bool MouseMove(GameTime gameTime, MouseMoveEventArgs e)
+        {
+            return false;
         }
 
         public bool MouseButtonDown(GameTime gameTime, MouseButtonEventArgs e)
