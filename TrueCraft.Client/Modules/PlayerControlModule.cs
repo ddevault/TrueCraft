@@ -79,38 +79,47 @@ namespace TrueCraft.Client.Modules
                         Game.Client.Velocity += TrueCraft.API.Vector3.Up * 0.3;
                     return true;
 
+                case Keys.D1:
                 case Keys.NumPad1:
                     Game.Client.HotbarSelection = 0;
                     return true;
 
+                case Keys.D2:
                 case Keys.NumPad2:
                     Game.Client.HotbarSelection = 1;
                     return true;
 
+                case Keys.D3:
                 case Keys.NumPad3:
                     Game.Client.HotbarSelection = 2;
                     return true;
 
+                case Keys.D4:
                 case Keys.NumPad4:
                     Game.Client.HotbarSelection = 3;
                     return true;
 
+                case Keys.D5:
                 case Keys.NumPad5:
                     Game.Client.HotbarSelection = 4;
                     return true;
 
+                case Keys.D6:
                 case Keys.NumPad6:
                     Game.Client.HotbarSelection = 5;
                     return true;
 
+                case Keys.D7:
                 case Keys.NumPad7:
                     Game.Client.HotbarSelection = 6;
                     return true;
 
+                case Keys.D8:
                 case Keys.NumPad8:
                     Game.Client.HotbarSelection = 7;
                     return true;
 
+                case Keys.D9:
                 case Keys.NumPad9:
                     Game.Client.HotbarSelection = 8;
                     return true;
