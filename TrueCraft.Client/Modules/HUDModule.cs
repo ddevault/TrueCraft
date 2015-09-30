@@ -26,7 +26,7 @@ namespace TrueCraft.Client.Modules
 
         public void Draw(GameTime gameTime)
         {
-            SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            SpriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.NonPremultiplied);
             
             SpriteBatch.Draw(Icons, new Vector2(
                 Game.GraphicsDevice.Viewport.Width / 2 - (8 * Game.ScaleFactor * 2),
