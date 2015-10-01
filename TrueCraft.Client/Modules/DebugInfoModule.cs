@@ -99,18 +99,6 @@ namespace TrueCraft.Client.Modules
             Font.DrawText(SpriteBatch, xOrigin, yOrigin + (yOffset * 3),
                 string.Format(ChatColor.Gray + "{0} pending chunks", Game.ChunkModule.ChunkRenderer.PendingChunks));
 
-            var sb = new StringBuilder(ChatColor.DarkGray + "inv: ");
-            for (int i = 0; i < Game.Client.Inventory.Hotbar.Length; i++)
-            {
-                var provider = Game.ItemRepository.GetItemProvider(Game.Client.Inventory.Hotbar[i].ID);
-                if (provider != null)
-                    sb.Append(provider.DisplayName + " ");
-                else
-                    sb.Append("[empty]");
-            }
-
-            Font.DrawText(SpriteBatch, xOrigin, yOrigin + (yOffset * 4), sb.ToString());
-
             SpriteBatch.End();
         }
 

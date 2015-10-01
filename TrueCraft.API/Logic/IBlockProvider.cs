@@ -6,7 +6,7 @@ using fNbt;
 
 namespace TrueCraft.API.Logic
 {
-    public interface IBlockProvider
+    public interface IBlockProvider : IItemProvider
     {
         byte ID { get; }
         double BlastResistance { get; }

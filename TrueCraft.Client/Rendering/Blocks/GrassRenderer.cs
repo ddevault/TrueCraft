@@ -96,7 +96,7 @@ namespace TrueCraft.Client.Rendering.Blocks
             VisibleFaces faces, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
             var texture = Texture;
-            if (descriptor.Coordinates.Y < World.Height)
+            if (descriptor.Coordinates.Y < World.Height && descriptor.Chunk != null)
             {
                 if (descriptor.Chunk.GetBlockID(descriptor.Coordinates + Coordinates3D.Up) == SnowfallBlock.BlockID)
                 {

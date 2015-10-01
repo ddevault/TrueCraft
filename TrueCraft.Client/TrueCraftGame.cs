@@ -100,6 +100,9 @@ namespace TrueCraft.Client
                 ScaleFactor = 1.0f;
             else
                 ScaleFactor = 1.5f;
+            IconRenderer.PrepareEffects(this);
+            UpdateCamera();
+            CreateRenderTarget();
         }
 
         protected override void Initialize()
@@ -114,7 +117,7 @@ namespace TrueCraft.Client
             Modules.Add(ChunkModule);
             Modules.Add(new HighlightModule(this));
             Modules.Add(new PlayerControlModule(this));
-            Modules.Add(new HUDModule(this));
+            Modules.Add(new HUDModule(this, Pixel));
             Modules.Add(DebugInfoModule);
 
             Client.PropertyChanged += HandleClientPropertyChanged;
@@ -125,6 +128,8 @@ namespace TrueCraft.Client
             itemRepository.DiscoverItemProviders();
             ItemRepository = itemRepository;
             BlockProvider.ItemRepository = ItemRepository;
+
+            IconRenderer.CreateBlocks(this, BlockRepository);
 
             var centerX = GraphicsDevice.Viewport.Width / 2;
             var centerY = GraphicsDevice.Viewport.Height / 2;
@@ -140,11 +145,8 @@ namespace TrueCraft.Client
             KeyboardComponent.KeyDown += OnKeyboardKeyDown;
             KeyboardComponent.KeyUp += OnKeyboardKeyUp;
 
-            Window.ClientSizeChanged += (sender, e) => CreateRenderTarget();
             CreateRenderTarget();
             SpriteBatch = new SpriteBatch(GraphicsDevice);
-
-            Window_ClientSizeChanged(null, null);
             ThreadID = Thread.CurrentThread.ManagedThreadId;
         }
 

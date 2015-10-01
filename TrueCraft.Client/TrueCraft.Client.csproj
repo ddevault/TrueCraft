@@ -136,6 +136,7 @@
     <Compile Include="Rendering\Blocks\CactusRenderer.cs" />
     <Compile Include="Handlers\InventoryHandlers.cs" />
     <Compile Include="Handlers\ChunkHandlers.cs" />
+    <Compile Include="Rendering\IconRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

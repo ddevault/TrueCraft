@@ -1,5 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using TrueCraft.Client.Rendering;
+using TrueCraft.Core.Logic.Items;
+using TrueCraft.API.Logic;
 
 namespace TrueCraft.Client.Modules
 {
@@ -9,13 +12,17 @@ namespace TrueCraft.Client.Modules
         private SpriteBatch SpriteBatch { get; set; }
         private Texture2D GUI { get; set; }
         private Texture2D Icons { get; set; }
+        private Texture2D Items { get; set; }
+        private FontRenderer Font { get; set; }
 
-        public HUDModule(TrueCraftGame game)
+        public HUDModule(TrueCraftGame game, FontRenderer font)
         {
             Game = game;
+            Font = font;
             SpriteBatch = new SpriteBatch(game.GraphicsDevice);
             GUI = game.TextureMapper.GetTexture("gui/gui.png");
             Icons = game.TextureMapper.GetTexture("gui/icons.png");
+            Items = game.TextureMapper.GetTexture("gui/items.png");
         }
 
         public void Update(GameTime gameTime)
@@ -35,7 +42,15 @@ namespace TrueCraft.Client.Modules
                 0, Vector2.Zero, Game.ScaleFactor * 2, SpriteEffects.None, 1);
 
             DrawHotbar(gameTime);
+            DrawHotbarItemSprites(gameTime);
 
+            SpriteBatch.End();
+
+            DrawHotbarBlockSprites(gameTime);
+
+            // Once more, with feeling
+            SpriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.NonPremultiplied);
+            DrawHotbarSlotCounts(gameTime);
             SpriteBatch.End();
         }
 
@@ -72,6 +87,69 @@ namespace TrueCraft.Client.Modules
                 Game.GraphicsDevice.Viewport.Width / 2 - Scale(HotbarBackgroundRect.Width / 2) + Scale(Game.Client.HotbarSelection * 20 - 1),
                 Game.GraphicsDevice.Viewport.Height - Scale(HotbarBackgroundRect.Height + 6)),
                 HotbarSelectionRect, Color.White, 0, Vector2.Zero, Game.ScaleFactor * 2, SpriteEffects.None, 1);
+        }
+
+        private void DrawHotbarItemSprites(GameTime gameTime)
+        {
+            var scale = new Point((int)(16 * Game.ScaleFactor * 2));
+            var origin = new Point((int)(Game.GraphicsDevice.Viewport.Width / 2 - Scale(HotbarBackgroundRect.Width / 2)),
+                    (int)(Game.GraphicsDevice.Viewport.Height - Scale(HotbarBackgroundRect.Height + 5)));
+            origin.X += (int)Scale(3);
+            origin.Y += (int)Scale(3);
+            for (int i = 0; i < Game.Client.Inventory.Hotbar.Length; i++)
+            {
+                var item = Game.Client.Inventory.Hotbar[i];
+                if (item.Empty)
+                    continue;
+                var provider = Game.ItemRepository.GetItemProvider(item.ID);
+                if (provider.GetIconTexture((byte)item.Metadata) == null)
+                    continue;
+                var position = origin + new Point((int)Scale(i * 20), 0);
+                var rect = new Rectangle(position, scale);
+                IconRenderer.RenderItemIcon(SpriteBatch, Items, provider,
+                    (byte)item.Metadata, rect, Color.White); // TODO: Fuck, metadata was supposed to be a short
+            }
+        }
+
+        private void DrawHotbarBlockSprites(GameTime gameTime)
+        {
+            var scale = new Point((int)(16 * Game.ScaleFactor * 2));
+            var origin = new Point((int)(Game.GraphicsDevice.Viewport.Width / 2 - Scale(HotbarBackgroundRect.Width / 2)),
+                    (int)(Game.GraphicsDevice.Viewport.Height - Scale(HotbarBackgroundRect.Height + 5)));
+            origin.X += (int)Scale(3);
+            origin.Y += (int)Scale(3);
+            for (int i = 0; i < Game.Client.Inventory.Hotbar.Length; i++)
+            {
+                var item = Game.Client.Inventory.Hotbar[i];
+                if (item.Empty)
+                    continue;
+                var provider = Game.ItemRepository.GetItemProvider(item.ID) as IBlockProvider;
+                if (provider == null || provider.GetIconTexture((byte)item.Metadata) != null)
+                    continue;
+                var position = origin + new Point((int)Scale(i * 20), 0);
+                var rect = new Rectangle(position, scale);
+                IconRenderer.RenderBlockIcon(Game, Items, provider,
+                    (byte)item.Metadata, rect, Color.White); // TODO: Fuck, metadata was supposed to be a short
+            }
+        }
+
+        private void DrawHotbarSlotCounts(GameTime gameTime)
+        {
+            var origin = new Point((int)(Game.GraphicsDevice.Viewport.Width / 2 - Scale(HotbarBackgroundRect.Width / 2)),
+                    (int)(Game.GraphicsDevice.Viewport.Height - Scale(HotbarBackgroundRect.Height + 5)));
+            origin.X += (int)Scale(3);
+            origin.Y += (int)Scale(3);
+            for (int i = 0; i < Game.Client.Inventory.Hotbar.Length; i++)
+            {
+                var item = Game.Client.Inventory.Hotbar[i];
+                if (item.Empty || item.Count == 1)
+                    continue;
+                int offset = 12;
+                if (item.Count >= 10)
+                    offset -= 6;
+                var position = origin + new Point((int)Scale(i * 20 + offset), (int)Scale(5));
+                Font.DrawText(SpriteBatch, position.X, position.Y, item.Count.ToString(), Game.ScaleFactor);
+            }
         }
 
         #endregion
