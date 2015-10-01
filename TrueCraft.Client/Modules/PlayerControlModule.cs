@@ -213,6 +213,12 @@ namespace TrueCraft.Client.Modules
                             BeginDigging(target);
                     }
                     return true;
+                case MouseButton.Right:
+                    var item = Game.Client.Inventory.Hotbar[Game.Client.HotbarSelection];
+                        Game.Client.QueuePacket(new PlayerBlockPlacementPacket(
+                        Game.HighlightedBlock.X, (sbyte)Game.HighlightedBlock.Y, Game.HighlightedBlock.Z,
+                        Game.HighlightedBlockFace, item.ID, item.Count, item.Metadata));
+                    return true;
             }
             return false;
         }

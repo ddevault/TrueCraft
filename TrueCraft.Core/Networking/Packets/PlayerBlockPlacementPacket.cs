@@ -12,6 +12,18 @@ namespace TrueCraft.Core.Networking.Packets
     {
         public byte ID { get { return 0x0F; } }
 
+        public PlayerBlockPlacementPacket(int x, sbyte y, int z, BlockFace face, short itemID,
+            sbyte? amount, short? metadata)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+            Face = face;
+            ItemID = itemID;
+            Amount = amount;
+            Metadata = metadata;
+        }
+
         public int X;
         public sbyte Y;
         public int Z;
