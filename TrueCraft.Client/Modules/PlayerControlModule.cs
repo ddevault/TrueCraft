@@ -17,11 +17,13 @@ namespace TrueCraft.Client.Modules
         private DateTime NextAnimation { get; set; }
         private XVector3 Delta { get; set; }
         private bool Capture { get; set; }
+        private bool Digging { get; set; }
 
         public PlayerControlModule(TrueCraftGame game)
         {
             Game = game;
             Capture = true;
+            Digging = false;
             Game.StartDigging = DateTime.MinValue;
             Game.EndDigging = DateTime.MaxValue;
             Game.TargetBlock = -Coordinates3D.One;
@@ -194,24 +196,7 @@ namespace TrueCraft.Client.Modules
             switch (e.Button)
             {
                 case MouseButton.Left:
-                    if (Game.StartDigging == DateTime.MinValue) // Would like to start digging a block
-                    {
-                        var target = Game.HighlightedBlock;
-                        if (target != -Coordinates3D.One)
-                            BeginDigging(target);
-                    }
-                    else // Currently digging a block
-                    {
-                        var target = Game.HighlightedBlock;
-                        if (target == -Coordinates3D.One) // Cancel
-                        {
-                            Game.StartDigging = DateTime.MinValue;
-                            Game.EndDigging = DateTime.MaxValue;
-                            Game.TargetBlock = -Coordinates3D.One;
-                        }
-                        else if (target != Game.TargetBlock) // Change target
-                            BeginDigging(target);
-                    }
+                    Digging = true;
                     return true;
                 case MouseButton.Right:
                     var item = Game.Client.Inventory.Hotbar[Game.Client.HotbarSelection];
@@ -244,6 +229,7 @@ namespace TrueCraft.Client.Modules
             switch (e.Button)
             {
                 case MouseButton.Left:
+                    Digging = false;
                     Game.StartDigging = DateTime.MinValue;
                     Game.EndDigging = DateTime.MaxValue;
                     Game.TargetBlock = -Coordinates3D.One;
@@ -254,6 +240,28 @@ namespace TrueCraft.Client.Modules
 
         public void Update(GameTime gameTime)
         {
+            if (Digging)
+            {
+                if (Game.StartDigging == DateTime.MinValue) // Would like to start digging a block
+                {
+                    var target = Game.HighlightedBlock;
+                    if (target != -Coordinates3D.One)
+                        BeginDigging(target);
+                }
+                else // Currently digging a block
+                {
+                    var target = Game.HighlightedBlock;
+                    if (target == -Coordinates3D.One) // Cancel
+                    {
+                        Game.StartDigging = DateTime.MinValue;
+                        Game.EndDigging = DateTime.MaxValue;
+                        Game.TargetBlock = -Coordinates3D.One;
+                    }
+                    else if (target != Game.TargetBlock) // Change target
+                        BeginDigging(target);
+                }
+            }
+
             if (Delta != XVector3.Zero)
             {
                 var lookAt = XVector3.Transform(-Delta,
