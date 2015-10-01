@@ -43,6 +43,7 @@ namespace TrueCraft.Client
         private SpriteBatch SpriteBatch { get; set; }
         private KeyboardHandler KeyboardComponent { get; set; }
         private MouseHandler MouseComponent { get; set; }
+        private GamePadHandler GamePadComponent { get; set; }
         private RenderTarget2D RenderTarget { get; set; }
         private int ThreadID { get; set; }
 
@@ -90,6 +91,9 @@ namespace TrueCraft.Client
 
             MouseComponent = new MouseHandler(this);
             Components.Add(MouseComponent);
+
+            GamePadComponent = new GamePadHandler(this);
+            Components.Add(GamePadComponent);
         }
 
         void Window_ClientSizeChanged(object sender, EventArgs e)
@@ -144,6 +148,8 @@ namespace TrueCraft.Client
             MouseComponent.ButtonUp += OnMouseComponentButtonUp;
             KeyboardComponent.KeyDown += OnKeyboardKeyDown;
             KeyboardComponent.KeyUp += OnKeyboardKeyUp;
+            GamePadComponent.ButtonDown += OnGamePadButtonDown;
+            GamePadComponent.ButtonUp += OnGamePadButtonUp;
 
             CreateRenderTarget();
             SpriteBatch = new SpriteBatch(GraphicsDevice);
@@ -213,6 +219,32 @@ namespace TrueCraft.Client
                 if (input != null)
                 {
                     if (input.KeyUp(GameTime, e))
+                        break;
+                }
+            }
+        }
+
+        private void OnGamePadButtonUp(object sender, GamePadButtonEventArgs e)
+        {
+            foreach (var module in Modules)
+            {
+                var input = module as IInputModule;
+                if (input != null)
+                {
+                    if (input.GamePadButtonUp(GameTime, e))
+                        break;
+                }
+            }
+        }
+
+        private void OnGamePadButtonDown(object sender, GamePadButtonEventArgs e)
+        {
+            foreach (var module in Modules)
+            {
+                var input = module as IInputModule;
+                if (input != null)
+                {
+                    if (input.GamePadButtonDown(GameTime, e))
                         break;
                 }
             }

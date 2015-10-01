@@ -9,7 +9,7 @@ using System.Text;
 
 namespace TrueCraft.Client.Modules
 {
-    public class DebugInfoModule : IGraphicalModule, IInputModule
+    public class DebugInfoModule : InputModule, IGraphicalModule
     {
         public bool Chunks { get; set; }
 
@@ -28,7 +28,7 @@ namespace TrueCraft.Client.Modules
 #endif
         }
 
-        public bool KeyDown(GameTime gameTime, KeyboardKeyEventArgs e)
+        public override bool KeyDown(GameTime gameTime, KeyboardKeyEventArgs e)
         {
             switch (e.Key)
             {
@@ -38,7 +38,7 @@ namespace TrueCraft.Client.Modules
             return false;
         }
 
-        public bool KeyUp(GameTime gameTime, KeyboardKeyEventArgs e)
+        public override bool KeyUp(GameTime gameTime, KeyboardKeyEventArgs e)
         {
             switch (e.Key)
             {
@@ -47,30 +47,6 @@ namespace TrueCraft.Client.Modules
                     return true;
             }
             return false;
-        }
-
-        public bool MouseScroll(GameTime gameTime, MouseScrollEventArgs e)
-        {
-            return false;
-        }
-
-        public bool MouseMove(GameTime gameTime, MouseMoveEventArgs e)
-        {
-            return false;
-        }
-
-        public bool MouseButtonDown(GameTime gameTime, MouseButtonEventArgs e)
-        {
-            return false;
-        }
-
-        public bool MouseButtonUp(GameTime gameTime, MouseButtonEventArgs e)
-        {
-            return false;
-        }
-
-        public void Update(GameTime gameTime)
-        {
         }
         
         public void Draw(GameTime gameTime)

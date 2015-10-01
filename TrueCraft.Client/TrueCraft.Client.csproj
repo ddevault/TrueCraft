@@ -137,6 +137,10 @@
     <Compile Include="Handlers\InventoryHandlers.cs" />
     <Compile Include="Handlers\ChunkHandlers.cs" />
     <Compile Include="Rendering\IconRenderer.cs" />
+    <Compile Include="Modules\InputModule.cs" />
+    <Compile Include="Input\GamePadHandler.cs" />
+    <Compile Include="Input\GamePadEventArgs.cs" />
+    <Compile Include="Input\GamePadButtonEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

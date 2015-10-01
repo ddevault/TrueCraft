@@ -11,13 +11,14 @@ using TrueCraft.Core.Networking.Packets;
 
 namespace TrueCraft.Client.Modules
 {
-    public class PlayerControlModule : IInputModule
+    public class PlayerControlModule : InputModule
     {
         private TrueCraftGame Game { get; set; }
         private DateTime NextAnimation { get; set; }
         private XVector3 Delta { get; set; }
         private bool Capture { get; set; }
         private bool Digging { get; set; }
+        private GamePadState GamePadState { get; set; }
 
         public PlayerControlModule(TrueCraftGame game)
         {
@@ -28,9 +29,10 @@ namespace TrueCraft.Client.Modules
             Game.EndDigging = DateTime.MaxValue;
             Game.TargetBlock = -Coordinates3D.One;
             NextAnimation = DateTime.MaxValue;
+            GamePadState = GamePad.GetState(PlayerIndex.One);
         }
 
-        public bool KeyDown(GameTime gameTime, KeyboardKeyEventArgs e)
+        public override bool KeyDown(GameTime gameTime, KeyboardKeyEventArgs e)
         {
             switch (e.Key)
             {
@@ -129,7 +131,7 @@ namespace TrueCraft.Client.Modules
             return false;
         }
 
-        public bool KeyUp(GameTime gameTime, KeyboardKeyEventArgs e)
+        public override bool KeyUp(GameTime gameTime, KeyboardKeyEventArgs e)
         {
             switch (e.Key)
             {
@@ -160,7 +162,36 @@ namespace TrueCraft.Client.Modules
             return false;
         }
 
-        public bool MouseScroll(GameTime gameTime, MouseScrollEventArgs e)
+        public override bool GamePadButtonDown(GameTime gameTime, GamePadButtonEventArgs e)
+        {
+            var selected = Game.Client.HotbarSelection;
+            switch (e.Button)
+            {
+                case Buttons.LeftShoulder:
+                    selected--;
+                    if (selected < 0)
+                        selected = 8;
+                    if (selected > 8)
+                        selected = 0;
+                    Game.Client.HotbarSelection = selected;
+                    break;
+                case Buttons.RightShoulder:
+                    selected++;
+                    if (selected < 0)
+                        selected = 8;
+                    if (selected > 8)
+                        selected = 0;
+                    Game.Client.HotbarSelection = selected;
+                    break;
+                case Buttons.A:
+                    if (Math.Floor(Game.Client.Position.Y) == Game.Client.Position.Y)
+                        Game.Client.Velocity += TrueCraft.API.Vector3.Up * 0.3;
+                    break;
+            }
+            return false;
+        }
+
+        public override bool MouseScroll(GameTime gameTime, MouseScrollEventArgs e)
         {
             var selected = Game.Client.HotbarSelection;
             selected += e.DeltaValue > 0 ? -1 : 1;
@@ -172,7 +203,7 @@ namespace TrueCraft.Client.Modules
             return true;
         }
         
-        public bool MouseMove(GameTime gameTime, MouseMoveEventArgs e)
+        public override bool MouseMove(GameTime gameTime, MouseMoveEventArgs e)
         {
             if (!Capture)
                 return false;
@@ -191,7 +222,7 @@ namespace TrueCraft.Client.Modules
             return true;
         }
 
-        public bool MouseButtonDown(GameTime gameTime, MouseButtonEventArgs e)
+        public override bool MouseButtonDown(GameTime gameTime, MouseButtonEventArgs e)
         {
             switch (e.Button)
             {
@@ -224,23 +255,47 @@ namespace TrueCraft.Client.Modules
             NextAnimation = DateTime.UtcNow.AddSeconds(0.25);
         }
 
-        public bool MouseButtonUp(GameTime gameTime, MouseButtonEventArgs e)
+        public override bool MouseButtonUp(GameTime gameTime, MouseButtonEventArgs e)
         {
             switch (e.Button)
             {
                 case MouseButton.Left:
                     Digging = false;
-                    Game.StartDigging = DateTime.MinValue;
-                    Game.EndDigging = DateTime.MaxValue;
-                    Game.TargetBlock = -Coordinates3D.One;
                     return true;
             }
             return false;
         }
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
-            if (Digging)
+            var delta = Delta;
+
+            var gamePad = GamePad.GetState(PlayerIndex.One); // TODO: Can this stuff be done effectively in the GamePadHandler?
+            if (gamePad.IsConnected && gamePad.ThumbSticks.Left.Length() != 0)
+                delta = new XVector3(gamePad.ThumbSticks.Left.X, 0, gamePad.ThumbSticks.Left.Y);
+
+            var digging = Digging;
+
+            if (gamePad.IsConnected && gamePad.Triggers.Right > 0.5f)
+                digging = true;
+            if (gamePad.IsConnected && gamePad.Triggers.Left > 0.5f && GamePadState.Triggers.Left < 0.5f)
+            {
+                var item = Game.Client.Inventory.Hotbar[Game.Client.HotbarSelection];
+                Game.Client.QueuePacket(new PlayerBlockPlacementPacket(
+                    Game.HighlightedBlock.X, (sbyte)Game.HighlightedBlock.Y, Game.HighlightedBlock.Z,
+                    Game.HighlightedBlockFace, item.ID, item.Count, item.Metadata));
+            }
+            if (gamePad.IsConnected && gamePad.ThumbSticks.Right.Length() != 0)
+            {
+                var look = -(gamePad.ThumbSticks.Right * 8) * (float)(gameTime.ElapsedGameTime.TotalSeconds * 30);
+
+                Game.Client.Yaw -= look.X;
+                Game.Client.Pitch -= look.Y;
+                Game.Client.Yaw %= 360;
+                Game.Client.Pitch = MathHelper.Clamp(Game.Client.Pitch, -89.9f, 89.9f);
+            }
+
+            if (digging)
             {
                 if (Game.StartDigging == DateTime.MinValue) // Would like to start digging a block
                 {
@@ -261,10 +316,16 @@ namespace TrueCraft.Client.Modules
                         BeginDigging(target);
                 }
             }
-
-            if (Delta != XVector3.Zero)
+            else
             {
-                var lookAt = XVector3.Transform(-Delta,
+                Game.StartDigging = DateTime.MinValue;
+                Game.EndDigging = DateTime.MaxValue;
+                Game.TargetBlock = -Coordinates3D.One;
+            }
+
+            if (delta != XVector3.Zero)
+            {
+                var lookAt = XVector3.Transform(-delta,
                                  Matrix.CreateRotationY(MathHelper.ToRadians(-(Game.Client.Yaw - 180) + 180)));
 
                 lookAt.X *= (float)(gameTime.ElapsedGameTime.TotalSeconds * 4.3717);
@@ -293,6 +354,8 @@ namespace TrueCraft.Client.Modules
                     Game.EndDigging = DateTime.MaxValue;
                 }
             }
+
+            GamePadState = gamePad;
         }
     }
 }
