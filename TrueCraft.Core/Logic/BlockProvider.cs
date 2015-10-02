@@ -115,8 +115,6 @@ namespace TrueCraft.Core.Logic
 
         public virtual void ItemUsedOnBlock(Coordinates3D coordinates, ItemStack item, BlockFace face, IWorld world, IRemoteClient user)
         {
-            coordinates += MathHelper.BlockFaceToCoordinates(face);
-            var old = world.GetBlockData(coordinates);
             byte[] overwritable =
                 {
                     AirBlock.BlockID,
@@ -126,42 +124,48 @@ namespace TrueCraft.Core.Logic
                     StationaryLavaBlock.BlockID,
                     SnowfallBlock.BlockID
                 };
-            if (overwritable.Any(b => b == old.ID))
+            var old = world.GetBlockData(coordinates);
+            if (!overwritable.Any(b => b == old.ID))
             {
-                // Test for entities
-                var em = user.Server.GetEntityManagerForWorld(world);
-                var entities = em.EntitiesInRange(coordinates, 2);
-                var box = new BoundingBox(coordinates, coordinates + Vector3.One);
-                foreach (var entity in entities)
+                coordinates += MathHelper.BlockFaceToCoordinates(face);
+                old = world.GetBlockData(coordinates);
+                if (!overwritable.Any(b => b == old.ID))
+                    return;
+            }
+
+            // Test for entities
+            var em = user.Server.GetEntityManagerForWorld(world);
+            var entities = em.EntitiesInRange(coordinates, 2);
+            var box = new BoundingBox(coordinates, coordinates + Vector3.One);
+            foreach (var entity in entities)
+            {
+                var aabb = entity as IAABBEntity;
+                if (aabb != null && !(entity is ItemEntity))
                 {
-                    var aabb = entity as IAABBEntity;
-                    if (aabb != null && !(entity is ItemEntity))
-                    {
-                        if (aabb.BoundingBox.Intersects(box) && false) // TODO: Figure out
-                            return;
-                    }
-                    var player = entity as PlayerEntity; // Players do not implement IAABBEntity
-                    if (player != null)
-                    {
-                        if (new BoundingBox(player.Position, player.Position + player.Size)
-                            .Intersects(box) && false)
-                            return;
-                    }
+                    if (aabb.BoundingBox.Intersects(box) && false) // TODO: Figure out
+                        return;
                 }
-
-                // Place block
-                world.SetBlockID(coordinates, ID);
-                world.SetMetadata(coordinates, (byte)item.Metadata);
-
-                BlockPlaced(world.GetBlockData(coordinates), face, world, user);
-
-                if (!IsSupported(world.GetBlockData(coordinates), user.Server, world))
-                    world.SetBlockData(coordinates, old);
-                else
+                var player = entity as PlayerEntity; // Players do not implement IAABBEntity
+                if (player != null)
                 {
-                    item.Count--;
-                    user.Inventory[user.SelectedSlot] = item;
+                    if (new BoundingBox(player.Position, player.Position + player.Size)
+                        .Intersects(box) && false)
+                        return;
                 }
+            }
+
+            // Place block
+            world.SetBlockID(coordinates, ID);
+            world.SetMetadata(coordinates, (byte)item.Metadata);
+
+            BlockPlaced(world.GetBlockData(coordinates), face, world, user);
+
+            if (!IsSupported(world.GetBlockData(coordinates), user.Server, world))
+                world.SetBlockData(coordinates, old);
+            else
+            {
+                item.Count--;
+                user.Inventory[user.SelectedSlot] = item;
             }
         }
 
