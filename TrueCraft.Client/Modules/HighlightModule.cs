@@ -90,8 +90,8 @@ namespace TrueCraft.Client.Modules
         public void Update(GameTime gameTime)
         {
             var direction = XVector3.Transform(XVector3.UnitZ,
-                Matrix.CreateRotationX(MathHelper.ToRadians(Game.Client.Pitch)) *
-                Matrix.CreateRotationY(MathHelper.ToRadians(-(Game.Client.Yaw - 180) + 180)));
+            Matrix.CreateRotationX(MathHelper.ToRadians(Game.Client.Pitch)) *
+            Matrix.CreateRotationY(MathHelper.ToRadians(-(Game.Client.Yaw - 180) + 180)));
 
             var cast = VoxelCast.Cast(Game.Client.World,
                 new TRay(Game.Camera.Position, new TVector3(direction.X, direction.Y, direction.Z)),
@@ -101,10 +101,21 @@ namespace TrueCraft.Client.Modules
                 Game.HighlightedBlock = -Coordinates3D.One;
             else
             {
-                Game.HighlightedBlock = cast.Item1;
-                Game.HighlightedBlockFace = cast.Item2;
-                HighlightEffect.World = DestructionEffect.World =
-                    Matrix.CreateTranslation(new XVector3(cast.Item1.X, cast.Item1.Y, cast.Item1.Z));
+                var provider = Game.BlockRepository.GetBlockProvider(Game.Client.World.GetBlockID(cast.Item1));
+                if (provider.InteractiveBoundingBox != null)
+                {
+                    var box = provider.InteractiveBoundingBox.Value;
+
+                    Game.HighlightedBlock = cast.Item1;
+                    Game.HighlightedBlockFace = cast.Item2;
+
+                    DestructionEffect.World =
+                        Matrix.CreateTranslation(new XVector3(cast.Item1.X, cast.Item1.Y, cast.Item1.Z));
+                    HighlightEffect.World = Matrix.Identity
+                        * Matrix.CreateScale(new XVector3((float)box.Width, (float)box.Height, (float)box.Depth))
+                        * Matrix.CreateTranslation(new XVector3((float)box.Min.X, (float)box.Min.Y, (float)box.Min.Z))
+                        * Matrix.CreateTranslation(new XVector3(cast.Item1.X, cast.Item1.Y, cast.Item1.Z));
+                }
             }
         }
 

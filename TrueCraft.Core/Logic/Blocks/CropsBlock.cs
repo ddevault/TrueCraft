@@ -24,7 +24,15 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override string DisplayName { get { return "Crops"; } }
 
-        public override TrueCraft.API.BoundingBox? BoundingBox { get { return null; } }
+        public override BoundingBox? BoundingBox { get { return null; } }
+
+        public override BoundingBox? InteractiveBoundingBox
+        {
+            get
+            {
+                return new BoundingBox(Vector3.Zero, new Vector3(1, 3 / 16.0, 1));
+            }
+        }
 
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {

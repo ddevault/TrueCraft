@@ -271,6 +271,14 @@ namespace TrueCraft.Core.Logic
             }
         }
 
+        public virtual BoundingBox? InteractiveBoundingBox
+        {
+            get
+            {
+                return BoundingBox;
+            }
+        }
+
         /// <summary>
         /// Gets the time required to mine the given block with the given item.
         /// </summary>

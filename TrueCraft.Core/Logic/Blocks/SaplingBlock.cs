@@ -29,6 +29,14 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override BoundingBox? BoundingBox { get { return null; } }
 
+        public override BoundingBox? InteractiveBoundingBox
+        {
+            get
+            {
+                return new BoundingBox(new Vector3(1 / 16.0, 0, 1 / 16.0), new Vector3(14 / 16.0));
+            }
+        }
+
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(15, 0);

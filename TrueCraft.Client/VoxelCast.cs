@@ -35,7 +35,7 @@ namespace TrueCraft.Client
                         if (id != 0)
                         {
                             var provider = repository.GetBlockProvider(id);
-                            var box = provider.BoundingBox;
+                            var box = provider.InteractiveBoundingBox;
                             if (box != null)
                             {
                                 BlockFace _face;
