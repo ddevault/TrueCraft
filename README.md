@@ -40,7 +40,7 @@ If you are a dirty dev, you are more limited in how you can help. You can work o
 
 ## Assets
 
-TrueCraft is compatible with Minecraft beta 1.7.3 texture packs. We ship one of our own, based on [Programmer Art](https://github.com/deathcap/ProgrammerArt). You can install the official assets through the TrueCraft launcher if you wish.
+TrueCraft is compatible with Minecraft beta 1.7.3 texture packs. We ship the Pixeludi Pack (by Wojtek Mroczek) by default. You can install the Mojang assets through the TrueCraft launcher if you wish.
 
 ## Blah blah blah
 

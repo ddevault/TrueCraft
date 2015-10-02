@@ -276,7 +276,7 @@ namespace TrueCraft.Client.Modules
 
             var digging = Digging;
 
-            if (gamePad.IsConnected && gamePad.Triggers.Right > 0.5f)
+            if (gamePad.IsConnected && gamePad.Triggers.Right > 0.5f && gamePad.Triggers.Right < 0.5f)
                 digging = true;
             if (gamePad.IsConnected && gamePad.Triggers.Left > 0.5f && GamePadState.Triggers.Left < 0.5f)
             {
