@@ -123,7 +123,8 @@ namespace TrueCraft.Core.Logic
                     WaterBlock.BlockID,
                     StationaryWaterBlock.BlockID,
                     LavaBlock.BlockID,
-                    StationaryLavaBlock.BlockID
+                    StationaryLavaBlock.BlockID,
+                    SnowfallBlock.BlockID
                 };
             if (overwritable.Any(b => b == old.ID))
             {

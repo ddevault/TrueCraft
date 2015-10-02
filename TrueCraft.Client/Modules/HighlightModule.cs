@@ -109,9 +109,7 @@ namespace TrueCraft.Client.Modules
                     Game.HighlightedBlock = cast.Item1;
                     Game.HighlightedBlockFace = cast.Item2;
 
-                    DestructionEffect.World =
-                        Matrix.CreateTranslation(new XVector3(cast.Item1.X, cast.Item1.Y, cast.Item1.Z));
-                    HighlightEffect.World = Matrix.Identity
+                    DestructionEffect.World = HighlightEffect.World = Matrix.Identity
                         * Matrix.CreateScale(new XVector3((float)box.Width, (float)box.Height, (float)box.Depth))
                         * Matrix.CreateTranslation(new XVector3((float)box.Min.X, (float)box.Min.Y, (float)box.Min.Z))
                         * Matrix.CreateTranslation(new XVector3(cast.Item1.X, cast.Item1.Y, cast.Item1.Z));
