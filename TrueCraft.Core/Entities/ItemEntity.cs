@@ -54,7 +54,10 @@ namespace TrueCraft.Core.Entities
 
         public void TerrainCollision(Vector3 collisionPoint, Vector3 collisionDirection)
         {
-            // This space intentionally left blank
+            if (collisionDirection == Vector3.Down)
+            {
+                Velocity = Vector3.Zero;
+            }
         }
 
         public override byte EntityType
@@ -103,7 +106,7 @@ namespace TrueCraft.Core.Entities
             if ((DateTime.UtcNow - SpawnTime).TotalSeconds > 1)
             {
                 var player = nearbyEntities.FirstOrDefault(e => e is PlayerEntity && (e as PlayerEntity).Health != 0
-                                 && e.Position.DistanceTo(Position) <= PickupRange);
+                    && e.Position.DistanceTo(Position) <= PickupRange);
                 if (player != null)
                 {
                     var playerEntity = player as PlayerEntity;

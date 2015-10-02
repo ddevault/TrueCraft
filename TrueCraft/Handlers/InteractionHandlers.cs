@@ -39,7 +39,7 @@ namespace TrueCraft.Handlers
                     var inventory = client.SelectedItem;
                     inventory.Count--;
                     var item = new ItemEntity(client.Entity.Position + new Vector3(0, PlayerEntity.Height, 0), spawned);
-                    item.Velocity = MathHelper.FowardVector(client.Entity.Yaw) * 0.3;
+                    item.Velocity = MathHelper.RotateY(Vector3.Forwards, MathHelper.DegreesToRadians(client.Entity.Yaw)) * 0.5;
                     client.Inventory[client.SelectedSlot] = inventory;
                     server.GetEntityManagerForWorld(client.World).SpawnEntity(item);
                     break;
