@@ -50,7 +50,7 @@ namespace TrueCraft.Core.Logic.Blocks
         {
             get
             {
-                return false;
+                return true;
             }
         }
     }
