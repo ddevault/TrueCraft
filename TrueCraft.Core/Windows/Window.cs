@@ -4,14 +4,19 @@ using System.Linq;
 using System.Text;
 using TrueCraft.API.Windows;
 using TrueCraft.API;
+using TrueCraft.API.Networking;
 
 namespace TrueCraft.Core.Windows
 {
-    public abstract class Window : IWindow, IDisposable
+    public abstract class Window : IWindow, IDisposable, IEventSubject
     {
         public abstract IWindowArea[] WindowAreas { get; protected set; }
 
         public event EventHandler<WindowChangeEventArgs> WindowChange;
+
+        public bool IsDisposed { get; private set; }
+
+        public IRemoteClient Client { get; set; }
 
         public virtual void MoveToAlternateArea(int index)
         {
@@ -142,6 +147,8 @@ namespace TrueCraft.Core.Windows
                 WindowChange(this, e);
         }
 
+        public event EventHandler Disposed;
+
         public virtual void Dispose()
         {
             for (int i = 0; i < WindowAreas.Length; i++)
@@ -149,6 +156,10 @@ namespace TrueCraft.Core.Windows
                 WindowAreas[i].Dispose();
             }
             WindowChange = null;
+            if (Disposed != null)
+                Disposed(this, null);
+            Client = null;
+            IsDisposed = true;
         }
     }
 }

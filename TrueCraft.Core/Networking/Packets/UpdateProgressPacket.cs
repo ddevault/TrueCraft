@@ -16,6 +16,13 @@ namespace TrueCraft.Core.Networking.Packets
 
         public byte ID { get { return 0x69; } }
 
+        public UpdateProgressPacket(sbyte windowID, ProgressTarget target, short value)
+        {
+            WindowID = windowID;
+            Target = target;
+            Value = value;
+        }
+
         public sbyte WindowID;
         public ProgressTarget Target;
         /// <summary>

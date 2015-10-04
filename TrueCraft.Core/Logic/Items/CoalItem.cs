@@ -3,7 +3,7 @@ using TrueCraft.API.Logic;
 
 namespace TrueCraft.Core.Logic.Items
 {
-    public class CoalItem : ItemProvider
+    public class CoalItem : ItemProvider, IBurnableItem
     {
         public static readonly short ItemID = 0x107;
 
@@ -15,5 +15,7 @@ namespace TrueCraft.Core.Logic.Items
         }
 
         public override string DisplayName { get { return "Coal"; } }
+
+        public TimeSpan BurnTime { get { return TimeSpan.FromSeconds(80); } }
     }
 }

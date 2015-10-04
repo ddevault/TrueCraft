@@ -1,10 +1,11 @@
 using System;
 using TrueCraft.API.Logic;
 using TrueCraft.API;
+using TrueCraft.Core.Logic.Items;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class IronOreBlock : BlockProvider
+    public class IronOreBlock : BlockProvider, ISmeltableItem
     {
         public static readonly byte BlockID = 0x0F;
         
@@ -38,5 +39,7 @@ namespace TrueCraft.Core.Logic.Blocks
                 return ToolType.Pickaxe;
             }
         }
+
+        public ItemStack SmeltingOutput { get { return new ItemStack(IronIngotItem.ItemID); } }
     }
 }

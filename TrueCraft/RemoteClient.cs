@@ -208,6 +208,7 @@ namespace TrueCraft
         public void OpenWindow(IWindow window)
         {
             CurrentWindow = window;
+            window.Client = this;
             window.ID = NextWindowID++;
             if (NextWindowID < 0) NextWindowID = 1;
             QueuePacket(new OpenWindowPacket(window.ID, window.Type, window.Name, (sbyte)window.MinecraftWasWrittenByFuckingIdiotsLength));

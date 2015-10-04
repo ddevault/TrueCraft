@@ -1,4 +1,5 @@
 ﻿using System;
+using TrueCraft.API.Networking;
 
 namespace TrueCraft.API.Windows
 {
@@ -6,6 +7,7 @@ namespace TrueCraft.API.Windows
     {
         event EventHandler<WindowChangeEventArgs> WindowChange;
 
+        IRemoteClient Client { get; set; }
         IWindowArea[] WindowAreas { get; }
         sbyte ID { get; set; }
         string Name { get; }

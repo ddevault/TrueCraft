@@ -122,6 +122,8 @@
     <Compile Include="Physics\IPhysicsEngine.cs" />
     <Compile Include="Physics\IPhysicsEntity.cs" />
     <Compile Include="Physics\IAABBEntity.cs" />
+    <Compile Include="Logic\ISmeltableItem.cs" />
+    <Compile Include="Logic\IBurnableItem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
