@@ -21,6 +21,7 @@ namespace TrueCraft.Core.Entities
         {
             Position = position;
             Item = item;
+            Velocity = new Vector3(MathHelper.Random.NextDouble() * 0.25 - 0.125, 0.25, MathHelper.Random.NextDouble() * 0.25 - 0.125);
             if (item.Empty)
                 Despawned = true;
         }

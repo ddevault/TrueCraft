@@ -324,7 +324,7 @@ namespace TrueCraft.Client
         {
             get
             {
-                return 1.98f;
+                return 1.6f;
             }
         }
 

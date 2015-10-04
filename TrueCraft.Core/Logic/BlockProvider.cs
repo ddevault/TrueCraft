@@ -115,23 +115,24 @@ namespace TrueCraft.Core.Logic
             // This space intentionally left blank
         }
 
+        public static readonly byte[] Overwritable =
+        {
+            AirBlock.BlockID,
+            WaterBlock.BlockID,
+            StationaryWaterBlock.BlockID,
+            LavaBlock.BlockID,
+            StationaryLavaBlock.BlockID,
+            SnowfallBlock.BlockID
+        };
+
         public virtual void ItemUsedOnBlock(Coordinates3D coordinates, ItemStack item, BlockFace face, IWorld world, IRemoteClient user)
         {
-            byte[] overwritable =
-                {
-                    AirBlock.BlockID,
-                    WaterBlock.BlockID,
-                    StationaryWaterBlock.BlockID,
-                    LavaBlock.BlockID,
-                    StationaryLavaBlock.BlockID,
-                    SnowfallBlock.BlockID
-                };
             var old = world.GetBlockData(coordinates);
-            if (!overwritable.Any(b => b == old.ID))
+            if (!Overwritable.Any(b => b == old.ID))
             {
                 coordinates += MathHelper.BlockFaceToCoordinates(face);
                 old = world.GetBlockData(coordinates);
-                if (!overwritable.Any(b => b == old.ID))
+                if (!Overwritable.Any(b => b == old.ID))
                     return;
             }
 

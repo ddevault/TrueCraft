@@ -7,6 +7,8 @@ using TrueCraft.API.Server;
 using TrueCraft.API.World;
 using TrueCraft.Core.Logic.Blocks;
 using TrueCraft.API.Physics;
+using TrueCraft.Core.Logic;
+using System.Linq;
 
 namespace TrueCraft.Core.Entities
 {
@@ -49,7 +51,12 @@ namespace TrueCraft.Core.Entities
                 if (EntityType == 71)
                     id = GravelBlock.BlockID;
                 EntityManager.DespawnEntity(this);
-                World.SetBlockID((Coordinates3D)collisionPoint, id);
+                var position = (Coordinates3D)collisionPoint + Coordinates3D.Up;
+                var hit = World.BlockRepository.GetBlockProvider(World.GetBlockID(position));
+                if (hit.BoundingBox == null && !BlockProvider.Overwritable.Any(o => o == hit.ID))
+                    EntityManager.SpawnEntity(new ItemEntity(position + new Vector3(0.5), new ItemStack(id)));
+                else
+                    World.SetBlockID(position, id);
             }
         }
 
@@ -57,7 +64,7 @@ namespace TrueCraft.Core.Entities
         {
             get
             {
-                return new BoundingBox(Position, Position + Size);
+                return new BoundingBox(Position - (Size / 2), Position + (Size / 2));
             }
         }
 
@@ -77,7 +84,7 @@ namespace TrueCraft.Core.Entities
         {
             get
             {
-                return 1.98f;
+                return 0.8f;
             }
         }
 
