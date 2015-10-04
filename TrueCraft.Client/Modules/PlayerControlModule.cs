@@ -334,6 +334,9 @@ namespace TrueCraft.Client.Modules
                 Game.Bobbing += Math.Max(Math.Abs(lookAt.X), Math.Abs(lookAt.Z));
 
                 Game.Client.Velocity = new TVector3(lookAt.X, Game.Client.Velocity.Y, lookAt.Z);
+
+                if ((int)Game.Bobbing % 2 == 0)
+                    Game.Audio.PlayPack("grass");
             }
             else
                 Game.Client.Velocity *= new TVector3(0, 1, 0);
