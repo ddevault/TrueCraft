@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Collections.Concurrent;
 using TrueCraft.Profiling;
+using TrueCraft.Core.Logic.Blocks;
 
 namespace TrueCraft
 {
@@ -224,6 +225,7 @@ namespace TrueCraft
 
         void ScheduleUpdatesForChunk(IWorld world, IChunk chunk)
         {
+            chunk.UpdateHeightMap();
             int _x = chunk.Coordinates.X * Chunk.Width;
             int _z = chunk.Coordinates.Z * Chunk.Depth;
             Coordinates3D coords, _coords;

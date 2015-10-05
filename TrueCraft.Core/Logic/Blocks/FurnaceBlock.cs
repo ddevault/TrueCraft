@@ -144,6 +144,12 @@ namespace TrueCraft.Core.Logic.Blocks
             UpdateWindows(coords, state);
         }
 
+        public override void BlockLoadedFromChunk(Coordinates3D coords, IMultiplayerServer server, IWorld world)
+        {
+            var state = GetState(world, coords);
+            TryInitializeFurnace(state, server.Scheduler, world, coords, server.ItemRepository);
+        }
+
         public override void BlockMined(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
             var entity = world.GetTileEntity(descriptor.Coordinates);
