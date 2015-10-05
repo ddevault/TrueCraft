@@ -234,7 +234,6 @@ namespace TrueCraft.Core.Logic.Blocks
                 if (state.CookTime == -1 && input != null && (outputStack.Empty || outputStack.CanMerge(input.SmeltingOutput)))
                 {
                     state.CookTime = 0;
-                    state.Items[FurnaceWindow.FuelIndex].Count--;
                     SetState(world, coords, state);
                 }
                 var subject = new FurnaceEventSubject();
