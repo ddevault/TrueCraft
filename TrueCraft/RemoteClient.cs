@@ -213,6 +213,7 @@ namespace TrueCraft
             if (NextWindowID < 0) NextWindowID = 1;
             QueuePacket(new OpenWindowPacket(window.ID, window.Type, window.Name, (sbyte)window.MinecraftWasWrittenByFuckingIdiotsLength));
             QueuePacket(new WindowItemsPacket(window.ID, window.GetSlots()));
+            window.WindowChange += HandleWindowChange;
         }
 
         public void CloseWindow(bool clientInitiated = false)
@@ -477,6 +478,12 @@ namespace TrueCraft
 
         void HandleWindowChange(object sender, WindowChangeEventArgs e)
         {
+            if (!(sender is InventoryWindow))
+            {
+                QueuePacket(new SetSlotPacket((sender as IWindow).ID, (short)e.SlotIndex, e.Value.ID, e.Value.Count, e.Value.Metadata));
+                return;
+            }
+
             if (e.SlotIndex != InventoryWindow.CraftingOutputIndex) // Because Minecraft is stupid
                 QueuePacket(new SetSlotPacket(0, (short)e.SlotIndex, e.Value.ID, e.Value.Count, e.Value.Metadata));
             if (e.SlotIndex == SelectedSlot)

@@ -15,6 +15,30 @@ namespace TrueCraft.Core.Logic.Blocks
 {
     public class FurnaceBlock : BlockProvider, ICraftingRecipe
     {
+        protected class FurnaceState
+        {
+            public short BurnTimeRemaining { get; set; }
+            public short BurnTimeTotal { get; set; }
+            public short CookTime { get; set; }
+            public ItemStack[] Items { get; set; }
+
+            public FurnaceState()
+            {
+                Items = new ItemStack[3];
+            }
+        }
+
+        protected class FurnaceEventSubject : IEventSubject
+        {
+            public event EventHandler Disposed;
+
+            public void Dispose()
+            {
+                if (Disposed != null)
+                    Dispose();
+            }
+        }
+
         public static readonly byte BlockID = 0x3D;
 
         public override byte ID { get { return 0x3D; } }
@@ -29,7 +53,95 @@ namespace TrueCraft.Core.Logic.Blocks
 
         protected override ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
-            return new ItemStack[] { new ItemStack(BlockID) };
+            return new[] { new ItemStack(BlockID) };
+        }
+
+        protected static Dictionary<Coordinates3D, FurnaceEventSubject> TrackedFurnaces { get; set; }
+        protected static Dictionary<Coordinates3D, List<IWindow>> TrackedFurnaceWindows { get; set; }
+
+        public FurnaceBlock()
+        {
+            TrackedFurnaces = new Dictionary<Coordinates3D, FurnaceEventSubject>();
+            TrackedFurnaceWindows = new Dictionary<Coordinates3D, List<IWindow>>();
+        }
+
+        private NbtCompound CreateTileEntity()
+        {
+            return new NbtCompound(new NbtTag[]
+            {
+                new NbtShort("BurnTime", 0),
+                new NbtShort("BurnTotal", 0),
+                new NbtShort("CookTime", -1),
+                new NbtList("Items", new[]
+                {
+                    ItemStack.EmptyStack.ToNbt(),
+                    ItemStack.EmptyStack.ToNbt(),
+                    ItemStack.EmptyStack.ToNbt()
+                }, NbtTagType.Compound)
+            });
+        }
+
+        private FurnaceState GetState(IWorld world, Coordinates3D coords)
+        {
+            var tileEntity = world.GetTileEntity(coords);
+            if (tileEntity == null)
+                tileEntity = CreateTileEntity();
+            var burnTime = tileEntity.Get<NbtShort>("BurnTime");
+            var burnTotal = tileEntity.Get<NbtShort>("BurnTotal");
+            var cookTime = tileEntity.Get<NbtShort>("CookTime");
+            var state = new FurnaceState
+            {
+                BurnTimeTotal = burnTotal == null ? (short)0 : burnTotal.Value,
+                BurnTimeRemaining = burnTime == null ? (short)0 : burnTime.Value,
+                CookTime = cookTime == null ? (short)200 : cookTime.Value
+            };
+            var items = tileEntity.Get<NbtList>("Items");
+            if (items != null)
+            {
+                int i = 0;
+                foreach (var item in items)
+                    state.Items[i++] = ItemStack.FromNbt((NbtCompound)item);
+            }
+            return state;
+        }
+
+        private void UpdateWindows(Coordinates3D coords, FurnaceState state)
+        {
+            if (TrackedFurnaceWindows.ContainsKey(coords))
+            {
+                Handling = true;
+                foreach (var window in TrackedFurnaceWindows[coords])
+                {
+                    window[0] = state.Items[0];
+                    window[1] = state.Items[1];
+                    window[2] = state.Items[2];
+
+                    window.Client.QueuePacket(new UpdateProgressPacket(
+                        window.ID, UpdateProgressPacket.ProgressTarget.ItemCompletion, state.CookTime));
+                    var burnProgress = state.BurnTimeRemaining / (double)state.BurnTimeTotal;
+                    var burn = (short)(burnProgress * 250);
+                    window.Client.QueuePacket(new UpdateProgressPacket(
+                        window.ID, UpdateProgressPacket.ProgressTarget.AvailableHeat, burn));
+                }
+                Handling = false;
+            }
+        }
+
+        private void SetState(IWorld world, Coordinates3D coords, FurnaceState state)
+        {
+            world.SetTileEntity(coords, new NbtCompound(new NbtTag[]
+            {
+                new NbtShort("BurnTime", state.BurnTimeRemaining),
+                new NbtShort("BurnTotal", state.BurnTimeTotal),
+                new NbtShort("CookTime", state.CookTime),
+                new NbtList("Items", new[]
+                {
+                    state.Items[0].ToNbt(),
+                    state.Items[1].ToNbt(),
+                    state.Items[2].ToNbt()
+                }, NbtTagType.Compound)
+            }));
+            UpdateWindows(coords, state);
         }
 
         public override void BlockMined(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
@@ -51,58 +163,26 @@ namespace TrueCraft.Core.Logic.Blocks
         public override bool BlockRightClicked(BlockDescriptor descriptor, BlockFace face, IWorld world, IRemoteClient user)
         {
             var window = new FurnaceWindow(user.Server.Scheduler, descriptor.Coordinates,
-                user.Server.ItemRepository, (InventoryWindow)user.Inventory);
+                             user.Server.ItemRepository, (InventoryWindow)user.Inventory);
 
-            var entity = world.GetTileEntity(descriptor.Coordinates);
-            if (entity != null)
-            {
-                int i = 0;
-                foreach (var item in (NbtList)entity["Items"])
-                {
-                    var slot = ItemStack.FromNbt((NbtCompound)item);
-                    window[i++] = slot;
-                }
-            }
+            var state = GetState(world, descriptor.Coordinates);
+            for (int i = 0; i < state.Items.Length; i++)
+                window[i] = state.Items[i];
 
             user.OpenWindow(window);
+            if (!TrackedFurnaceWindows.ContainsKey(descriptor.Coordinates))
+                TrackedFurnaceWindows[descriptor.Coordinates] = new List<IWindow>();
+            TrackedFurnaceWindows[descriptor.Coordinates].Add(window);
+            window.Disposed += (sender, e) => TrackedFurnaceWindows.Remove(descriptor.Coordinates);
+            UpdateWindows(descriptor.Coordinates, state);
 
-            if (entity != null)
-            {
-                var burnTime = entity["BurnTime"].ShortValue;
-                var burnTotal = entity["BurnTotal"].ShortValue;
-                var cookTime = entity["CookTime"].ShortValue;
-                var burnProgress = (short)(((double)burnTime / burnTotal) * 250);
-                if (burnTime == 0)
-                    burnProgress = 0;
-                if (cookTime != 0)
-                    window.Client.QueuePacket(new UpdateProgressPacket(window.ID,
-                        UpdateProgressPacket.ProgressTarget.ItemCompletion, cookTime));
-                if (burnProgress != 0)
-                    window.Client.QueuePacket(new UpdateProgressPacket(window.ID,
-                            UpdateProgressPacket.ProgressTarget.AvailableHeat, burnProgress));
-            }
+            // TODO: Set window progress appropriately
 
             window.WindowChange += (sender, e) => FurnaceWindowChanged(sender, e, world);
             return false;
         }
 
         private bool Handling = false;
-
-        private NbtCompound CreateTileEntity()
-        {
-            return new NbtCompound(new NbtTag[]
-            {
-                new NbtShort("BurnTime", 0),
-                new NbtShort("BurnTotal", 0),
-                new NbtShort("CookTime", 20),
-                new NbtList("Items", new[]
-                {
-                    ItemStack.EmptyStack.ToNbt(),
-                    ItemStack.EmptyStack.ToNbt(),
-                    ItemStack.EmptyStack.ToNbt()
-                }, NbtTagType.Compound)
-            });
-        }
 
         protected void FurnaceWindowChanged(object sender, WindowChangeEventArgs e, IWorld world)
         {
@@ -113,35 +193,132 @@ namespace TrueCraft.Core.Logic.Blocks
             if (index >= FurnaceWindow.MainIndex)
                 return;
 
-            Handling =  true;
+            Handling = true;
+            e.Handled = true;
             window[index] = e.Value;
 
-            var entity = world.GetTileEntity(window.Coordinates);
-            if (entity == null)
-                entity = CreateTileEntity();
+            var state = GetState(world, window.Coordinates);
 
-            entity["Items"] = new NbtList("Items", new NbtTag[]
+            state.Items[0] = window[0];
+            state.Items[1] = window[1];
+            state.Items[2] = window[2];
+
+            SetState(world, window.Coordinates, state);
+
+            Handling = true;
+
+            if (!TrackedFurnaces.ContainsKey(window.Coordinates))
             {
-                window[0].ToNbt(), window[1].ToNbt(), window[2].ToNbt()
-            }, NbtTagType.Compound);
-
-            world.SetTileEntity(window.Coordinates, entity);
-
-            UpdateFurnaceState(window.EventScheduler, world, entity, window.ItemRepository, window.Coordinates, window, TimeSpan.Zero);
+                // Set up the initial state
+                TryInitializeFurnace(state, window.EventScheduler, world, window.Coordinates, window.ItemRepository);
+            }
 
             Handling = false;
         }
 
-        private void UpdateFurnaceState(IEventScheduler scheduler, IWorld world, NbtCompound tileEntity,
-                                        IItemRepository itemRepository, Coordinates3D coords, FurnaceWindow window, TimeSpan elapsed)
+        private void TryInitializeFurnace(FurnaceState state, IEventScheduler scheduler, IWorld world,
+                                          Coordinates3D coords, IItemRepository itemRepository)
         {
-            if (world.GetBlockID(coords) != FurnaceBlock.BlockID && world.GetBlockID(coords) != LitFurnaceBlock.BlockID)
+            if (TrackedFurnaces.ContainsKey(coords))
+                return;
+
+            var inputStack = state.Items[FurnaceWindow.IngredientIndex];
+            var fuelStack = state.Items[FurnaceWindow.FuelIndex];
+            var outputStack = state.Items[FurnaceWindow.OutputIndex];
+
+            var input = itemRepository.GetItemProvider(inputStack.ID) as ISmeltableItem;
+            var fuel = itemRepository.GetItemProvider(fuelStack.ID) as IBurnableItem;
+
+            if (state.BurnTimeRemaining > 0)
             {
-                if (window != null && !window.IsDisposed)
-                    window.Dispose();
+                if (state.CookTime == -1 && input != null && (outputStack.Empty || outputStack.CanMerge(input.SmeltingOutput)))
+                {
+                    state.CookTime = 0;
+                    state.Items[FurnaceWindow.FuelIndex].Count--;
+                    SetState(world, coords, state);
+                }
+                var subject = new FurnaceEventSubject();
+                TrackedFurnaces[coords] = subject;
+                scheduler.ScheduleEvent("smelting", subject, TimeSpan.FromSeconds(1),
+                    server => UpdateFurnace(server.Scheduler, world, coords, itemRepository));
                 return;
             }
-            // TODO
+
+            if (fuel != null && input != null) // We can maybe start
+            {
+                if (outputStack.Empty || outputStack.CanMerge(input.SmeltingOutput))
+                {
+                    // We can definitely start
+                    state.BurnTimeRemaining = state.BurnTimeTotal = (short)(fuel.BurnTime.TotalSeconds * 20);
+                    state.CookTime = 0;
+                    state.Items[FurnaceWindow.FuelIndex].Count--;
+                    SetState(world, coords, state);
+                    world.SetBlockID(coords, LitFurnaceBlock.BlockID);
+                    var subject = new FurnaceEventSubject();
+                    TrackedFurnaces[coords] = subject;
+                    scheduler.ScheduleEvent("smelting", subject, TimeSpan.FromSeconds(1),
+                        server => UpdateFurnace(server.Scheduler, world, coords, itemRepository));
+                }
+            }
+        }
+
+        private void UpdateFurnace(IEventScheduler scheduler, IWorld world, Coordinates3D coords, IItemRepository itemRepository)
+        {
+            if (TrackedFurnaces.ContainsKey(coords))
+                TrackedFurnaces.Remove(coords);
+
+            if (world.GetBlockID(coords) != FurnaceBlock.BlockID && world.GetBlockID(coords) != LitFurnaceBlock.BlockID)
+            {
+                /*if (window != null && !window.IsDisposed)
+                    window.Dispose();*/
+                return;
+            }
+
+            var state = GetState(world, coords);
+
+            var inputStack = state.Items[FurnaceWindow.IngredientIndex];
+            var outputStack = state.Items[FurnaceWindow.OutputIndex];
+
+            var input = itemRepository.GetItemProvider(inputStack.ID) as ISmeltableItem;
+
+            // Update burn time
+            var burnTime = state.BurnTimeRemaining;
+            if (state.BurnTimeRemaining > 0)
+            {
+                state.BurnTimeRemaining -= 20; // ticks
+                if (state.BurnTimeRemaining <= 0)
+                {
+                    state.BurnTimeRemaining = 0;
+                    state.BurnTimeTotal = 0;
+                    world.SetBlockID(coords, FurnaceBlock.BlockID);
+                }
+            }
+
+            // Update cook time
+            if (state.CookTime < 200 && state.CookTime >= 0)
+            {
+                state.CookTime += 20; // ticks
+                if (state.CookTime >= 200)
+                    state.CookTime = 200;
+            }
+
+            // Are we done cooking?
+            if (state.CookTime == 200 && burnTime > 0)
+            {
+                state.CookTime = -1;
+                if (input != null && (outputStack.Empty || outputStack.CanMerge(input.SmeltingOutput)))
+                {
+                    if (outputStack.Empty)
+                        outputStack = input.SmeltingOutput;
+                    else if (outputStack.CanMerge(input.SmeltingOutput))
+                        outputStack.Count += input.SmeltingOutput.Count;
+                    state.Items[FurnaceWindow.OutputIndex] = outputStack;
+                    state.Items[FurnaceWindow.IngredientIndex].Count--;
+                }
+            }
+
+            SetState(world, coords, state);
+            TryInitializeFurnace(state, scheduler, world, coords, itemRepository);
         }
 
         public override Tuple<int, int> GetTextureMap(byte metadata)

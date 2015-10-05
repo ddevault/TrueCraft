@@ -3,7 +3,7 @@ using TrueCraft.API.Networking;
 
 namespace TrueCraft.API.Windows
 {
-    public interface IWindow : IDisposable
+    public interface IWindow : IDisposable, IEventSubject
     {
         event EventHandler<WindowChangeEventArgs> WindowChange;
 
