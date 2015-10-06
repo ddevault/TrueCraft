@@ -22,6 +22,14 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override BoundingBox? BoundingBox { get { return null; } }
 
+        public override SoundEffectClass SoundEffect
+        {
+            get
+            {
+                return SoundEffectClass.None;
+            }
+        }
+
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(0, 0);

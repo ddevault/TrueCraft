@@ -205,6 +205,8 @@ namespace TrueCraft.Core.Logic
             return Coordinates3D.Zero;
         }
 
+        public virtual SoundEffectClass SoundEffect { get { return SoundEffectClass.Stone; } }
+
         /// <summary>
         /// The maximum amount that can be in a single stack of this block.
         /// </summary>

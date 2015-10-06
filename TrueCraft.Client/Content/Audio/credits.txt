@@ -1,0 +1,1 @@
+﻿The footstep and mining/placement sound effects were sourced from Minetest under CC-BY-SA: https://github.com/minetest/minetest_game

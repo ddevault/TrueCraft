@@ -28,6 +28,14 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override bool Flammable { get { return true; } }
 
+        public override SoundEffectClass SoundEffect
+        {
+            get
+            {
+                return SoundEffectClass.Grass;
+            }
+        }
+
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(4, 3);

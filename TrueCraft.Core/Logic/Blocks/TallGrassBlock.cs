@@ -28,6 +28,14 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override string DisplayName { get { return "Tall Grass"; } }
 
+        public override SoundEffectClass SoundEffect
+        {
+            get
+            {
+                return SoundEffectClass.Grass;
+            }
+        }
+
         public override bool Flammable { get { return true; } }
 
         public override BoundingBox? BoundingBox { get { return null; } }

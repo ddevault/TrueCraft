@@ -30,11 +30,19 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override byte Luminance { get { return 0; } }
 
-        public override bool Opaque { get { return true; } } // TODO: Distinguish between opaque and instantly destroyable
+        public override bool Opaque { get { return true; } }
 
         public override byte LightOpacity { get { return 255; } }
         
         public override string DisplayName { get { return "Farmland"; } }
+
+        public override SoundEffectClass SoundEffect
+        {
+            get
+            {
+                return SoundEffectClass.Gravel;
+            }
+        }
 
         protected override ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {

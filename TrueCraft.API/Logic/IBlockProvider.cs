@@ -17,6 +17,7 @@ namespace TrueCraft.API.Logic
         byte LightOpacity { get; }
         bool DiffuseSkyLight { get; }
         bool Flammable { get; }
+        SoundEffectClass SoundEffect { get; }
         ToolMaterial EffectiveToolMaterials { get; }
         ToolType EffectiveTools { get; }
         string DisplayName { get; }

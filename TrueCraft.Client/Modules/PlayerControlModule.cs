@@ -8,6 +8,8 @@ using XVector3 = Microsoft.Xna.Framework.Vector3;
 using TrueCraft.API;
 using TrueCraft.Core.Logic;
 using TrueCraft.Core.Networking.Packets;
+using TrueCraft.Core.Logic.Blocks;
+using TrueCraft.API.Logic;
 
 namespace TrueCraft.Client.Modules
 {
@@ -266,6 +268,19 @@ namespace TrueCraft.Client.Modules
             return false;
         }
 
+        private void PlayFootstep()
+        {
+            var coords = (Coordinates3D)Game.Client.BoundingBox.Min.Floor();
+            var target = Game.Client.World.GetBlockID(coords);
+            if (target == AirBlock.BlockID)
+                target = Game.Client.World.GetBlockID(coords + Coordinates3D.Down);
+            var provider = Game.BlockRepository.GetBlockProvider(target);
+            if (provider.SoundEffect == SoundEffectClass.None)
+                return;
+            var effect = string.Format("footstep.{0}", Enum.GetName(typeof(SoundEffectClass), provider.SoundEffect).ToLower());
+            Game.Audio.PlayPack(effect, 0.1f);
+        }
+
         public override void Update(GameTime gameTime)
         {
             var delta = Delta;
@@ -331,9 +346,13 @@ namespace TrueCraft.Client.Modules
                 lookAt.X *= (float)(gameTime.ElapsedGameTime.TotalSeconds * 4.3717);
                 lookAt.Z *= (float)(gameTime.ElapsedGameTime.TotalSeconds * 4.3717);
 
+                var bobbing = Game.Bobbing;
                 Game.Bobbing += Math.Max(Math.Abs(lookAt.X), Math.Abs(lookAt.Z));
 
                 Game.Client.Velocity = new TVector3(lookAt.X, Game.Client.Velocity.Y, lookAt.Z);
+
+                if ((int)bobbing % 2 == 0 && (int)Game.Bobbing % 2 != 0)
+                    PlayFootstep();
             }
             else
                 Game.Client.Velocity *= new TVector3(0, 1, 0);

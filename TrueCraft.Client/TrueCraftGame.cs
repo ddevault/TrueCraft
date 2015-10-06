@@ -38,6 +38,7 @@ namespace TrueCraft.Client
         public DateTime StartDigging { get; set; }
         public DateTime EndDigging { get; set; }
         public Coordinates3D TargetBlock { get; set; }
+        public AudioManager Audio { get; set; }
 
         private List<IGameplayModule> Modules { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
@@ -114,6 +115,9 @@ namespace TrueCraft.Client
             Modules = new List<IGameplayModule>();
 
             base.Initialize(); // (calls LoadContent)
+
+            Audio = new AudioManager();
+            Audio.LoadDefaultPacks(Content);
 
             ChunkModule = new ChunkModule(this);
             DebugInfoModule = new DebugInfoModule(this, Pixel);
@@ -354,7 +358,7 @@ namespace TrueCraft.Client
 
         private void UpdateCamera()
         {
-            const double bobbingMultiplier = 0.015;
+            const double bobbingMultiplier = 0.05;
 
             var bobbing = Bobbing * 1.5;
             var xbob = Math.Cos(bobbing + Math.PI / 2) * bobbingMultiplier;
