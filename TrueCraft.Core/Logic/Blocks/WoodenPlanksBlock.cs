@@ -4,7 +4,7 @@ using TrueCraft.API.Logic;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class WoodenPlanksBlock : BlockProvider, ICraftingRecipe, IBurnableItem, IBurnableItem
+    public class WoodenPlanksBlock : BlockProvider, ICraftingRecipe, IBurnableItem
     {
         public static readonly byte BlockID = 0x05;
         
