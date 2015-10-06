@@ -278,7 +278,7 @@ namespace TrueCraft.Client.Modules
             if (provider.SoundEffect == SoundEffectClass.None)
                 return;
             var effect = string.Format("footstep.{0}", Enum.GetName(typeof(SoundEffectClass), provider.SoundEffect).ToLower());
-            Game.Audio.PlayPack(effect, 0.1f);
+            Game.Audio.PlayPack(effect, 0.5f);
         }
 
         public override void Update(GameTime gameTime)
