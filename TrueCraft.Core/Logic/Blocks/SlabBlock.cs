@@ -30,6 +30,14 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override string DisplayName { get { return "Stone Slab"; } }
 
+        public override SoundEffectClass SoundEffect
+        {
+            get
+            {
+                return SoundEffectClass.Wood; // TODO: Deal with metadata god dammit
+            }
+        }
+
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(6, 0);
@@ -133,6 +141,14 @@ namespace TrueCraft.Core.Logic.Blocks
         public override byte Luminance { get { return 0; } }
 
         public override string DisplayName { get { return "Double Stone Slab"; } }
+
+        public override SoundEffectClass SoundEffect
+        {
+            get
+            {
+                return SoundEffectClass.Wood;
+            }
+        }
 
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {

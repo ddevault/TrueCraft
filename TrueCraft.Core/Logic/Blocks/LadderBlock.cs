@@ -34,6 +34,14 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override string DisplayName { get { return "Ladder"; } }
 
+        public override SoundEffectClass SoundEffect
+        {
+            get
+            {
+                return SoundEffectClass.Wood;
+            }
+        }
+
         public override BoundingBox? BoundingBox { get { return null; } }
 
         public override BoundingBox? InteractiveBoundingBox

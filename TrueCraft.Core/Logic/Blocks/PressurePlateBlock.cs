@@ -23,6 +23,14 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override string DisplayName { get { return "Wooden Pressure Plate"; } }
 
+        public override SoundEffectClass SoundEffect
+        {
+            get
+            {
+                return SoundEffectClass.Wood;
+            }
+        }
+
         public ItemStack[,] Pattern
         {
             get

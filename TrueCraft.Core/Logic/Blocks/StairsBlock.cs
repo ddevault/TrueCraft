@@ -69,6 +69,14 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override bool Flammable { get { return true; } }
 
+        public override SoundEffectClass SoundEffect
+        {
+            get
+            {
+                return SoundEffectClass.Wood;
+            }
+        }
+
         public ItemStack[,] Pattern
         {
             get

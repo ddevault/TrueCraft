@@ -1,4 +1,1 @@
-﻿Dirt and Stone footsteps CC-BY-SA from http://www.littlerobotsoundfactory.com/
-Snow footsteps CC-BY-SA & public domain from http://freesound.org/people/iujhu/
-Wood footsteps CC-BY-SA from http://www.ronaldvanwonderen.com/ and http://freesound.org/people/wildweasel/
-Cloth footsteps CC-0/public domain from http://freesound.org/people/Yuval/
+﻿The footstep and mining/placement sound effects were sourced from Minetest under CC-BY-SA: https://github.com/minetest/minetest_game

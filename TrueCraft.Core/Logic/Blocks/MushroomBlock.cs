@@ -9,6 +9,14 @@ namespace TrueCraft.Core.Logic.Blocks
         public override double BlastResistance { get { return 0; } }
 
         public override double Hardness { get { return 0; } }
+
+        public override SoundEffectClass SoundEffect
+        {
+            get
+            {
+                return SoundEffectClass.Grass;
+            }
+        }
     }
 
     public class BrownMushroomBlock : MushroomBlock

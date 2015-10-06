@@ -24,6 +24,14 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override string DisplayName { get { return "Jack 'o' Lantern"; } }
 
+        public override SoundEffectClass SoundEffect
+        {
+            get
+            {
+                return SoundEffectClass.Wood;
+            }
+        }
+
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(6, 6);

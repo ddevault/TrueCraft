@@ -19,6 +19,14 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override string DisplayName { get { return "Snow Block"; } }
 
+        public override SoundEffectClass SoundEffect
+        {
+            get
+            {
+                return SoundEffectClass.Snow;
+            }
+        }
+
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(2, 4);
@@ -72,6 +80,14 @@ namespace TrueCraft.Core.Logic.Blocks
         public override string DisplayName { get { return "Snow"; } }
 
         public override BoundingBox? BoundingBox { get { return null; } }
+
+        public override SoundEffectClass SoundEffect
+        {
+            get
+            {
+                return SoundEffectClass.Snow;
+            }
+        }
 
         public override BoundingBox? InteractiveBoundingBox
         {

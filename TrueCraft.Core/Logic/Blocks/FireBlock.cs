@@ -26,6 +26,14 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override string DisplayName { get { return "Fire"; } }
 
+        public override SoundEffectClass SoundEffect
+        {
+            get
+            {
+                return SoundEffectClass.Wood; // Yeah, this is what Minecraft actually uses here
+            }
+        }
+
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(15, 1);

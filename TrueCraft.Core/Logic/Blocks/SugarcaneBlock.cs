@@ -28,6 +28,14 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override string DisplayName { get { return "Sugar cane"; } }
 
+        public override SoundEffectClass SoundEffect
+        {
+            get
+            {
+                return SoundEffectClass.Grass;
+            }
+        }
+
         public override BoundingBox? BoundingBox
         {
             get

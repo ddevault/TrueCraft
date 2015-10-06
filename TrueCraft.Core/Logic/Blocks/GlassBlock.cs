@@ -22,6 +22,14 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override byte LightOpacity { get { return 0; } }
 
+        public override SoundEffectClass SoundEffect
+        {
+            get
+            {
+                return SoundEffectClass.Glass;
+            }
+        }
+
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(1, 3);

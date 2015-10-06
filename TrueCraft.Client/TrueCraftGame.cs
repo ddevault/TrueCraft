@@ -358,7 +358,7 @@ namespace TrueCraft.Client
 
         private void UpdateCamera()
         {
-            const double bobbingMultiplier = 0.015;
+            const double bobbingMultiplier = 0.05;
 
             var bobbing = Bobbing * 1.5;
             var xbob = Math.Cos(bobbing + Math.PI / 2) * bobbingMultiplier;

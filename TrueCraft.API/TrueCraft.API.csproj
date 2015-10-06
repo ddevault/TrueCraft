@@ -40,7 +40,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="YamlDotNet">
-      <HintPath>..\packages\YamlDotNet.3.6.1\lib\net35\YamlDotNet.dll</HintPath>
+      <HintPath>..\packages\YamlDotNet.3.7.0\lib\net35\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +122,7 @@
     <Compile Include="Physics\IPhysicsEngine.cs" />
     <Compile Include="Physics\IPhysicsEntity.cs" />
     <Compile Include="Physics\IAABBEntity.cs" />
+    <Compile Include="Logic\SoundEffectClass.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -132,10 +133,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="AI\" />
     <Folder Include="Physics\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
