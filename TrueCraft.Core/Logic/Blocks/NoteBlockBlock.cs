@@ -5,7 +5,7 @@ using TrueCraft.Core.Logic.Items;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class NoteBlockBlock : BlockProvider, ICraftingRecipe
+    public class NoteBlockBlock : BlockProvider, ICraftingRecipe, IBurnableItem
     {
         public static readonly byte BlockID = 0x19;
         
@@ -18,6 +18,8 @@ namespace TrueCraft.Core.Logic.Blocks
         public override byte Luminance { get { return 0; } }
         
         public override string DisplayName { get { return "Note Block"; } }
+
+        public TimeSpan BurnTime { get { return TimeSpan.FromSeconds(15); } }
 
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {

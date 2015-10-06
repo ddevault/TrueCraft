@@ -5,7 +5,7 @@ using TrueCraft.Core.Logic.Items;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class DiamondOreBlock : BlockProvider
+    public class DiamondOreBlock : BlockProvider, ISmeltableItem
     {
         public static readonly byte BlockID = 0x38;
         
@@ -18,6 +18,8 @@ namespace TrueCraft.Core.Logic.Blocks
         public override byte Luminance { get { return 0; } }
         
         public override string DisplayName { get { return "Diamond Ore"; } }
+
+        public ItemStack SmeltingOutput { get { return new ItemStack(DiamondItem.ItemID); } }
 
         public override ToolMaterial EffectiveToolMaterials
         {

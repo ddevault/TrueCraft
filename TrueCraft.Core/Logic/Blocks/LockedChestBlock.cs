@@ -3,7 +3,7 @@ using TrueCraft.API.Logic;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class LockedChestBlock : BlockProvider
+    public class LockedChestBlock : BlockProvider, IBurnableItem
     {
         public static readonly byte BlockID = 0x5F;
         
@@ -18,6 +18,8 @@ namespace TrueCraft.Core.Logic.Blocks
         public override bool Opaque { get { return false; } }
         
         public override string DisplayName { get { return "Locked Chest"; } }
+
+        public TimeSpan BurnTime { get { return TimeSpan.FromSeconds(15); } }
 
         public override SoundEffectClass SoundEffect
         {

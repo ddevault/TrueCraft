@@ -5,7 +5,7 @@ using TrueCraft.Core.Logic.Items;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class RedstoneOreBlock : BlockProvider
+    public class RedstoneOreBlock : BlockProvider, ISmeltableItem
     {
         public static readonly byte BlockID = 0x49;
 
@@ -18,6 +18,8 @@ namespace TrueCraft.Core.Logic.Blocks
         public override byte Luminance { get { return 0; } }
 
         public override string DisplayName { get { return "Redstone Ore"; } }
+
+        public ItemStack SmeltingOutput { get { return new ItemStack(RedstoneItem.ItemID); } }
 
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {

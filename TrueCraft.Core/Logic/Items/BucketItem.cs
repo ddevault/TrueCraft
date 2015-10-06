@@ -68,13 +68,15 @@ namespace TrueCraft.Core.Logic.Items
         }
     }
 
-    public class LavaBucketItem : BucketItem
+    public class LavaBucketItem : BucketItem, IBurnableItem
     {
         public static readonly new short ItemID = 0x147;
 
         public override short ID { get { return 0x147; } }
 
         public override string DisplayName { get { return "Lava Bucket"; } }
+
+        public TimeSpan BurnTime { get { return TimeSpan.FromSeconds(1000); } }
 
         protected override byte? RelevantBlockType
         {

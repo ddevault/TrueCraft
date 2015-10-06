@@ -7,7 +7,7 @@ using TrueCraft.Core.Windows;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class CraftingTableBlock : BlockProvider, ICraftingRecipe
+    public class CraftingTableBlock : BlockProvider, ICraftingRecipe, IBurnableItem
     {
         public static readonly byte BlockID = 0x3A;
         
@@ -20,6 +20,8 @@ namespace TrueCraft.Core.Logic.Blocks
         public override byte Luminance { get { return 0; } }
         
         public override string DisplayName { get { return "Crafting Table"; } }
+
+        public TimeSpan BurnTime { get { return TimeSpan.FromSeconds(15); } }
 
         public override SoundEffectClass SoundEffect
         {

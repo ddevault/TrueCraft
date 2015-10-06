@@ -6,7 +6,7 @@ using TrueCraft.API.Networking;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class TrapdoorBlock : BlockProvider, ICraftingRecipe
+    public class TrapdoorBlock : BlockProvider, ICraftingRecipe, IBurnableItem
     {
         public enum TrapdoorDirection
         {
@@ -36,6 +36,8 @@ namespace TrueCraft.Core.Logic.Blocks
         public override bool Opaque { get { return false; } }
 
         public override string DisplayName { get { return "Trapdoor"; } }
+
+        public TimeSpan BurnTime { get { return TimeSpan.FromSeconds(15); } }
 
         public override SoundEffectClass SoundEffect
         {

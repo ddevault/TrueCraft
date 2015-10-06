@@ -5,7 +5,7 @@ using TrueCraft.Core.Logic.Blocks;
 
 namespace TrueCraft.Core.Logic.Items
 {
-    public class StickItem : ItemProvider, ICraftingRecipe
+    public class StickItem : ItemProvider, ICraftingRecipe, IBurnableItem
     {
         public static readonly short ItemID = 0x118;
 
@@ -17,6 +17,8 @@ namespace TrueCraft.Core.Logic.Items
         }
 
         public override string DisplayName { get { return "Stick"; } }
+
+        public TimeSpan BurnTime { get { return TimeSpan.FromSeconds(5); } }
 
         public ItemStack[,] Pattern
         {

@@ -19,6 +19,8 @@ namespace TrueCraft.Core.Logic.Blocks
         
         public override string DisplayName { get { return "Lapis Lazuli Ore"; } }
 
+        //public ItemStack SmeltingOutput { get { return new ItemStack(); } } // TODO: Metadata
+
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {
             return new Tuple<int, int>(0, 10);

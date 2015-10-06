@@ -1,10 +1,11 @@
 using System;
 using TrueCraft.API.Logic;
 using TrueCraft.API;
+using TrueCraft.Core.Logic.Items;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class GoldOreBlock : BlockProvider
+    public class GoldOreBlock : BlockProvider, ISmeltableItem
     {
         public static readonly byte BlockID = 0x0E;
         
@@ -17,6 +18,8 @@ namespace TrueCraft.Core.Logic.Blocks
         public override byte Luminance { get { return 0; } }
         
         public override string DisplayName { get { return "Gold Ore"; } }
+
+        public ItemStack SmeltingOutput { get { return new ItemStack(GoldIngotItem.ItemID); } }
 
         public override Tuple<int, int> GetTextureMap(byte metadata)
         {

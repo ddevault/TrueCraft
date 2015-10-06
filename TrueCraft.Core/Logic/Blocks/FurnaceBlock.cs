@@ -51,6 +51,14 @@ namespace TrueCraft.Core.Logic.Blocks
 
         public override string DisplayName { get { return "Furnace"; } }
 
+        public override ToolType EffectiveTools
+        {
+            get
+            {
+                return ToolType.Pickaxe;
+            }
+        }
+
         protected override ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
             return new[] { new ItemStack(BlockID) };

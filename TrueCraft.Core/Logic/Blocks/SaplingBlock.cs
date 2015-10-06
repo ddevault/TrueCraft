@@ -4,7 +4,7 @@ using TrueCraft.API;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
-    public class SaplingBlock : BlockProvider
+    public class SaplingBlock : BlockProvider, IBurnableItem
     {
         public enum SaplingType
         {
@@ -28,6 +28,8 @@ namespace TrueCraft.Core.Logic.Blocks
         public override string DisplayName { get { return "Sapling"; } }
 
         public override BoundingBox? BoundingBox { get { return null; } }
+
+        public TimeSpan BurnTime { get { return TimeSpan.FromSeconds(5); } }
 
         public override BoundingBox? InteractiveBoundingBox
         {
