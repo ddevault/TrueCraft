@@ -353,6 +353,7 @@
     <Compile Include="Physics\PhysicsEngine.cs" />
     <Compile Include="Entities\WolfEntity.cs" />
     <Compile Include="Windows\FurnaceWindow.cs" />
+    <Compile Include="Paths.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

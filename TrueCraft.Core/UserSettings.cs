@@ -8,15 +8,6 @@ namespace TrueCraft.Core
     {
         public static UserSettings Local { get; set; }
 
-        public static string SettingsPath
-        {
-            get
-            {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                    ".truecraft", "settings.json");
-            }
-        }
-
         public bool AutoLogin { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
@@ -44,14 +35,14 @@ namespace TrueCraft.Core
 
         public void Load()
         {
-            if (File.Exists(SettingsPath))
-                JsonConvert.PopulateObject(File.ReadAllText(SettingsPath), this);
+            if (File.Exists(Paths.Settings))
+                JsonConvert.PopulateObject(File.ReadAllText(Paths.Settings), this);
         }
 
         public void Save()
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(SettingsPath));
-            File.WriteAllText(SettingsPath, JsonConvert.SerializeObject(this, Formatting.Indented));
+            Directory.CreateDirectory(Path.GetDirectoryName(Paths.Settings));
+            File.WriteAllText(Paths.Settings, JsonConvert.SerializeObject(this, Formatting.Indented));
         }
     }
 

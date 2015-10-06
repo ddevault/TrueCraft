@@ -11,15 +11,6 @@ namespace TrueCraft.Launcher.Singleplayer
 {
     public class Worlds
     {
-        public static string WorldsPath
-        {
-            get
-            {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                    ".truecraft", "worlds");
-            }
-        }
-
         public static Worlds Local { get; set; }
 
         public BlockRepository BlockRepository { get; set; }
@@ -27,11 +18,11 @@ namespace TrueCraft.Launcher.Singleplayer
 
         public void Load()
         {
-            if (!Directory.Exists(WorldsPath))
-                Directory.CreateDirectory(WorldsPath);
+            if (!Directory.Exists(Paths.Worlds))
+                Directory.CreateDirectory(Paths.Worlds);
             BlockRepository = new BlockRepository();
             BlockRepository.DiscoverBlockProviders();
-            var directories = Directory.GetDirectories(WorldsPath);
+            var directories = Directory.GetDirectories(Paths.Worlds);
             var saves = new List<World>();
             foreach (var d in directories)
             {
@@ -63,7 +54,7 @@ namespace TrueCraft.Launcher.Singleplayer
             foreach (var c in Path.GetInvalidFileNameChars())
                 safeName = safeName.Replace(c.ToString(), "");
             world.Name = name;
-            world.Save(Path.Combine(WorldsPath, safeName));
+            world.Save(Path.Combine(Paths.Worlds, safeName));
             Saves = Saves.Concat(new[] { world }).ToArray();
             return world;
         }

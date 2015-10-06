@@ -308,8 +308,7 @@ namespace TrueCraft.Client
 
         public void TakeScreenshot()
         {
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                           ".truecraft", "screenshots", DateTime.Now.ToString("yyyy-MM-dd_H.mm.ss") + ".png");
+            var path = Path.Combine(Paths.Screenshots, DateTime.Now.ToString("yyyy-MM-dd_H.mm.ss") + ".png");
             if (!Directory.Exists(Path.GetDirectoryName(path)))
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
             using (var stream = File.OpenWrite(path))
