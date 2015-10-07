@@ -145,6 +145,7 @@
     <Compile Include="Input\GamePadEventArgs.cs" />
     <Compile Include="Input\GamePadButtonEventArgs.cs" />
     <Compile Include="AudioManager.cs" />
+    <Compile Include="Modules\ChatModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

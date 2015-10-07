@@ -32,6 +32,7 @@ namespace TrueCraft.Core.World
         public World World { get; set; }
 
         private Stream regionFile { get; set; }
+        private object streamLock = new object();
 
         /// <summary>
         /// Creates a new Region for server-side use at the given position using
@@ -163,7 +164,7 @@ namespace TrueCraft.Core.World
         {
             lock (Chunks)
             {
-                lock (regionFile)
+                lock (streamLock)
                 {
                     var toRemove = new List<Coordinates2D>();
                     foreach (var kvp in Chunks)
@@ -262,7 +263,7 @@ namespace TrueCraft.Core.World
         {
             if (regionFile == null)
                 return;
-            lock (regionFile)
+            lock (streamLock)
             {
                 regionFile.Flush();
                 regionFile.Close();

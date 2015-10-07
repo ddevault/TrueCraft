@@ -32,6 +32,7 @@ namespace TrueCraft.Client
         public ConcurrentBag<Action> PendingMainThreadActions { get; set; }
         public double Bobbing { get; set; }
         public ChunkModule ChunkModule { get; set; }
+        public ChatModule ChatModule { get; set; }
         public float ScaleFactor { get; set; }
         public Coordinates3D HighlightedBlock { get; set; }
         public BlockFace HighlightedBlockFace { get; set; }
@@ -121,9 +122,11 @@ namespace TrueCraft.Client
 
             ChunkModule = new ChunkModule(this);
             DebugInfoModule = new DebugInfoModule(this, Pixel);
+            ChatModule = new ChatModule(this, Pixel);
 
             Modules.Add(ChunkModule);
             Modules.Add(new HighlightModule(this));
+            Modules.Add(ChatModule);
             Modules.Add(new PlayerControlModule(this));
             Modules.Add(new HUDModule(this, Pixel));
             Modules.Add(DebugInfoModule);

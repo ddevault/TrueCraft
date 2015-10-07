@@ -61,7 +61,7 @@ namespace TrueCraft.Client.Rendering
         /// <param name="y"></param>
         /// <param name="text"></param>
         /// <param name="scale"></param>
-        public void DrawText(SpriteBatch spriteBatch, int x, int y, string text, float scale = 1.0f)
+        public void DrawText(SpriteBatch spriteBatch, int x, int y, string text, float scale = 1.0f, byte alpha = 255)
         {
             var dx = x;
             var dy = y;
@@ -96,8 +96,8 @@ namespace TrueCraft.Client.Rendering
                             (int)(glyph.Width * scale),
                             (int)(glyph.Height * scale));
 
-                        spriteBatch.Draw(font.GetTexture(glyph.Page), shadowRectangle, sourceRectangle, new Color(63, 63, 21));
-                        spriteBatch.Draw(font.GetTexture(glyph.Page), destRectangle, sourceRectangle, color);
+                        spriteBatch.Draw(font.GetTexture(glyph.Page), shadowRectangle, sourceRectangle, new Color(63, 63, 21, alpha));
+                        spriteBatch.Draw(font.GetTexture(glyph.Page), destRectangle, sourceRectangle, new Color(color, alpha));
                         dx += (int)(glyph.XAdvance * scale);
                     }
                 }
