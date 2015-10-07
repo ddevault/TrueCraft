@@ -4,6 +4,7 @@ using TrueCraft.API;
 using TrueCraft.API.World;
 using TrueCraft.API.Networking;
 using TrueCraft.Core.Windows;
+using TrueCraft.Core.Entities;
 
 namespace TrueCraft.Core.Logic.Blocks
 {
@@ -35,6 +36,19 @@ namespace TrueCraft.Core.Logic.Blocks
         {
             var window = new CraftingBenchWindow(user.Server.CraftingRepository, (InventoryWindow)user.Inventory);
             user.OpenWindow(window);
+            window.Disposed += (sender, e) =>
+            {
+                var entityManager = user.Server.GetEntityManagerForWorld(world);
+                for (int i = 0; i < window.CraftingGrid.StartIndex + window.CraftingGrid.Length; i++)
+                {
+                    var item = window[i];
+                    if (!item.Empty)
+                    {
+                        var entity = new ItemEntity(descriptor.Coordinates + Coordinates3D.Up, item);
+                        entityManager.SpawnEntity(entity);
+                    }
+                }
+            };
             return false;
         }
 
