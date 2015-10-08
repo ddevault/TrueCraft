@@ -249,7 +249,8 @@ namespace TrueCraft.Client.Modules
             Game.StartDigging = DateTime.UtcNow;
             short damage;
             Game.EndDigging = Game.StartDigging.AddMilliseconds(
-                BlockProvider.GetHarvestTime(block, 0, out damage));
+                BlockProvider.GetHarvestTime(block,
+                    Game.Client.Inventory.Hotbar[Game.Client.HotbarSelection].ID, out damage));
             Game.Client.QueuePacket(new PlayerDiggingPacket(
                 PlayerDiggingPacket.Action.StartDigging,
                 Game.TargetBlock.X, (sbyte)Game.TargetBlock.Y, Game.TargetBlock.Z,
