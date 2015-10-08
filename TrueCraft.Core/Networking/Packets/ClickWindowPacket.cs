@@ -10,6 +10,19 @@ namespace TrueCraft.Core.Networking.Packets
     {
         public byte ID { get { return 0x66; } }
 
+        public ClickWindowPacket(sbyte windowID, short slotIndex, bool rightClick, short transactionID, bool shift,
+            short itemID, sbyte count, short metadata)
+        {
+            WindowID = windowID;
+            SlotIndex = slotIndex;
+            RightClick = rightClick;
+            TransactionID = transactionID;
+            Shift = shift;
+            ItemID = itemID;
+            Count = count;
+            Metadata = metadata;
+        }
+
         public sbyte WindowID;
         public short SlotIndex;
         public bool RightClick;

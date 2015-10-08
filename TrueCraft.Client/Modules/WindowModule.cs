@@ -10,6 +10,9 @@ using TrueCraft.API.Windows;
 using System;
 using TrueCraft.API;
 using TrueCraft.Core.Windows;
+using TrueCraft.Core.Logic.Blocks;
+using TrueCraft.Core.Logging;
+using TrueCraft.API.Logging;
 
 namespace TrueCraft.Client.Modules
 {
@@ -20,7 +23,8 @@ namespace TrueCraft.Client.Modules
         private Texture2D Inventory { get; set; }
         private Texture2D Items { get; set; }
         private FontRenderer Font { get; set; }
-        private int SelectedSlot { get; set; }
+        private short SelectedSlot { get; set; }
+        private ItemStack HeldItem { get; set; }
 
         private enum RenderStage
         {
@@ -37,6 +41,7 @@ namespace TrueCraft.Client.Modules
             Inventory = game.TextureMapper.GetTexture("gui/inventory.png");
             Items = game.TextureMapper.GetTexture("gui/items.png");
             SelectedSlot = -1;
+            HeldItem = ItemStack.EmptyStack;
         }
 
         private static readonly Rectangle InventoryWindowRect = new Rectangle(0, 0, 176, 166);
@@ -45,6 +50,17 @@ namespace TrueCraft.Client.Modules
         {
             if (Game.Client.CurrentWindow != null)
             {
+                // TODO: slot == -999 when outside of the window and -1 when inside the window, but not on an item
+                SelectedSlot = -999;
+
+                IItemProvider provider = null;
+                var scale = new Point((int)(16 * Game.ScaleFactor * 2));
+                var mouse = Mouse.GetState().Position.ToVector2().ToPoint()
+                            - new Point((int)(8 * Game.ScaleFactor * 2));
+                var rect = new Rectangle(mouse, scale);
+                if (!HeldItem.Empty)
+                    provider = Game.ItemRepository.GetItemProvider(HeldItem.ID);
+
                 SpriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.NonPremultiplied);
                 SpriteBatch.Draw(Game.White1x1, new Rectangle(0, 0,
                     Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height), new Color(Color.Black, 180));
@@ -58,6 +74,14 @@ namespace TrueCraft.Client.Modules
                         DrawInventoryWindow(RenderStage.Sprites);
                         break;
                 }
+                if (provider != null)
+                {
+                    if (provider.GetIconTexture((byte)HeldItem.Metadata) != null)
+                    {
+                        IconRenderer.RenderItemIcon(SpriteBatch, Items, provider,
+                            (byte)HeldItem.Metadata, rect, Color.White);
+                    }
+                }
                 SpriteBatch.End();
                 switch (Game.Client.CurrentWindow.Type)
                 {
@@ -65,12 +89,30 @@ namespace TrueCraft.Client.Modules
                         DrawInventoryWindow(RenderStage.Models);
                         break;
                 }
+                if (provider != null)
+                {
+                    if (provider.GetIconTexture((byte)HeldItem.Metadata) == null && provider is IBlockProvider)
+                    {
+                        IconRenderer.RenderBlockIcon(Game, provider as IBlockProvider, (byte)HeldItem.Metadata, rect);
+                    }
+                }
                 SpriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.NonPremultiplied);
                 switch (Game.Client.CurrentWindow.Type)
                 {
                     case -1:
                         DrawInventoryWindow(RenderStage.Text);
                         break;
+                }
+                if (provider != null)
+                {
+                    if (HeldItem.Count > 1)
+                    {
+                        int offset = 10;
+                        if (HeldItem.Count >= 10)
+                            offset -= 6;
+                        mouse += new Point((int)Scale(offset), (int)Scale(5));
+                        Font.DrawText(SpriteBatch, mouse.X, mouse.Y, HeldItem.Count.ToString(), Game.ScaleFactor);
+                    }
                 }
                 SpriteBatch.End();
             }
@@ -81,6 +123,72 @@ namespace TrueCraft.Client.Modules
             if (Game.Client.CurrentWindow != null)
                 return true;
             return base.MouseMove(gameTime, e);
+        }
+
+        public override bool MouseButtonDown(GameTime gameTime, MouseButtonEventArgs e)
+        {
+            if (Game.Client.CurrentWindow == null)
+                return false;
+            var id = Game.Client.CurrentWindow.ID;
+            if (id == -1)
+                id = 0; // Minecraft is stupid
+            var item = ItemStack.EmptyStack;
+            if (SelectedSlot > 0)
+                item = Game.Client.CurrentWindow[SelectedSlot];
+            var packet = new ClickWindowPacket(id, SelectedSlot, e.Button == MouseButton.Right,
+                             0, Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift),
+                             item.ID, item.Count, item.Metadata);
+            Game.Client.QueuePacket(packet);
+            if (HeldItem.Empty) // See InteractionHandler.cs (in the server) for an explanation
+            {
+                if (!packet.Shift)
+                {
+                    if (packet.RightClick)
+                    {
+                        var held = (ItemStack)item.Clone();
+                        held.Count = (sbyte)((held.Count / 2) + (item.Count % 2));
+                        HeldItem = held;
+                    }
+                    else
+                        HeldItem = (ItemStack)item.Clone();
+                }
+            }
+            else
+            {
+                if (item.Empty)
+                {
+                    if (packet.RightClick)
+                    {
+                        var held = HeldItem;
+                        held.Count--;
+                        HeldItem = held;
+                    }
+                    else
+                        HeldItem = ItemStack.EmptyStack;
+                }
+                else
+                {
+                    if (item.CanMerge(HeldItem))
+                    {
+                        if (packet.RightClick)
+                        {
+                            var held = HeldItem;
+                            held.Count--;
+                            HeldItem = held;
+                        }
+                        else
+                            HeldItem = ItemStack.EmptyStack;
+                    }
+                    else
+                        HeldItem = (ItemStack)item.Clone(); 
+                }
+            }
+            return true;
+        }
+
+        public override bool MouseButtonUp(GameTime gameTime, MouseButtonEventArgs e)
+        {
+            return Game.Client.CurrentWindow != null;
         }
 
         public override bool KeyDown(GameTime gameTime, KeyboardKeyEventArgs e)
@@ -147,7 +255,7 @@ namespace TrueCraft.Client.Modules
                 var rect = new Rectangle(position, scale);
                 if (stage == RenderStage.Sprites && rect.Contains(mouse))
                 {
-                    SelectedSlot = area.StartIndex + i;
+                    SelectedSlot = (short)(area.StartIndex + i);
                     SpriteBatch.Draw(Game.White1x1, rect, Color.LightGray);
                 }
                 if (item.Empty)

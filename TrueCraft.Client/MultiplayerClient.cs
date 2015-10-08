@@ -42,7 +42,6 @@ namespace TrueCraft.Client
         public InventoryWindow Inventory { get; set; }
         public int Health { get; set; }
         public IWindow CurrentWindow { get; set; }
-        public ItemStack ItemInMouse { get; set; }
 
         public bool Connected
         {
