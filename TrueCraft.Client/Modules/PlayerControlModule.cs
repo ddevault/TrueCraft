@@ -80,6 +80,10 @@ namespace TrueCraft.Client.Modules
                     Capture = !Capture;
                     return true;
 
+                case Keys.E:
+                    Game.Client.CurrentWindow = Game.Client.Inventory;
+                    return true;
+
                 case Keys.Space:
                     if (Math.Floor(Game.Client.Position.Y) == Game.Client.Position.Y)
                         Game.Client.Velocity += TrueCraft.API.Vector3.Up * 0.3;

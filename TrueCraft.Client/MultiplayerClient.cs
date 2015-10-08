@@ -17,6 +17,7 @@ using TrueCraft.Core;
 using TrueCraft.API.Physics;
 using TrueCraft.Core.Physics;
 using TrueCraft.Core.Windows;
+using TrueCraft.API.Windows;
 
 namespace TrueCraft.Client
 {
@@ -40,6 +41,8 @@ namespace TrueCraft.Client
         public int EntityID { get; internal set; }
         public InventoryWindow Inventory { get; set; }
         public int Health { get; set; }
+        public IWindow CurrentWindow { get; set; }
+        public ItemStack ItemInMouse { get; set; }
 
         public bool Connected
         {

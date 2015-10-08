@@ -126,13 +126,16 @@ namespace TrueCraft.Client
             DebugInfoModule = new DebugInfoModule(this, Pixel);
             ChatModule = new ChatModule(this, Pixel);
             var hud = new HUDModule(this, Pixel);
+            var windowModule = new WindowModule(this, Pixel);
 
             GraphicalModules.Add(ChunkModule);
             GraphicalModules.Add(new HighlightModule(this));
             GraphicalModules.Add(hud);
             GraphicalModules.Add(ChatModule);
+            GraphicalModules.Add(windowModule);
             GraphicalModules.Add(DebugInfoModule);
 
+            InputModules.Add(windowModule);
             InputModules.Add(ChatModule);
             InputModules.Add(new HUDModule(this, Pixel));
             InputModules.Add(new PlayerControlModule(this));

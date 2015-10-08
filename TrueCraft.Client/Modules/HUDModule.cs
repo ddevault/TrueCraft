@@ -93,8 +93,6 @@ namespace TrueCraft.Client.Modules
                 Game.GraphicsDevice.Viewport.Height - Scale(HotbarBackgroundRect.Height + 5)),
                 HotbarBackgroundRect, Color.White, 0, Vector2.Zero, Game.ScaleFactor * 2, SpriteEffects.None, 1);
 
-            // TODO: Icons
-
             // Selection
             SpriteBatch.Draw(GUI, new Vector2(
                 Game.GraphicsDevice.Viewport.Width / 2 - Scale(HotbarBackgroundRect.Width / 2) + Scale(Game.Client.HotbarSelection * 20 - 1),
