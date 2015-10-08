@@ -162,8 +162,7 @@ namespace TrueCraft.Client.Modules
                     continue;
                 var position = origin + new Point((int)Scale(i * 20), 0);
                 var rect = new Rectangle(position, scale);
-                IconRenderer.RenderBlockIcon(Game, Items, provider,
-                    (byte)item.Metadata, rect, Color.White); // TODO: Fuck, metadata was supposed to be a short
+                IconRenderer.RenderBlockIcon(Game, provider, (byte)item.Metadata, rect);
             }
         }
 
@@ -178,7 +177,7 @@ namespace TrueCraft.Client.Modules
                 var item = Game.Client.Inventory.Hotbar[i];
                 if (item.Empty || item.Count == 1)
                     continue;
-                int offset = 12;
+                int offset = 10;
                 if (item.Count >= 10)
                     offset -= 6;
                 var position = origin + new Point((int)Scale(i * 20 + offset), (int)Scale(5));

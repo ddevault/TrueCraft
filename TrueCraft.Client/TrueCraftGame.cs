@@ -40,6 +40,7 @@ namespace TrueCraft.Client
         public DateTime EndDigging { get; set; }
         public Coordinates3D TargetBlock { get; set; }
         public AudioManager Audio { get; set; }
+        public Texture2D White1x1 { get; set; }
 
         private List<IGameplayModule> InputModules { get; set; }
         private List<IGameplayModule> GraphicalModules { get; set; }
@@ -118,6 +119,9 @@ namespace TrueCraft.Client
             GraphicalModules = new List<IGameplayModule>();
 
             base.Initialize(); // (calls LoadContent)
+
+            White1x1 = new Texture2D(GraphicsDevice, 1, 1);
+            White1x1.SetData<Color>(new[] { Color.White });
 
             Audio = new AudioManager();
             Audio.LoadDefaultPacks(Content);

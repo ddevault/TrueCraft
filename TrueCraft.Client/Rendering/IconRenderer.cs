@@ -34,9 +34,10 @@ namespace TrueCraft.Client.Rendering
             RenderEffect.Texture = game.TextureMapper.GetTexture("terrain.png");
             RenderEffect.TextureEnabled = true;
             RenderEffect.VertexColorEnabled = true;
-            RenderEffect.EnableDefaultLighting();
-            // TODO: Figure out how to make the lighting give the cubes some sense of depth
-            RenderEffect.DirectionalLight0.Direction = new Vector3(-0.75f, -0.75f, -0.75f);
+            RenderEffect.LightingEnabled = true;
+            RenderEffect.DirectionalLight0.Direction = new Vector3(10, -10, -0.8f);
+            RenderEffect.DirectionalLight0.DiffuseColor = Color.White.ToVector3();
+            RenderEffect.DirectionalLight0.Enabled = true;
             RenderEffect.Projection = Matrix.CreateOrthographicOffCenter(
                 0, game.GraphicsDevice.Viewport.Width,
                 0, game.GraphicsDevice.Viewport.Height,
@@ -53,8 +54,7 @@ namespace TrueCraft.Client.Rendering
             spriteBatch.Draw(texture, destination, source, color);
         }
 
-        public static void RenderBlockIcon(TrueCraftGame game, Texture2D texture, IBlockProvider provider,
-            byte metadata, Rectangle destination, Color color)
+        public static void RenderBlockIcon(TrueCraftGame game, IBlockProvider provider, byte metadata, Rectangle destination)
         {
             var mesh = BlockMeshes[provider.ID];
             if (mesh != null)

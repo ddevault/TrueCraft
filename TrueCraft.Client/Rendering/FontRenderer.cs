@@ -53,14 +53,34 @@ namespace TrueCraft.Client.Rendering
             };
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="spriteBatch"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="text"></param>
-        /// <param name="scale"></param>
+        public Point MeasureText(string text, float scale = 1.0f)
+        {
+            var dx = 0;
+            var height = 0;
+            var font = Fonts[0];
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (text[i] == '§')
+                {
+                    i++;
+                    var code = string.Format("§{0}", text[i]);
+                    if (ChatFormat.IsValid(code))
+                        font = GetFont(code);
+                }
+                else
+                {
+                    var glyph = font.GetGlyph(text[i]);
+                    if (glyph != null)
+                    {
+                        dx += (int)(glyph.XAdvance * scale);
+                        if (glyph.Height > height)
+                            height = glyph.Height;
+                    }
+                }
+            }
+            return new Point(dx, height);
+        }
+
         public void DrawText(SpriteBatch spriteBatch, int x, int y, string text, float scale = 1.0f, byte alpha = 255)
         {
             var dx = x;
@@ -91,12 +111,12 @@ namespace TrueCraft.Client.Rendering
                             (int)(glyph.Width * scale),
                             (int)(glyph.Height * scale));
                         var shadowRectangle = new Rectangle(
-                            dx + (int)(glyph.XOffset * scale) + 2,
-                            dy + (int)(glyph.YOffset * scale) + 2,
+                            dx + (int)(glyph.XOffset * scale) + 4,
+                            dy + (int)(glyph.YOffset * scale) + 4,
                             (int)(glyph.Width * scale),
                             (int)(glyph.Height * scale));
 
-                        spriteBatch.Draw(font.GetTexture(glyph.Page), shadowRectangle, sourceRectangle, new Color(63, 63, 21, alpha));
+                        spriteBatch.Draw(font.GetTexture(glyph.Page), shadowRectangle, sourceRectangle, new Color(21, 21, 21, alpha));
                         spriteBatch.Draw(font.GetTexture(glyph.Page), destRectangle, sourceRectangle, new Color(color, alpha));
                         dx += (int)(glyph.XAdvance * scale);
                     }

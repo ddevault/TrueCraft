@@ -44,7 +44,7 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <Commandlineparameters>localhost TestUser</Commandlineparameters>
+    <Commandlineparameters>localhost SirCmpwn</Commandlineparameters>
     <DebugType>
     </DebugType>
     <DebugSymbols>true</DebugSymbols>
