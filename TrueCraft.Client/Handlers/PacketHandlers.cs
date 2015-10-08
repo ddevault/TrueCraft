@@ -16,6 +16,7 @@ namespace TrueCraft.Client.Handlers
             client.RegisterPacketHandler(new ChatMessagePacket().ID, HandleChatMessage);
             client.RegisterPacketHandler(new SetPlayerPositionPacket().ID, HandlePositionAndLook);
             client.RegisterPacketHandler(new LoginResponsePacket().ID, HandleLoginResponse);
+            client.RegisterPacketHandler(new UpdateHealthPacket().ID, HandleUpdateHealth);
 
             client.RegisterPacketHandler(new ChunkPreamblePacket().ID, ChunkHandlers.HandleChunkPreamble);
             client.RegisterPacketHandler(new ChunkDataPacket().ID, ChunkHandlers.HandleChunkData);
@@ -57,6 +58,12 @@ namespace TrueCraft.Client.Handlers
             client.QueuePacket(packet);
             client.LoggedIn = true;
             // TODO: Pitch and yaw
+        }
+
+        public static void HandleUpdateHealth(IPacket _packet, MultiplayerClient client)
+        {
+            var packet = (UpdateHealthPacket)_packet;
+            client.Health = packet.Health;
         }
     }
 }

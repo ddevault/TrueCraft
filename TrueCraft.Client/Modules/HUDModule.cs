@@ -43,6 +43,7 @@ namespace TrueCraft.Client.Modules
 
             DrawHotbar(gameTime);
             DrawHotbarItemSprites(gameTime);
+            DrawLife(gameTime);
 
             SpriteBatch.End();
 
@@ -68,6 +69,18 @@ namespace TrueCraft.Client.Modules
         private static readonly Rectangle HotbarSelectionRect =
             new Rectangle(0, 22, 24, 24);
 
+        private static readonly Rectangle FullHeartRect =
+            new Rectangle(52, 0, 9, 9);
+
+        private static readonly Rectangle HalfHeartRect =
+            new Rectangle(61, 0, 9, 9);
+
+        private static readonly Rectangle EmptyHeartRect =
+            new Rectangle(16, 0, 9, 9);
+
+        private static readonly Rectangle EmptyHeartHighlightedRect =
+            new Rectangle(25, 0, 9, 9);
+
         /// <summary>
         /// Draws the inventory hotbar.
         /// </summary>
@@ -87,6 +100,29 @@ namespace TrueCraft.Client.Modules
                 Game.GraphicsDevice.Viewport.Width / 2 - Scale(HotbarBackgroundRect.Width / 2) + Scale(Game.Client.HotbarSelection * 20 - 1),
                 Game.GraphicsDevice.Viewport.Height - Scale(HotbarBackgroundRect.Height + 6)),
                 HotbarSelectionRect, Color.White, 0, Vector2.Zero, Game.ScaleFactor * 2, SpriteEffects.None, 1);
+        }
+
+        private void DrawLife(GameTime gameTime)
+        {
+            int x = (int)(Game.GraphicsDevice.Viewport.Width / 2 - Scale(HotbarBackgroundRect.Width / 2));
+            int y = (int)(Game.GraphicsDevice.Viewport.Height - Scale(HotbarBackgroundRect.Height + 5));
+            y -= (int)(Scale(EmptyHeartRect.Height) * 1.25);
+
+            for (int i = 0; i < 10; i++)
+            {
+                SpriteBatch.Draw(Icons, new Vector2(x + i * Scale(EmptyHeartRect.Width), y), EmptyHeartRect, Color.White,
+                    0, Vector2.Zero, Game.ScaleFactor * 2, SpriteEffects.None, 1);
+                if (Game.Client.Health >= i * 2)
+                {
+                    SpriteBatch.Draw(Icons, new Vector2(x + i * Scale(FullHeartRect.Width), y), FullHeartRect, Color.White,
+                        0, Vector2.Zero, Game.ScaleFactor * 2, SpriteEffects.None, 1);
+                }
+                else if (Game.Client.Health >= i * 2 - 1)
+                {
+                    SpriteBatch.Draw(Icons, new Vector2(x + i * Scale(HalfHeartRect.Width), y), HalfHeartRect, Color.White,
+                        0, Vector2.Zero, Game.ScaleFactor * 2, SpriteEffects.None, 1);
+                }
+            }
         }
 
         private void DrawHotbarItemSprites(GameTime gameTime)

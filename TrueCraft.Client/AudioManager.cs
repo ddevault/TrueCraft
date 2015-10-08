@@ -66,6 +66,11 @@ namespace TrueCraft.Client
                 {
                     "footstep.glass",
                     "default_glass_footstep.ogg"
+                },
+                new[]
+                {
+                    "hurt",
+                    "default_hurt.wav"
                 }
             };
             foreach (var pack in packs)

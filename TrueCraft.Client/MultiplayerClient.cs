@@ -39,6 +39,7 @@ namespace TrueCraft.Client
         public bool LoggedIn { get; internal set; }
         public int EntityID { get; internal set; }
         public InventoryWindow Inventory { get; set; }
+        public int Health { get; set; }
 
         public bool Connected
         {
@@ -88,6 +89,7 @@ namespace TrueCraft.Client
             SocketPool = new SocketAsyncEventArgsPool(100, 200, 65536);
             connected = 0;
             cancel = new CancellationTokenSource();
+            Health = 15;
         }
 
         public void RegisterPacketHandler(byte packetId, PacketHandler handler)

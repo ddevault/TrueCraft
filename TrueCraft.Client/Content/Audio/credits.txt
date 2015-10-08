@@ -1,1 +1,2 @@
 ﻿The footstep and mining/placement sound effects were sourced from Minetest under CC-BY-SA: https://github.com/minetest/minetest_game
+default_hurt.wav is the same sound effect Minecraft uses, which is CC-BY-SA from http://freesound.org/people/thecheeseman/sounds/44429/

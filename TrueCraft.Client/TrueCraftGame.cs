@@ -41,7 +41,8 @@ namespace TrueCraft.Client
         public Coordinates3D TargetBlock { get; set; }
         public AudioManager Audio { get; set; }
 
-        private List<IGameplayModule> Modules { get; set; }
+        private List<IGameplayModule> InputModules { get; set; }
+        private List<IGameplayModule> GraphicalModules { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
         private KeyboardHandler KeyboardComponent { get; set; }
         private MouseHandler MouseComponent { get; set; }
@@ -113,7 +114,8 @@ namespace TrueCraft.Client
 
         protected override void Initialize()
         {
-            Modules = new List<IGameplayModule>();
+            InputModules = new List<IGameplayModule>();
+            GraphicalModules = new List<IGameplayModule>();
 
             base.Initialize(); // (calls LoadContent)
 
@@ -123,13 +125,17 @@ namespace TrueCraft.Client
             ChunkModule = new ChunkModule(this);
             DebugInfoModule = new DebugInfoModule(this, Pixel);
             ChatModule = new ChatModule(this, Pixel);
+            var hud = new HUDModule(this, Pixel);
 
-            Modules.Add(ChunkModule);
-            Modules.Add(new HighlightModule(this));
-            Modules.Add(ChatModule);
-            Modules.Add(new PlayerControlModule(this));
-            Modules.Add(new HUDModule(this, Pixel));
-            Modules.Add(DebugInfoModule);
+            GraphicalModules.Add(ChunkModule);
+            GraphicalModules.Add(new HighlightModule(this));
+            GraphicalModules.Add(hud);
+            GraphicalModules.Add(ChatModule);
+            GraphicalModules.Add(DebugInfoModule);
+
+            InputModules.Add(ChatModule);
+            InputModules.Add(new HUDModule(this, Pixel));
+            InputModules.Add(new PlayerControlModule(this));
 
             Client.PropertyChanged += HandleClientPropertyChanged;
             Client.Connect(EndPoint);
@@ -207,7 +213,7 @@ namespace TrueCraft.Client
 
         private void OnKeyboardKeyDown(object sender, KeyboardKeyEventArgs e)
         {
-            foreach (var module in Modules)
+            foreach (var module in InputModules)
             {
                 var input = module as IInputModule;
                 if (input != null)
@@ -220,7 +226,7 @@ namespace TrueCraft.Client
 
         private void OnKeyboardKeyUp(object sender, KeyboardKeyEventArgs e)
         {
-            foreach (var module in Modules)
+            foreach (var module in InputModules)
             {
                 var input = module as IInputModule;
                 if (input != null)
@@ -233,7 +239,7 @@ namespace TrueCraft.Client
 
         private void OnGamePadButtonUp(object sender, GamePadButtonEventArgs e)
         {
-            foreach (var module in Modules)
+            foreach (var module in InputModules)
             {
                 var input = module as IInputModule;
                 if (input != null)
@@ -246,7 +252,7 @@ namespace TrueCraft.Client
 
         private void OnGamePadButtonDown(object sender, GamePadButtonEventArgs e)
         {
-            foreach (var module in Modules)
+            foreach (var module in InputModules)
             {
                 var input = module as IInputModule;
                 if (input != null)
@@ -259,7 +265,7 @@ namespace TrueCraft.Client
 
         private void OnMouseComponentScroll(object sender, MouseScrollEventArgs e)
         {
-            foreach (var module in Modules)
+            foreach (var module in InputModules)
             {
                 var input = module as IInputModule;
                 if (input != null)
@@ -272,7 +278,7 @@ namespace TrueCraft.Client
 
         private void OnMouseComponentButtonDown(object sender, MouseButtonEventArgs e)
         {
-            foreach (var module in Modules)
+            foreach (var module in InputModules)
             {
                 var input = module as IInputModule;
                 if (input != null)
@@ -285,7 +291,7 @@ namespace TrueCraft.Client
 
         private void OnMouseComponentButtonUp(object sender, MouseButtonEventArgs e)
         {
-            foreach (var module in Modules)
+            foreach (var module in InputModules)
             {
                 var input = module as IInputModule;
                 if (input != null)
@@ -298,7 +304,7 @@ namespace TrueCraft.Client
 
         private void OnMouseComponentMove(object sender, MouseMoveEventArgs e)
         {
-            foreach (var module in Modules)
+            foreach (var module in InputModules)
             {
                 var input = module as IInputModule;
                 if (input != null)
@@ -316,6 +322,7 @@ namespace TrueCraft.Client
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
             using (var stream = File.OpenWrite(path))
                 new PngWriter().Write(RenderTarget, stream);
+            ChatModule.AddMessage("Screenshot saved to " + Path.GetFileName(path));
         }
 
         public void FlushMainThreadActions()
@@ -350,7 +357,9 @@ namespace TrueCraft.Client
                 NextPhysicsUpdate = DateTime.UtcNow.AddMilliseconds(50);
             }
 
-            foreach (var module in Modules)
+            foreach (var module in InputModules)
+                module.Update(gameTime);
+            foreach (var module in GraphicalModules)
                 module.Update(gameTime);
 
             UpdateCamera();
@@ -383,7 +392,7 @@ namespace TrueCraft.Client
             GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 
             Mesh.ResetStats();
-            foreach (var module in Modules)
+            foreach (var module in GraphicalModules)
             {
                 var drawable = module as IGraphicalModule;
                 if (drawable != null)
