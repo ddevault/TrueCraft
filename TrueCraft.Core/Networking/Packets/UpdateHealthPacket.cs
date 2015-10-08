@@ -10,6 +10,11 @@ namespace TrueCraft.Core.Networking.Packets
     {
         public byte ID { get { return 0x08; } }
 
+        public UpdateHealthPacket(short health)
+        {
+            Health = health;
+        }
+
         public short Health;
 
         public void ReadPacket(IMinecraftStream stream)

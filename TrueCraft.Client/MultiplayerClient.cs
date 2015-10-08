@@ -89,7 +89,7 @@ namespace TrueCraft.Client
             SocketPool = new SocketAsyncEventArgsPool(100, 200, 65536);
             connected = 0;
             cancel = new CancellationTokenSource();
-            Health = 15;
+            Health = 20;
         }
 
         public void RegisterPacketHandler(byte packetId, PacketHandler handler)

@@ -61,6 +61,7 @@ namespace TrueCraft.Handlers
                 remoteClient.QueuePacket(new LoginResponsePacket(client.Entity.EntityID, 0, Dimension.Overworld));
                 remoteClient.UpdateChunks();
                 remoteClient.QueuePacket(new WindowItemsPacket(0, remoteClient.Inventory.GetSlots()));
+                remoteClient.QueuePacket(new UpdateHealthPacket((remoteClient.Entity as PlayerEntity).Health));
                 remoteClient.QueuePacket(new SpawnPositionPacket((int)remoteClient.Entity.Position.X,
                         (int)remoteClient.Entity.Position.Y, (int)remoteClient.Entity.Position.Z));
                 remoteClient.QueuePacket(new SetPlayerPositionPacket(remoteClient.Entity.Position.X,
