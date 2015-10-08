@@ -5,6 +5,7 @@ using TrueCraft.Core.Logic.Items;
 using TrueCraft.API.Logic;
 using TrueCraft.Client.Input;
 using Microsoft.Xna.Framework.Input;
+using TrueCraft.Core.Networking.Packets;
 
 namespace TrueCraft.Client.Modules
 {
@@ -60,7 +61,10 @@ namespace TrueCraft.Client.Modules
             {
                 if (e.Key == Keys.Escape)
                 {
+                    if (Game.Client.CurrentWindow.Type != -1)
+                        Game.Client.QueuePacket(new CloseWindowPacket(Game.Client.CurrentWindow.ID));
                     Game.Client.CurrentWindow = null;
+                    Mouse.SetPosition(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height / 2);
                 }
                 return true;
             }
