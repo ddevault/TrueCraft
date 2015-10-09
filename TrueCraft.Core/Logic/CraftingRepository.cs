@@ -5,7 +5,7 @@ using TrueCraft.API;
 using TrueCraft.API.Windows;
 using TrueCraft.API.Logic;
 
-namespace TrueCraft
+namespace TrueCraft.Core.Logic
 {
     public class CraftingRepository : ICraftingRepository
     {
@@ -16,7 +16,7 @@ namespace TrueCraft
             Recipes.Add(recipe);
         }
 
-        internal void DiscoverRecipes()
+        public void DiscoverRecipes()
         {
             var recipeTypes = new List<Type>();
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())

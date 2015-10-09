@@ -13,27 +13,34 @@ namespace TrueCraft.Core.Windows
         public CraftingBenchWindow(ICraftingRepository craftingRepository, InventoryWindow inventory)
         {
             WindowAreas = new[]
-                {
-                    new CraftingWindowArea(craftingRepository, CraftingOutputIndex, 3, 3),
-                    new WindowArea(MainIndex, 27, 9, 3), // Main inventory
-                    new WindowArea(HotbarIndex, 9, 9, 1) // Hotbar
-                };
-            inventory.MainInventory.CopyTo(MainInventory);
-            inventory.Hotbar.CopyTo(Hotbar);
+            {
+                new CraftingWindowArea(craftingRepository, CraftingOutputIndex, 3, 3),
+                new WindowArea(MainIndex, 27, 9, 3), // Main inventory
+                new WindowArea(HotbarIndex, 9, 9, 1) // Hotbar
+            };
+            if (inventory != null)
+            {
+                inventory.MainInventory.CopyTo(MainInventory);
+                inventory.Hotbar.CopyTo(Hotbar);
+            }
             foreach (var area in WindowAreas)
                 area.WindowChange += (s, e) => OnWindowChange(new WindowChangeEventArgs(
-                    (s as WindowArea).StartIndex + e.SlotIndex, e.Value));
+                        (s as WindowArea).StartIndex + e.SlotIndex, e.Value));
             Copying = false;
-            inventory.WindowChange += (sender, e) =>
+            if (inventory != null)
             {
-                if (Copying) return;
-                if ((e.SlotIndex >= InventoryWindow.MainIndex && e.SlotIndex < InventoryWindow.MainIndex + inventory.MainInventory.Length)
-                    || (e.SlotIndex >= InventoryWindow.HotbarIndex && e.SlotIndex < InventoryWindow.HotbarIndex + inventory.Hotbar.Length))
+                inventory.WindowChange += (sender, e) =>
                 {
-                    inventory.MainInventory.CopyTo(MainInventory);
-                    inventory.Hotbar.CopyTo(Hotbar);
-                }
-            };
+                    if (Copying)
+                        return;
+                    if ((e.SlotIndex >= InventoryWindow.MainIndex && e.SlotIndex < InventoryWindow.MainIndex + inventory.MainInventory.Length)
+                    || (e.SlotIndex >= InventoryWindow.HotbarIndex && e.SlotIndex < InventoryWindow.HotbarIndex + inventory.Hotbar.Length))
+                    {
+                        inventory.MainInventory.CopyTo(MainInventory);
+                        inventory.Hotbar.CopyTo(Hotbar);
+                    }
+                };
+            }
         }
 
         #region Variables

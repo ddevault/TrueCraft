@@ -3,6 +3,9 @@ using TrueCraft.API.Networking;
 using TrueCraft.Core.Networking.Packets;
 using TrueCraft.API.Windows;
 using TrueCraft.API;
+using TrueCraft.Core.Windows;
+using TrueCraft.Core.Logic;
+using TrueCraft.API.Logic;
 
 namespace TrueCraft.Client.Handlers
 {
@@ -14,9 +17,7 @@ namespace TrueCraft.Client.Handlers
             if (packet.WindowID == 0)
                 client.Inventory.SetSlots(packet.Items);
             else
-            {
-                // TODO
-            }
+                client.CurrentWindow.SetSlots(packet.Items);
         }
 
         public static void HandleSetSlot(IPacket _packet, MultiplayerClient client)
@@ -26,9 +27,7 @@ namespace TrueCraft.Client.Handlers
             if (packet.WindowID == 0)
                 window = client.Inventory;
             else
-            {
-                // TODO
-            }
+                window = client.CurrentWindow;
             if (window != null)
             {
                 if (packet.SlotIndex >= 0 && packet.SlotIndex < window.Length)
@@ -36,6 +35,25 @@ namespace TrueCraft.Client.Handlers
                     window[packet.SlotIndex] = new ItemStack(packet.ItemID, packet.Count, packet.Metadata);
                 }
             }
+        }
+
+        public static void HandleOpenWindowPacket(IPacket _packet, MultiplayerClient client)
+        {
+            var packet = (OpenWindowPacket)_packet;
+            IWindow window = null;
+            switch (packet.Type)
+            {
+                case 1: // Crafting bench window
+                    window = new CraftingBenchWindow(client.CraftingRepository, client.Inventory);
+                    break;
+            }
+            window.ID = packet.WindowID;
+            client.CurrentWindow = window;
+        }
+
+        public static void HandleCloseWindowPacket(IPacket _packet, MultiplayerClient client)
+        {
+            client.CurrentWindow = null;
         }
     }
 }

@@ -21,6 +21,7 @@ namespace TrueCraft.Client.Modules
         private TrueCraftGame Game { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
         private Texture2D Inventory { get; set; }
+        private Texture2D Crafting { get; set; }
         private Texture2D Items { get; set; }
         private FontRenderer Font { get; set; }
         private short SelectedSlot { get; set; }
@@ -39,12 +40,14 @@ namespace TrueCraft.Client.Modules
             Font = font;
             SpriteBatch = new SpriteBatch(game.GraphicsDevice);
             Inventory = game.TextureMapper.GetTexture("gui/inventory.png");
+            Crafting = game.TextureMapper.GetTexture("gui/crafting.png");
             Items = game.TextureMapper.GetTexture("gui/items.png");
             SelectedSlot = -1;
             HeldItem = ItemStack.EmptyStack;
         }
 
         private static readonly Rectangle InventoryWindowRect = new Rectangle(0, 0, 176, 166);
+        private static readonly Rectangle CraftingWindowRect = new Rectangle(0, 0, 176, 166);
 
         public void Draw(GameTime gameTime)
         {
@@ -73,6 +76,13 @@ namespace TrueCraft.Client.Modules
                             InventoryWindowRect, Color.White, 0, Vector2.Zero, Game.ScaleFactor * 2, SpriteEffects.None, 1);
                         DrawInventoryWindow(RenderStage.Sprites);
                         break;
+                    case 1: // Crafting bench
+                        SpriteBatch.Draw(Crafting, new Vector2(
+                            Game.GraphicsDevice.Viewport.Width / 2 - Scale(CraftingWindowRect.Width / 2),
+                            Game.GraphicsDevice.Viewport.Height / 2 - Scale(CraftingWindowRect.Height / 2)),
+                            CraftingWindowRect, Color.White, 0, Vector2.Zero, Game.ScaleFactor * 2, SpriteEffects.None, 1);
+                        DrawCraftingWindow(RenderStage.Sprites);
+                        break;
                 }
                 if (provider != null)
                 {
@@ -88,6 +98,9 @@ namespace TrueCraft.Client.Modules
                     case -1:
                         DrawInventoryWindow(RenderStage.Models);
                         break;
+                    case 1: // Crafting bench
+                        DrawCraftingWindow(RenderStage.Models);
+                        break;
                 }
                 if (provider != null)
                 {
@@ -101,6 +114,9 @@ namespace TrueCraft.Client.Modules
                 {
                     case -1:
                         DrawInventoryWindow(RenderStage.Text);
+                        break;
+                    case 1: // Crafting bench
+                        DrawCraftingWindow(RenderStage.Text);
                         break;
                 }
                 if (provider != null)
@@ -151,8 +167,8 @@ namespace TrueCraft.Client.Modules
             if (SelectedSlot > -1)
                 item = Game.Client.CurrentWindow[SelectedSlot];
             var packet = new ClickWindowPacket(id, SelectedSlot, e.Button == MouseButton.Right,
-                             0, Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift),
-                             item.ID, item.Count, item.Metadata);
+                0, Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift),
+                item.ID, item.Count, item.Metadata);
             if (packet.SlotIndex == -999)
             {
                 // Special case (throwing item) TODO
@@ -161,7 +177,7 @@ namespace TrueCraft.Client.Modules
             {
                 var backup = Game.Client.CurrentWindow.GetSlots();
                 var staging = (ItemStack)HeldItem.Clone();
-                Window.HandleClickPacket(packet, Game.Client.CurrentWindow, ref staging); // just for updating staging
+                Window.HandleClickPacket(packet, Game.Client.CurrentWindow, ref staging);
                 HeldItem = staging;
                 Game.Client.CurrentWindow.SetSlots(backup);
             }
@@ -198,6 +214,14 @@ namespace TrueCraft.Client.Modules
             DrawWindowArea(Game.Client.Inventory.Armor, 8, 8, InventoryWindowRect, stage);
         }
 
+        private void DrawCraftingWindow(RenderStage stage)
+        {
+            var window = (CraftingBenchWindow)Game.Client.CurrentWindow;
+            DrawWindowArea(window.CraftingGrid, 29, 16, CraftingWindowRect, stage);
+            DrawWindowArea(window.MainInventory, 8, 84, CraftingWindowRect, stage);
+            DrawWindowArea(window.Hotbar, 8, 142, CraftingWindowRect, stage);
+        }
+
         private void DrawWindowArea(IWindowArea area, int _x, int _y, Rectangle frame, RenderStage stage)
         {
             var mouse = Mouse.GetState().Position.ToVector2();
@@ -222,8 +246,8 @@ namespace TrueCraft.Client.Modules
                         }
                         else
                         {
-                            x = (int)Scale(119);
-                            y = (int)Scale(30);
+                            x = (int)Scale(124 - _x);
+                            y = (int)Scale(35 - _y);
                         }
                     }
                     else
@@ -239,7 +263,7 @@ namespace TrueCraft.Client.Modules
                 if (stage == RenderStage.Sprites && rect.Contains(mouse))
                 {
                     SelectedSlot = (short)(area.StartIndex + i);
-                    SpriteBatch.Draw(Game.White1x1, rect, Color.LightGray);
+                    SpriteBatch.Draw(Game.White1x1, rect, new Color(Color.White, 150));
                 }
                 if (item.Empty)
                     continue;

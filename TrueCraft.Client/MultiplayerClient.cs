@@ -18,6 +18,7 @@ using TrueCraft.API.Physics;
 using TrueCraft.Core.Physics;
 using TrueCraft.Core.Windows;
 using TrueCraft.API.Windows;
+using TrueCraft.API.Logic;
 
 namespace TrueCraft.Client
 {
@@ -42,6 +43,7 @@ namespace TrueCraft.Client
         public InventoryWindow Inventory { get; set; }
         public int Health { get; set; }
         public IWindow CurrentWindow { get; set; }
+        public ICraftingRepository CraftingRepository { get; set; }
 
         public bool Connected
         {
@@ -92,6 +94,9 @@ namespace TrueCraft.Client
             connected = 0;
             cancel = new CancellationTokenSource();
             Health = 20;
+            var crafting = new CraftingRepository();
+            CraftingRepository = crafting;
+            crafting.DiscoverRecipes();
         }
 
         public void RegisterPacketHandler(byte packetId, PacketHandler handler)
