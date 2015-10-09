@@ -484,8 +484,8 @@ namespace TrueCraft
                 return;
             }
 
-            if (e.SlotIndex != InventoryWindow.CraftingOutputIndex) // Because Minecraft is stupid
-                QueuePacket(new SetSlotPacket(0, (short)e.SlotIndex, e.Value.ID, e.Value.Count, e.Value.Metadata));
+            QueuePacket(new SetSlotPacket(0, (short)e.SlotIndex, e.Value.ID, e.Value.Count, e.Value.Metadata));
+
             if (e.SlotIndex == SelectedSlot)
             {
                 var notified = Server.GetEntityManagerForWorld(World).ClientsForEntity(Entity);

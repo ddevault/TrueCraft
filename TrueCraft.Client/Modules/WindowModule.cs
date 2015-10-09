@@ -133,42 +133,47 @@ namespace TrueCraft.Client.Modules
             if (id == -1)
                 id = 0; // Minecraft is stupid
             var item = ItemStack.EmptyStack;
-            if (SelectedSlot > 0)
+            if (SelectedSlot > -1)
                 item = Game.Client.CurrentWindow[SelectedSlot];
             var packet = new ClickWindowPacket(id, SelectedSlot, e.Button == MouseButton.Right,
                              0, Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift),
                              item.ID, item.Count, item.Metadata);
-            Game.Client.QueuePacket(packet);
-            if (HeldItem.Empty) // See InteractionHandler.cs (in the server) for an explanation
+            // Special cases (TODO: make this more abstract? Read-only slots?)
+            if ((Game.Client.CurrentWindow is InventoryWindow && SelectedSlot == InventoryWindow.CraftingOutputIndex)
+                || (Game.Client.CurrentWindow is CraftingBenchWindow && SelectedSlot == CraftingBenchWindow.CraftingOutputIndex)
+                || (Game.Client.CurrentWindow is FurnaceWindow && SelectedSlot == FurnaceWindow.OutputIndex))
             {
-                if (!packet.Shift)
+                if (HeldItem.Empty)
+                    HeldItem = (ItemStack)item.Clone();
+                else
                 {
-                    if (packet.RightClick)
+                    if (item.CanMerge(HeldItem))
                     {
-                        var held = (ItemStack)item.Clone();
-                        held.Count = (sbyte)((held.Count / 2) + (item.Count % 2));
+                        var held = HeldItem;
+                        held.Count += item.Count;
                         HeldItem = held;
                     }
-                    else
-                        HeldItem = (ItemStack)item.Clone();
                 }
             }
             else
             {
-                if (item.Empty)
+                if (HeldItem.Empty) // See InteractionHandler.cs (in the server) for an explanation
                 {
-                    if (packet.RightClick)
+                    if (!packet.Shift)
                     {
-                        var held = HeldItem;
-                        held.Count--;
-                        HeldItem = held;
+                        if (packet.RightClick)
+                        {
+                            var held = (ItemStack)item.Clone();
+                            held.Count = (sbyte)((held.Count / 2) + (item.Count % 2));
+                            HeldItem = held;
+                        }
+                        else
+                            HeldItem = (ItemStack)item.Clone();
                     }
-                    else
-                        HeldItem = ItemStack.EmptyStack;
                 }
                 else
                 {
-                    if (item.CanMerge(HeldItem))
+                    if (item.Empty)
                     {
                         if (packet.RightClick)
                         {
@@ -180,9 +185,24 @@ namespace TrueCraft.Client.Modules
                             HeldItem = ItemStack.EmptyStack;
                     }
                     else
-                        HeldItem = (ItemStack)item.Clone(); 
+                    {
+                        if (item.CanMerge(HeldItem))
+                        {
+                            if (packet.RightClick)
+                            {
+                                var held = HeldItem;
+                                held.Count--;
+                                HeldItem = held;
+                            }
+                            else
+                                HeldItem = ItemStack.EmptyStack;
+                        }
+                        else
+                            HeldItem = (ItemStack)item.Clone(); 
+                    }
                 }
             }
+            Game.Client.QueuePacket(packet);
             return true;
         }
 
