@@ -96,7 +96,7 @@ namespace TrueCraft.Client.Rendering
             // they're unimportant as we can just use default textures.
             try
             {
-                var archive = new ZipFile(Path.Combine(TexturePack.TexturePackPath, texturePack.Name));
+                var archive = new ZipFile(Path.Combine(Paths.TexturePacks, texturePack.Name));
                 foreach (var entry in archive.Entries)
                 {
                     var key = entry.FileName;

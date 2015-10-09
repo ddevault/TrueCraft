@@ -208,7 +208,8 @@ namespace TrueCraft.Client
             // Load any custom textures if needed.
             TextureMapper = new TextureMapper(GraphicsDevice);
             if (UserSettings.Local.SelectedTexturePack != TexturePack.Default.Name)
-                TextureMapper.AddTexturePack(TexturePack.FromArchive(Path.Combine(TexturePack.TexturePackPath, UserSettings.Local.SelectedTexturePack)));
+                TextureMapper.AddTexturePack(TexturePack.FromArchive(Path.Combine(Paths.TexturePacks,
+                    UserSettings.Local.SelectedTexturePack)));
 
             Pixel = new FontRenderer(
                 new Font(Content, "Fonts/Pixel"),

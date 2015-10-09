@@ -9,38 +9,16 @@ namespace TrueCraft.Core
     /// </summary>
     public class TexturePack
     {
-        /// <summary>
-        /// 
-        /// </summary>
         public static readonly TexturePack Unknown = new TexturePack(
             "?",
             File.OpenRead(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/default-pack.png")),
             File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/default-pack.txt")));
 
-        /// <summary>
-        /// 
-        /// </summary>
         public static readonly TexturePack Default = new TexturePack(
             "Default",
             File.OpenRead(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/pack.png")),
             File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/pack.txt")));
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public static string TexturePackPath
-        {
-            get
-            {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                    ".truecraft/texturepacks/");
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="path"></param>
         public static TexturePack FromArchive(string path)
         {
             if (string.IsNullOrEmpty(path))
@@ -82,27 +60,12 @@ namespace TrueCraft.Core
             return new TexturePack(name, image, description);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public string Name { get; private set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public Stream Image { get; private set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public string Description { get; private set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="image"></param>
-        /// <param name="description"></param>
         public TexturePack(string name, Stream image, string description)
         {
             Name = name;

@@ -61,5 +61,13 @@ namespace TrueCraft.Core
                 return Path.Combine(Base, "screenshots");
             }
         }
+
+        public static string TexturePacks
+        {
+            get
+            {
+                return Path.Combine(Base, "texturepacks");
+            }
+        }
     }
 }
