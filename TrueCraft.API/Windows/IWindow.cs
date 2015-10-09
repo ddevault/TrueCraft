@@ -16,6 +16,7 @@ namespace TrueCraft.API.Windows
         int MinecraftWasWrittenByFuckingIdiotsLength { get; }
         ItemStack this[int index] { get; set; }
         bool Empty { get; }
+        short[] ReadOnlySlots { get; }
 
         /// <summary>
         /// Call this to "shift+click" an item from one area to another.

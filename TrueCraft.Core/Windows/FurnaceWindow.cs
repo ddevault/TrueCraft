@@ -50,11 +50,11 @@ namespace TrueCraft.Core.Windows
 
         private bool Copying { get; set; }
 
-        public const int IngredientIndex = 0;
-        public const int FuelIndex = 1;
-        public const int OutputIndex = 2;
-        public const int MainIndex = 3;
-        public const int HotbarIndex = 30;
+        public const short IngredientIndex = 0;
+        public const short FuelIndex = 1;
+        public const short OutputIndex = 2;
+        public const short MainIndex = 3;
+        public const short HotbarIndex = 30;
 
         public override string Name
         {
@@ -69,6 +69,14 @@ namespace TrueCraft.Core.Windows
             get
             {
                 return 2;
+            }
+        }
+
+        public override short[] ReadOnlySlots
+        {
+            get
+            {
+                return new[] { OutputIndex };
             }
         }
 

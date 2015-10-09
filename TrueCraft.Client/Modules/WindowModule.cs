@@ -138,69 +138,17 @@ namespace TrueCraft.Client.Modules
             var packet = new ClickWindowPacket(id, SelectedSlot, e.Button == MouseButton.Right,
                              0, Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift),
                              item.ID, item.Count, item.Metadata);
-            // Special cases (TODO: make this more abstract? Read-only slots?)
-            if ((Game.Client.CurrentWindow is InventoryWindow && SelectedSlot == InventoryWindow.CraftingOutputIndex)
-                || (Game.Client.CurrentWindow is CraftingBenchWindow && SelectedSlot == CraftingBenchWindow.CraftingOutputIndex)
-                || (Game.Client.CurrentWindow is FurnaceWindow && SelectedSlot == FurnaceWindow.OutputIndex))
+            if (packet.SlotIndex == -999)
             {
-                if (HeldItem.Empty)
-                    HeldItem = (ItemStack)item.Clone();
-                else
-                {
-                    if (item.CanMerge(HeldItem))
-                    {
-                        var held = HeldItem;
-                        held.Count += item.Count;
-                        HeldItem = held;
-                    }
-                }
+                // Special case (throwing item) TODO
             }
             else
             {
-                if (HeldItem.Empty) // See InteractionHandler.cs (in the server) for an explanation
-                {
-                    if (!packet.Shift)
-                    {
-                        if (packet.RightClick)
-                        {
-                            var held = (ItemStack)item.Clone();
-                            held.Count = (sbyte)((held.Count / 2) + (item.Count % 2));
-                            HeldItem = held;
-                        }
-                        else
-                            HeldItem = (ItemStack)item.Clone();
-                    }
-                }
-                else
-                {
-                    if (item.Empty)
-                    {
-                        if (packet.RightClick)
-                        {
-                            var held = HeldItem;
-                            held.Count--;
-                            HeldItem = held;
-                        }
-                        else
-                            HeldItem = ItemStack.EmptyStack;
-                    }
-                    else
-                    {
-                        if (item.CanMerge(HeldItem))
-                        {
-                            if (packet.RightClick)
-                            {
-                                var held = HeldItem;
-                                held.Count--;
-                                HeldItem = held;
-                            }
-                            else
-                                HeldItem = ItemStack.EmptyStack;
-                        }
-                        else
-                            HeldItem = (ItemStack)item.Clone(); 
-                    }
-                }
+                var backup = Game.Client.CurrentWindow.GetSlots();
+                var staging = (ItemStack)HeldItem.Clone();
+                Window.HandleClickPacket(packet, Game.Client.CurrentWindow, ref staging); // just for updating staging
+                HeldItem = staging;
+                Game.Client.CurrentWindow.SetSlots(backup);
             }
             Game.Client.QueuePacket(packet);
             return true;

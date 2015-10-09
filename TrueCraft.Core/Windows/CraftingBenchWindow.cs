@@ -40,10 +40,10 @@ namespace TrueCraft.Core.Windows
 
         private bool Copying { get; set; }
 
-        public const int HotbarIndex = 37;
-        public const int CraftingGridIndex = 1;
-        public const int CraftingOutputIndex = 0;
-        public const int MainIndex = 10;
+        public const short HotbarIndex = 37;
+        public const short CraftingGridIndex = 1;
+        public const short CraftingOutputIndex = 0;
+        public const short MainIndex = 10;
 
         public override string Name
         {
@@ -58,6 +58,14 @@ namespace TrueCraft.Core.Windows
             get
             {
                 return 1;
+            }
+        }
+
+        public override short[] ReadOnlySlots
+        {
+            get
+            {
+                return new[] { CraftingOutputIndex };
             }
         }
 

@@ -26,11 +26,11 @@ namespace TrueCraft.Core.Windows
 
         #region Variables
 
-        public const int HotbarIndex = 36;
-        public const int CraftingGridIndex = 1;
-        public const int CraftingOutputIndex = 0;
-        public const int ArmorIndex = 5;
-        public const int MainIndex = 9;
+        public const short HotbarIndex = 36;
+        public const short CraftingGridIndex = 1;
+        public const short CraftingOutputIndex = 0;
+        public const short ArmorIndex = 5;
+        public const short MainIndex = 9;
 
         public override string Name
         {
@@ -45,6 +45,14 @@ namespace TrueCraft.Core.Windows
             get
             {
                 return -1; // NOTE: This window does not have a type
+            }
+        }
+
+        public override short[] ReadOnlySlots
+        {
+            get
+            {
+                return new[] { CraftingOutputIndex };
             }
         }
 

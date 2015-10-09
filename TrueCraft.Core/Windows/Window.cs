@@ -5,6 +5,7 @@ using System.Text;
 using TrueCraft.API.Windows;
 using TrueCraft.API;
 using TrueCraft.API.Networking;
+using TrueCraft.Core.Networking.Packets;
 
 namespace TrueCraft.Core.Windows
 {
@@ -160,6 +161,95 @@ namespace TrueCraft.Core.Windows
                 Disposed(this, null);
             Client = null;
             IsDisposed = true;
+        }
+
+        public virtual short[] ReadOnlySlots
+        {
+            get { return new short[0]; }
+        }
+
+        public static void HandleClickPacket(ClickWindowPacket packet, IWindow window, ref ItemStack itemStaging)
+        {
+            if (packet.SlotIndex >= window.Length || packet.SlotIndex < 0)
+                return;
+            var existing = window[packet.SlotIndex];
+            if (window.ReadOnlySlots.Contains(packet.SlotIndex))
+            {
+                if (itemStaging.ID == existing.ID || itemStaging.Empty)
+                {
+                    if (itemStaging.Empty)
+                        itemStaging = existing;
+                    else
+                        itemStaging.Count += existing.Count;
+                    window[packet.SlotIndex] = ItemStack.EmptyStack;
+                }
+                return;
+            }
+            if (itemStaging.Empty) // Picking up something
+            {
+                if (packet.Shift)
+                {
+                    window.MoveToAlternateArea(packet.SlotIndex);
+                }
+                else
+                {
+                    if (packet.RightClick)
+                    {
+                        sbyte mod = (sbyte)(existing.Count % 2);
+                        existing.Count /= 2;
+                        itemStaging = existing;
+                        itemStaging.Count += mod;
+                        window[packet.SlotIndex] = existing;
+                    }
+                    else
+                    {
+                        itemStaging = window[packet.SlotIndex];
+                        window[packet.SlotIndex] = ItemStack.EmptyStack;
+                    }
+                }
+            }
+            else // Setting something down
+            {
+                if (existing.Empty) // Replace empty slot
+                {
+                    if (packet.RightClick)
+                    {
+                        var newItem = (ItemStack)itemStaging.Clone();
+                        newItem.Count = 1;
+                        itemStaging.Count--;
+                        window[packet.SlotIndex] = newItem;
+                    }
+                    else
+                    {
+                        window[packet.SlotIndex] = itemStaging;
+                        itemStaging = ItemStack.EmptyStack;
+                    }
+                }
+                else
+                {
+                    if (existing.CanMerge(itemStaging)) // Merge items
+                    {
+                        // TODO: Consider the maximum stack size
+                        if (packet.RightClick)
+                        {
+                            existing.Count++;
+                            itemStaging.Count--;
+                            window[packet.SlotIndex] = existing;
+                        }
+                        else
+                        {
+                            existing.Count += itemStaging.Count;
+                            window[packet.SlotIndex] = existing;
+                            itemStaging = ItemStack.EmptyStack;
+                        }
+                    }
+                    else // Swap items
+                    {
+                        window[packet.SlotIndex] = itemStaging;
+                        itemStaging = existing;
+                    }
+                }
+            }
         }
     }
 }
