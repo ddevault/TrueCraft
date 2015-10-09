@@ -114,6 +114,21 @@ namespace TrueCraft.Client.Modules
                         Font.DrawText(SpriteBatch, mouse.X, mouse.Y, HeldItem.Count.ToString(), Game.ScaleFactor);
                     }
                 }
+                if (SelectedSlot >= 0)
+                {
+                    var item = Game.Client.CurrentWindow[SelectedSlot];
+                    if (!item.Empty)
+                    {
+                        var p = Game.ItemRepository.GetItemProvider(item.ID);
+                        var size = Font.MeasureText(p.DisplayName);
+                        mouse = Mouse.GetState().Position.ToVector2().ToPoint();
+                        mouse += new Point(10, 10);
+                        SpriteBatch.Draw(Game.White1x1, new Rectangle(mouse,
+                            new Point(size.X + 10, size.Y + 15)),
+                            new Color(Color.Black, 200));
+                        Font.DrawText(SpriteBatch, mouse.X + 5, mouse.Y, p.DisplayName);
+                    }
+                }
                 SpriteBatch.End();
             }
         }
