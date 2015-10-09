@@ -4,7 +4,9 @@ A completely [clean-room](https://en.wikipedia.org/wiki/Clean_room_design) imple
 
 [![Build Status](https://travis-ci.org/SirCmpwn/TrueCraft.svg?branch=master)](https://travis-ci.org/SirCmpwn/TrueCraft) [![Donate with fosspay](https://drewdevault.com/donate/static/donate-with-fosspay.png)](https://drewdevault.com/donate?project=1)
 
-![](https://sr.ht/yPAf.png)
+![](https://sr.ht/1U9R.png)
+
+*Screenshot taken with [Eldpack](http://eldpack.com/)*
 
 I miss the old days of Minecraft, when it was a simple game. It was nearly perfect. Most of what Mojang has added since beta 1.7.3 is fluff, life support for a game that was "done" years ago. This is my attempt to get back to the original spirit of Minecraft, before there were things like the End, or all-in-one redstone devices, or village gift shops. A simple sandbox where you can build and explore and fight with your friends. I miss that.
 
