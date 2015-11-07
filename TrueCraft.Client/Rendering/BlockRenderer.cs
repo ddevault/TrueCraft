@@ -39,11 +39,13 @@ namespace TrueCraft.Client.Rendering
             };
             for (int i = 0; i < texture.Length; i++)
                 texture[i] *= new Vector2(16f / 256f);
-            return CreateUniformCube(offset, texture, faces, indiciesOffset, out indicies, Color.White);
+            return CreateUniformCube(offset, texture, faces, indiciesOffset, out indicies, Color.White, descriptor.BlockLight);
         }
 
+        public static readonly Random Random = new Random();
+
         public static VertexPositionNormalColorTexture[] CreateUniformCube(Vector3 offset, Vector2[] texture,
-            VisibleFaces faces, int indiciesOffset, out int[] indicies, Color color)
+            VisibleFaces faces, int indiciesOffset, out int[] indicies, Color color, int light = 15)
         {
             faces = VisibleFaces.All; // Temporary
 
@@ -70,7 +72,7 @@ namespace TrueCraft.Client.Rendering
                 }
                 var side = (CubeFace)_side;
                 var quad = CreateQuad(side, offset, texture, textureIndex % texture.Length, indiciesOffset,
-                    out _indicies, color);
+                    out _indicies, new Color(color.ToVector3() * CubeBrightness[light]));
                 Array.Copy(quad, 0, verticies, sidesSoFar * 4, 4);
                 Array.Copy(_indicies, 0, indicies, sidesSoFar * 6, 6);
                 textureIndex += 4;
@@ -102,6 +104,15 @@ namespace TrueCraft.Client.Rendering
                 0.6f, 0.6f, // North / South
                 0.8f, 0.8f, // East / West
                 1.0f, 0.5f  // Top / Bottom
+            };
+
+        protected static readonly float[] CubeBrightness =
+            new float[]
+            {
+                0.050f, 0.067f, 0.085f, 0.106f, // [ 0..3 ]
+                0.129f, 0.156f, 0.186f, 0.221f, // [ 4..7 ]
+                0.261f, 0.309f, 0.367f, 0.437f, // [ 8..11]
+                0.525f, 0.638f, 0.789f, 1.000f //  [12..15]
             };
 
         protected enum CubeFace
