@@ -88,12 +88,21 @@ namespace TrueCraft.Client.Rendering
             var quad = new VertexPositionNormalColorTexture[4];
             var unit = CubeMesh[(int)face];
             var normal = CubeNormals[(int)face];
+            var faceColor = new Color(FaceBrightness[(int)face] * color.ToVector3());
             for (int i = 0; i < 4; i++)
             {
-                quad[i] = new VertexPositionNormalColorTexture(offset + unit[i], normal, color, texture[textureOffset + i]);
+                quad[i] = new VertexPositionNormalColorTexture(offset + unit[i], normal, faceColor, texture[textureOffset + i]);
             }
             return quad;
         }
+        
+        protected static readonly float[] FaceBrightness =
+            new float[]
+            {
+                0.6f, 0.6f, // North / South
+                0.8f, 0.8f, // East / West
+                1.0f, 0.5f  // Top / Bottom
+            };
 
         protected enum CubeFace
         {
