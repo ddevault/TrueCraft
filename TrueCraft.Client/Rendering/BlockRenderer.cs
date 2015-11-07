@@ -42,8 +42,6 @@ namespace TrueCraft.Client.Rendering
             return CreateUniformCube(offset, texture, faces, indiciesOffset, out indicies, Color.White, descriptor.BlockLight);
         }
 
-        public static readonly Random Random = new Random();
-
         public static VertexPositionNormalColorTexture[] CreateUniformCube(Vector3 offset, Vector2[] texture,
             VisibleFaces faces, int indiciesOffset, out int[] indicies, Color color, int light = 15)
         {
