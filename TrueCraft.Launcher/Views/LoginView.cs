@@ -16,6 +16,7 @@ namespace TrueCraft.Launcher.Views
         public PasswordEntry PasswordText { get; set; }
         public Button LogInButton { get; set; }
         public Button RegisterButton { get; set; }
+        public Button OfflineButton { get; set; }
         public ImageView TrueCraftLogoImage { get; set; }
         public Label ErrorLabel { get; set; }
         public CheckBox RememberCheckBox { get; set; }
@@ -35,6 +36,7 @@ namespace TrueCraft.Launcher.Views
             PasswordText = new PasswordEntry();
             LogInButton = new Button("Log In");
             RegisterButton = new Button("Register");
+            OfflineButton = new Button("Play Offline");
             RememberCheckBox = new CheckBox("Remember Me");
             UsernameText.Text = UserSettings.Local.Username;
             if (UserSettings.Local.AutoLogin)
@@ -60,19 +62,22 @@ namespace TrueCraft.Launcher.Views
             };
             RegisterButton.Clicked += (sender, e) =>
             {
-                if (RegisterButton.Label == "Register")
-                    Window.WebView.Url = "http://truecraft.io/register";
-                else
-                {
-                    Window.User.Username = UsernameText.Text;
-                    Window.User.SessionId = "-";
-                    Window.MainContainer.Remove(this);
-                    Window.MainContainer.PackEnd(Window.MainMenuView = new MainMenuView(Window));
-                }
+                Window.WebView.Url = "https://truecraft.io/register";
             };
+            OfflineButton.Clicked += (sender, e) =>
+            {
+                Window.User.Username = UsernameText.Text;
+                Window.User.SessionId = "-";
+                Window.InteractionBox.Remove(this);
+                Window.InteractionBox.PackEnd(Window.MainMenuView = new MainMenuView(Window));
+            };
+            var regoffbox = new HBox();
+            RegisterButton.WidthRequest = OfflineButton.WidthRequest = 0.5;
+            regoffbox.PackStart(RegisterButton, true);
+            regoffbox.PackStart(OfflineButton, true);
             LogInButton.Clicked += LogInButton_Clicked;
 
-            this.PackEnd(RegisterButton);
+            this.PackEnd(regoffbox);
             this.PackEnd(LogInButton);
             this.PackEnd(RememberCheckBox);
             this.PackEnd(PasswordText);
@@ -112,6 +117,7 @@ namespace TrueCraft.Launcher.Views
             var request = WebRequest.CreateHttp(TrueCraftUser.AuthServer + "/api/login");
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded";
+            request.AllowAutoRedirect = false;
             request.BeginGetRequestStream(HandleLoginRequestReady, new LogInAsyncState
             {
                 Request = request,
