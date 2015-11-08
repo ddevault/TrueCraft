@@ -33,7 +33,7 @@ namespace TrueCraft.Launcher
 
             MainContainer = new HBox();
             WebScrollView = new ScrollView();
-            WebView = new WebView("http://truecraft.io/updates");
+            WebView = new WebView("https://truecraft.io/updates");
             LoginView = new LoginView(this);
             OptionView = new OptionView(this);
             MultiplayerView = new MultiplayerView(this);
