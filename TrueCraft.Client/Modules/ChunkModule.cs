@@ -36,10 +36,6 @@ namespace TrueCraft.Client.Modules
             ChunkRenderer.Start();
 
             OpaqueEffect = new BasicEffect(Game.GraphicsDevice);
-            OpaqueEffect.EnableDefaultLighting();
-            OpaqueEffect.DirectionalLight0.SpecularColor = Color.Black.ToVector3();
-            OpaqueEffect.DirectionalLight1.SpecularColor = Color.Black.ToVector3();
-            OpaqueEffect.DirectionalLight2.SpecularColor = Color.Black.ToVector3();
             OpaqueEffect.TextureEnabled = true;
             OpaqueEffect.Texture = Game.TextureMapper.GetTexture("terrain.png");
             OpaqueEffect.FogEnabled = true;

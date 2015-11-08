@@ -107,7 +107,7 @@ namespace TrueCraft.Client.Rendering.Blocks
             // Apply biome colors to top of cube
             for (int i = (int)(CubeFace.PositiveY) * 4; i < (int)(CubeFace.PositiveY) * 4 + 4; i++)
             {
-                cube[i].Color = BiomeColor; // TODO: Take this from biome
+                cube[i].Color = new Color(cube[i].Color.ToVector3() * BiomeColor.ToVector3()); // TODO: Take this from biome
             }
             return cube;
         }
