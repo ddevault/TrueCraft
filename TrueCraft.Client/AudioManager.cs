@@ -117,9 +117,7 @@ namespace TrueCraft.Client
         public void PlayPack(string pack, float volume = 1.0f)
         {
             var i = MathHelper.Random.Next(0, AudioPacks[pack].Length);
-            var instance = AudioPacks[pack][i].CreateInstance();
-            instance.Volume = volume * EffectVolume;
-            instance.Play();
+            AudioPacks[pack][i].Play(volume * EffectVolume, 1.0f, 0.0f);
         }
     }
 }
