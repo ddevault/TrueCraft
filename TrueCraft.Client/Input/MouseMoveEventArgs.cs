@@ -28,7 +28,7 @@ namespace TrueCraft.Client.Input
             : base(x, y)
         {
             DeltaX = deltaX;
-            DeltaY = DeltaY;
+            DeltaY = deltaY;
         }
     }
 }

@@ -215,9 +215,13 @@ namespace TrueCraft.Client.Modules
                 return false;
             var centerX = Game.GraphicsDevice.Viewport.Width / 2;
             var centerY = Game.GraphicsDevice.Viewport.Height / 2;
-            Mouse.SetPosition(centerX, centerY);
+            if (e.X < 10 || e.X > Game.GraphicsDevice.Viewport.Width - 10 ||
+                e.Y < 10 || e.Y > Game.GraphicsDevice.Viewport.Height - 10)
+            {
+                Mouse.SetPosition(centerX, centerY);
+            }
 
-            var look = new Vector2((centerX - e.X), (centerY - e.Y))
+            var look = new Vector2((-e.DeltaX), (-e.DeltaY))
                 * (float)(gameTime.ElapsedGameTime.TotalSeconds * 30);
 
             Game.Client.Yaw -= look.X;

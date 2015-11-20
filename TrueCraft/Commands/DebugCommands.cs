@@ -425,4 +425,45 @@ namespace TrueCraft.Commands
             client.SendMessage("/reinv: Resends your inventory.");
         }
     }
+
+    public class RelightCommand : Command
+    {
+        public override string Name
+        {
+            get { return "relight"; }
+        }
+
+        public override string Description
+        {
+            get { return "Relights the chunk you're standing in."; }
+        }
+
+        public override string[] Aliases
+        {
+            get { return new string[0]; }
+        }
+
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
+        {
+            if (arguments.Length != 0)
+            {
+                Help(client, alias, arguments);
+                return;
+            }
+            var server = client.Server as MultiplayerServer;
+            var chunk = client.World.FindChunk((Coordinates3D)client.Entity.Position);
+            var lighter = server.WorldLighters.SingleOrDefault(l => l.World == client.World);
+            if (lighter != null)
+            {
+                lighter.InitialLighting(chunk, true);
+                (client as RemoteClient).UnloadChunk(chunk.Coordinates);
+                (client as RemoteClient).LoadChunk(chunk.Coordinates);
+            }
+        }
+
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
+        {
+            client.SendMessage("/reinv: Resends your inventory.");
+        }
+    }
 }

@@ -170,6 +170,11 @@ namespace TrueCraft
         void HandleChunkLoaded(object sender, ChunkLoadedEventArgs e)
         {
             ChunksToSchedule.Add(new Tuple<IWorld, IChunk>(sender as IWorld, e.Chunk));
+            if (Program.ServerConfiguration.EnableLighting)
+            {
+                var lighter = WorldLighters.SingleOrDefault(l => l.World == sender);
+                lighter.InitialLighting(e.Chunk, false);
+            }
         }
 
         void HandleBlockChanged(object sender, BlockChangeEventArgs e)
