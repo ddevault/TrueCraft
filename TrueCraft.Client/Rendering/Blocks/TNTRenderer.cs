@@ -55,7 +55,14 @@ namespace TrueCraft.Client.Rendering.Blocks
         public override VertexPositionNormalColorTexture[] Render(BlockDescriptor descriptor, Vector3 offset,
             VisibleFaces faces, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
-            return CreateUniformCube(offset, Texture, faces, indiciesOffset, out indicies, Color.White);
+            var lighting = new int[6];
+            for (int i = 0; i < 6; i++)
+            {
+                var coords = (descriptor.Coordinates + FaceCoords[i]);
+                lighting[i] = GetLight(descriptor.Chunk, coords);
+            }
+
+            return CreateUniformCube(offset, Texture, faces, indiciesOffset, out indicies, Color.White, lighting);
         }
     }
 }

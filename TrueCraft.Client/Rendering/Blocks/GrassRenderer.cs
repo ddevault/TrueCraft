@@ -103,7 +103,15 @@ namespace TrueCraft.Client.Rendering.Blocks
                     texture = SnowTexture;
                 }
             }
-            var cube = CreateUniformCube(offset, texture, faces, indiciesOffset, out indicies, Color.White);
+            
+            var lighting = new int[6];
+            for (int i = 0; i < 6; i++)
+            {
+                var coords = (descriptor.Coordinates + FaceCoords[i]);
+                lighting[i] = GetLight(descriptor.Chunk, coords);
+            }
+
+            var cube = CreateUniformCube(offset, texture, faces, indiciesOffset, out indicies, Color.White, lighting);
             // Apply biome colors to top of cube
             for (int i = (int)(CubeFace.PositiveY) * 4; i < (int)(CubeFace.PositiveY) * 4 + 4; i++)
             {

@@ -96,9 +96,16 @@ namespace TrueCraft.Client.Rendering.Blocks
             var texture = DryTexture;
             if (descriptor.Metadata == (byte)FarmlandBlock.MoistureLevel.Moist)
                 texture = MoistTexture;
+            
+            var lighting = new int[6];
+            for (int i = 0; i < 6; i++)
+            {
+                var coords = (descriptor.Coordinates + FaceCoords[i]);
+                lighting[i] = GetLight(descriptor.Chunk, coords);
+            }
 
             var overhead = new Vector3(0.5f, 0.5f, 0.5f);
-            var cube = CreateUniformCube(overhead, texture, faces, indiciesOffset, out indicies, Color.White);
+            var cube = CreateUniformCube(overhead, texture, faces, indiciesOffset, out indicies, Color.White, lighting);
             for (int i = 0; i < cube.Length; i++)
             {
                 if (cube[i].Position.Y > 0)
