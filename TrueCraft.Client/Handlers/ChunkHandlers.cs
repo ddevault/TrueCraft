@@ -28,7 +28,9 @@ namespace TrueCraft.Client.Handlers
             }
             chunk.SetBlockID(adjusted, (byte)packet.BlockID);
             chunk.SetMetadata(adjusted, (byte)packet.Metadata);
-            client.OnChunkModified(new ChunkEventArgs(new ReadOnlyChunk(chunk)));
+            var args = new ChunkEventArgs(new ReadOnlyChunk(chunk));
+            args.Source = coordinates;
+            client.OnChunkModified(args);
         }
 
         public static void HandleChunkPreamble(IPacket _packet, MultiplayerClient client)

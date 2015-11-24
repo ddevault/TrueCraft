@@ -87,6 +87,7 @@ namespace TrueCraft.Client
         internal ReadOnlyChunk(IChunk chunk)
         {
             Chunk = chunk;
+            Chunk.TerrainPopulated = true;
         }
 
         public byte GetBlockId(Coordinates3D coordinates)

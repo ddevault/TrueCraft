@@ -134,12 +134,14 @@ namespace TrueCraft.Core.World
         /// <summary>
         /// Sets the chunk at the specified local position to the given value.
         /// </summary>
-        public void SetChunk(Coordinates2D position, IChunk chunk)
+        public bool SetChunk(Coordinates2D position, IChunk chunk)
         {
-            if (!Chunks.ContainsKey(position))
+            bool isNew = !Chunks.ContainsKey(position);
+            if (isNew)
                 Chunks.Add(position, chunk);
             chunk.IsModified = true;
             Chunks[position] = chunk;
+            return isNew;
         }
 
         /// <summary>

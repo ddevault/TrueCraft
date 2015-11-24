@@ -8,6 +8,9 @@ using System.ComponentModel;
 using TrueCraft.API;
 using System.Linq;
 using System.Threading;
+using TrueCraft.Core.Lighting;
+using TrueCraft.Client.Events;
+using TrueCraft.Core.World;
 
 namespace TrueCraft.Client.Modules
 {
@@ -16,6 +19,7 @@ namespace TrueCraft.Client.Modules
         public TrueCraftGame Game { get; set; }
         public ChunkRenderer ChunkRenderer { get; set; }
         public int ChunksRendered { get; set; }
+        public WorldLighting WorldLighting { get; set; }
 
         private HashSet<Coordinates2D> ActiveMeshes { get; set; }
         private List<ChunkMesh> ChunkMeshes { get; set; }
@@ -28,10 +32,12 @@ namespace TrueCraft.Client.Modules
         {
             Game = game;
 
+            WorldLighting = new WorldLighting(Game.Client.World.World, Game.BlockRepository);
+
             ChunkRenderer = new ChunkRenderer(Game.Client.World, Game, Game.BlockRepository);
             Game.Client.ChunkLoaded += (sender, e) => ChunkRenderer.Enqueue(e.Chunk);
             Game.Client.ChunkUnloaded += (sender, e) => UnloadChunk(e.Chunk);
-            Game.Client.ChunkModified += (sender, e) => ChunkRenderer.Enqueue(e.Chunk, true);
+            Game.Client.ChunkModified += HandleChunkModified;
             ChunkRenderer.MeshCompleted += MeshCompleted;
             ChunkRenderer.Start();
 
@@ -58,6 +64,23 @@ namespace TrueCraft.Client.Modules
         void MeshCompleted(object sender, RendererEventArgs<ReadOnlyChunk> e)
         {
             IncomingChunks.Add(e.Result);
+        }
+
+        void HandleChunkModified(object sender, ChunkEventArgs e)
+        {
+            Game.PendingMainThreadActions.Add(() =>
+            {
+                /*var posA = e.Source;
+                posA.Y = 0;
+                var posB = e.Source;
+                posB.Y = World.Height;
+                posB.X++; posB.Z++;
+                WorldLighting.EnqueueOperation(new TrueCraft.API.BoundingBox(posA, posB), true);
+                WorldLighting.EnqueueOperation(new TrueCraft.API.BoundingBox(posA, posB), false);*/
+                //while (WorldLighting.TryLightNext()) { } // flush
+                WorldLighting.InitialLighting(e.Chunk.Chunk);
+                ChunkRenderer.Enqueue(e.Chunk, true);
+            });
         }
 
         void UnloadChunk(ReadOnlyChunk chunk)

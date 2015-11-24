@@ -142,7 +142,9 @@ namespace TrueCraft.Core.World
             lock (region)
             {
                 chunk.IsModified = true;
-                region.SetChunk(new Coordinates2D(coordinates.X - regionX * 32, coordinates.Z - regionZ * 32), chunk);
+                bool isNew = region.SetChunk(new Coordinates2D(coordinates.X - regionX * 32, coordinates.Z - regionZ * 32), chunk);
+                if (isNew)
+                    OnChunkLoaded(new ChunkLoadedEventArgs(chunk));
             }
         }
 
