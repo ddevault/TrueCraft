@@ -1,9 +1,10 @@
 ﻿using System;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using TrueCraft.Core.Logic;
-using TrueCraft.API.Logic;
 using System.Linq;
+using Microsoft.Xna.Framework;
+using TrueCraft.API.Logic;
+using TrueCraft.API.World;
+using TrueCraft.Core.World;
+using Coordinates3D = TrueCraft.API.Coordinates3D;
 
 namespace TrueCraft.Client.Rendering
 {
@@ -37,15 +38,26 @@ namespace TrueCraft.Client.Rendering
                 texCoords,
                 texCoords + Vector2.UnitX
             };
+
             for (int i = 0; i < texture.Length; i++)
                 texture[i] *= new Vector2(16f / 256f);
-            return CreateUniformCube(offset, texture, faces, indiciesOffset, out indicies, Color.White, descriptor.BlockLight);
+
+            var lighting = new int[6];
+            for (int i = 0; i < 6; i++)
+            {
+                var coords = (descriptor.Coordinates + FaceCoords[i]);
+                lighting[i] = GetLight(descriptor.Chunk, coords);
+            }
+
+            return CreateUniformCube(offset, texture, faces, indiciesOffset, out indicies, Color.White, lighting);
         }
 
         public static VertexPositionNormalColorTexture[] CreateUniformCube(Vector3 offset, Vector2[] texture,
-            VisibleFaces faces, int indiciesOffset, out int[] indicies, Color color, int light = 15)
+            VisibleFaces faces, int indiciesOffset, out int[] indicies, Color color, int[] lighting = null)
         {
             faces = VisibleFaces.All; // Temporary
+            if (lighting == null)
+                lighting = DefaultLighting;
 
             int totalFaces = 0;
             uint f = (uint)faces;
@@ -68,9 +80,11 @@ namespace TrueCraft.Client.Rendering
                     textureIndex += 4;
                     continue;
                 }
+                var lightColor = LightColor.ToVector3() * CubeBrightness[lighting[_side]];
+
                 var side = (CubeFace)_side;
                 var quad = CreateQuad(side, offset, texture, textureIndex % texture.Length, indiciesOffset,
-                    out _indicies, new Color(color.ToVector3() * CubeBrightness[light]));
+                    out _indicies, new Color(lightColor * color.ToVector3()));
                 Array.Copy(quad, 0, verticies, sidesSoFar * 4, 4);
                 Array.Copy(_indicies, 0, indicies, sidesSoFar * 6, 6);
                 textureIndex += 4;
@@ -95,7 +109,29 @@ namespace TrueCraft.Client.Rendering
             }
             return quad;
         }
-        
+
+        #region Lighting
+
+        /// <summary>
+        /// The per-vertex light color to apply to blocks.
+        /// </summary>
+        protected static readonly Color LightColor =
+            new Color(245, 245, 225);
+
+        /// <summary>
+        /// The default lighting information for rendering a block;
+        ///  i.e. when the lighting param to CreateUniformCube == null.
+        /// </summary>
+        protected static readonly int[] DefaultLighting =
+            new int[]
+            {
+                0, 0, 0,
+                0, 0, 0
+            };
+
+        /// <summary>
+        /// The per-face brightness modifier for lighting.
+        /// </summary>
         protected static readonly float[] FaceBrightness =
             new float[]
             {
@@ -103,7 +139,21 @@ namespace TrueCraft.Client.Rendering
                 0.8f, 0.8f, // East / West
                 1.0f, 0.5f  // Top / Bottom
             };
+        
+        /// <summary>
+        /// The offset coordinates used to get the position of a block for a face.
+        /// </summary>
+        protected static readonly Coordinates3D[] FaceCoords =
+            new Coordinates3D[]
+            {
+                Coordinates3D.South, Coordinates3D.North,
+                Coordinates3D.East, Coordinates3D.West,
+                Coordinates3D.Up, Coordinates3D.Down
+            };
 
+        /// <summary>
+        /// Maps a light level [0..15] to a brightness modifier for lighting.
+        /// </summary>
         protected static readonly float[] CubeBrightness =
             new float[]
             {
@@ -112,6 +162,37 @@ namespace TrueCraft.Client.Rendering
                 0.261f, 0.309f, 0.367f, 0.437f, // [ 8..11]
                 0.525f, 0.638f, 0.789f, 1.000f //  [12..15]
             };
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="chunk"></param>
+        /// <param name="coords"></param>
+        /// <returns></returns>
+        protected static int GetLight(IChunk chunk, Coordinates3D coords)
+        {
+            // Handle icon renderer.
+            if (chunk == null)
+                return 15;
+
+            // Handle top (and bottom) of the world.
+            if (coords.Y < 0)
+                return 0;
+            if (coords.Y >= Chunk.Height)
+                return 15;
+
+            // Handle coordinates outside the chunk.
+            if ((coords.X < 0) || (coords.X >= Chunk.Width) ||
+                (coords.Z < 0) || (coords.Z >= Chunk.Depth))
+            {
+                // TODO: Handle chunk boundaries properly.
+                return 0;
+            }
+
+            return Math.Min(chunk.GetBlockLight(coords) + chunk.GetSkyLight(coords), 15);
+        }
+
+        #endregion
 
         protected enum CubeFace
         {
