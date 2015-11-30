@@ -1,12 +1,12 @@
-![](https://sr.ht/3O-k.png)
+<p align="center">
+    <img src="https://sr.ht/3O-k.png" width="728" />
+</p>
 
 A completely [clean-room](https://en.wikipedia.org/wiki/Clean_room_design) implementation of Minecraft beta 1.7.3 (circa September 2011). No decompiled code has been used in the development of this software. This is an **implementation** - not a clone. TrueCraft is compatible with Minecraft beta 1.7.3 clients and servers.
 
 [![Build Status](https://travis-ci.org/SirCmpwn/TrueCraft.svg?branch=master)](https://travis-ci.org/SirCmpwn/TrueCraft) [![Donate with fosspay](https://drewdevault.com/donate/static/donate-with-fosspay.png)](https://drewdevault.com/donate?project=1)
 
-<p align="center">
-    <img src="https://sr.ht/87Ov.png" width="728" />
-</p>
+![](https://sr.ht/87Ov.png)
 
 *Screenshot taken with [Eldpack](http://eldpack.com/)*
 
