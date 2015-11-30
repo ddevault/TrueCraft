@@ -4,7 +4,9 @@ A completely [clean-room](https://en.wikipedia.org/wiki/Clean_room_design) imple
 
 [![Build Status](https://travis-ci.org/SirCmpwn/TrueCraft.svg?branch=master)](https://travis-ci.org/SirCmpwn/TrueCraft) [![Donate with fosspay](https://drewdevault.com/donate/static/donate-with-fosspay.png)](https://drewdevault.com/donate?project=1)
 
-![](https://sr.ht/87Ov.png)
+<p align="center">
+    <img src="https://sr.ht/87Ov.png" width="728" />
+</p>
 
 *Screenshot taken with [Eldpack](http://eldpack.com/)*
 
