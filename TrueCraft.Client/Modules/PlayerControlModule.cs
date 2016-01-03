@@ -21,6 +21,7 @@ namespace TrueCraft.Client.Modules
         private bool Capture { get; set; }
         private bool Digging { get; set; }
         private GamePadState GamePadState { get; set; }
+        public bool IgnoreNextUpdate { get; set; }
 
         public PlayerControlModule(TrueCraftGame game)
         {
@@ -213,12 +214,20 @@ namespace TrueCraft.Client.Modules
         {
             if (!Capture)
                 return false;
+            if (IgnoreNextUpdate)
+            {
+                IgnoreNextUpdate = false;
+                return true;
+            }
             var centerX = Game.GraphicsDevice.Viewport.Width / 2;
             var centerY = Game.GraphicsDevice.Viewport.Height / 2;
+
             if (e.X < 10 || e.X > Game.GraphicsDevice.Viewport.Width - 10 ||
                 e.Y < 10 || e.Y > Game.GraphicsDevice.Viewport.Height - 10)
             {
                 Mouse.SetPosition(centerX, centerY);
+                IgnoreNextUpdate = true;
+                return true;
             }
 
             var look = new Vector2((-e.DeltaX), (-e.DeltaY))

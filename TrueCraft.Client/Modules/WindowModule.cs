@@ -200,6 +200,7 @@ namespace TrueCraft.Client.Modules
                         Game.Client.QueuePacket(new CloseWindowPacket(Game.Client.CurrentWindow.ID));
                     Game.Client.CurrentWindow = null;
                     Mouse.SetPosition(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height / 2);
+                    Game.ControlModule.IgnoreNextUpdate = true;
                 }
                 return true;
             }

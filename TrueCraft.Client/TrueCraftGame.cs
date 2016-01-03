@@ -41,6 +41,7 @@ namespace TrueCraft.Client
         public Coordinates3D TargetBlock { get; set; }
         public AudioManager Audio { get; set; }
         public Texture2D White1x1 { get; set; }
+        public PlayerControlModule ControlModule { get; set; }
 
         private List<IGameplayModule> InputModules { get; set; }
         private List<IGameplayModule> GraphicalModules { get; set; }
@@ -143,7 +144,7 @@ namespace TrueCraft.Client
             InputModules.Add(DebugInfoModule);
             InputModules.Add(ChatModule);
             InputModules.Add(new HUDModule(this, Pixel));
-            InputModules.Add(new PlayerControlModule(this));
+            InputModules.Add(ControlModule = new PlayerControlModule(this));
 
             Client.PropertyChanged += HandleClientPropertyChanged;
             Client.Connect(EndPoint);
