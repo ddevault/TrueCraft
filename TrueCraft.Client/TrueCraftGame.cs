@@ -121,6 +121,13 @@ namespace TrueCraft.Client
 
             base.Initialize(); // (calls LoadContent)
 
+            if (GraphicsDevice.Viewport.Width < 640 || GraphicsDevice.Viewport.Height < 480)
+                ScaleFactor = 0.5f;
+            else if (GraphicsDevice.Viewport.Width < 978 || GraphicsDevice.Viewport.Height < 720)
+                ScaleFactor = 1.0f;
+            else
+                ScaleFactor = 1.5f;
+
             White1x1 = new Texture2D(GraphicsDevice, 1, 1);
             White1x1.SetData<Color>(new[] { Color.White });
 
