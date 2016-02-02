@@ -81,6 +81,7 @@ namespace TrueCraft.Client
             Graphics.PreferredBackBufferWidth = UserSettings.Local.WindowResolution.Width;
             Graphics.PreferredBackBufferHeight = UserSettings.Local.WindowResolution.Height;
             Graphics.GraphicsProfile = GraphicsProfile.HiDef;
+            Graphics.PreparingDeviceSettings += PrepareDeviceSettings;
             Graphics.ApplyChanges();
             Window.ClientSizeChanged += Window_ClientSizeChanged;
             Client = client;
@@ -99,6 +100,11 @@ namespace TrueCraft.Client
 
             GamePadComponent = new GamePadHandler(this);
             Components.Add(GamePadComponent);
+        }
+
+        void PrepareDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
+        {
+            e.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
         }
 
         void Window_ClientSizeChanged(object sender, EventArgs e)
@@ -418,7 +424,7 @@ namespace TrueCraft.Client
 
             GraphicsDevice.SetRenderTarget(null);
 
-            SpriteBatch.Begin();
+            SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
             SpriteBatch.Draw(RenderTarget, Vector2.Zero, Color.White);
             SpriteBatch.End();
 
