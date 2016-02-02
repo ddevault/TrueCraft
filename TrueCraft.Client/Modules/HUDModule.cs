@@ -33,7 +33,7 @@ namespace TrueCraft.Client.Modules
 
         public void Draw(GameTime gameTime)
         {
-            SpriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.NonPremultiplied);
+            SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise);
             
             SpriteBatch.Draw(Icons, new Vector2(
                 Game.GraphicsDevice.Viewport.Width / 2 - (8 * Game.ScaleFactor * 2),
@@ -50,7 +50,7 @@ namespace TrueCraft.Client.Modules
             DrawHotbarBlockSprites(gameTime);
 
             // Once more, with feeling
-            SpriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.NonPremultiplied);
+            SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise);
             DrawHotbarSlotCounts(gameTime);
             SpriteBatch.End();
         }
@@ -125,7 +125,7 @@ namespace TrueCraft.Client.Modules
 
         private void DrawHotbarItemSprites(GameTime gameTime)
         {
-            var scale = new Point((int)(16 * Game.ScaleFactor * 2));
+            var scale = new Point((int)(16 * Game.ScaleFactor * 2), (int)(16 * Game.ScaleFactor * 2));
             var origin = new Point((int)(Game.GraphicsDevice.Viewport.Width / 2 - Scale(HotbarBackgroundRect.Width / 2)),
                     (int)(Game.GraphicsDevice.Viewport.Height - Scale(HotbarBackgroundRect.Height + 5)));
             origin.X += (int)Scale(3);
@@ -139,7 +139,7 @@ namespace TrueCraft.Client.Modules
                 if (provider.GetIconTexture((byte)item.Metadata) == null)
                     continue;
                 var position = origin + new Point((int)Scale(i * 20), 0);
-                var rect = new Rectangle(position, scale);
+                var rect = new Rectangle(position.X, position.Y, scale.X, scale.Y);
                 IconRenderer.RenderItemIcon(SpriteBatch, Items, provider,
                     (byte)item.Metadata, rect, Color.White); // TODO: Fuck, metadata was supposed to be a short
             }
@@ -147,7 +147,7 @@ namespace TrueCraft.Client.Modules
 
         private void DrawHotbarBlockSprites(GameTime gameTime)
         {
-            var scale = new Point((int)(16 * Game.ScaleFactor * 2));
+            var scale = new Point((int)(16 * Game.ScaleFactor * 2), (int)(16 * Game.ScaleFactor * 2));
             var origin = new Point((int)(Game.GraphicsDevice.Viewport.Width / 2 - Scale(HotbarBackgroundRect.Width / 2)),
                     (int)(Game.GraphicsDevice.Viewport.Height - Scale(HotbarBackgroundRect.Height + 5)));
             origin.X += (int)Scale(3);
@@ -161,7 +161,7 @@ namespace TrueCraft.Client.Modules
                 if (provider == null || provider.GetIconTexture((byte)item.Metadata) != null)
                     continue;
                 var position = origin + new Point((int)Scale(i * 20), 0);
-                var rect = new Rectangle(position, scale);
+                var rect = new Rectangle(position.X, position.Y, scale.X, scale.Y);
                 IconRenderer.RenderBlockIcon(Game, provider, (byte)item.Metadata, rect);
             }
         }

@@ -57,14 +57,14 @@ namespace TrueCraft.Client.Modules
                 SelectedSlot = -999;
 
                 IItemProvider provider = null;
-                var scale = new Point((int)(16 * Game.ScaleFactor * 2));
-                var mouse = Mouse.GetState().Position.ToVector2().ToPoint()
-                            - new Point((int)(8 * Game.ScaleFactor * 2));
-                var rect = new Rectangle(mouse, scale);
+                var scale = new Point((int)(16 * Game.ScaleFactor * 2), (int)(16 * Game.ScaleFactor * 2));
+                MouseState state = Mouse.GetState();
+                var mouse = new Point(state.X - (int)(8 * Game.ScaleFactor * 2), state.Y - (int)(8 * Game.ScaleFactor * 2));
+                var rect = new Rectangle(mouse.X, mouse.Y, scale.X, scale.Y);
                 if (!HeldItem.Empty)
                     provider = Game.ItemRepository.GetItemProvider(HeldItem.ID);
 
-                SpriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.NonPremultiplied);
+                SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise);
                 SpriteBatch.Draw(Game.White1x1, new Rectangle(0, 0,
                     Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height), new Color(Color.Black, 180));
                 switch (Game.Client.CurrentWindow.Type)
@@ -109,7 +109,7 @@ namespace TrueCraft.Client.Modules
                         IconRenderer.RenderBlockIcon(Game, provider as IBlockProvider, (byte)HeldItem.Metadata, rect);
                     }
                 }
-                SpriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.NonPremultiplied);
+                SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise);
                 switch (Game.Client.CurrentWindow.Type)
                 {
                     case -1:
@@ -137,10 +137,10 @@ namespace TrueCraft.Client.Modules
                     {
                         var p = Game.ItemRepository.GetItemProvider(item.ID);
                         var size = Font.MeasureText(p.DisplayName);
-                        mouse = Mouse.GetState().Position.ToVector2().ToPoint();
-                        mouse += new Point(10, 10);
-                        SpriteBatch.Draw(Game.White1x1, new Rectangle(mouse,
-                            new Point(size.X + 10, size.Y + 15)),
+                        mouse.X = state.X + 10;
+                        mouse.Y = state.Y + 10;
+                        SpriteBatch.Draw(Game.White1x1, new Rectangle(mouse.X, mouse.Y,
+                            size.X + 10, size.Y + 15),
                             new Color(Color.Black, 200));
                         Font.DrawText(SpriteBatch, mouse.X + 5, mouse.Y, p.DisplayName);
                     }
@@ -225,8 +225,9 @@ namespace TrueCraft.Client.Modules
 
         private void DrawWindowArea(IWindowArea area, int _x, int _y, Rectangle frame, RenderStage stage)
         {
-            var mouse = Mouse.GetState().Position.ToVector2();
-            var scale = new Point((int)(16 * Game.ScaleFactor * 2));
+            MouseState state = Mouse.GetState();
+            var mouse = new Point(state.X, state.Y);
+            var scale = new Point((int)(16 * Game.ScaleFactor * 2), (int)(16 * Game.ScaleFactor * 2));
             var origin = new Point((int)(
                 Game.GraphicsDevice.Viewport.Width / 2 - Scale(frame.Width / 2) + Scale(_x)),
                 (int)(Game.GraphicsDevice.Viewport.Height / 2 - Scale(frame.Height / 2) + Scale(_y)));
@@ -260,7 +261,7 @@ namespace TrueCraft.Client.Modules
                     }
                 }
                 var position = origin + new Point(x, y);
-                var rect = new Rectangle(position, scale);
+                var rect = new Rectangle(position.X, position.Y, scale.X, scale.Y);
                 if (stage == RenderStage.Sprites && rect.Contains(mouse))
                 {
                     SelectedSlot = (short)(area.StartIndex + i);
