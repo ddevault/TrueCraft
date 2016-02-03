@@ -23,7 +23,7 @@ namespace TrueCraft.Core
                     }
                     else
                     {
-                        result += "/Library/Application Support/truecraft";
+                        result += "/Library/Application Support/";
                     }
                 }
                 else if (RuntimeInfo.IsLinux)
