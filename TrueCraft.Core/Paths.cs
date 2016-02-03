@@ -45,7 +45,8 @@ namespace TrueCraft.Core
                 }
                 else
                 {
-                    throw new NotSupportedException("Unhandled RuntimeInfo platform!");
+                    System.Console.WriteLine("Unrecognized platform. Fall back to CWD.");
+                    result = Environment.CurrentDirectory;
                 }
                 result = Path.Combine(result, "truecraft");
                 if (!Directory.Exists(result))
