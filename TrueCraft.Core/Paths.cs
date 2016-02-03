@@ -29,10 +29,7 @@ namespace TrueCraft.Core
                 string result;
                 if (os.Equals("Windows"))
                 {
-                    result = Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        "truecraft"
-                    );
+                    result = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                 }
                 else if (os.Equals("Mac OS X"))
                 {
@@ -45,7 +42,6 @@ namespace TrueCraft.Core
                     {
                         result += "/Library/Application Support/truecraft";
                     }
-                    result = Path.Combine(result, "truecraft");
                 }
                 else if (os.Equals("Linux"))
                 {
@@ -63,12 +59,12 @@ namespace TrueCraft.Core
                             result += "/.config/";
                         }
                     }
-                    result = Path.Combine(result, "truecraft");
                 }
                 else
                 {
                     throw new NotSupportedException("Unhandled SDL2 platform!");
                 }
+                result = Path.Combine(result, "truecraft");
                 if (!Directory.Exists(result))
                 {
                     Directory.CreateDirectory(result);
