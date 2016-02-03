@@ -9,32 +9,71 @@ namespace TrueCraft.Core
         {
             get
             {
-                var xdg_config_home = Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
-                string config = null;
-                if (xdg_config_home != null)
+                string os;
+                // FIXME: SDL_GetPlatform() is nicer! -flibit
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
-                    config = Path.Combine(xdg_config_home, "truecraft");
-                    if (Directory.Exists(config))
-                        return config;
+                    os = "Windows";
                 }
-                var appdata = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "truecraft");
-                if (Directory.Exists(appdata))
-                    return appdata;
-                var userprofile = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                    ".truecraft");
-                if (Directory.Exists(userprofile))
-                    return userprofile;
-                // At this point, there's no existing data to choose from, so use the best option
-                if (config != null)
+                else
                 {
-                    Directory.CreateDirectory(config);
-                    return config;
+                    if (Environment.CurrentDirectory.StartsWith("/Users/"))
+                    {
+                        os = "Mac OS X";
+                    }
+                    else // FIXME: Assumption! -flibit
+                    {
+                        os = "Linux";
+                    }
                 }
-                Directory.CreateDirectory(appdata);
-                return appdata;
+                string result;
+                if (os.Equals("Windows"))
+                {
+                    result = Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                        "truecraft"
+                    );
+                }
+                else if (os.Equals("Mac OS X"))
+                {
+                    result = Environment.GetEnvironmentVariable("HOME");
+                    if (String.IsNullOrEmpty(result))
+                    {
+                        result = "./"; // Oh well.
+                    }
+                    else
+                    {
+                        result += "/Library/Application Support/truecraft";
+                    }
+                    result = Path.Combine(result, "truecraft");
+                }
+                else if (os.Equals("Linux"))
+                {
+                    // Assuming a non-OSX Unix platform will follow the XDG. Which it should.
+                    result = Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
+                    if (String.IsNullOrEmpty(result))
+                    {
+                        result = Environment.GetEnvironmentVariable("HOME");
+                        if (String.IsNullOrEmpty(result))
+                        {
+                            result = "./"; // Oh well.
+                        }
+                        else
+                        {
+                            result += "/.config/";
+                        }
+                    }
+                    result = Path.Combine(result, "truecraft");
+                }
+                else
+                {
+                    throw new NotSupportedException("Unhandled SDL2 platform!");
+                }
+                if (!Directory.Exists(result))
+                {
+                    Directory.CreateDirectory(result);
+                }
+                return result;
             }
         }
 
