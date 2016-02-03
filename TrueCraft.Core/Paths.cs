@@ -9,29 +9,12 @@ namespace TrueCraft.Core
         {
             get
             {
-                string os;
-                // FIXME: SDL_GetPlatform() is nicer! -flibit
-                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                {
-                    os = "Windows";
-                }
-                else
-                {
-                    if (Environment.CurrentDirectory.StartsWith("/Users/"))
-                    {
-                        os = "Mac OS X";
-                    }
-                    else // FIXME: Assumption! -flibit
-                    {
-                        os = "Linux";
-                    }
-                }
                 string result;
-                if (os.Equals("Windows"))
+                if (RuntimeInfo.IsWindows)
                 {
                     result = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                 }
-                else if (os.Equals("Mac OS X"))
+                else if (RuntimeInfo.IsMacOSX)
                 {
                     result = Environment.GetEnvironmentVariable("HOME");
                     if (String.IsNullOrEmpty(result))
@@ -43,7 +26,7 @@ namespace TrueCraft.Core
                         result += "/Library/Application Support/truecraft";
                     }
                 }
-                else if (os.Equals("Linux"))
+                else if (RuntimeInfo.IsLinux)
                 {
                     // Assuming a non-OSX Unix platform will follow the XDG. Which it should.
                     result = Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
@@ -62,7 +45,7 @@ namespace TrueCraft.Core
                 }
                 else
                 {
-                    throw new NotSupportedException("Unhandled SDL2 platform!");
+                    throw new NotSupportedException("Unhandled RuntimeInfo platform!");
                 }
                 result = Path.Combine(result, "truecraft");
                 if (!Directory.Exists(result))
