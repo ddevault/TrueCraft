@@ -38,7 +38,8 @@
       <HintPath>..\lib\Ionic.Zip.Reduced.dll</HintPath>
     </Reference>
     <Reference Include="YamlDotNet">
-      <HintPath>..\packages\YamlDotNet.3.7.0\lib\net35\YamlDotNet.dll</HintPath>
+      <HintPath>..\packages\YamlDotNet.3.8.0\lib\net35\YamlDotNet.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
