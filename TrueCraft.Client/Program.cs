@@ -14,38 +14,6 @@ namespace TrueCraft.Client
         [STAThread]
         public static void Main(string[] args)
         {
-            AppDomain.CurrentDomain.AssemblyResolve += AppDomain_CurrentDomain_AssemblyResolve;
-
-            // We need to run this in another method to avoid referencing MonoGame before registering
-            // our AssemblyResolve handler
-            Main_Thread(args);
-        }
-
-        static Assembly AppDomain_CurrentDomain_AssemblyResolve (object sender, ResolveEventArgs args)
-        {
-            var assemblyName = new AssemblyName(args.Name);
-            if (assemblyName.Name != "MonoGame.Framework")
-                return null;
-            if (RuntimeInfo.IsLinux)
-                return Assembly.LoadFile("MonoGame.Framework.Linux.dll");
-            if (RuntimeInfo.IsWindows)
-            {
-                // MS.NET needs the absolute path to an assembly to load it.
-                var fileInfo = new FileInfo("MonoGame.Framework.Windows.dll");
-                return Assembly.LoadFile(fileInfo.FullName);
-            }
-            if (RuntimeInfo.IsMacOSX)
-            {
-                var fileInfo = new FileInfo("MonoGame.Framework.MacOS.dll");
-                return Assembly.LoadFile(fileInfo.FullName);
-            }
-            return null;
-        }
-
-        // We need to spawn the main thread manually so we can register the assembly resolver
-        // and manage apartment state ourselves.
-        private static void Main_Thread(string[] args)
-        {
             UserSettings.Local = new UserSettings();
             UserSettings.Local.Load();
 
