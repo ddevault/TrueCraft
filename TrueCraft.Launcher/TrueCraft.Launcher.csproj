@@ -91,9 +91,6 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <None Include="Xwt.WPF.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="truecraft">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -108,6 +105,10 @@
     </None>
     <None Include="..\lib\Xwt.Gtk3.dll.config">
       <Link>Xwt.Gtk3.dll.config</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\lib\Xwt.WPF.dll">
+      <Link>Xwt.WPF.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
