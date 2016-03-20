@@ -57,10 +57,16 @@ namespace TrueCraft.Core.Logic.Blocks
         {
             return new Tuple<int, int>(7, 2);
         }
-
+        
         protected override ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
-            return new[] { new ItemStack(SeedsItem.ItemID, (sbyte)MathHelper.Random.Next(2)) };
+            if (MathHelper.Random.Next (1, 24) == 1) {
+                return new[] { new ItemStack (SeedsItem.ItemID, (sbyte)1) };
+            }
+            else
+            {
+                return new[] { new ItemStack(-1) };
+            }
         }
     }
 }
