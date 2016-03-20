@@ -61,9 +61,9 @@ namespace TrueCraft.Core.Logic.Blocks
         protected override ItemStack[] GetDrop(BlockDescriptor descriptor, ItemStack item)
         {
             if (MathHelper.Random.Next (1, 24) == 1)
-                return new[] { new ItemStack (SeedsItem.ItemID, (sbyte)1) };
+                return new[] { new ItemStack (SeedsItem.ItemID, 1) };
             else
-                return new[] { new ItemStack(-1) };
+                return new[] { ItemStack.Empty };
         }
     }
 }
