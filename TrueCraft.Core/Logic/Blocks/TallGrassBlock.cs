@@ -63,7 +63,7 @@ namespace TrueCraft.Core.Logic.Blocks
             if (MathHelper.Random.Next (1, 24) == 1)
                 return new[] { new ItemStack (SeedsItem.ItemID, 1) };
             else
-                return new[] { ItemStack.Empty };
+                return new[] { ItemStack.EmptyStack };
         }
     }
 }
