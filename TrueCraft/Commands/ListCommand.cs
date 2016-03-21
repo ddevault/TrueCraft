@@ -1,5 +1,4 @@
-﻿using System.Text;
-using TrueCraft.API.Networking;
+﻿using TrueCraft.API.Networking;
 
 namespace TrueCraft.Commands
 {
@@ -21,7 +20,7 @@ namespace TrueCraft.Commands
             foreach (IRemoteClient i in client.Server.Clients)
             {
                 toSend = toSend + i.Username + ", ";
-                if (ASCIIEncoding.Unicode.GetByteCount(toSend.ToCharArray) > 32767)
+                if (toSend > 119)
                 {
                     client.SendMessage("Too many online players.");
                     return;
