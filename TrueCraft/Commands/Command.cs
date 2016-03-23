@@ -15,7 +15,7 @@ namespace TrueCraft.Commands
 
         public virtual string[] Aliases { get { return new string[0]; } }
 
-        public virtual void Handle(IRemoteClient Client, string alias, string[] arguments) { Help(Client, alias, arguments); }
+        public virtual void Handle(IRemoteClient client, string alias, string[] arguments) { Help(client, alias, arguments); }
 
         public virtual void Help(IRemoteClient client, string alias, string[] arguments) { client.SendMessage("Command \"" + alias + "\" is not functional!"); }
     }
