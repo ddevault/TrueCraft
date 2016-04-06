@@ -142,7 +142,7 @@ namespace TrueCraft.Launcher.Views
                 Server.Start();
                 Application.Invoke(() =>
                 {
-                    PlayButton.Sensitive = BackButton.Sensitive = CreateWorldButton.Sensitive = true;
+                    PlayButton.Sensitive = BackButton.Sensitive = CreateWorldButton.Sensitive = WorldListView.Sensitive = true;
                     var launchParams = string.Format("{0} {1} {2}", Server.Server.EndPoint, Window.User.Username, Window.User.SessionId);
                     var process = new Process();
                     if (RuntimeInfo.IsMono)
