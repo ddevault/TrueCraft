@@ -128,7 +128,7 @@ namespace TrueCraft.Launcher.Views
         {
             Server = new SingleplayerServer(Worlds.Local.Saves[WorldListView.SelectedRow]);
             PlayButton.Sensitive = BackButton.Sensitive = CreateWorldButton.Sensitive =
-                CreateWorldBox.Visible = false;
+                CreateWorldBox.Visible = WorldListView.Sensitive = false;
             ProgressBar.Visible = ProgressLabel.Visible = true;
             Task.Factory.StartNew(() =>
             {
@@ -162,6 +162,18 @@ namespace TrueCraft.Launcher.Views
                     Window.ShowInTaskbar = false;
                     Window.Hide();
                 });
+            }).ContinueWith(task =>
+            {
+                if (task.IsFaulted)
+                {
+                    Application.Invoke(() =>
+                    {
+                        MessageDialog.ShowError("Error loading world", "It's possible that this world is corrupted.");
+                        ProgressBar.Visible = ProgressLabel.Visible = false;
+                        PlayButton.Sensitive = BackButton.Sensitive = CreateWorldButton.Sensitive =
+                            WorldListView.Sensitive = true;
+                    });
+                }
             });
         }
 
