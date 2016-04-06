@@ -20,6 +20,7 @@ namespace TrueCraft.Launcher.Views
         public Label ResolutionLabel { get; set; }
         public ComboBox ResolutionComboBox { get; set; }
         public CheckBox FullscreenCheckBox { get; set; }
+        public CheckBox InvertMouseCheckBox { get; set; }
         public Label TexturePackLabel { get; set; }
         public DataField<Image> TexturePackImageField { get; set; }
         public DataField<string> TexturePackTextField { get; set; }
@@ -70,10 +71,15 @@ namespace TrueCraft.Launcher.Views
             }
 
             ResolutionComboBox.SelectedIndex = resolutionIndex;
-            FullscreenCheckBox = new CheckBox()
+            FullscreenCheckBox = new CheckBox
             {
                 Label = "Fullscreen mode",
                 State = (UserSettings.Local.IsFullscreen) ? CheckBoxState.On : CheckBoxState.Off
+            };
+            InvertMouseCheckBox = new CheckBox
+            {
+                Label = "Inverted mouse",
+                State = (UserSettings.Local.InvertedMouse) ? CheckBoxState.On : CheckBoxState.Off
             };
 
             TexturePackLabel = new Label("Select a texture pack...");
@@ -103,6 +109,12 @@ namespace TrueCraft.Launcher.Views
             FullscreenCheckBox.Clicked += (sender, e) =>
             {
                 UserSettings.Local.IsFullscreen = !UserSettings.Local.IsFullscreen;
+                UserSettings.Local.Save();
+            };
+
+            InvertMouseCheckBox.Clicked += (sender, e) => 
+            {
+                UserSettings.Local.InvertedMouse = !UserSettings.Local.InvertedMouse;
                 UserSettings.Local.Save();
             };
 
@@ -138,6 +150,7 @@ namespace TrueCraft.Launcher.Views
             this.PackStart(ResolutionLabel);
             this.PackStart(ResolutionComboBox);
             this.PackStart(FullscreenCheckBox);
+            this.PackStart(InvertMouseCheckBox);
             this.PackStart(TexturePackLabel);
             this.PackStart(TexturePackListView);
             this.PackStart(OfficialAssetsProgress);

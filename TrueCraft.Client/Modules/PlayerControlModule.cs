@@ -233,6 +233,8 @@ namespace TrueCraft.Client.Modules
             var look = new Vector2((-e.DeltaX), (-e.DeltaY))
                 * (float)(gameTime.ElapsedGameTime.TotalSeconds * 30);
 
+            if (TrueCraft.Core.UserSettings.Local.InvertedMouse)
+                look.Y = -look.Y;
             Game.Client.Yaw -= look.X;
             Game.Client.Pitch -= look.Y;
             Game.Client.Yaw %= 360;

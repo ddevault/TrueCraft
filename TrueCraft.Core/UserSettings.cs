@@ -15,6 +15,7 @@ namespace TrueCraft.Core
         public string SelectedTexturePack { get; set; }
         public FavoriteServer[] FavoriteServers { get; set; }
         public bool IsFullscreen { get; set; }
+        public bool InvertedMouse { get; set; }
         public WindowResolution WindowResolution { get; set; }
 
         public UserSettings()
@@ -26,6 +27,7 @@ namespace TrueCraft.Core
             SelectedTexturePack = TexturePack.Default.Name;
             FavoriteServers = new FavoriteServer[0];
             IsFullscreen = false;
+            InvertedMouse = false;
             WindowResolution = new WindowResolution()
             {
                 Width = 1280,
