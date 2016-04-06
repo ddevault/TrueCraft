@@ -19,6 +19,10 @@ namespace TrueCraft.Launcher
                 Application.Initialize(ToolkitType.Gtk); // TODO: Cocoa
             else if (RuntimeInfo.IsWindows)
                 Application.Initialize(ToolkitType.Wpf);
+            else
+                // In this case they're probably using some flavor of Unix
+                // which probably has some flavor of GTK availble
+                Application.Initialize(ToolkitType.Gtk);
             UserSettings.Local = new UserSettings();
             UserSettings.Local.Load();
             var thread = new Thread(KeepSessionAlive);
