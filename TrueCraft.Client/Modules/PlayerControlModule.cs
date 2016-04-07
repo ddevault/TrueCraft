@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using TrueCraft.Client.Input;
+using Matrix = Microsoft.Xna.Framework.Matrix;
 using TVector3 = TrueCraft.API.Vector3;
 using XVector3 = Microsoft.Xna.Framework.Vector3;
 using TrueCraft.API;

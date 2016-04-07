@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using TrueCraft.API;
 using TrueCraft.Client.Rendering;
 using Microsoft.Xna.Framework;
+using Matrix = Microsoft.Xna.Framework.Matrix;
 using XVector3 = Microsoft.Xna.Framework.Vector3;
 using TVector3 = TrueCraft.API.Vector3;
 using TRay = TrueCraft.API.Ray;
