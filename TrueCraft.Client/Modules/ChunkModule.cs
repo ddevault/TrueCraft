@@ -8,6 +8,7 @@ using System.ComponentModel;
 using TrueCraft.API;
 using System.Linq;
 using System.Threading;
+using TrueCraft.Client.Events;
 
 namespace TrueCraft.Client.Modules
 {
@@ -29,9 +30,9 @@ namespace TrueCraft.Client.Modules
             Game = game;
 
             ChunkRenderer = new ChunkRenderer(Game.Client.World, Game, Game.BlockRepository);
-            Game.Client.ChunkLoaded += (sender, e) => ChunkRenderer.Enqueue(e.Chunk);
+            Game.Client.ChunkLoaded += Game_Client_ChunkLoaded;
             Game.Client.ChunkUnloaded += (sender, e) => UnloadChunk(e.Chunk);
-            Game.Client.ChunkModified += (sender, e) => ChunkRenderer.Enqueue(e.Chunk, true);
+            Game.Client.ChunkModified += Game_Client_ChunkModified;
             ChunkRenderer.MeshCompleted += MeshCompleted;
             ChunkRenderer.Start();
 
@@ -53,6 +54,29 @@ namespace TrueCraft.Client.Modules
             ChunkMeshes = new List<ChunkMesh>();
             IncomingChunks = new ConcurrentBag<Mesh>();
             ActiveMeshes = new HashSet<Coordinates2D>();
+        }
+
+        private void Game_Client_ChunkModified(object sender, ChunkEventArgs e)
+        {
+            ChunkRenderer.Enqueue(e.Chunk, true);
+        }
+
+        private readonly static Coordinates2D[] AdjacentCoordinates =
+            {
+                Coordinates2D.North, Coordinates2D.South,
+                Coordinates2D.East, Coordinates2D.West
+            };
+
+        private void Game_Client_ChunkLoaded(object sender, ChunkEventArgs e)
+        {
+            ChunkRenderer.Enqueue(e.Chunk);
+            for (int i = 0; i < AdjacentCoordinates.Length; i++)
+            {
+                ReadOnlyChunk adjacent = Game.Client.World.GetChunk(
+                     AdjacentCoordinates[i] + e.Chunk.Coordinates);
+                if (adjacent != null)
+                    ChunkRenderer.Enqueue(adjacent);
+            }
         }
 
         void MeshCompleted(object sender, RendererEventArgs<ReadOnlyChunk> e)
