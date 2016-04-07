@@ -28,6 +28,8 @@ namespace TrueCraft.Client.Handlers
             }
             chunk.SetBlockID(adjusted, (byte)packet.BlockID);
             chunk.SetMetadata(adjusted, (byte)packet.Metadata);
+            client.OnBlockChanged(new BlockChangeEventArgs(coordinates, new TrueCraft.API.Logic.BlockDescriptor(),
+                new TrueCraft.API.Logic.BlockDescriptor()));
             client.OnChunkModified(new ChunkEventArgs(new ReadOnlyChunk(chunk)));
         }
 
@@ -110,6 +112,7 @@ namespace TrueCraft.Client.Handlers
                 // TODO: Lighting
             }
             chunk.UpdateHeightMap();
+            chunk.TerrainPopulated = true;
             client.OnChunkLoaded(new ChunkEventArgs(new ReadOnlyChunk(chunk)));
         }
     }

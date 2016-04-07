@@ -9,6 +9,9 @@ using TrueCraft.API;
 using System.Linq;
 using System.Threading;
 using TrueCraft.Client.Events;
+using TrueCraft.API.World;
+using TrueCraft.Core.Lighting;
+using TrueCraft.Core.World;
 
 namespace TrueCraft.Client.Modules
 {
@@ -21,6 +24,7 @@ namespace TrueCraft.Client.Modules
         private HashSet<Coordinates2D> ActiveMeshes { get; set; }
         private List<ChunkMesh> ChunkMeshes { get; set; }
         private ConcurrentBag<Mesh> IncomingChunks { get; set; }
+        private WorldLighting WorldLighting { get; set; }
 
         private BasicEffect OpaqueEffect { get; set; }
         private AlphaTestEffect TransparentEffect { get; set; }
@@ -33,8 +37,10 @@ namespace TrueCraft.Client.Modules
             Game.Client.ChunkLoaded += Game_Client_ChunkLoaded;
             Game.Client.ChunkUnloaded += (sender, e) => UnloadChunk(e.Chunk);
             Game.Client.ChunkModified += Game_Client_ChunkModified;
+            Game.Client.BlockChanged += Game_Client_BlockChanged;
             ChunkRenderer.MeshCompleted += MeshCompleted;
             ChunkRenderer.Start();
+            WorldLighting = new WorldLighting(Game.Client.World.World, Game.BlockRepository);
 
             OpaqueEffect = new BasicEffect(Game.GraphicsDevice);
             OpaqueEffect.TextureEnabled = true;
@@ -54,6 +60,28 @@ namespace TrueCraft.Client.Modules
             ChunkMeshes = new List<ChunkMesh>();
             IncomingChunks = new ConcurrentBag<Mesh>();
             ActiveMeshes = new HashSet<Coordinates2D>();
+        }
+
+        void Game_Client_BlockChanged(object sender, BlockChangeEventArgs e)
+        {
+            WorldLighting.EnqueueOperation(new TrueCraft.API.BoundingBox(
+                e.Position, e.Position + Coordinates3D.One), false);
+            WorldLighting.EnqueueOperation(new TrueCraft.API.BoundingBox(
+                e.Position, e.Position + Coordinates3D.One), true);
+            var posA = e.Position;
+            posA.Y = 0;
+            var posB = e.Position;
+            posB.Y = World.Height;
+            posB.X++;
+            posB.Z++;
+            WorldLighting.EnqueueOperation(new TrueCraft.API.BoundingBox(posA, posB), true);
+            WorldLighting.EnqueueOperation(new TrueCraft.API.BoundingBox(posA, posB), false);
+            for (int i = 0; i < 100; i++)
+            {
+                if (!WorldLighting.TryLightNext())
+                    break;
+            }
+
         }
 
         private void Game_Client_ChunkModified(object sender, ChunkEventArgs e)
@@ -126,6 +154,7 @@ namespace TrueCraft.Client.Modules
             }
             if (any)
                 Game.FlushMainThreadActions();
+            WorldLighting.TryLightNext();
         }
 
         private static readonly BlendState ColorWriteDisable = new BlendState
