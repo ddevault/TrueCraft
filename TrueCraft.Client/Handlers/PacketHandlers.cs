@@ -17,6 +17,7 @@ namespace TrueCraft.Client.Handlers
             client.RegisterPacketHandler(new SetPlayerPositionPacket().ID, HandlePositionAndLook);
             client.RegisterPacketHandler(new LoginResponsePacket().ID, HandleLoginResponse);
             client.RegisterPacketHandler(new UpdateHealthPacket().ID, HandleUpdateHealth);
+            client.RegisterPacketHandler(new TimeUpdatePacket().ID, HandleTimeUpdate);
 
             client.RegisterPacketHandler(new ChunkPreamblePacket().ID, ChunkHandlers.HandleChunkPreamble);
             client.RegisterPacketHandler(new ChunkDataPacket().ID, ChunkHandlers.HandleChunkData);
@@ -66,6 +67,13 @@ namespace TrueCraft.Client.Handlers
         {
             var packet = (UpdateHealthPacket)_packet;
             client.Health = packet.Health;
+        }
+
+        public static void HandleTimeUpdate(IPacket _packet, MultiplayerClient client)
+        {
+            var packet = (TimeUpdatePacket)_packet;
+            var time = packet.Time / 20.0;
+            client.World.World.BaseTime = DateTime.UtcNow - TimeSpan.FromSeconds(time);
         }
     }
 }
