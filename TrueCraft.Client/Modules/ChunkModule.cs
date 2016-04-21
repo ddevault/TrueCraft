@@ -46,16 +46,17 @@ namespace TrueCraft.Client.Modules
             OpaqueEffect.TextureEnabled = true;
             OpaqueEffect.Texture = Game.TextureMapper.GetTexture("terrain.png");
             OpaqueEffect.FogEnabled = true;
-            OpaqueEffect.FogStart = 512f;
-            OpaqueEffect.FogEnd = 1000f;
-            OpaqueEffect.FogColor = Color.CornflowerBlue.ToVector3();
+            OpaqueEffect.FogStart = 0;
+            OpaqueEffect.FogEnd = Game.Camera.Frustum.Far.D * 0.8f;
             OpaqueEffect.VertexColorEnabled = true;
+            OpaqueEffect.LightingEnabled = true;
 
             TransparentEffect = new AlphaTestEffect(Game.GraphicsDevice);
             TransparentEffect.AlphaFunction = CompareFunction.Greater;
             TransparentEffect.ReferenceAlpha = 127;
             TransparentEffect.Texture = Game.TextureMapper.GetTexture("terrain.png");
             TransparentEffect.VertexColorEnabled = true;
+            OpaqueEffect.LightingEnabled = true;
 
             ChunkMeshes = new List<ChunkMesh>();
             IncomingChunks = new ConcurrentBag<Mesh>();
@@ -164,8 +165,11 @@ namespace TrueCraft.Client.Modules
 
         public void Draw(GameTime gameTime)
         {
+            OpaqueEffect.FogColor = Game.SkyModule.WorldFogColor.ToVector3();
             Game.Camera.ApplyTo(OpaqueEffect);
             Game.Camera.ApplyTo(TransparentEffect);
+            OpaqueEffect.AmbientLightColor = TransparentEffect.DiffuseColor = Color.White.ToVector3() 
+                * new Microsoft.Xna.Framework.Vector3(0.25f + Game.SkyModule.BrightnessModifier);
 
             int chunks = 0;
             Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;

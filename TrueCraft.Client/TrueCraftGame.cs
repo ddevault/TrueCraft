@@ -42,6 +42,7 @@ namespace TrueCraft.Client
         public AudioManager Audio { get; set; }
         public Texture2D White1x1 { get; set; }
         public PlayerControlModule ControlModule { get; set; }
+        public SkyModule SkyModule { get; set; }
 
         private List<IGameplayModule> InputModules { get; set; }
         private List<IGameplayModule> GraphicalModules { get; set; }
@@ -121,18 +122,23 @@ namespace TrueCraft.Client
 
             base.Initialize(); // (calls LoadContent)
 
+            Camera = new Camera(GraphicsDevice.Viewport.AspectRatio, 70.0f, 0.1f, 1000.0f);
+            UpdateCamera();
+
             White1x1 = new Texture2D(GraphicsDevice, 1, 1);
             White1x1.SetData<Color>(new[] { Color.White });
 
             Audio = new AudioManager();
             Audio.LoadDefaultPacks(Content);
 
+            SkyModule = new SkyModule(this);
             ChunkModule = new ChunkModule(this);
             DebugInfoModule = new DebugInfoModule(this, Pixel);
             ChatModule = new ChatModule(this, Pixel);
             var hud = new HUDModule(this, Pixel);
             var windowModule = new WindowModule(this, Pixel);
 
+            GraphicalModules.Add(SkyModule);
             GraphicalModules.Add(ChunkModule);
             GraphicalModules.Add(new HighlightModule(this));
             GraphicalModules.Add(hud);
@@ -160,9 +166,6 @@ namespace TrueCraft.Client
             var centerX = GraphicsDevice.Viewport.Width / 2;
             var centerY = GraphicsDevice.Viewport.Height / 2;
             Mouse.SetPosition(centerX, centerY);
-
-            Camera = new Camera(GraphicsDevice.Viewport.AspectRatio, 70.0f, 0.1f, 1000.0f);
-            UpdateCamera();
 
             MouseComponent.Scroll += OnMouseComponentScroll;
             MouseComponent.Move += OnMouseComponentMove;
@@ -397,7 +400,6 @@ namespace TrueCraft.Client
             GraphicsDevice.SetRenderTarget(RenderTarget);
             GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
-            Graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
             GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
             GraphicsDevice.SamplerStates[1] = SamplerState.PointClamp;
 

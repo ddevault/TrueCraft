@@ -36,6 +36,8 @@ namespace TrueCraft.Client.Rendering
             Defaults.Add("gui/crafting.png", new PngReader().Read(File.OpenRead("Content/crafting.png"), graphicsDevice));
             Defaults.Add("gui/furnace.png", new PngReader().Read(File.OpenRead("Content/furnace.png"), graphicsDevice));
             Defaults.Add("gui/inventory.png", new PngReader().Read(File.OpenRead("Content/inventory.png"), graphicsDevice));
+            Defaults.Add("terrain/moon.png", new PngReader().Read(File.OpenRead("Content/moon.png"), graphicsDevice));
+            Defaults.Add("terrain/sun.png", new PngReader().Read(File.OpenRead("Content/sun.png"), graphicsDevice));
         }
 
         /// <summary>

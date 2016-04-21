@@ -151,6 +151,7 @@
     <Compile Include="AudioManager.cs" />
     <Compile Include="Modules\ChatModule.cs" />
     <Compile Include="Modules\WindowModule.cs" />
+    <Compile Include="Modules\SkyModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -377,6 +378,12 @@
     </Content>
     <None Include="..\lib\OpenTK.dll.config">
       <Link>OpenTK.dll.config</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\moon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\sun.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
