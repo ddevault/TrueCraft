@@ -205,7 +205,8 @@ namespace TrueCraft.Client
         private void CreateRenderTarget()
         {
             RenderTarget = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height,
-                false, GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
+                false, GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24,
+                0, RenderTargetUsage.PreserveContents);
         }
 
         void HandleClientPropertyChanged(object sender, PropertyChangedEventArgs e)
