@@ -116,11 +116,11 @@ namespace TrueCraft.Core.Entities
                 // Advance along path
                 var target = (Vector3)CurrentPath.Waypoints[CurrentPath.Index];
                 target.Y = Position.Y; // TODO: Find better way of doing this
-                var diff = target - Position;
-                diff *= modifier;
                 if (faceRoute)
                     Face(target);
-                Position += diff;
+                var lookAt = Vector3.Forwards.Transform(Matrix.CreateRotationY(MathHelper.ToRadians(-(Yaw - 180) + 180)));
+                lookAt *= modifier;
+                Velocity = new Vector3(lookAt.X, Velocity.Y, lookAt.Z);
                 if (Position.DistanceTo(target) < 0.1)
                 {
                     CurrentPath.Index++;

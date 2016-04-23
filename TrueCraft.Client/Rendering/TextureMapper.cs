@@ -35,6 +35,8 @@ namespace TrueCraft.Client.Rendering
             Defaults.Add("gui/crafting.png", Texture2D.FromStream(graphicsDevice, File.OpenRead("Content/crafting.png")));
             Defaults.Add("gui/furnace.png", Texture2D.FromStream(graphicsDevice, File.OpenRead("Content/furnace.png")));
             Defaults.Add("gui/inventory.png", Texture2D.FromStream(graphicsDevice, File.OpenRead("Content/inventory.png")));
+            Defaults.Add("terrain/moon.png", Texture2D.FromStream(graphicsDevice, File.OpenRead("Content/moon.png")));
+            Defaults.Add("terrain/sun.png", Texture2D.FromStream(graphicsDevice, File.OpenRead("Content/sun.png")));
         }
 
         /// <summary>

@@ -199,9 +199,15 @@ namespace TrueCraft.Client.Rendering.Blocks
 
         protected virtual VertexPositionNormalColorTexture[] RenderSlab(BlockDescriptor descriptor, Vector3 offset, Tuple<int, int> textureMap, int indiciesOffset, out int[] indicies)
         {
+            int[] lighting = new int[6];
+            for (int i = 0; i < 6; i++)
+            {
+                var coords = (descriptor.Coordinates + FaceCoords[i]);
+                lighting[i] = GetLight(descriptor.Chunk, coords);
+            }
             var result = CreateUniformCube(offset,
                 GetTextureMap((SlabBlock.SlabMaterial)descriptor.Metadata), VisibleFaces.All,
-                indiciesOffset, out indicies, Color.White);
+                indiciesOffset, out indicies, Color.White, lighting);
             for (int i = 0; i < 6; i++)
             {
                 var face = (CubeFace)i;

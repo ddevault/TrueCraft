@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace TrueCraft.Client.Rendering
 {
@@ -22,6 +23,7 @@ namespace TrueCraft.Client.Rendering
         private Thread[] _rendererThreads;
         private volatile bool _isDisposed;
         protected ConcurrentQueue<T> _items, _priorityItems;
+        private HashSet<T> _pending;
 
         /// <summary>
         /// Gets whether this renderer is running.
@@ -61,6 +63,7 @@ namespace TrueCraft.Client.Rendering
                     _rendererThreads[i] = new Thread(DoRendering) { IsBackground = true };
                 }
                 _items = new ConcurrentQueue<T>(); _priorityItems = new ConcurrentQueue<T>();
+                _pending = new HashSet<T>();
                 _isDisposed = false;
             }
         }
@@ -95,13 +98,13 @@ namespace TrueCraft.Client.Rendering
 
                 lock (_syncLock)
                 {
-                    if (_priorityItems.TryDequeue(out item) && TryRender(item, out result))
+                    if (_priorityItems.TryDequeue(out item) && _pending.Remove(item) && TryRender(item, out result))
                     {
                         var args = new RendererEventArgs<T>(item, result, true);
                         if (MeshCompleted != null)
                             MeshCompleted(this, args);
                     }
-                    else if (_items.TryDequeue(out item) && TryRender(item, out result))
+                    else if (_items.TryDequeue(out item) && _pending.Remove(item) && TryRender(item, out result))
                     {
                         var args = new RendererEventArgs<T>(item, result, false);
                         if (MeshCompleted != null)
@@ -144,16 +147,21 @@ namespace TrueCraft.Client.Rendering
         /// </summary>
         /// <param name="item"></param>
         /// <param name="hasPriority"></param>
-        public void Enqueue(T item, bool hasPriority = false)
+        public bool Enqueue(T item, bool hasPriority = false)
         {
             if (_isDisposed)
                 throw new ObjectDisposedException(GetType().Name);
 
-            if (!_isRunning) return;
+            if (_pending.Contains(item))
+                return false;
+            _pending.Add(item);
+
+            if (!_isRunning) return false;
             if (hasPriority)
                 _priorityItems.Enqueue(item);
             else
                 _items.Enqueue(item);
+            return true;
         }
 
         /// <summary>

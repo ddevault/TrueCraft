@@ -15,6 +15,8 @@ namespace TrueCraft.Client
 
         internal World World { get; set; }
 
+        public long Time { get { return World.Time; } }
+
         internal ReadOnlyWorld()
         {
             World = new World("default");

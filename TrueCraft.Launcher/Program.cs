@@ -14,20 +14,15 @@ namespace TrueCraft.Launcher
         public static void Main(string[] args)
         {
             if (RuntimeInfo.IsLinux)
-            {
-                try
-                {
-                    Application.Initialize(ToolkitType.Gtk3);
-                }
-                catch
-                {
-                    Application.Initialize(ToolkitType.Gtk);
-                }
-            }
+                Application.Initialize(ToolkitType.Gtk);
             else if (RuntimeInfo.IsMacOSX)
                 Application.Initialize(ToolkitType.Gtk); // TODO: Cocoa
             else if (RuntimeInfo.IsWindows)
                 Application.Initialize(ToolkitType.Wpf);
+            else
+                // In this case they're probably using some flavor of Unix
+                // which probably has some flavor of GTK availble
+                Application.Initialize(ToolkitType.Gtk);
             UserSettings.Local = new UserSettings();
             UserSettings.Local.Load();
             var thread = new Thread(KeepSessionAlive);

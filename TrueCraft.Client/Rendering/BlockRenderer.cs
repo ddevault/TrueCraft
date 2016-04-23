@@ -125,8 +125,8 @@ namespace TrueCraft.Client.Rendering
         protected static readonly int[] DefaultLighting =
             new int[]
             {
-                0, 0, 0,
-                0, 0, 0
+                15, 15, 15,
+                15, 15, 15
             };
 
         /// <summary>
@@ -144,7 +144,6 @@ namespace TrueCraft.Client.Rendering
         /// The offset coordinates used to get the position of a block for a face.
         /// </summary>
         protected static readonly Coordinates3D[] FaceCoords =
-            new Coordinates3D[]
             {
                 Coordinates3D.South, Coordinates3D.North,
                 Coordinates3D.East, Coordinates3D.West,
@@ -185,8 +184,7 @@ namespace TrueCraft.Client.Rendering
             if ((coords.X < 0) || (coords.X >= Chunk.Width) ||
                 (coords.Z < 0) || (coords.Z >= Chunk.Depth))
             {
-                // TODO: Handle chunk boundaries properly.
-                return 0;
+                return 15;
             }
 
             return Math.Min(chunk.GetBlockLight(coords) + chunk.GetSkyLight(coords), 15);

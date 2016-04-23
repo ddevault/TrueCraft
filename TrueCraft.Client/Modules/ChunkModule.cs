@@ -8,6 +8,10 @@ using System.ComponentModel;
 using TrueCraft.API;
 using System.Linq;
 using System.Threading;
+using TrueCraft.Client.Events;
+using TrueCraft.API.World;
+using TrueCraft.Core.Lighting;
+using TrueCraft.Core.World;
 
 namespace TrueCraft.Client.Modules
 {
@@ -20,6 +24,7 @@ namespace TrueCraft.Client.Modules
         private HashSet<Coordinates2D> ActiveMeshes { get; set; }
         private List<ChunkMesh> ChunkMeshes { get; set; }
         private ConcurrentBag<Mesh> IncomingChunks { get; set; }
+        private WorldLighting WorldLighting { get; set; }
 
         private BasicEffect OpaqueEffect { get; set; }
         private AlphaTestEffect TransparentEffect { get; set; }
@@ -29,30 +34,78 @@ namespace TrueCraft.Client.Modules
             Game = game;
 
             ChunkRenderer = new ChunkRenderer(Game.Client.World, Game, Game.BlockRepository);
-            Game.Client.ChunkLoaded += (sender, e) => ChunkRenderer.Enqueue(e.Chunk);
+            Game.Client.ChunkLoaded += Game_Client_ChunkLoaded;
             Game.Client.ChunkUnloaded += (sender, e) => UnloadChunk(e.Chunk);
-            Game.Client.ChunkModified += (sender, e) => ChunkRenderer.Enqueue(e.Chunk, true);
+            Game.Client.ChunkModified += Game_Client_ChunkModified;
+            Game.Client.BlockChanged += Game_Client_BlockChanged;
             ChunkRenderer.MeshCompleted += MeshCompleted;
             ChunkRenderer.Start();
+            WorldLighting = new WorldLighting(Game.Client.World.World, Game.BlockRepository);
 
             OpaqueEffect = new BasicEffect(Game.GraphicsDevice);
             OpaqueEffect.TextureEnabled = true;
             OpaqueEffect.Texture = Game.TextureMapper.GetTexture("terrain.png");
             OpaqueEffect.FogEnabled = true;
-            OpaqueEffect.FogStart = 512f;
-            OpaqueEffect.FogEnd = 1000f;
-            OpaqueEffect.FogColor = Color.CornflowerBlue.ToVector3();
+            OpaqueEffect.FogStart = 0;
+            OpaqueEffect.FogEnd = Game.Camera.Frustum.Far.D * 0.8f;
             OpaqueEffect.VertexColorEnabled = true;
+            OpaqueEffect.LightingEnabled = true;
 
             TransparentEffect = new AlphaTestEffect(Game.GraphicsDevice);
             TransparentEffect.AlphaFunction = CompareFunction.Greater;
             TransparentEffect.ReferenceAlpha = 127;
             TransparentEffect.Texture = Game.TextureMapper.GetTexture("terrain.png");
             TransparentEffect.VertexColorEnabled = true;
+            OpaqueEffect.LightingEnabled = true;
 
             ChunkMeshes = new List<ChunkMesh>();
             IncomingChunks = new ConcurrentBag<Mesh>();
             ActiveMeshes = new HashSet<Coordinates2D>();
+        }
+
+        void Game_Client_BlockChanged(object sender, BlockChangeEventArgs e)
+        {
+            WorldLighting.EnqueueOperation(new TrueCraft.API.BoundingBox(
+                e.Position, e.Position + Coordinates3D.One), false);
+            WorldLighting.EnqueueOperation(new TrueCraft.API.BoundingBox(
+                e.Position, e.Position + Coordinates3D.One), true);
+            var posA = e.Position;
+            posA.Y = 0;
+            var posB = e.Position;
+            posB.Y = World.Height;
+            posB.X++;
+            posB.Z++;
+            WorldLighting.EnqueueOperation(new TrueCraft.API.BoundingBox(posA, posB), true);
+            WorldLighting.EnqueueOperation(new TrueCraft.API.BoundingBox(posA, posB), false);
+            for (int i = 0; i < 100; i++)
+            {
+                if (!WorldLighting.TryLightNext())
+                    break;
+            }
+
+        }
+
+        private void Game_Client_ChunkModified(object sender, ChunkEventArgs e)
+        {
+            ChunkRenderer.Enqueue(e.Chunk, true);
+        }
+
+        private readonly static Coordinates2D[] AdjacentCoordinates =
+            {
+                Coordinates2D.North, Coordinates2D.South,
+                Coordinates2D.East, Coordinates2D.West
+            };
+
+        private void Game_Client_ChunkLoaded(object sender, ChunkEventArgs e)
+        {
+            ChunkRenderer.Enqueue(e.Chunk);
+            for (int i = 0; i < AdjacentCoordinates.Length; i++)
+            {
+                ReadOnlyChunk adjacent = Game.Client.World.GetChunk(
+                     AdjacentCoordinates[i] + e.Chunk.Coordinates);
+                if (adjacent != null)
+                    ChunkRenderer.Enqueue(adjacent);
+            }
         }
 
         void MeshCompleted(object sender, RendererEventArgs<ReadOnlyChunk> e)
@@ -102,6 +155,7 @@ namespace TrueCraft.Client.Modules
             }
             if (any)
                 Game.FlushMainThreadActions();
+            WorldLighting.TryLightNext();
         }
 
         private static readonly BlendState ColorWriteDisable = new BlendState
@@ -111,8 +165,11 @@ namespace TrueCraft.Client.Modules
 
         public void Draw(GameTime gameTime)
         {
+            OpaqueEffect.FogColor = Game.SkyModule.WorldFogColor.ToVector3();
             Game.Camera.ApplyTo(OpaqueEffect);
             Game.Camera.ApplyTo(TransparentEffect);
+            OpaqueEffect.AmbientLightColor = TransparentEffect.DiffuseColor = Color.White.ToVector3() 
+                * new Microsoft.Xna.Framework.Vector3(0.25f + Game.SkyModule.BrightnessModifier);
 
             int chunks = 0;
             Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;

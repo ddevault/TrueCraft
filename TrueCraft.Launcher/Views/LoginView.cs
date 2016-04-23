@@ -87,12 +87,14 @@ namespace TrueCraft.Launcher.Views
 
         private void DisableForm()
         {
-            UsernameText.Sensitive = PasswordText.Sensitive = LogInButton.Sensitive = RegisterButton.Sensitive = false;
+            UsernameText.Sensitive = PasswordText.Sensitive = LogInButton.Sensitive =
+                RegisterButton.Sensitive = OfflineButton.Sensitive = false;
         }
 
         private void EnableForm()
         {
-            UsernameText.Sensitive = PasswordText.Sensitive = LogInButton.Sensitive = RegisterButton.Sensitive = true;
+            UsernameText.Sensitive = PasswordText.Sensitive = LogInButton.Sensitive =
+                RegisterButton.Sensitive = OfflineButton.Sensitive = true;
         }
 
         private class LogInAsyncState

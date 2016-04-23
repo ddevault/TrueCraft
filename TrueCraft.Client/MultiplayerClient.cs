@@ -19,6 +19,7 @@ using TrueCraft.Core.Physics;
 using TrueCraft.Core.Windows;
 using TrueCraft.API.Windows;
 using TrueCraft.API.Logic;
+using TrueCraft.API.World;
 
 namespace TrueCraft.Client
 {
@@ -30,6 +31,7 @@ namespace TrueCraft.Client
         public event EventHandler<ChunkEventArgs> ChunkModified;
         public event EventHandler<ChunkEventArgs> ChunkLoaded;
         public event EventHandler<ChunkEventArgs> ChunkUnloaded;
+        public event EventHandler<BlockChangeEventArgs> BlockChanged;
         public event PropertyChangedEventHandler PropertyChanged;
 
         private long connected;
@@ -263,6 +265,11 @@ namespace TrueCraft.Client
         protected internal void OnChunkModified(ChunkEventArgs e)
         {
             if (ChunkModified != null) ChunkModified(this, e);
+        }
+
+        protected internal void OnBlockChanged(BlockChangeEventArgs e)
+        {
+            if (BlockChanged != null) BlockChanged(this, e);
         }
 
         #region IAABBEntity implementation

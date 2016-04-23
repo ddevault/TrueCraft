@@ -33,6 +33,11 @@ namespace TrueCraft.Core
             return (int)(value * 32);
         }
 
+        public static double ToRadians(double degrees)
+        {
+            return degrees * 0.017453292519943295769236907684886;
+        }
+
         public static Coordinates3D BlockFaceToCoordinates(BlockFace face)
         {
             switch (face)

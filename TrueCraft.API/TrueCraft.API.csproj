@@ -126,6 +126,7 @@
     <Compile Include="Logic\ISmeltableItem.cs" />
     <Compile Include="Logic\IBurnableItem.cs" />
     <Compile Include="Logic\SoundEffectClass.cs" />
+    <Compile Include="Matrix.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
