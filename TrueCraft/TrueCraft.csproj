@@ -67,6 +67,7 @@
     <Compile Include="ServerConfiguration.cs" />
     <Compile Include="MobManager.cs" />
     <Compile Include="Rules\OverworldSpawnRules.cs" />
+    <Compile Include="Commands\ListCommand.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
