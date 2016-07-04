@@ -4,6 +4,8 @@ using TrueCraft.Core.World;
 using TrueCraft.API;
 using fNbt;
 using TrueCraft.Core.Logic.Blocks;
+using System.IO;
+using System.Reflection;
 
 namespace TrueCraft.Core.Test.World
 {
@@ -15,7 +17,8 @@ namespace TrueCraft.Core.Test.World
         [TestFixtureSetUp]
         public void SetUp()
         {
-            var file = new NbtFile("Files/TestChunk.nbt");
+            var assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var file = new NbtFile(Path.Combine(assemblyDir, "Files", "TestChunk.nbt"));
             Chunk = Chunk.FromNbt(file);
         }
 

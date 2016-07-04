@@ -16,3 +16,4 @@ config.yaml
 packets.log
 
 world/manifest.nbt
+TestResult.xml

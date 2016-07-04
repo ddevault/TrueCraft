@@ -4,6 +4,8 @@ using NUnit.Framework;
 using TrueCraft.API;
 using TrueCraft.Core.TerrainGen;
 using TrueCraft.API.World;
+using System.IO;
+using System.Reflection;
 
 namespace TrueCraft.Core.Test.World
 {
@@ -15,7 +17,8 @@ namespace TrueCraft.Core.Test.World
         [TestFixtureSetUp]
         public void SetUp()
         {
-            World = TrueCraft.Core.World.World.LoadWorld("Files");
+            var assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            World = TrueCraft.Core.World.World.LoadWorld(Path.Combine(assemblyDir, "Files"));
         }
 
         [Test]

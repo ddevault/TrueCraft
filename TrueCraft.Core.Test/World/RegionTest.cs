@@ -2,6 +2,8 @@
 using NUnit.Framework;
 using TrueCraft.Core.World;
 using TrueCraft.API;
+using System.IO;
+using System.Reflection;
 
 namespace TrueCraft.Core.Test.World
 {
@@ -14,7 +16,9 @@ namespace TrueCraft.Core.Test.World
         public void SetUp()
         {
             var world = new TrueCraft.Core.World.World();
-            Region = new Region(Coordinates2D.Zero, world, "Files/r.0.0.mca");
+            var assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            Region = new Region(Coordinates2D.Zero, world,
+                Path.Combine(assemblyDir, "Files", "r.0.0.mca"));
         }
 
         [Test]

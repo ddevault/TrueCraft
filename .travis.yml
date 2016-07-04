@@ -6,7 +6,10 @@ before_install:
     - git submodule update --init --recursive
 install:
     - nuget restore TrueCraft.sln
-    - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
+    - nuget install NUnit.Runners -Version 3.2.1 -OutputDirectory testrunner
 script:
     - xbuild TrueCraft.sln
-    - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./TrueCraft.Core.Test/bin/Debug/TrueCraft.Core.Test.dll
+    - |
+        mono \
+            ./testrunner/NUnit.ConsoleRunner.3.2.1/tools/nunit3-console.exe \
+            ./TrueCraft.Core.Test/TrueCraft.Core.Test.csproj
