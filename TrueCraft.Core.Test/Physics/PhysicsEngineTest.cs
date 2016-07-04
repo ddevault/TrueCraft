@@ -212,6 +212,31 @@ namespace TrueCraft.Core.Test.Physics
             physics.Update(TimeSpan.FromSeconds(1));
 
             Assert.AreEqual(0, entity.Position.X);
+            Assert.AreEqual(0, entity.Velocity.X);
+        }
+
+        [Test]
+        [Ignore("Fails until I rewrite the physics engine AGAIN")]
+        public void TestCornerCollision()
+        {
+            var repository = GetBlockRepository();
+            var world = new TrueCraft.Core.World.World("default", new FlatlandGenerator());
+            var physics = new PhysicsEngine(world, repository);
+            var entity = new TestEntity();
+            entity.Position = new Vector3(-1, 10, -1);
+            entity.AccelerationDueToGravity = 0;
+            entity.Drag = 0;
+            entity.Velocity = new Vector3(1, 0, 1);
+            physics.AddEntity(entity);
+            world.SetBlockID(new Coordinates3D(0, 10, 0), StoneBlock.BlockID);
+
+            // Test
+            physics.Update(TimeSpan.FromSeconds(1));
+
+            Assert.AreEqual(0, entity.Position.X);
+            Assert.AreEqual(0, entity.Position.Z);
+            Assert.AreEqual(0, entity.Velocity.X);
+            Assert.AreEqual(0, entity.Velocity.Z);
         }
     }
 }
