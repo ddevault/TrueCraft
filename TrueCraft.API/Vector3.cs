@@ -167,6 +167,42 @@ namespace TrueCraft.API
                 Math.Max(value1.Z, value2.Z)
                 );
         }
+        
+        /// <summary>
+        /// Calculates the dot product between two vectors.
+        /// </summary>
+        public static double Dot(Vector3 value1, Vector3 value2)
+        {
+            return value1.X * value2.X + value1.Y * value2.Y + value1.Z * value2.Z;
+        }
+        
+        /// <summary>
+        /// Computes the cross product of two vectors.
+        /// </summary>
+        /// <param name="vector1">The first vector.</param>
+        /// <param name="vector2">The second vector.</param>
+        /// <returns>The cross product of two vectors.</returns>
+        public static Vector3 Cross(Vector3 vector1, Vector3 vector2)
+        {
+            Cross(ref vector1, ref vector2, out vector1);
+            return vector1;
+        }
+
+        /// <summary>
+        /// Computes the cross product of two vectors.
+        /// </summary>
+        /// <param name="vector1">The first vector.</param>
+        /// <param name="vector2">The second vector.</param>
+        /// <param name="result">The cross product of two vectors as an output parameter.</param>
+        public static void Cross(ref Vector3 vector1, ref Vector3 vector2, out Vector3 result)
+        {
+            var x = vector1.Y * vector2.Z - vector2.Y * vector1.Z;
+            var y = -(vector1.X * vector2.Z - vector2.X * vector1.Z);
+            var z = vector1.X * vector2.Y - vector2.X * vector1.Y;
+            result.X = x;
+            result.Y = y;
+            result.Z = z;
+        }
 
         #endregion
 

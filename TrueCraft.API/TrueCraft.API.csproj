@@ -127,6 +127,7 @@
     <Compile Include="Logic\IBurnableItem.cs" />
     <Compile Include="Logic\SoundEffectClass.cs" />
     <Compile Include="Matrix.cs" />
+    <Compile Include="BoundingCylinder.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

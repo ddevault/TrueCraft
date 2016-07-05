@@ -216,7 +216,6 @@ namespace TrueCraft.Core.Test.Physics
         }
 
         [Test]
-        [Ignore("Fails until I rewrite the physics engine AGAIN")]
         public void TestCornerCollision()
         {
             var repository = GetBlockRepository();
@@ -233,8 +232,8 @@ namespace TrueCraft.Core.Test.Physics
             // Test
             physics.Update(TimeSpan.FromSeconds(1));
 
-            Assert.AreEqual(0, entity.Position.X);
-            Assert.AreEqual(0, entity.Position.Z);
+            Assert.AreEqual(-1, entity.Position.X);
+            Assert.AreEqual(-1, entity.Position.Z);
             Assert.AreEqual(0, entity.Velocity.X);
             Assert.AreEqual(0, entity.Velocity.Z);
         }
