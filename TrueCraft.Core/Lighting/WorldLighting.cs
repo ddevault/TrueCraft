@@ -181,7 +181,13 @@ namespace TrueCraft.Core.Lighting
             byte emissiveness = provider.Luminance;
             if (op.SkyLight)
             {
-                var height = HeightMaps[chunk.Coordinates][adjustedCoords.X, adjustedCoords.Z];
+                byte[,] map;
+                if (!HeightMaps.TryGetValue(chunk.Coordinates, out map))
+                {
+                    GenerateHeightMap(chunk);
+                    map = HeightMaps[chunk.Coordinates];
+                }
+                var height = map[adjustedCoords.X, adjustedCoords.Z];
                 // For skylight, the emissiveness is 15 if y >= height
                 if (y >= height)
                     emissiveness = 15;
