@@ -137,23 +137,27 @@ namespace TrueCraft.Core.Logic
             }
 
             // Test for entities
-            var em = user.Server.GetEntityManagerForWorld(world);
-            var entities = em.EntitiesInRange(coordinates, 2);
-            var box = new BoundingBox(coordinates, coordinates + Vector3.One);
-            foreach (var entity in entities)
+            if (BoundingBox.HasValue)
             {
-                var aabb = entity as IAABBEntity;
-                if (aabb != null && !(entity is ItemEntity))
+                var em = user.Server.GetEntityManagerForWorld(world);
+                var entities = em.EntitiesInRange(coordinates, 3);
+                var box = new BoundingBox(BoundingBox.Value.Min + (Vector3)coordinates,
+                    BoundingBox.Value.Max + (Vector3)coordinates);
+                foreach (var entity in entities)
                 {
-                    if (aabb.BoundingBox.Intersects(box) && false) // TODO: Figure out
-                        return;
-                }
-                var player = entity as PlayerEntity; // Players do not implement IAABBEntity
-                if (player != null)
-                {
-                    if (new BoundingBox(player.Position, player.Position + player.Size)
-                        .Intersects(box) && false)
-                        return;
+                    var aabb = entity as IAABBEntity;
+                    if (aabb != null && !(entity is ItemEntity))
+                    {
+                        if (aabb.BoundingBox.Intersects(box))
+                            return;
+                    }
+                    var player = entity as PlayerEntity; // Players do not implement IAABBEntity
+                    if (player != null)
+                    {
+                        if (new BoundingBox(player.Position, player.Position + player.Size)
+                            .Intersects(box))
+                            return;
+                    }
                 }
             }
 
