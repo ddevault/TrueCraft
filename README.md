@@ -14,6 +14,9 @@ I miss the old days of Minecraft, when it was a simple game. It was nearly perfe
 
 The goal of this project is effectively to fork Minecraft. Your contribution is welcome, but keep in mind that I will mercilessly reject changes that aren't in line with the vision. If you like the new Minecraft, please feel free to keep playing it. If you miss the old Minecraft, join me.
 
+If you'd like to support TrueCraft development, you can contribute to [my Patreon
+page](https://patreon.com/sircmpwn).
+
 ## Compiling
 
 **Use a recursive git clone.**
