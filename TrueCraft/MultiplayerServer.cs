@@ -75,6 +75,7 @@ namespace TrueCraft
         private TcpListener Listener;
         private readonly PacketHandler[] PacketHandlers;
         private IList<ILogProvider> LogProviders;
+        private Stopwatch Time;
         private ConcurrentBag<Tuple<IWorld, IChunk>> ChunksToSchedule;
         internal object ClientLock = new object();
         
@@ -109,6 +110,7 @@ namespace TrueCraft
             QueryProtocol = new TrueCraft.QueryProtocol(this);
             WorldLighters = new List<WorldLighting>();
             ChunksToSchedule = new ConcurrentBag<Tuple<IWorld, IChunk>>();
+            Time = new Stopwatch();
 
             AccessConfiguration = Configuration.LoadConfiguration<AccessConfiguration>("access.yaml");
 
@@ -124,6 +126,8 @@ namespace TrueCraft
         public void Start(IPEndPoint endPoint)
         {
             ShuttingDown = false;
+            Time.Reset();
+            Time.Start();
             Listener = new TcpListener(endPoint);
             Listener.Start();
             EndPoint = (IPEndPoint)Listener.LocalEndpoint;
@@ -135,7 +139,7 @@ namespace TrueCraft
                 AcceptClient(this, args);
             
             Log(LogCategory.Notice, "Running TrueCraft server on {0}", EndPoint);
-            EnvironmentWorker.Change(MillisecondsPerTick, 0);
+            EnvironmentWorker.Change(MillisecondsPerTick, Timeout.Infinite);
             if(Program.ServerConfiguration.Query)
                 QueryProtocol.Start();
         }
@@ -150,6 +154,16 @@ namespace TrueCraft
                 w.Save();
             foreach (var c in Clients)
                 DisconnectClient(c);
+        }
+
+        public void Pause()
+        {
+            EnvironmentWorker.Change(Timeout.Infinite, Timeout.Infinite);
+        }
+        
+        public void Resume()
+        {
+            EnvironmentWorker.Change(0, Timeout.Infinite);
         }
 
         public void AddWorld(IWorld world)
@@ -216,7 +230,7 @@ namespace TrueCraft
             if (Program.ServerConfiguration.EnableLighting)
             {
                 var lighter = new WorldLighting(sender as IWorld, BlockRepository);
-                lighter.InitialLighting(e.Chunk);
+                lighter.InitialLighting(e.Chunk, false);
             }
             else
             {
@@ -385,6 +399,8 @@ namespace TrueCraft
             if (ShuttingDown)
                 return;
 
+            long start = Time.ElapsedMilliseconds;
+            long limit = Time.ElapsedMilliseconds + MillisecondsPerTick;
             Profiler.Start("environment");
 
             Scheduler.Update();
@@ -396,15 +412,20 @@ namespace TrueCraft
             }
             Profiler.Done();
 
-            Profiler.Start("environment.lighting");
-            foreach (var lighter in WorldLighters)
+            if (Program.ServerConfiguration.EnableLighting)
             {
-                int attempts = 500;
-                while (attempts-- > 0 && lighter.TryLightNext())
+                Profiler.Start("environment.lighting");
+                foreach (var lighter in WorldLighters)
                 {
+                    while (Time.ElapsedMilliseconds < limit && lighter.TryLightNext())
+                    {
+                        // This space intentionally left blank
+                    }
+                    if (Time.ElapsedMilliseconds >= limit)
+                        Log(LogCategory.Warning, "Lighting queue is backed up");
                 }
+                Profiler.Done();
             }
-            Profiler.Done();
 
             Profiler.Start("environment.chunks");
             Tuple<IWorld, IChunk> t;
@@ -413,8 +434,12 @@ namespace TrueCraft
             Profiler.Done();
 
             Profiler.Done(MillisecondsPerTick);
-
-            EnvironmentWorker.Change(MillisecondsPerTick, 0);
+            long end = Time.ElapsedMilliseconds;
+            long next = MillisecondsPerTick - (end - start);
+            if (next < 0)
+                next = 0;
+            
+            EnvironmentWorker.Change(next, Timeout.Infinite);
         }
 
         public bool PlayerIsWhitelisted(string client)

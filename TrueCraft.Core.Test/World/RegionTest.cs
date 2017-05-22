@@ -12,7 +12,7 @@ namespace TrueCraft.Core.Test.World
     {
         public Region Region { get; set; }
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void SetUp()
         {
             var world = new TrueCraft.Core.World.World();

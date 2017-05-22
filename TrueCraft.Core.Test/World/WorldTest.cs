@@ -14,7 +14,7 @@ namespace TrueCraft.Core.Test.World
     {
         public TrueCraft.Core.World.World World { get; set; }
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void SetUp()
         {
             var assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);

@@ -210,15 +210,77 @@ namespace TrueCraft.Commands
                 if (path == null)
                 {
                     client.SendMessage(ChatColor.Red + "It is impossible for this entity to reach you.");
-                    return;
                 }
-                entity.CurrentPath = path;
+                else
+                {
+                    client.SendMessage(string.Format(ChatColor.Blue
+                        + "Executing path with {0} waypoints", path.Waypoints.Count()));
+                    entity.CurrentPath = path;
+                }
             });
         }
 
         public override void Help(IRemoteClient client, string alias, string[] arguments)
         {
             client.SendMessage("/tome [id]: Moves a mob to your position.");
+        }
+    }
+
+    public class EntityInfoCommand : Command
+    {
+        public override string Name
+        {
+            get { return "entity"; }
+        }
+
+        public override string Description
+        {
+            get { return "Provides information about an entity ID."; }
+        }
+
+        public override string[] Aliases
+        {
+            get { return new string[0]; }
+        }
+
+        public override void Handle(IRemoteClient client, string alias, string[] arguments)
+        {
+            if (arguments.Length != 1)
+            {
+                Help(client, alias, arguments);
+                return;
+            }
+
+            int id;
+            if (!int.TryParse(arguments[0], out id))
+            {
+                Help(client, alias, arguments);
+                return;
+            }
+
+            var manager = client.Server.GetEntityManagerForWorld(client.World);
+            var entity = manager.GetEntityByID(id);
+            if (entity == null)
+            {
+                client.SendMessage(ChatColor.Red + "An entity with that ID does not exist in this world.");
+                return;
+            }
+            client.SendMessage(string.Format(
+                "{0} {1}", entity.GetType().Name, entity.Position));
+            if (entity is MobEntity)
+            {
+                var mob = entity as MobEntity;
+                client.SendMessage(string.Format(
+                    "{0}/{1} HP, {2} State, moving to to {3}",
+                    mob.Health, mob.MaxHealth,
+                    mob.CurrentState?.GetType().Name ?? "null",
+                    mob.CurrentPath?.Waypoints.Last().ToString() ?? "null"));
+            }
+        }
+
+        public override void Help(IRemoteClient client, string alias, string[] arguments)
+        {
+            client.SendMessage("/entity [id]: Shows information about this entity.");
         }
     }
 

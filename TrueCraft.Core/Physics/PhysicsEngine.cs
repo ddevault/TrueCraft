@@ -41,10 +41,21 @@ namespace TrueCraft.Core.Physics
                 Entities.Remove(entity);
         }
 
+        private void TruncateVelocity(IPhysicsEntity entity, double multiplier)
+        {
+            if (Math.Abs(entity.Velocity.X) < 0.1 * multiplier)
+                entity.Velocity = new Vector3(0, entity.Velocity.Y, entity.Velocity.Z);
+            if (Math.Abs(entity.Velocity.Y) < 0.1 * multiplier)
+                entity.Velocity = new Vector3(entity.Velocity.X, 0, entity.Velocity.Z);
+            if (Math.Abs(entity.Velocity.Z) < 0.1 * multiplier)
+                entity.Velocity = new Vector3(entity.Velocity.X, entity.Velocity.Y, 0);
+            entity.Velocity.Clamp(entity.TerminalVelocity);
+        }
+
         public void Update(TimeSpan time)
         {
             double multiplier = time.TotalSeconds;
-            if (multiplier == 0)
+            if (multiplier == 0 || multiplier > 1)
                 return;
             lock (EntityLock)
             {
@@ -55,9 +66,7 @@ namespace TrueCraft.Core.Physics
                     {
                         entity.Velocity -= new Vector3(0, entity.AccelerationDueToGravity * multiplier, 0);
                         entity.Velocity *= 1 - entity.Drag * multiplier;
-                        if (entity.Velocity.Distance < 0.001)
-                            entity.Velocity = Vector3.Zero;
-                        entity.Velocity.Clamp(entity.TerminalVelocity);
+                        TruncateVelocity(entity, multiplier);
 
                         Vector3 collision, before = entity.Velocity;
 
@@ -74,8 +83,8 @@ namespace TrueCraft.Core.Physics
                             if (TestTerrainCollisionCylinder(aabbEntity, out collision))
                                 aabbEntity.TerrainCollision(collision, before);
                         }
-
                         entity.EndUpdate(entity.Position + entity.Velocity);
+                        TruncateVelocity(entity, multiplier);
                     }
                 }
             }

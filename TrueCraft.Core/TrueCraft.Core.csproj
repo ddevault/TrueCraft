@@ -355,6 +355,7 @@
     <Compile Include="Windows\FurnaceWindow.cs" />
     <Compile Include="Paths.cs" />
     <Compile Include="Logic\CraftingRepository.cs" />
+    <Compile Include="AI\IdleState.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

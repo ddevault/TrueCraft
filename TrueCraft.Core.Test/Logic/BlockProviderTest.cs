@@ -23,7 +23,7 @@ namespace TrueCraft.Core.Test.Logic
         public Mock<IRemoteClient> User { get; set; }
         public Mock<IBlockRepository> BlockRepository { get; set; }
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void SetUp()
         {
             World = new Mock<IWorld>();

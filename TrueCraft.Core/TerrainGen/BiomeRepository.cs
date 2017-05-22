@@ -47,7 +47,7 @@ namespace TrueCraft.Core.TerrainGen
             return BiomeProviders[id];
         }
 
-        public IBiomeProvider GetBiome(double temperature, double rainfall)
+        public IBiomeProvider GetBiome(double temperature, double rainfall, bool spawn)
         {
             List<IBiomeProvider> temperatureResults = new List<IBiomeProvider>();
             foreach (var biome in BiomeProviders)
@@ -79,7 +79,10 @@ namespace TrueCraft.Core.TerrainGen
 
             foreach (var biome in BiomeProviders)
             {
-                if (biome != null && biome.Rainfall.Equals(rainfall) && temperatureResults.Contains(biome))
+                if (biome != null
+                    && biome.Rainfall.Equals(rainfall)
+                    && temperatureResults.Contains(biome)
+                    && (!spawn || biome.Spawn))
                 {
                     return biome;
                 }
@@ -92,14 +95,15 @@ namespace TrueCraft.Core.TerrainGen
                 if (biome != null)
                 {
                     var difference = Math.Abs(temperature - biome.Temperature);
-                    if (biomeProvider == null || difference < rainfallDifference)
+                    if ((biomeProvider == null || difference < rainfallDifference)
+                        && (!spawn || biome.Spawn))
                     {
                         biomeProvider = biome;
                         rainfallDifference = (float)difference;
                     }
                 }
             }
-            return biomeProvider;
+            return biomeProvider ?? new PlainsBiome();
         }
     }
 }

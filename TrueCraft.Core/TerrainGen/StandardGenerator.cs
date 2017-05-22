@@ -137,7 +137,9 @@ namespace TrueCraft.Core.TerrainGen
                         || cellValue.Equals(1)
                         && world.BiomeDiagram.ClosestCellPoint(location) >= featurePointDistance)
                     {
-                        byte id = (SingleBiome) ? GenerationBiome : world.BiomeDiagram.GenerateBiome(seed, Biomes, location);
+                        byte id = (SingleBiome) ? GenerationBiome
+                            : world.BiomeDiagram.GenerateBiome(seed, Biomes, location,
+                                IsSpawnCoordinate(location.X, location.Z));
                         var cell = new BiomeCell(id, location);
                         world.BiomeDiagram.AddCell(cell);
                     }
@@ -207,14 +209,23 @@ namespace TrueCraft.Core.TerrainGen
             return world.BiomeDiagram.GetBiome(location);
         }
 
+        bool IsSpawnCoordinate(int x, int z)
+        {
+            return x > -1000 && x < 1000 || z > -1000 && z < 1000;
+        }
+
         int GetHeight(int x, int z)
         {
-            var NoiseValue = FinalNoise.Value2D(x, z) + GroundLevel;
-            if (NoiseValue < 0)
-                NoiseValue = GroundLevel;
-            if (NoiseValue > Chunk.Height)
-                NoiseValue = Chunk.Height - 1;
-            return (int)NoiseValue;
+            var value = FinalNoise.Value2D(x, z) + GroundLevel;
+            var coords = new Coordinates2D(x, z);
+            double distance = IsSpawnCoordinate(x, z) ? coords.Distance : 1000;
+            if (distance < 1000) // Avoids deep water within 1km sq of spawn
+                value += (1 - distance / 1000f) * 12;
+            if (value < 0)
+                value = GroundLevel;
+            if (value > Chunk.Height)
+                value = Chunk.Height - 1;
+            return (int)value;
         }
     }
 }

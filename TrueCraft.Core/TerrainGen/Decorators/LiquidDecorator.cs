@@ -12,7 +12,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
 {
     public class LiquidDecorator : IChunkDecorator
     {
-        const int WaterLevel = 40;
+        public static readonly int WaterLevel = 40;
 
         public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
         {

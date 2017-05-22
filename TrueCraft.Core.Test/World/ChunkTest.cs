@@ -14,7 +14,7 @@ namespace TrueCraft.Core.Test.World
     {
         public Chunk Chunk { get; set; }
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void SetUp()
         {
             var assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);

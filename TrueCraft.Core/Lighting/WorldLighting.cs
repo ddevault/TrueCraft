@@ -300,6 +300,7 @@ namespace TrueCraft.Core.Lighting
             EnqueueOperation(new BoundingBox(new Vector3(coords.X, 0, coords.Z),
                 new Vector3(coords.X + Chunk.Width, chunk.MaxHeight + 2, coords.Z + Chunk.Depth)),
                 true, true);
+            TryLightNext();
             while (flush && TryLightNext())
             {
             }

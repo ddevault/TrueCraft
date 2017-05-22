@@ -27,6 +27,14 @@ namespace TrueCraft.Core.TerrainGen.Biomes
         /// The base rainfall of the biome.
         /// </summary>
         public abstract double Rainfall { get; }
+        
+        public virtual bool Spawn
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         /// <summary>
         /// The tree types generated in the biome.

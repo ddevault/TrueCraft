@@ -67,58 +67,55 @@ namespace TrueCraft.Core.World
         public IChunk GetChunk(Coordinates2D position, bool generate = true)
         {
             // TODO: This could use some refactoring
-            lock (Chunks)
+            if (!Chunks.ContainsKey(position))
             {
-                if (!Chunks.ContainsKey(position))
+                if (regionFile != null)
                 {
-                    if (regionFile != null)
+                    // Search the stream for that region
+                    lock (streamLock)
                     {
-                        // Search the stream for that region
-                        lock (regionFile)
+                        var chunkData = GetChunkFromTable(position);
+                        if (chunkData == null)
                         {
-                            var chunkData = GetChunkFromTable(position);
-                            if (chunkData == null)
-                            {
-                                if (World.ChunkProvider == null)
-                                    throw new ArgumentException("The requested chunk is not loaded.", "position");
-                                if (generate)
-                                    GenerateChunk(position);
-                                else
-                                    return null;
-                                return Chunks[position];
-                            }
-                            regionFile.Seek(chunkData.Item1, SeekOrigin.Begin);
-                            /*int length = */
-                            new MinecraftStream(regionFile).ReadInt32(); // TODO: Avoid making new objects here, and in the WriteInt32
-                            int compressionMode = regionFile.ReadByte();
-                            switch (compressionMode)
-                            {
-                                case 1: // gzip
-                                    throw new NotImplementedException("gzipped chunks are not implemented");
-                                case 2: // zlib
-                                    var nbt = new NbtFile();
-                                    nbt.LoadFromStream(regionFile, NbtCompression.ZLib, null);
-                                    var chunk = Chunk.FromNbt(nbt);
-                                    Chunks.Add(position, chunk);
-                                    World.OnChunkLoaded(new ChunkLoadedEventArgs(chunk));
-                                    break;
-                                default:
-                                    throw new InvalidDataException("Invalid compression scheme provided by region file.");
-                            }
+                            if (World.ChunkProvider == null)
+                                throw new ArgumentException("The requested chunk is not loaded.", "position");
+                            if (generate)
+                                GenerateChunk(position);
+                            else
+                                return null;
+                            return Chunks[position];
+                        }
+                        regionFile.Seek(chunkData.Item1, SeekOrigin.Begin);
+                        /*int length = */
+                        new MinecraftStream(regionFile).ReadInt32(); // TODO: Avoid making new objects here, and in the WriteInt32
+                        int compressionMode = regionFile.ReadByte();
+                        switch (compressionMode)
+                        {
+                            case 1: // gzip
+                                throw new NotImplementedException("gzipped chunks are not implemented");
+                            case 2: // zlib
+                                var nbt = new NbtFile();
+                                nbt.LoadFromStream(regionFile, NbtCompression.ZLib, null);
+                                var chunk = Chunk.FromNbt(nbt);
+                                Chunks.Add(position, chunk);
+                                World.OnChunkLoaded(new ChunkLoadedEventArgs(chunk));
+                                break;
+                            default:
+                                throw new InvalidDataException("Invalid compression scheme provided by region file.");
                         }
                     }
-                    else if (World.ChunkProvider == null)
-                        throw new ArgumentException("The requested chunk is not loaded.", "position");
-                    else
-                    {
-                        if (generate)
-                            GenerateChunk(position);
-                        else
-                            return null;
-                    }
                 }
-                return Chunks[position];
+                else if (World.ChunkProvider == null)
+                    throw new ArgumentException("The requested chunk is not loaded.", "position");
+                else
+                {
+                    if (generate)
+                        GenerateChunk(position);
+                    else
+                        return null;
+                }
             }
+            return Chunks[position];
         }
 
         public void GenerateChunk(Coordinates2D position)
@@ -162,41 +159,38 @@ namespace TrueCraft.Core.World
         /// </summary>
         public void Save()
         {
-            lock (Chunks)
+            lock (streamLock)
             {
-                lock (streamLock)
+                var toRemove = new List<Coordinates2D>();
+                foreach (var kvp in Chunks)
                 {
-                    var toRemove = new List<Coordinates2D>();
-                    foreach (var kvp in Chunks)
+                    var chunk = kvp.Value;
+                    if (chunk.IsModified)
                     {
-                        var chunk = kvp.Value;
-                        if (chunk.IsModified)
-                        {
-                            var data = ((Chunk)chunk).ToNbt();
-                            byte[] raw = data.SaveToBuffer(NbtCompression.ZLib);
+                        var data = ((Chunk)chunk).ToNbt();
+                        byte[] raw = data.SaveToBuffer(NbtCompression.ZLib);
 
-                            var header = GetChunkFromTable(kvp.Key);
-                            if (header == null || header.Item2 > raw.Length)
-                                header = AllocateNewChunks(kvp.Key, raw.Length);
+                        var header = GetChunkFromTable(kvp.Key);
+                        if (header == null || header.Item2 > raw.Length)
+                            header = AllocateNewChunks(kvp.Key, raw.Length);
 
-                            regionFile.Seek(header.Item1, SeekOrigin.Begin);
-                            new MinecraftStream(regionFile).WriteInt32(raw.Length);
-                            regionFile.WriteByte(2); // Compressed with zlib
-                            regionFile.Write(raw, 0, raw.Length);
+                        regionFile.Seek(header.Item1, SeekOrigin.Begin);
+                        new MinecraftStream(regionFile).WriteInt32(raw.Length);
+                        regionFile.WriteByte(2); // Compressed with zlib
+                        regionFile.Write(raw, 0, raw.Length);
 
-                            chunk.IsModified = false;
-                        }
-                        if ((DateTime.UtcNow - chunk.LastAccessed).TotalMinutes > 5)
-                            toRemove.Add(kvp.Key);
+                        chunk.IsModified = false;
                     }
-                    regionFile.Flush();
-                    // Unload idle chunks
-                    foreach (var chunk in toRemove)
-                    {
-                        var c = Chunks[chunk];
-                        Chunks.Remove(chunk);
-                        c.Dispose();
-                    }
+                    if ((DateTime.UtcNow - chunk.LastAccessed).TotalMinutes > 5)
+                        toRemove.Add(kvp.Key);
+                }
+                regionFile.Flush();
+                // Unload idle chunks
+                foreach (var chunk in toRemove)
+                {
+                    var c = Chunks[chunk];
+                    Chunks.Remove(chunk);
+                    c.Dispose();
                 }
             }
         }

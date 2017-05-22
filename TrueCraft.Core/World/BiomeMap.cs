@@ -42,11 +42,11 @@ namespace TrueCraft.Core.World
             return BiomeID;
         }
 
-        public byte GenerateBiome(int seed, IBiomeRepository biomes, Coordinates2D location)
+        public byte GenerateBiome(int seed, IBiomeRepository biomes, Coordinates2D location, bool spawn)
         {
             double temp = Math.Abs(TempNoise.Value2D(location.X, location.Z));
             double rainfall = Math.Abs(RainNoise.Value2D(location.X, location.Z));
-            byte ID = biomes.GetBiome(temp, rainfall).ID;
+            byte ID = biomes.GetBiome(temp, rainfall, spawn).ID;
             return ID;
         }
 
