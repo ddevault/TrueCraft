@@ -128,7 +128,8 @@ namespace TrueCraft.Core.World
         public void SetBlockID(Coordinates3D coordinates, byte value)
         {
             IsModified = true;
-            ParentRegion.DamageChunk(Coordinates);
+            if (ParentRegion != null)
+                ParentRegion.DamageChunk(Coordinates);
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
             Data[index] = value;
             if (value == AirBlock.BlockID)
@@ -166,7 +167,8 @@ namespace TrueCraft.Core.World
         public void SetMetadata(Coordinates3D coordinates, byte value)
         {
             IsModified = true;
-            ParentRegion.DamageChunk(Coordinates);
+            if (ParentRegion != null)
+                ParentRegion.DamageChunk(Coordinates);
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
             Metadata[index] = value;
         }
@@ -178,7 +180,8 @@ namespace TrueCraft.Core.World
         public void SetSkyLight(Coordinates3D coordinates, byte value)
         {
             IsModified = true;
-            ParentRegion.DamageChunk(Coordinates);
+            if (ParentRegion != null)
+                ParentRegion.DamageChunk(Coordinates);
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
             SkyLight[index] = value;
         }
@@ -190,7 +193,8 @@ namespace TrueCraft.Core.World
         public void SetBlockLight(Coordinates3D coordinates, byte value)
         {
             IsModified = true;
-            ParentRegion.DamageChunk(Coordinates);
+            if (ParentRegion != null)
+                ParentRegion.DamageChunk(Coordinates);
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
             BlockLight[index] = value;
         }
@@ -215,7 +219,8 @@ namespace TrueCraft.Core.World
             else
                 TileEntities[coordinates] = value;
             IsModified = true;
-            ParentRegion.DamageChunk(Coordinates);
+            if (ParentRegion != null)
+                ParentRegion.DamageChunk(Coordinates);
         }
 
         /// <summary>
