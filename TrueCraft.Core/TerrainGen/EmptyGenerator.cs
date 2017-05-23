@@ -8,10 +8,6 @@ namespace TrueCraft.Core
 {
     public class EmptyGenerator : IChunkProvider
     {
-        public EmptyGenerator()
-        {
-        }
-
         public IChunk GenerateChunk(IWorld world, Coordinates2D coordinates)
         {
             return new Chunk(coordinates);
@@ -20,6 +16,10 @@ namespace TrueCraft.Core
         public Coordinates3D GetSpawn(IWorld world)
         {
             return Coordinates3D.Zero;
+        }
+
+        public void Initialize(IWorld world)
+        {
         }
 
         public IList<IChunkDecorator> ChunkDecorators { get; set; }

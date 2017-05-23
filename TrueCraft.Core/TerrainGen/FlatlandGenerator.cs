@@ -27,6 +27,10 @@ namespace TrueCraft.Core.TerrainGen
             GeneratorOptions = generatorOptions;
         }
 
+        public void Initialize(IWorld world)
+        {
+        }
+
         public static string DefaultGeneratorOptions { get; set; }
 
         public string GeneratorOptions

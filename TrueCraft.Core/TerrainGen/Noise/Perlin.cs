@@ -16,7 +16,7 @@ namespace TrueCraft.Core.TerrainGen.Noise
         public double Lacunarity { get; set; }
         public InterpolateType Interpolation { get; set; }
 
-        public Perlin(int seed = 0)
+        public Perlin(int seed)
         {
             this.Seed = seed;
             this.Octaves = 2;

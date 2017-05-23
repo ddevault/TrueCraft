@@ -12,11 +12,12 @@ namespace TrueCraft.Core.World
     {
         public IList<BiomeCell> BiomeCells { get; private set; }
 
-        Perlin TempNoise = new Perlin();
-        Perlin RainNoise = new Perlin();
+        Perlin TempNoise, RainNoise;
 
         public BiomeMap(int seed)
         {
+            TempNoise = new Perlin(seed);
+            RainNoise = new Perlin(seed);
             BiomeCells = new List<BiomeCell>();
             TempNoise.Persistance = 1.45;
             TempNoise.Frequency = 0.015;

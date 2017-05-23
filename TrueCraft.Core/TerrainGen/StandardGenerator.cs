@@ -19,10 +19,10 @@ namespace TrueCraft.Core.TerrainGen
     public class StandardGenerator : IChunkProvider
     {
         BiomeRepository Biomes = new BiomeRepository();
-        Perlin HighNoise = new Perlin();
-        Perlin LowNoise = new Perlin();
-        Perlin BottomNoise = new Perlin();
-        Perlin CaveNoise = new Perlin();
+        Perlin HighNoise;
+        Perlin LowNoise;
+        Perlin BottomNoise;
+        Perlin CaveNoise;
         ClampNoise HighClamp;
         ClampNoise LowClamp;
         ClampNoise BottomClamp;
@@ -30,10 +30,27 @@ namespace TrueCraft.Core.TerrainGen
         bool EnableCaves;
         private const int GroundLevel = 50;
 
-        public StandardGenerator(IWorld world)
+        public StandardGenerator()
         {
             EnableCaves = true;
+            ChunkDecorators = new List<IChunkDecorator>();
+            ChunkDecorators.Add(new LiquidDecorator());
+            ChunkDecorators.Add(new OreDecorator());
+            ChunkDecorators.Add(new PlantDecorator());
+            ChunkDecorators.Add(new TreeDecorator());
+            ChunkDecorators.Add(new FreezeDecorator());
+            ChunkDecorators.Add(new CactusDecorator());
+            ChunkDecorators.Add(new SugarCaneDecorator());
+            ChunkDecorators.Add(new DungeonDecorator(GroundLevel));
+        }
 
+        public void Initialize(IWorld world)
+        {
+            HighNoise = new Perlin(world.Seed);
+            LowNoise = new Perlin(world.Seed);
+            BottomNoise = new Perlin(world.Seed);
+            CaveNoise = new Perlin(world.Seed);
+            
             CaveNoise.Octaves = 3;
             CaveNoise.Amplitude = 0.05;
             CaveNoise.Persistance = 2;
@@ -71,16 +88,6 @@ namespace TrueCraft.Core.TerrainGen
             BottomClamp.MaxValue = 5;
 
             FinalNoise = new ModifyNoise(HighClamp, LowClamp, NoiseModifier.Add);
-
-            ChunkDecorators = new List<IChunkDecorator>();
-            ChunkDecorators.Add(new LiquidDecorator());
-            ChunkDecorators.Add(new OreDecorator());
-            ChunkDecorators.Add(new PlantDecorator());
-            ChunkDecorators.Add(new TreeDecorator());
-            ChunkDecorators.Add(new FreezeDecorator());
-            ChunkDecorators.Add(new CactusDecorator());
-            ChunkDecorators.Add(new SugarCaneDecorator());
-            ChunkDecorators.Add(new DungeonDecorator(GroundLevel));
         }
 
         public IList<IChunkDecorator> ChunkDecorators { get; private set; }
