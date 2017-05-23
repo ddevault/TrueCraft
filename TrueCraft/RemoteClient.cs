@@ -413,7 +413,7 @@ namespace TrueCraft
             server.Scheduler.ScheduleEvent("remote.keepalive", this, TimeSpan.FromSeconds(10), SendKeepAlive);
         }
 
-        internal void UpdateChunks()
+        internal void UpdateChunks(bool block = false)
         {
             var newChunks = new HashSet<Coordinates2D>();
             var toLoad = new List<Tuple<Coordinates2D, IChunk>>();
@@ -428,11 +428,11 @@ namespace TrueCraft
                     newChunks.Add(coords);
                     if (!LoadedChunks.Contains(coords))
                         toLoad.Add(new Tuple<Coordinates2D, IChunk>(
-                            coords, World.GetChunk(coords, generate: false)));
+                            coords, World.GetChunk(coords, generate: block)));
                 }
             }
             Profiler.Done();
-            Task.Factory.StartNew(() =>
+            var encode = new Action(() =>
             {
                 Profiler.Start("client.encode-chunks");
                 foreach (var tup in toLoad)
@@ -446,6 +446,10 @@ namespace TrueCraft
                 }
                 Profiler.Done();
             });
+            if (block)
+                encode();
+            else
+                Task.Factory.StartNew(encode);
             Profiler.Start("client.old-chunks");
             LoadedChunks.IntersectWith(newChunks);
             Profiler.Done();
