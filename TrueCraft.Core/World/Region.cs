@@ -110,7 +110,7 @@ namespace TrueCraft.Core.World
                                 nbt.LoadFromStream(regionFile, NbtCompression.ZLib, null);
                                 var chunk = Chunk.FromNbt(nbt);
                                 chunk.ParentRegion = this;
-                                Chunks.Add(position, chunk);
+                                Chunks[position] = chunk;
                                 World.OnChunkLoaded(new ChunkLoadedEventArgs(chunk));
                                 break;
                             default:
@@ -148,12 +148,10 @@ namespace TrueCraft.Core.World
         /// </summary>
         public void SetChunk(Coordinates2D position, IChunk chunk)
         {
-            if (!Chunks.ContainsKey(position))
-                Chunks.Add(position, chunk);
+            Chunks[position] = chunk;
             chunk.IsModified = true;
             DirtyChunks.Add(position);
             chunk.ParentRegion = this;
-            Chunks[position] = chunk;
         }
 
         /// <summary>
