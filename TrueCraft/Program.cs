@@ -109,18 +109,22 @@ namespace TrueCraft
             Server.ChatMessageReceived += HandleChatMessageReceived;
             Server.Start(new IPEndPoint(IPAddress.Parse(ServerConfiguration.ServerAddress), ServerConfiguration.ServerPort));
             Console.CancelKeyPress += HandleCancelKeyPress;
+            Server.Scheduler.ScheduleEvent("world.save", null,
+                TimeSpan.FromSeconds(ServerConfiguration.WorldSaveInterval), SaveWorlds);
             while (true)
             {
-                Thread.Sleep(1000 * ServerConfiguration.WorldSaveInterval);
-                Server.Pause();
-                Server.Log(LogCategory.Notice, "Saving world...");
-                foreach (var w in Server.Worlds)
-                {
-                    w.Save();
-                }
-                Server.Log(LogCategory.Notice, "Done.");
-                Server.Resume();
+                Thread.Yield();
             }
+        }
+
+        static void SaveWorlds(IMultiplayerServer server)
+        {
+            Server.Log(LogCategory.Notice, "Saving world...");
+            foreach (var w in Server.Worlds)
+                w.Save();
+            Server.Log(LogCategory.Notice, "Done.");
+            server.Scheduler.ScheduleEvent("world.save", null,
+                TimeSpan.FromSeconds(ServerConfiguration.WorldSaveInterval), SaveWorlds);
         }
 
         static void HandleCancelKeyPress(object sender, ConsoleCancelEventArgs e)

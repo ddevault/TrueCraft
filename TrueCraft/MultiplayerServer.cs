@@ -125,6 +125,10 @@ namespace TrueCraft
 
         public void Start(IPEndPoint endPoint)
         {
+            Scheduler.DisabledEvents.Clear();
+            if (Program.ServerConfiguration.DisabledEvents != null)
+                Program.ServerConfiguration.DisabledEvents.ToList().ForEach(
+                    ev => Scheduler.DisabledEvents.Add(ev));
             ShuttingDown = false;
             Time.Reset();
             Time.Start();
@@ -156,16 +160,6 @@ namespace TrueCraft
                 DisconnectClient(c);
         }
 
-        public void Pause()
-        {
-            EnvironmentWorker.Change(Timeout.Infinite, Timeout.Infinite);
-        }
-        
-        public void Resume()
-        {
-            EnvironmentWorker.Change(0, Timeout.Infinite);
-        }
-
         public void AddWorld(IWorld world)
         {
             Worlds.Add(world);
@@ -183,7 +177,8 @@ namespace TrueCraft
 
         void HandleChunkLoaded(object sender, ChunkLoadedEventArgs e)
         {
-            ChunksToSchedule.Add(new Tuple<IWorld, IChunk>(sender as IWorld, e.Chunk));
+            if (Program.ServerConfiguration.EnableEventLoading)
+                ChunksToSchedule.Add(new Tuple<IWorld, IChunk>(sender as IWorld, e.Chunk));
             if (Program.ServerConfiguration.EnableLighting)
             {
                 var lighter = WorldLighters.SingleOrDefault(l => l.World == sender);
@@ -234,9 +229,9 @@ namespace TrueCraft
             }
             else
             {
-                for (int i = 0; i < e.Chunk.SkyLight.Data.Length; i++)
+                for (int i = 0; i < e.Chunk.SkyLight.Length * 2; i++)
                 {
-                    e.Chunk.SkyLight.Data[i] = 0xFF;
+                    e.Chunk.SkyLight[i] = 0xF;
                 }
             }
             HandleChunkLoaded(sender, e);
@@ -427,11 +422,14 @@ namespace TrueCraft
                 Profiler.Done();
             }
 
-            Profiler.Start("environment.chunks");
-            Tuple<IWorld, IChunk> t;
-            if (ChunksToSchedule.TryTake(out t))
-                ScheduleUpdatesForChunk(t.Item1, t.Item2);
-            Profiler.Done();
+            if (Program.ServerConfiguration.EnableEventLoading)
+            {
+                Profiler.Start("environment.chunks");
+                Tuple<IWorld, IChunk> t;
+                if (ChunksToSchedule.TryTake(out t))
+                    ScheduleUpdatesForChunk(t.Item1, t.Item2);
+                Profiler.Done();
+            }
 
             Profiler.Done(MillisecondsPerTick);
             long end = Time.ElapsedMilliseconds;

@@ -519,7 +519,7 @@ namespace TrueCraft.Commands
             {
                 lighter.InitialLighting(chunk, true);
                 (client as RemoteClient).UnloadChunk(chunk.Coordinates);
-                (client as RemoteClient).LoadChunk(chunk.Coordinates);
+                (client as RemoteClient).LoadChunk(chunk);
             }
         }
 

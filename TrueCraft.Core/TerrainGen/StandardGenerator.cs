@@ -220,7 +220,7 @@ namespace TrueCraft.Core.TerrainGen
             var coords = new Coordinates2D(x, z);
             double distance = IsSpawnCoordinate(x, z) ? coords.Distance : 1000;
             if (distance < 1000) // Avoids deep water within 1km sq of spawn
-                value += (1 - distance / 1000f) * 12;
+                value += (1 - distance / 1000f) * 18;
             if (value < 0)
                 value = GroundLevel;
             if (value > Chunk.Height)

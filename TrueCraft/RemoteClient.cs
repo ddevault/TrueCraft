@@ -22,6 +22,7 @@ using fNbt;
 using TrueCraft.API.Logging;
 using TrueCraft.API.Logic;
 using TrueCraft.Exceptions;
+using TrueCraft.Profiling;
 
 namespace TrueCraft
 {
@@ -29,7 +30,7 @@ namespace TrueCraft
     {
         public RemoteClient(IMultiplayerServer server, IPacketReader packetReader, PacketHandler[] packetHandlers, Socket connection)
         {
-            LoadedChunks = new List<Coordinates2D>();
+            LoadedChunks = new HashSet<Coordinates2D>();
             Server = server;
             Inventory = new InventoryWindow(server.CraftingRepository);
             InventoryWindow.WindowChange += HandleWindowChange;
@@ -145,7 +146,7 @@ namespace TrueCraft
         }
 
         internal int ChunkRadius { get; set; }
-        internal IList<Coordinates2D> LoadedChunks { get; set; }
+        internal HashSet<Coordinates2D> LoadedChunks { get; set; }
 
         public bool DataAvailable
         {
@@ -398,8 +399,10 @@ namespace TrueCraft
                 if (ChunkRadius < 8) // TODO: Allow customization of this number
                 {
                     ChunkRadius++;
-                    UpdateChunks();
-                    server.Scheduler.ScheduleEvent("remote.chunks", this, TimeSpan.FromSeconds(1), ExpandChunkRadius);
+                    server.Scheduler.ScheduleEvent("client.update-chunks", this,
+                        TimeSpan.Zero, s => UpdateChunks());
+                    server.Scheduler.ScheduleEvent("remote.chunks", this,
+                        TimeSpan.FromSeconds(1), ExpandChunkRadius);
                 }
             });
         }
@@ -412,67 +415,77 @@ namespace TrueCraft
 
         internal void UpdateChunks()
         {
-            var newChunks = new List<Coordinates2D>();
+            var newChunks = new HashSet<Coordinates2D>();
+            var toLoad = new List<Tuple<Coordinates2D, IChunk>>();
+            Profiler.Start("client.new-chunks");
             for (int x = -ChunkRadius; x < ChunkRadius; x++)
             {
                 for (int z = -ChunkRadius; z < ChunkRadius; z++)
                 {
-                    newChunks.Add(new Coordinates2D(
+                    var coords = new Coordinates2D(
                         ((int)Entity.Position.X >> 4) + x,
-                        ((int)Entity.Position.Z >> 4) + z));
+                        ((int)Entity.Position.Z >> 4) + z);
+                    newChunks.Add(coords);
+                    if (!LoadedChunks.Contains(coords))
+                        toLoad.Add(new Tuple<Coordinates2D, IChunk>(
+                            coords, World.GetChunk(coords, generate: false)));
                 }
             }
-            // Unload extraneous columns
-            lock (LoadedChunks)
+            Profiler.Done();
+            Task.Factory.StartNew(() =>
             {
-                var currentChunks = new List<Coordinates2D>(LoadedChunks);
-                foreach (Coordinates2D chunk in currentChunks)
+                Profiler.Start("client.encode-chunks");
+                foreach (var tup in toLoad)
                 {
-                    if (!newChunks.Contains(chunk))
-                        UnloadChunk(chunk);
+                    var coords = tup.Item1;
+                    var chunk = tup.Item2;
+                    if (chunk == null)
+                        chunk = World.GetChunk(coords);
+                    chunk.LastAccessed = DateTime.UtcNow;
+                    LoadChunk(chunk);
                 }
-                // Load new columns
-                foreach (Coordinates2D chunk in newChunks)
-                {
-                    if (!LoadedChunks.Contains(chunk))
-                        LoadChunk(chunk);
-                }
-            }
+                Profiler.Done();
+            });
+            Profiler.Start("client.old-chunks");
+            LoadedChunks.IntersectWith(newChunks);
+            Profiler.Done();
+            Profiler.Start("client.update-entities");
             ((EntityManager)Server.GetEntityManagerForWorld(World)).UpdateClientEntities(this);
+            Profiler.Done();
         }
 
         internal void UnloadAllChunks()
         {
-            lock (LoadedChunks)
+            while (LoadedChunks.Any())
             {
-                while (LoadedChunks.Any())
-                {
-                    UnloadChunk(LoadedChunks[0]);
-                }
+                UnloadChunk(LoadedChunks.First());
             }
         }
 
-        internal void LoadChunk(Coordinates2D position)
+        internal void LoadChunk(IChunk chunk)
         {
-            var chunk = World.GetChunk(position);
-            chunk.LastAccessed = DateTime.UtcNow;
             QueuePacket(new ChunkPreamblePacket(chunk.Coordinates.X, chunk.Coordinates.Z));
             QueuePacket(CreatePacket(chunk));
-            LoadedChunks.Add(position);
-            foreach (var kvp in chunk.TileEntities)
-            {
-                var coords = kvp.Key;
-                var descriptor = new BlockDescriptor
+            Server.Scheduler.ScheduleEvent("client.finalize-chunks", this,
+                TimeSpan.Zero, server =>
                 {
-                    Coordinates = coords + new Coordinates3D(chunk.X, 0, chunk.Z),
-                    Metadata = chunk.GetMetadata(coords),
-                    ID = chunk.GetBlockID(coords),
-                    BlockLight = chunk.GetBlockLight(coords),
-                    SkyLight = chunk.GetSkyLight(coords)
-                };
-                var provider = Server.BlockRepository.GetBlockProvider(descriptor.ID);
-                provider.TileEntityLoadedForClient(descriptor, World, kvp.Value, this);
-            }
+                    return;
+                    LoadedChunks.Add(chunk.Coordinates);
+                    foreach (var kvp in chunk.TileEntities)
+                    {
+                        var coords = kvp.Key;
+                        var descriptor = new BlockDescriptor
+                        {
+                            Coordinates = coords + new Coordinates3D(chunk.X, 0, chunk.Z),
+                            Metadata = chunk.GetMetadata(coords),
+                            ID = chunk.GetBlockID(coords),
+                            BlockLight = chunk.GetBlockLight(coords),
+                            SkyLight = chunk.GetSkyLight(coords)
+                        };
+                        var provider = Server.BlockRepository.GetBlockProvider(descriptor.ID);
+                        provider.TileEntityLoadedForClient(descriptor, World, kvp.Value, this);
+                    }
+                });
         }
 
         internal void UnloadChunk(Coordinates2D position)
@@ -511,19 +524,20 @@ namespace TrueCraft
             var X = chunk.Coordinates.X;
             var Z = chunk.Coordinates.Z;
 
-            const int blocksPerChunk = Chunk.Width * Chunk.Height * Chunk.Depth;
-            const int bytesPerChunk = (int)(blocksPerChunk * 2.5);
-
-            byte[] data = new byte[bytesPerChunk];
-
-            Buffer.BlockCopy(chunk.Blocks, 0, data, 0, chunk.Blocks.Length);
-            Buffer.BlockCopy(chunk.Metadata.Data, 0, data, chunk.Blocks.Length, chunk.Metadata.Data.Length);
-            Buffer.BlockCopy(chunk.BlockLight.Data, 0, data, chunk.Blocks.Length + chunk.Metadata.Data.Length, chunk.BlockLight.Data.Length);
-            Buffer.BlockCopy(chunk.SkyLight.Data, 0, data, chunk.Blocks.Length + chunk.Metadata.Data.Length
-                + chunk.BlockLight.Data.Length, chunk.SkyLight.Data.Length);
-
-            var result = ZlibStream.CompressBuffer(data);
-            return new ChunkDataPacket(X * Chunk.Width, 0, Z * Chunk.Depth, Chunk.Width, Chunk.Height, Chunk.Depth, result);
+            Profiler.Start("client.encode-chunks.compress");
+            byte[] result;
+            using (var ms = new MemoryStream())
+            {
+                using (var deflate = new ZlibStream(new MemoryStream(chunk.Data),
+                    CompressionMode.Compress,
+                    CompressionLevel.BestSpeed))
+                    deflate.CopyTo(ms);
+                result = ms.ToArray();
+            }
+            Profiler.Done();
+            
+            return new ChunkDataPacket(X * Chunk.Width, 0, Z * Chunk.Depth,
+                Chunk.Width, Chunk.Height, Chunk.Depth, result);
         }
 
         public void Dispose()

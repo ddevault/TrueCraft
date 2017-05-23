@@ -116,7 +116,7 @@ namespace TrueCraft.Client
         public int X { get { return Chunk.X; } }
         public int Z { get { return Chunk.Z; } }
 
-        public ReadOnlyCollection<byte> Blocks { get { return Array.AsReadOnly(Chunk.Blocks); } }
+        public ReadOnlyCollection<byte> Blocks { get { return Array.AsReadOnly(Chunk.Data); } }
         public ReadOnlyNibbleArray Metadata { get { return new ReadOnlyNibbleArray(Chunk.Metadata); } }
         public ReadOnlyNibbleArray BlockLight { get { return new ReadOnlyNibbleArray(Chunk.BlockLight); } }
         public ReadOnlyNibbleArray SkyLight { get { return new ReadOnlyNibbleArray(Chunk.SkyLight); } }

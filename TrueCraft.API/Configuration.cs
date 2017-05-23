@@ -29,7 +29,7 @@ namespace TrueCraft.API
                 config = new T();
             }
 
-            var serializer = new Serializer();
+            var serializer = new Serializer(SerializationOptions.EmitDefaults);
             using (var writer = new StreamWriter(configFileName))
                 serializer.Serialize(writer, config);
 

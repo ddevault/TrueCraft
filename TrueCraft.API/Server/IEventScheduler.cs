@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TrueCraft.API.Server
 {
     public interface IEventScheduler
     {
+        HashSet<string> DisabledEvents { get; }
         /// <summary>
         /// Schedules an event to occur some time in the future.
         /// </summary>

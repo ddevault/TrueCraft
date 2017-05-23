@@ -88,7 +88,7 @@
     <Compile Include="World\IWorld.cs" />
     <Compile Include="World\IChunk.cs" />
     <Compile Include="World\IChunkProvider.cs" />
-    <Compile Include="NibbleArray.cs" />
+    <Compile Include="NibbleSlice.cs" />
     <Compile Include="World\IRegion.cs" />
     <Compile Include="Biome.cs" />
     <Compile Include="Logging\LogCategory.cs" />
