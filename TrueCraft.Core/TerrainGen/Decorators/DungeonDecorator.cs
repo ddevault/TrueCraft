@@ -24,8 +24,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
         {
             for (int attempts = 0; attempts < 8; attempts++)
             {
-                var noise = new Perlin();
-                noise.Seed = world.Seed - (chunk.Coordinates.X + chunk.Coordinates.Z);
+                var noise = new Perlin(world.Seed - (chunk.Coordinates.X + chunk.Coordinates.Z));
                 var offsetNoise = new ClampNoise(noise);
                 offsetNoise.MaxValue = 3;
                 var x = 0;
