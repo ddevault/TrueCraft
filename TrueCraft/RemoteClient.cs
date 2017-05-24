@@ -70,7 +70,7 @@ namespace TrueCraft
         public ItemStack ItemStaging { get; set; }
         public IWindow CurrentWindow { get; internal set; }
         public bool EnableLogging { get; set; }
-        public IPacket LastSuccessfulPacket { get; set; }
+        //public IPacket LastSuccessfulPacket { get; set; }
         public DateTime ExpectedDigComplete { get; set; }
 
         public Socket Connection { get; private set; }
@@ -329,33 +329,43 @@ namespace TrueCraft
                 }
 
                 var packets = PacketReader.ReadPackets(this, e.Buffer, e.Offset, e.BytesTransferred);
-
-                foreach (IPacket packet in packets)
+                try
                 {
-                    LastSuccessfulPacket = packet;
-
-                    if (PacketHandlers[packet.ID] != null)
+                    foreach (IPacket packet in packets)
                     {
-                        try
-                        {
-                            PacketHandlers[packet.ID](packet, this, Server);
-                        }
-                        catch (PlayerDisconnectException)
-                        {
-                            Server.DisconnectClient(this);
-                        }
-                        catch (Exception ex)
-                        {
-                            Server.Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
-                            Server.Log(LogCategory.Debug, ex.ToString());
+                        //LastSuccessfulPacket = packet;
 
-                            Server.DisconnectClient(this);
+                        if (PacketHandlers[packet.ID] != null)
+                        {
+                            try
+                            {
+                                PacketHandlers[packet.ID](packet, this, Server);
+                            }
+                            catch (PlayerDisconnectException)
+                            {
+                                Server.DisconnectClient(this);
+                            }
+                            catch (Exception ex)
+                            {
+                                Server.Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
+                                Server.Log(LogCategory.Debug, ex.ToString());
+
+                                Server.DisconnectClient(this);
+                            }
+                        }
+                        else
+                        {
+                            Log("Unhandled packet {0}", packet.GetType().Name);
                         }
                     }
-                    else
-                    {
-                        Log("Unhandled packet {0}", packet.GetType().Name);
-                    }
+                }
+                catch (NotSupportedException)
+                {
+                    // Usually thrown when we do not have the requested packet definition/type.
+
+                    // Might want to create its own Exception type for being more specific.
+                    Server.Log(LogCategory.Debug, "Disconnecting client due to unsupported packet received.");
+                    return;
                 }
 
                 if (sem != null)
@@ -539,7 +549,7 @@ namespace TrueCraft
                 result = ms.ToArray();
             }
             Profiler.Done();
-            
+
             return new ChunkDataPacket(X * Chunk.Width, 0, Z * Chunk.Depth,
                 Chunk.Width, Chunk.Height, Chunk.Depth, result);
         }
@@ -547,8 +557,6 @@ namespace TrueCraft
         public void Dispose()
         {
             Dispose(true);
-
-            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -565,14 +573,8 @@ namespace TrueCraft
 
                 if (Disposed != null)
                     Disposed(this, null);
+                sem = null;
             }
-
-            sem = null;
-        }
-
-        ~RemoteClient()
-        {
-            Dispose(false);
         }
     }
 }
