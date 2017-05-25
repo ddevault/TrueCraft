@@ -70,7 +70,6 @@ namespace TrueCraft
         public ItemStack ItemStaging { get; set; }
         public IWindow CurrentWindow { get; internal set; }
         public bool EnableLogging { get; set; }
-        //public IPacket LastSuccessfulPacket { get; set; }
         public DateTime ExpectedDigComplete { get; set; }
 
         public Socket Connection { get; private set; }
@@ -333,8 +332,6 @@ namespace TrueCraft
                 {
                     foreach (IPacket packet in packets)
                     {
-                        //LastSuccessfulPacket = packet;
-
                         if (PacketHandlers[packet.ID] != null)
                         {
                             try
@@ -361,9 +358,6 @@ namespace TrueCraft
                 }
                 catch (NotSupportedException)
                 {
-                    // Usually thrown when we do not have the requested packet definition/type.
-
-                    // Might want to create its own Exception type for being more specific.
                     Server.Log(LogCategory.Debug, "Disconnecting client due to unsupported packet received.");
                     return;
                 }
