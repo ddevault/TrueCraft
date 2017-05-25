@@ -70,7 +70,6 @@ namespace TrueCraft
         public ItemStack ItemStaging { get; set; }
         public IWindow CurrentWindow { get; internal set; }
         public bool EnableLogging { get; set; }
-        public IPacket LastSuccessfulPacket { get; set; }
         public DateTime ExpectedDigComplete { get; set; }
 
         public Socket Connection { get; private set; }
@@ -329,33 +328,38 @@ namespace TrueCraft
                 }
 
                 var packets = PacketReader.ReadPackets(this, e.Buffer, e.Offset, e.BytesTransferred);
-
-                foreach (IPacket packet in packets)
+                try
                 {
-                    LastSuccessfulPacket = packet;
-
-                    if (PacketHandlers[packet.ID] != null)
+                    foreach (IPacket packet in packets)
                     {
-                        try
+                        if (PacketHandlers[packet.ID] != null)
                         {
-                            PacketHandlers[packet.ID](packet, this, Server);
-                        }
-                        catch (PlayerDisconnectException)
-                        {
-                            Server.DisconnectClient(this);
-                        }
-                        catch (Exception ex)
-                        {
-                            Server.Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
-                            Server.Log(LogCategory.Debug, ex.ToString());
+                            try
+                            {
+                                PacketHandlers[packet.ID](packet, this, Server);
+                            }
+                            catch (PlayerDisconnectException)
+                            {
+                                Server.DisconnectClient(this);
+                            }
+                            catch (Exception ex)
+                            {
+                                Server.Log(LogCategory.Debug, "Disconnecting client due to exception in network worker");
+                                Server.Log(LogCategory.Debug, ex.ToString());
 
-                            Server.DisconnectClient(this);
+                                Server.DisconnectClient(this);
+                            }
+                        }
+                        else
+                        {
+                            Log("Unhandled packet {0}", packet.GetType().Name);
                         }
                     }
-                    else
-                    {
-                        Log("Unhandled packet {0}", packet.GetType().Name);
-                    }
+                }
+                catch (NotSupportedException)
+                {
+                    Server.Log(LogCategory.Debug, "Disconnecting client due to unsupported packet received.");
+                    return;
                 }
 
                 if (sem != null)
@@ -539,7 +543,7 @@ namespace TrueCraft
                 result = ms.ToArray();
             }
             Profiler.Done();
-            
+
             return new ChunkDataPacket(X * Chunk.Width, 0, Z * Chunk.Depth,
                 Chunk.Width, Chunk.Height, Chunk.Depth, result);
         }
@@ -547,8 +551,6 @@ namespace TrueCraft
         public void Dispose()
         {
             Dispose(true);
-
-            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -565,14 +567,8 @@ namespace TrueCraft
 
                 if (Disposed != null)
                     Disposed(this, null);
+                sem = null;
             }
-
-            sem = null;
-        }
-
-        ~RemoteClient()
-        {
-            Dispose(false);
         }
     }
 }
