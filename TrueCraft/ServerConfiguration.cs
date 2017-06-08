@@ -48,6 +48,8 @@ namespace TrueCraft
             Query = true;
             QueryPort = 25566;
             EnableLighting = true;
+            EnableEventLoading = true;
+            DisabledEvents = new string[0];
         }
 
         [YamlMember(Alias = "motd")]
@@ -76,5 +78,11 @@ namespace TrueCraft
 
         [YamlMember(Alias = "enable-lighting")]
         public bool EnableLighting { get; set; }
+        
+        [YamlMember(Alias = "enable-event-loading")]
+        public bool EnableEventLoading { get; set; }
+        
+        [YamlMember(Alias = "disable-events")]
+        public string[] DisabledEvents { get; set; }
     }
 }

@@ -12,11 +12,12 @@ namespace TrueCraft.Core.World
     {
         public IList<BiomeCell> BiomeCells { get; private set; }
 
-        Perlin TempNoise = new Perlin();
-        Perlin RainNoise = new Perlin();
+        Perlin TempNoise, RainNoise;
 
         public BiomeMap(int seed)
         {
+            TempNoise = new Perlin(seed);
+            RainNoise = new Perlin(seed);
             BiomeCells = new List<BiomeCell>();
             TempNoise.Persistance = 1.45;
             TempNoise.Frequency = 0.015;
@@ -42,11 +43,11 @@ namespace TrueCraft.Core.World
             return BiomeID;
         }
 
-        public byte GenerateBiome(int seed, IBiomeRepository biomes, Coordinates2D location)
+        public byte GenerateBiome(int seed, IBiomeRepository biomes, Coordinates2D location, bool spawn)
         {
             double temp = Math.Abs(TempNoise.Value2D(location.X, location.Z));
             double rainfall = Math.Abs(RainNoise.Value2D(location.X, location.Z));
-            byte ID = biomes.GetBiome(temp, rainfall).ID;
+            byte ID = biomes.GetBiome(temp, rainfall, spawn).ID;
             return ID;
         }
 

@@ -25,6 +25,11 @@ namespace TrueCraft.Core.TerrainGen.Biomes
         {
             get { return 0.0f; }
         }
+        
+        public override bool Spawn
+        {
+            get { return false; }
+        }
 
         public override TreeSpecies[] Trees
         {

@@ -69,7 +69,8 @@ namespace TrueCraft.Profiling
                     {
                         if (Match(EnabledBuckets[i], timer.Bucket))
                         {
-                            Console.WriteLine("{0} took {1}ms", timer.Bucket, elapsed);
+                            Console.WriteLine("[@{0:0.00}s] {1} took {2}ms",
+                                Stopwatch.ElapsedMilliseconds / 1000.0, timer.Bucket, elapsed);
                             break;
                         }
                     }

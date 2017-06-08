@@ -6,6 +6,7 @@ using TrueCraft.API;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TrueCraft.Profiling;
+using System.Collections.Concurrent;
 
 namespace TrueCraft.Core.Lighting
 {
@@ -34,15 +35,14 @@ namespace TrueCraft.Core.Lighting
         public IBlockRepository BlockRepository { get; set; }
         public IWorld World { get; set; }
 
-        private object _Lock = new object();
-        private List<LightingOperation> PendingOperations { get; set; }
+        private ConcurrentQueue<LightingOperation> PendingOperations { get; set; }
         private Dictionary<Coordinates2D, byte[,]> HeightMaps { get; set; }
 
         public WorldLighting(IWorld world, IBlockRepository blockRepository)
         {
             BlockRepository = blockRepository;
             World = world;
-            PendingOperations = new List<LightingOperation>();
+            PendingOperations = new ConcurrentQueue<LightingOperation>();
             HeightMaps = new Dictionary<Coordinates2D, byte[,]>();
             world.ChunkGenerated += (sender, e) => GenerateHeightMap(e.Chunk);
             world.ChunkLoaded += (sender, e) => GenerateHeightMap(e.Chunk);
@@ -72,7 +72,7 @@ namespace TrueCraft.Core.Lighting
                         if (id == 0)
                             continue;
                         var provider = BlockRepository.GetBlockProvider(id);
-                        if (provider.LightOpacity != 0)
+                        if (provider == null || provider.LightOpacity != 0)
                         {
                             map[x, z] = y;
                             break;
@@ -181,7 +181,13 @@ namespace TrueCraft.Core.Lighting
             byte emissiveness = provider.Luminance;
             if (op.SkyLight)
             {
-                var height = HeightMaps[chunk.Coordinates][adjustedCoords.X, adjustedCoords.Z];
+                byte[,] map;
+                if (!HeightMaps.TryGetValue(chunk.Coordinates, out map))
+                {
+                    GenerateHeightMap(chunk);
+                    map = HeightMaps[chunk.Coordinates];
+                }
+                var height = map[adjustedCoords.X, adjustedCoords.Z];
                 // For skylight, the emissiveness is 15 if y >= height
                 if (y >= height)
                     emissiveness = 15;
@@ -246,33 +252,31 @@ namespace TrueCraft.Core.Lighting
         public bool TryLightNext()
         {
             LightingOperation op;
-            lock (_Lock)
-            {
-                if (PendingOperations.Count == 0)
-                    return false;
-                op = PendingOperations[0];
-                PendingOperations.RemoveAt(0);
-            }
-            LightBox(op);
-            return true;
+            if (PendingOperations.Count == 0)
+                return false;
+            // TODO: Maybe a timeout or something?
+            bool dequeued = false;
+            while (!(dequeued = PendingOperations.TryDequeue(out op)) && PendingOperations.Count > 0) ;
+            if (dequeued)
+                LightBox(op);
+            return dequeued;
         }
 
         public void EnqueueOperation(BoundingBox box, bool skyLight, bool initial = false)
         {
-            lock (_Lock)
+            // Try to merge with existing operation
+            /*
+            for (int i = PendingOperations.Count - 1; i > PendingOperations.Count - 5 && i > 0; i--)
             {
-                // Try to merge with existing operation
-                for (int i = PendingOperations.Count - 1; i > PendingOperations.Count - 5 && i > 0; i--)
+                var op = PendingOperations[i];
+                if (op.Box.Intersects(box))
                 {
-                    var op = PendingOperations[i];
-                    if (op.Box.Intersects(box))
-                    {
-                        op.Box = new BoundingBox(Vector3.Min(op.Box.Min, box.Min), Vector3.Max(op.Box.Max, box.Max));
-                        return;
-                    }
+                    op.Box = new BoundingBox(Vector3.Min(op.Box.Min, box.Min), Vector3.Max(op.Box.Max, box.Max));
+                    return;
                 }
-                PendingOperations.Add(new LightingOperation { SkyLight = skyLight, Box = box, Initial = initial });
             }
+            */
+            PendingOperations.Enqueue(new LightingOperation { SkyLight = skyLight, Box = box, Initial = initial });
         }
 
         private void SetUpperVoxels(IChunk chunk)
@@ -294,6 +298,7 @@ namespace TrueCraft.Core.Lighting
             EnqueueOperation(new BoundingBox(new Vector3(coords.X, 0, coords.Z),
                 new Vector3(coords.X + Chunk.Width, chunk.MaxHeight + 2, coords.Z + Chunk.Depth)),
                 true, true);
+            TryLightNext();
             while (flush && TryLightNext())
             {
             }

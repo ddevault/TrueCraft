@@ -16,7 +16,16 @@ namespace TrueCraft.Core.World
         public static readonly int Height = 128;
 
         public string Name { get; set; }
-        public int Seed { get; set; }
+        private int _Seed;
+        public int Seed
+        {
+            get { return _Seed; }
+            set
+            {
+                _Seed = value;
+                BiomeDiagram = new BiomeMap(_Seed);
+            }
+        }
         private Coordinates3D? _SpawnPoint;
         public Coordinates3D SpawnPoint
         {
@@ -63,19 +72,18 @@ namespace TrueCraft.Core.World
         public World(string name) : this()
         {
             Name = name;
-            Seed = new Random().Next();
-            BiomeDiagram = new BiomeMap(Seed);
+            Seed = MathHelper.Random.Next();
         }
 
         public World(string name, IChunkProvider chunkProvider) : this(name)
         {
             ChunkProvider = chunkProvider;
+            ChunkProvider.Initialize(this);
         }
 
         public World(string name, int seed, IChunkProvider chunkProvider) : this(name, chunkProvider)
         {
             Seed = seed;
-            BiomeDiagram = new BiomeMap(Seed);
         }
 
         public static World LoadWorld(string baseDirectory)
@@ -94,7 +102,8 @@ namespace TrueCraft.Core.World
                     file.RootTag["SpawnPoint"]["Z"].IntValue);
                 world.Seed = file.RootTag["Seed"].IntValue;
                 var providerName = file.RootTag["ChunkProvider"].StringValue;
-                var provider = (IChunkProvider)Activator.CreateInstance(Type.GetType(providerName), world);
+                var provider = (IChunkProvider)Activator.CreateInstance(Type.GetType(providerName));
+                provider.Initialize(world);
                 if (file.RootTag.Contains("Name"))
                     world.Name = file.RootTag["Name"].StringValue;
                 world.ChunkProvider = provider;

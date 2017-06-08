@@ -18,8 +18,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
 
         public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
         {
-            Noise = new Perlin();
-            Noise.Seed = world.Seed;
+            Noise = new Perlin(world.Seed);
             ChanceNoise = new ClampNoise(Noise);
             ChanceNoise.MaxValue = 2;
             Coordinates2D? lastTree = null;

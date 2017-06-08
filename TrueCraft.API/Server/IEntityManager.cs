@@ -2,11 +2,13 @@
 using TrueCraft.API.Entities;
 using System.Collections.Generic;
 using TrueCraft.API.Networking;
+using TrueCraft.API.World;
 
 namespace TrueCraft.API.Server
 {
     public interface IEntityManager
     {
+        IWorld World { get; }
         TimeSpan TimeSinceLastUpdate { get; }
         /// <summary>
         /// Adds an entity to the world and assigns it an entity ID.

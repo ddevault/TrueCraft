@@ -98,20 +98,33 @@ namespace TrueCraft
                     if (progress % 10 == 0)
                         Server.Log(LogCategory.Notice, "{0}% complete", progress + 10);
                 }
+                Server.Log(LogCategory.Notice, "Lighting the world (this will take a moment)...");
+                foreach (var lighter in Server.WorldLighters)
+                {
+                    while (lighter.TryLightNext()) ;
+                }
             }
             world.Save();
             CommandManager = new CommandManager();
             Server.ChatMessageReceived += HandleChatMessageReceived;
             Server.Start(new IPEndPoint(IPAddress.Parse(ServerConfiguration.ServerAddress), ServerConfiguration.ServerPort));
             Console.CancelKeyPress += HandleCancelKeyPress;
+            Server.Scheduler.ScheduleEvent("world.save", null,
+                TimeSpan.FromSeconds(ServerConfiguration.WorldSaveInterval), SaveWorlds);
             while (true)
             {
-                Thread.Sleep(1000 * ServerConfiguration.WorldSaveInterval);
-                foreach (var w in Server.Worlds)
-                {
-                    w.Save();
-                }
+                Thread.Yield();
             }
+        }
+
+        static void SaveWorlds(IMultiplayerServer server)
+        {
+            Server.Log(LogCategory.Notice, "Saving world...");
+            foreach (var w in Server.Worlds)
+                w.Save();
+            Server.Log(LogCategory.Notice, "Done.");
+            server.Scheduler.ScheduleEvent("world.save", null,
+                TimeSpan.FromSeconds(ServerConfiguration.WorldSaveInterval), SaveWorlds);
         }
 
         static void HandleCancelKeyPress(object sender, ConsoleCancelEventArgs e)

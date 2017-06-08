@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TrueCraft.API;
 using TrueCraft.API.World;
 using System.Diagnostics;
+using TrueCraft.API.Logic;
 
 namespace TrueCraft.Core.AI
 {
@@ -40,8 +41,12 @@ namespace TrueCraft.Core.AI
         private bool CanOccupyVoxel(IWorld world, BoundingBox box, Coordinates3D voxel)
         {
             var id = world.GetBlockID(voxel);
-            // TODO: Make this more sophisticated
-            return id == 0;
+            if (world.BlockRepository == null)
+                return id == 0;
+            var provider = world.BlockRepository.GetBlockProvider(id);
+            if (provider == null)
+                return true;
+            return provider.BoundingBox == null;
         }
 
         private IEnumerable<Coordinates3D> GetNeighbors(IWorld world, BoundingBox subject, Coordinates3D current)

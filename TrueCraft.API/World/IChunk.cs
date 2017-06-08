@@ -15,12 +15,13 @@ namespace TrueCraft.API.World
         int[] HeightMap { get; }
         byte[] Biomes { get; }
         DateTime LastAccessed { get; set; }
-        byte[] Blocks { get; }
+        byte[] Data { get; }
         bool TerrainPopulated { get; set; }
         Dictionary<Coordinates3D, NbtCompound> TileEntities { get; set; }
-        NibbleArray Metadata { get; }
-        NibbleArray BlockLight { get; }
-        NibbleArray SkyLight { get; }
+        NibbleSlice Metadata { get; }
+        NibbleSlice BlockLight { get; }
+        NibbleSlice SkyLight { get; }
+        IRegion ParentRegion { get; set; }
         int GetHeight(byte x, byte z);
         void UpdateHeightMap();
         byte GetBlockID(Coordinates3D coordinates);

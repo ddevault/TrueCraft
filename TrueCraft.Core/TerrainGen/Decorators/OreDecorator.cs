@@ -55,12 +55,10 @@ namespace TrueCraft.Core.TerrainGen.Decorators
 
         public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
         {
-            //Test Seed: 291887241
-            var perlin = new Perlin();
+            var perlin = new Perlin(world.Seed);
             perlin.Lacunarity = 1;
             perlin.Amplitude = 7;
             perlin.Frequency = 0.015;
-            perlin.Seed = world.Seed;
             var chanceNoise = new ClampNoise(perlin);
             var noise = new ScaledNoise(perlin);
             var random = new Random(world.Seed);

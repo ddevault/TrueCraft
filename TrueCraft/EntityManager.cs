@@ -79,7 +79,8 @@ namespace TrueCraft
                         (int)(entity.Position.Z) >> 4 != (int)(entity.OldPosition.Z) >> 4)
                     {
                         client.Log("Passed chunk boundary at {0}, {1}", (int)(entity.Position.X) >> 4, (int)(entity.Position.Z) >> 4);
-                        Task.Factory.StartNew(client.UpdateChunks);
+                        Server.Scheduler.ScheduleEvent("client.update-chunks", client,
+                            TimeSpan.Zero, s => client.UpdateChunks());
                         UpdateClientEntities(client);
                     }
                     break;

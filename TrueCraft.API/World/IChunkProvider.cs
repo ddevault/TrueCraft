@@ -11,5 +11,6 @@ namespace TrueCraft.API.World
         IList<IChunkDecorator> ChunkDecorators { get; }
         IChunk GenerateChunk(IWorld world, Coordinates2D coordinates);
         Coordinates3D GetSpawn(IWorld world);
+        void Initialize(IWorld world);
     }
 }

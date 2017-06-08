@@ -28,6 +28,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
 
         public override bool GenerateAt(IWorld world, IChunk chunk, Coordinates3D location)
         {
+            Console.WriteLine("Dungeon in chunk {0}", chunk.Coordinates);
             if (!ValidLocation(location))
                 return false;
 
@@ -67,6 +68,10 @@ namespace TrueCraft.Core.TerrainGen.Decorations
                         && !IsCuboidCorner(new Coordinates2D(X, Z), location, Size))
                     {
                         var blockLocation = new Coordinates3D(X, above.Y, Z);
+                        if (blockLocation.X < 0 || blockLocation.X >= Chunk.Width
+                            || blockLocation.Z < 0 || blockLocation.Z >= Chunk.Depth
+                            || blockLocation.Y < 0 || blockLocation.Y >= Chunk.Height)
+                            continue;
                         chunk.SetBlockID(blockLocation, AirBlock.BlockID);
                         chunk.SetBlockID(blockLocation + Coordinates3D.Up, AirBlock.BlockID);
                         entrances++;
@@ -81,6 +86,10 @@ namespace TrueCraft.Core.TerrainGen.Decorations
             {
                 for (int z = location.Z; z < location.Z + Size.Z; z++)
                 {
+                    if (x < 0 || x >= Chunk.Width
+                            || z < 0 || z >= Chunk.Depth
+                            || location.Y < 0 || location.Y >= Chunk.Height)
+                            continue;
                     if (random.Next(0, 3) == 0)
                         chunk.SetBlockID(new Coordinates3D(x, location.Y, z), MossStoneBlock.BlockID);
                 }
@@ -101,6 +110,10 @@ namespace TrueCraft.Core.TerrainGen.Decorations
                     {
                         if (NeighboursBlock(chunk, new Coordinates3D(x, above.Y, z), CobblestoneBlock.BlockID))
                         {
+                            if (x < 0 || x >= Chunk.Width
+                                || z < 0 || z >= Chunk.Depth
+                                || above.Y < 0 || above.Y >= Chunk.Height)
+                            continue;
                             chunk.SetBlockID(new Coordinates3D(x, above.Y, z), ChestBlock.BlockID);
                             break;
                         }

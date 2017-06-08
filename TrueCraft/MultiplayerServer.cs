@@ -75,6 +75,7 @@ namespace TrueCraft
         private TcpListener Listener;
         private readonly PacketHandler[] PacketHandlers;
         private IList<ILogProvider> LogProviders;
+        private Stopwatch Time;
         private ConcurrentBag<Tuple<IWorld, IChunk>> ChunksToSchedule;
         internal object ClientLock = new object();
         
@@ -109,6 +110,7 @@ namespace TrueCraft
             QueryProtocol = new TrueCraft.QueryProtocol(this);
             WorldLighters = new List<WorldLighting>();
             ChunksToSchedule = new ConcurrentBag<Tuple<IWorld, IChunk>>();
+            Time = new Stopwatch();
 
             AccessConfiguration = Configuration.LoadConfiguration<AccessConfiguration>("access.yaml");
 
@@ -123,7 +125,13 @@ namespace TrueCraft
 
         public void Start(IPEndPoint endPoint)
         {
+            Scheduler.DisabledEvents.Clear();
+            if (Program.ServerConfiguration.DisabledEvents != null)
+                Program.ServerConfiguration.DisabledEvents.ToList().ForEach(
+                    ev => Scheduler.DisabledEvents.Add(ev));
             ShuttingDown = false;
+            Time.Reset();
+            Time.Start();
             Listener = new TcpListener(endPoint);
             Listener.Start();
             EndPoint = (IPEndPoint)Listener.LocalEndpoint;
@@ -135,7 +143,7 @@ namespace TrueCraft
                 AcceptClient(this, args);
             
             Log(LogCategory.Notice, "Running TrueCraft server on {0}", EndPoint);
-            EnvironmentWorker.Change(MillisecondsPerTick, 0);
+            EnvironmentWorker.Change(MillisecondsPerTick, Timeout.Infinite);
             if(Program.ServerConfiguration.Query)
                 QueryProtocol.Start();
         }
@@ -169,7 +177,8 @@ namespace TrueCraft
 
         void HandleChunkLoaded(object sender, ChunkLoadedEventArgs e)
         {
-            ChunksToSchedule.Add(new Tuple<IWorld, IChunk>(sender as IWorld, e.Chunk));
+            if (Program.ServerConfiguration.EnableEventLoading)
+                ChunksToSchedule.Add(new Tuple<IWorld, IChunk>(sender as IWorld, e.Chunk));
             if (Program.ServerConfiguration.EnableLighting)
             {
                 var lighter = WorldLighters.SingleOrDefault(l => l.World == sender);
@@ -216,13 +225,13 @@ namespace TrueCraft
             if (Program.ServerConfiguration.EnableLighting)
             {
                 var lighter = new WorldLighting(sender as IWorld, BlockRepository);
-                lighter.InitialLighting(e.Chunk);
+                lighter.InitialLighting(e.Chunk, false);
             }
             else
             {
-                for (int i = 0; i < e.Chunk.SkyLight.Data.Length; i++)
+                for (int i = 0; i < e.Chunk.SkyLight.Length * 2; i++)
                 {
-                    e.Chunk.SkyLight.Data[i] = 0xFF;
+                    e.Chunk.SkyLight[i] = 0xF;
                 }
             }
             HandleChunkLoaded(sender, e);
@@ -385,6 +394,8 @@ namespace TrueCraft
             if (ShuttingDown)
                 return;
 
+            long start = Time.ElapsedMilliseconds;
+            long limit = Time.ElapsedMilliseconds + MillisecondsPerTick;
             Profiler.Start("environment");
 
             Scheduler.Update();
@@ -396,25 +407,37 @@ namespace TrueCraft
             }
             Profiler.Done();
 
-            Profiler.Start("environment.lighting");
-            foreach (var lighter in WorldLighters)
+            if (Program.ServerConfiguration.EnableLighting)
             {
-                int attempts = 500;
-                while (attempts-- > 0 && lighter.TryLightNext())
+                Profiler.Start("environment.lighting");
+                foreach (var lighter in WorldLighters)
                 {
+                    while (Time.ElapsedMilliseconds < limit && lighter.TryLightNext())
+                    {
+                        // This space intentionally left blank
+                    }
+                    if (Time.ElapsedMilliseconds >= limit)
+                        Log(LogCategory.Warning, "Lighting queue is backed up");
                 }
+                Profiler.Done();
             }
-            Profiler.Done();
 
-            Profiler.Start("environment.chunks");
-            Tuple<IWorld, IChunk> t;
-            if (ChunksToSchedule.TryTake(out t))
-                ScheduleUpdatesForChunk(t.Item1, t.Item2);
-            Profiler.Done();
+            if (Program.ServerConfiguration.EnableEventLoading)
+            {
+                Profiler.Start("environment.chunks");
+                Tuple<IWorld, IChunk> t;
+                if (ChunksToSchedule.TryTake(out t))
+                    ScheduleUpdatesForChunk(t.Item1, t.Item2);
+                Profiler.Done();
+            }
 
             Profiler.Done(MillisecondsPerTick);
-
-            EnvironmentWorker.Change(MillisecondsPerTick, 0);
+            long end = Time.ElapsedMilliseconds;
+            long next = MillisecondsPerTick - (end - start);
+            if (next < 0)
+                next = 0;
+            
+            EnvironmentWorker.Change(next, Timeout.Infinite);
         }
 
         public bool PlayerIsWhitelisted(string client)

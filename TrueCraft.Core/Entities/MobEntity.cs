@@ -97,11 +97,6 @@ namespace TrueCraft.Core.Entities
 
         public IMobState CurrentState { get; set; }
 
-        public void ChangeState(IMobState state)
-        {
-            CurrentState = state;
-        }
-
         public void Face(Vector3 target)
         {
             var diff = target - Position;
@@ -115,14 +110,17 @@ namespace TrueCraft.Core.Entities
             {
                 // Advance along path
                 var target = (Vector3)CurrentPath.Waypoints[CurrentPath.Index];
+                target += new Vector3(Size.Width / 2, 0, Size.Depth / 2); // Center it
                 target.Y = Position.Y; // TODO: Find better way of doing this
                 if (faceRoute)
                     Face(target);
                 var lookAt = Vector3.Forwards.Transform(Matrix.CreateRotationY(MathHelper.ToRadians(-(Yaw - 180) + 180)));
                 lookAt *= modifier;
                 Velocity = new Vector3(lookAt.X, Velocity.Y, lookAt.Z);
-                if (Position.DistanceTo(target) < 0.1)
+                if (Position.DistanceTo(target) < Velocity.Distance)
                 {
+                    Position = target;
+                    Velocity = Vector3.Zero;
                     CurrentPath.Index++;
                     if (CurrentPath.Index >= CurrentPath.Waypoints.Count)
                     {

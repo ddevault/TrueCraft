@@ -86,7 +86,6 @@ namespace TrueCraft.Core.TerrainGen.Decorations
                 {
                     for (int h = location.Y; h < location.Y + size.Y; h++)
                     {
-
                         if (w < 0 || w >= Chunk.Width || l < 0 || l >= Chunk.Depth || h < 0 || h >= Chunk.Height)
                             continue;
                         Coordinates3D BlockLocation = new Coordinates3D(w, h, l);

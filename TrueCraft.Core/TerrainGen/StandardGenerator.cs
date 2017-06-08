@@ -19,10 +19,10 @@ namespace TrueCraft.Core.TerrainGen
     public class StandardGenerator : IChunkProvider
     {
         BiomeRepository Biomes = new BiomeRepository();
-        Perlin HighNoise = new Perlin();
-        Perlin LowNoise = new Perlin();
-        Perlin BottomNoise = new Perlin();
-        Perlin CaveNoise = new Perlin();
+        Perlin HighNoise;
+        Perlin LowNoise;
+        Perlin BottomNoise;
+        Perlin CaveNoise;
         ClampNoise HighClamp;
         ClampNoise LowClamp;
         ClampNoise BottomClamp;
@@ -30,17 +30,27 @@ namespace TrueCraft.Core.TerrainGen
         bool EnableCaves;
         private const int GroundLevel = 50;
 
-        public StandardGenerator(TrueCraft.Core.World.World world) : this()
+        public StandardGenerator()
         {
-            // TODO: Do we want to do anything with that world?
+            EnableCaves = true;
+            ChunkDecorators = new List<IChunkDecorator>();
+            ChunkDecorators.Add(new LiquidDecorator());
+            ChunkDecorators.Add(new OreDecorator());
+            ChunkDecorators.Add(new PlantDecorator());
+            ChunkDecorators.Add(new TreeDecorator());
+            ChunkDecorators.Add(new FreezeDecorator());
+            ChunkDecorators.Add(new CactusDecorator());
+            ChunkDecorators.Add(new SugarCaneDecorator());
+            ChunkDecorators.Add(new DungeonDecorator(GroundLevel));
         }
 
-        public StandardGenerator(bool singleBiome = false, bool enableCaves = true, byte generateBiome = (byte)Biome.Plains)
+        public void Initialize(IWorld world)
         {
-            SingleBiome = singleBiome;
-            GenerationBiome = generateBiome;
-            EnableCaves = enableCaves;
-
+            HighNoise = new Perlin(world.Seed);
+            LowNoise = new Perlin(world.Seed);
+            BottomNoise = new Perlin(world.Seed);
+            CaveNoise = new Perlin(world.Seed);
+            
             CaveNoise.Octaves = 3;
             CaveNoise.Amplitude = 0.05;
             CaveNoise.Persistance = 2;
@@ -78,16 +88,6 @@ namespace TrueCraft.Core.TerrainGen
             BottomClamp.MaxValue = 5;
 
             FinalNoise = new ModifyNoise(HighClamp, LowClamp, NoiseModifier.Add);
-
-            ChunkDecorators = new List<IChunkDecorator>();
-            ChunkDecorators.Add(new LiquidDecorator());
-            ChunkDecorators.Add(new OreDecorator());
-            ChunkDecorators.Add(new PlantDecorator());
-            ChunkDecorators.Add(new TreeDecorator());
-            ChunkDecorators.Add(new FreezeDecorator());
-            ChunkDecorators.Add(new CactusDecorator());
-            ChunkDecorators.Add(new SugarCaneDecorator());
-            ChunkDecorators.Add(new DungeonDecorator(GroundLevel));
         }
 
         public IList<IChunkDecorator> ChunkDecorators { get; private set; }
@@ -137,7 +137,9 @@ namespace TrueCraft.Core.TerrainGen
                         || cellValue.Equals(1)
                         && world.BiomeDiagram.ClosestCellPoint(location) >= featurePointDistance)
                     {
-                        byte id = (SingleBiome) ? GenerationBiome : world.BiomeDiagram.GenerateBiome(seed, Biomes, location);
+                        byte id = (SingleBiome) ? GenerationBiome
+                            : world.BiomeDiagram.GenerateBiome(seed, Biomes, location,
+                                IsSpawnCoordinate(location.X, location.Z));
                         var cell = new BiomeCell(id, location);
                         world.BiomeDiagram.AddCell(cell);
                     }
@@ -207,14 +209,23 @@ namespace TrueCraft.Core.TerrainGen
             return world.BiomeDiagram.GetBiome(location);
         }
 
+        bool IsSpawnCoordinate(int x, int z)
+        {
+            return x > -1000 && x < 1000 || z > -1000 && z < 1000;
+        }
+
         int GetHeight(int x, int z)
         {
-            var NoiseValue = FinalNoise.Value2D(x, z) + GroundLevel;
-            if (NoiseValue < 0)
-                NoiseValue = GroundLevel;
-            if (NoiseValue > Chunk.Height)
-                NoiseValue = Chunk.Height - 1;
-            return (int)NoiseValue;
+            var value = FinalNoise.Value2D(x, z) + GroundLevel;
+            var coords = new Coordinates2D(x, z);
+            double distance = IsSpawnCoordinate(x, z) ? coords.Distance : 1000;
+            if (distance < 1000) // Avoids deep water within 1km sq of spawn
+                value += (1 - distance / 1000f) * 18;
+            if (value < 0)
+                value = GroundLevel;
+            if (value > Chunk.Height)
+                value = Chunk.Height - 1;
+            return (int)value;
         }
     }
 }

@@ -22,6 +22,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueCraft.Profiling", "TrueCraft.Profiling\TrueCraft.Profiling.csproj", "{BCA0E139-CF47-43B3-9DC9-D4611C0A2AAD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FNA", "externals\FNA\FNA.csproj", "{35253CE1-C864-4CD3-8249-4D1319748E8F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueCraft.API.Test", "TrueCraft.Core.Test\TrueCraft.API.Test\TrueCraft.API.Test.csproj", "{90712322-5904-4BCE-8606-C662706B8EAE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -84,9 +85,16 @@ Global
 		{FEE55B54-91B0-4325-A2C3-D576C0B7A81F}.Optimized Debug|Any CPU.Build.0 = Optimized Debug|Any CPU
 		{FEE55B54-91B0-4325-A2C3-D576C0B7A81F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEE55B54-91B0-4325-A2C3-D576C0B7A81F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90712322-5904-4BCE-8606-C662706B8EAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90712322-5904-4BCE-8606-C662706B8EAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90712322-5904-4BCE-8606-C662706B8EAE}.Optimized Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90712322-5904-4BCE-8606-C662706B8EAE}.Optimized Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90712322-5904-4BCE-8606-C662706B8EAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90712322-5904-4BCE-8606-C662706B8EAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BCFDCD93-C23E-49E6-9767-A887B3C2A709} = {6756B61E-5856-4CA7-90B5-6053763FE7BA}
+		{90712322-5904-4BCE-8606-C662706B8EAE} = {6756B61E-5856-4CA7-90B5-6053763FE7BA}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
@@ -122,6 +130,26 @@ Global
 		$2.inheritsSet = Mono
 		$2.inheritsScope = text/x-csharp
 		$2.scope = text/x-csharp
+		$2.IndentSwitchSection = True
+		$2.NewLinesForBracesInProperties = True
+		$2.NewLinesForBracesInAccessors = True
+		$2.NewLinesForBracesInAnonymousMethods = True
+		$2.NewLinesForBracesInControlBlocks = True
+		$2.NewLinesForBracesInAnonymousTypes = True
+		$2.NewLinesForBracesInObjectCollectionArrayInitializers = True
+		$2.NewLinesForBracesInLambdaExpressionBody = True
+		$2.NewLineForElse = True
+		$2.NewLineForCatch = True
+		$2.NewLineForFinally = True
+		$2.NewLineForMembersInObjectInit = True
+		$2.NewLineForMembersInAnonymousTypes = True
+		$2.NewLineForClausesInQuery = True
+		$2.SpacingAfterMethodDeclarationName = False
+		$2.SpaceAfterMethodCallName = False
+		$2.SpaceBeforeOpenSquareBracket = False
+		$0.DotNetNamingPolicy = $3
+		$3.DirectoryNamespaceAssociation = PrefixedHierarchical
+		$3.ResourceNamePolicy = FileFormatDefault
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

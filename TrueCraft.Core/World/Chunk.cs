@@ -25,13 +25,13 @@ namespace TrueCraft.Core.World
         [NbtIgnore]
         public bool IsModified { get; set; }
         [NbtIgnore]
-        public byte[] Blocks { get; set; }
+        public byte[] Data { get; set; }
         [NbtIgnore]
-        public NibbleArray Metadata { get; set; }
+        public NibbleSlice Metadata { get; set; }
         [NbtIgnore]
-        public NibbleArray BlockLight { get; set; }
+        public NibbleSlice BlockLight { get; set; }
         [NbtIgnore]
-        public NibbleArray SkyLight { get; set; }
+        public NibbleSlice SkyLight { get; set; }
         public byte[] Biomes { get; set; }
         public int[] HeightMap { get; set; }
         public int MaxHeight { get; private set; }
@@ -73,7 +73,7 @@ namespace TrueCraft.Core.World
         public bool TerrainPopulated { get; set; }
 
         [NbtIgnore]
-        public Region ParentRegion { get; set; }
+        public IRegion ParentRegion { get; set; }
 
         public Chunk()
         {
@@ -83,23 +83,24 @@ namespace TrueCraft.Core.World
             TerrainPopulated = false;
             LightPopulated = false;
             MaxHeight = 0;
+            const int size = Width * Height * Depth;
+            const int halfSize = size / 2;
+            Data = new byte[size + halfSize * 3];
+            Metadata = new NibbleSlice(Data, size, halfSize);
+            BlockLight = new NibbleSlice(Data, size + halfSize, halfSize);
+            SkyLight = new NibbleSlice(Data, size + halfSize * 2, halfSize);
         }
 
         public Chunk(Coordinates2D coordinates) : this()
         {
             X = coordinates.X;
             Z = coordinates.Z;
-            const int size = Width * Height * Depth;
-            Blocks = new byte[size];
-            Metadata = new NibbleArray(size);
-            BlockLight = new NibbleArray(size);
-            SkyLight = new NibbleArray(size);
         }
 
         public byte GetBlockID(Coordinates3D coordinates)
         {
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
-            return Blocks[index];
+            return Data[index];
         }
 
         public byte GetMetadata(Coordinates3D coordinates)
@@ -127,8 +128,10 @@ namespace TrueCraft.Core.World
         public void SetBlockID(Coordinates3D coordinates, byte value)
         {
             IsModified = true;
+            if (ParentRegion != null)
+                ParentRegion.DamageChunk(Coordinates);
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
-            Blocks[index] = value;
+            Data[index] = value;
             if (value == AirBlock.BlockID)
                 Metadata[index] = 0x0;
             var oldHeight = GetHeight((byte)coordinates.X, (byte)coordinates.Z);
@@ -164,6 +167,8 @@ namespace TrueCraft.Core.World
         public void SetMetadata(Coordinates3D coordinates, byte value)
         {
             IsModified = true;
+            if (ParentRegion != null)
+                ParentRegion.DamageChunk(Coordinates);
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
             Metadata[index] = value;
         }
@@ -175,6 +180,8 @@ namespace TrueCraft.Core.World
         public void SetSkyLight(Coordinates3D coordinates, byte value)
         {
             IsModified = true;
+            if (ParentRegion != null)
+                ParentRegion.DamageChunk(Coordinates);
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
             SkyLight[index] = value;
         }
@@ -186,6 +193,8 @@ namespace TrueCraft.Core.World
         public void SetBlockLight(Coordinates3D coordinates, byte value)
         {
             IsModified = true;
+            if (ParentRegion != null)
+                ParentRegion.DamageChunk(Coordinates);
             int index = coordinates.Y + (coordinates.Z * Height) + (coordinates.X * Height * Width);
             BlockLight[index] = value;
         }
@@ -210,6 +219,8 @@ namespace TrueCraft.Core.World
             else
                 TileEntities[coordinates] = value;
             IsModified = true;
+            if (ParentRegion != null)
+                ParentRegion.DamageChunk(Coordinates);
         }
 
         /// <summary>
@@ -236,7 +247,7 @@ namespace TrueCraft.Core.World
                     for (y = Chunk.Height - 1; y >= 0; y--)
                     {
                         int index = y + (z * Height) + (x * Height * Width);
-                        if (Blocks[index] != 0)
+                        if (Data[index] != 0)
                         {
                             SetHeight(x, z, y);
                             if (y > MaxHeight)
@@ -275,10 +286,10 @@ namespace TrueCraft.Core.World
             chunk.Add(new NbtInt("Z", Z));
             chunk.Add(new NbtByte("LightPopulated", (byte)(LightPopulated ? 1 : 0)));
             chunk.Add(new NbtByte("TerrainPopulated", (byte)(TerrainPopulated ? 1 : 0)));
-            chunk.Add(new NbtByteArray("Blocks", Blocks));
-            chunk.Add(new NbtByteArray("Data", Metadata.Data));
-            chunk.Add(new NbtByteArray("SkyLight", SkyLight.Data));
-            chunk.Add(new NbtByteArray("BlockLight", BlockLight.Data));
+            chunk.Add(new NbtByteArray("Blocks", Data));
+            chunk.Add(new NbtByteArray("Data", Metadata.ToArray()));
+            chunk.Add(new NbtByteArray("SkyLight", SkyLight.ToArray()));
+            chunk.Add(new NbtByteArray("BlockLight", BlockLight.ToArray()));
             
             var tiles = new NbtList("TileEntities", NbtTagType.Compound);
             foreach (var kvp in TileEntities)
@@ -308,13 +319,17 @@ namespace TrueCraft.Core.World
                 TerrainPopulated = tag["TerrainPopulated"].ByteValue > 0;
             if (tag.Contains("LightPopulated"))
                 LightPopulated = tag["LightPopulated"].ByteValue > 0;
-            Blocks = tag["Blocks"].ByteArrayValue;
-            Metadata = new NibbleArray();
-            Metadata.Data = tag["Data"].ByteArrayValue;
-            BlockLight = new NibbleArray();
-            BlockLight.Data = tag["BlockLight"].ByteArrayValue;
-            SkyLight = new NibbleArray();
-            SkyLight.Data = tag["SkyLight"].ByteArrayValue;
+            const int size = Width * Height * Depth;
+            const int halfSize = size / 2;
+            Data = new byte[(int)(size * 2.5)];
+            Buffer.BlockCopy(tag["Blocks"].ByteArrayValue, 0, Data, 0, size);
+            Metadata = new NibbleSlice(Data, size, halfSize);
+            BlockLight = new NibbleSlice(Data, size + halfSize, halfSize);
+            SkyLight = new NibbleSlice(Data, size + halfSize * 2, halfSize);
+            
+            Metadata.Deserialize(tag["Data"]);
+            BlockLight.Deserialize(tag["BlockLight"]);
+            SkyLight.Deserialize(tag["SkyLight"]);
             
             if (tag.Contains("TileEntities"))
             {
