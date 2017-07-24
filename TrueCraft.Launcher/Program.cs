@@ -14,7 +14,7 @@ namespace TrueCraft.Launcher
         public static void Main(string[] args)
         {
             if (RuntimeInfo.IsLinux)
-                Application.Initialize(ToolkitType.Gtk);
+                Application.Initialize(ToolkitType.Gtk3);
             else if (RuntimeInfo.IsMacOSX)
                 Application.Initialize(ToolkitType.Gtk); // TODO: Cocoa
             else if (RuntimeInfo.IsWindows)
