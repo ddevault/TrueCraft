@@ -52,16 +52,31 @@ namespace TrueCraft.Client.Handlers
                 && packet.Height == Chunk.Height
                 && packet.Depth == Chunk.Depth) // Fast path
             {
+                // Chunk data offsets
+                int metadataOffset = chunk.Data.Length;
+                int lightOffset = metadataOffset + chunk.Metadata.Length;
+                int skylightOffset = lightOffset + chunk.BlockLight.Length;
+
                 // Block IDs
                 Buffer.BlockCopy(data, 0, chunk.Data, 0, chunk.Data.Length);
                 // Block metadata
-                Buffer.BlockCopy(data, chunk.Data.Length, chunk.Metadata.Data, 0, chunk.Metadata.Data.Length);
+                if (metadataOffset < data.Length)
+                {
+                    Buffer.BlockCopy(data, metadataOffset,
+                        chunk.Metadata.Data, 0, chunk.Metadata.Data.Length);
+                }
                 // Block light
-                Buffer.BlockCopy(data, chunk.Data.Length + chunk.Metadata.Data.Length,
-                    chunk.BlockLight.Data, 0, chunk.BlockLight.Data.Length);
+                if (lightOffset < data.Length)
+                {
+                    Buffer.BlockCopy(data, lightOffset,
+                        chunk.BlockLight.Data, 0, chunk.BlockLight.Data.Length);
+                }
                 // Sky light
-                Buffer.BlockCopy(data, chunk.Data.Length + chunk.Metadata.Data.Length + chunk.BlockLight.Data.Length,
-                    chunk.SkyLight.Data, 0, chunk.SkyLight.Data.Length);
+                if (skylightOffset < data.Length)
+                {
+                    Buffer.BlockCopy(data, skylightOffset,
+                        chunk.SkyLight.Data, 0, chunk.SkyLight.Data.Length);
+                }
             }
             else // Slow path
             {
