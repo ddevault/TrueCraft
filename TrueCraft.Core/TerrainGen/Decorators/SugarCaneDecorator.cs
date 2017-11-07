@@ -33,7 +33,8 @@ namespace TrueCraft.Core.TerrainGen.Decorators
                             var blockLocation = new Coordinates3D(x, height, z);
                             var sugarCaneLocation = blockLocation + Coordinates3D.Up;
                             var neighborsWater = Decoration.NeighboursBlock(chunk, blockLocation, WaterBlock.BlockID) || Decoration.NeighboursBlock(chunk, blockLocation, StationaryWaterBlock.BlockID);
-                            if (chunk.GetBlockID(blockLocation).Equals(GrassBlock.BlockID) && neighborsWater || chunk.GetBlockID(blockLocation).Equals(SandBlock.BlockID) && neighborsWater)
+                            var sugarCaneCanGrowOnCurrentBlock = (chunk.GetBlockID(blockLocation).Equals(GrassBlock.BlockID) || chunk.GetBlockID(blockLocation).Equals(SandBlock.BlockID));
+                            if (neighborsWater && sugarCaneCanGrowOnCurrentBlock)
                             {
                                 var random = new Random(world.Seed);
                                 double heightChance = random.NextDouble();
