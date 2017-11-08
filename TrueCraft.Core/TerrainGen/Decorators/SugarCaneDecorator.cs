@@ -13,16 +13,36 @@ namespace TrueCraft.Core.TerrainGen.Decorators
 {
     public class SugarCaneDecorator : IChunkDecorator
     {
+        private readonly NoiseGen suppliedNoise;
+
+        public SugarCaneDecorator()
+        {
+            suppliedNoise = null;
+        }
+
+        public SugarCaneDecorator(NoiseGen suppliedNoiseSource)
+        {
+            suppliedNoise = suppliedNoiseSource;
+        }
         public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
         {
-            var noise = new Perlin(world.Seed);
+            NoiseGen noise;
+            if (suppliedNoise == null)
+            {
+                noise = new Perlin(world.Seed);
+            }
+            else
+            {
+                noise = suppliedNoise;
+            }
             var chanceNoise = new ClampNoise(noise);
             chanceNoise.MaxValue = 1;
             for (int x = 0; x < 16; x++)
             {
                 for (int z = 0; z < 16; z++)
                 {
-                    var biome = biomes.GetBiome(chunk.Biomes[x * Chunk.Width + z]);
+                    var chunkBiome = chunk.Biomes[x * Chunk.Width + z];
+                    var biome = biomes.GetBiome(chunkBiome);
                     var height = chunk.HeightMap[x * Chunk.Width + z];
                     var blockX = MathHelper.ChunkToBlockX(x, chunk.Coordinates.X);
                     var blockZ = MathHelper.ChunkToBlockZ(z, chunk.Coordinates.Z);

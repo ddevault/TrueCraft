@@ -40,12 +40,12 @@ namespace TrueCraft.Core.TerrainGen.Decorations
             };
             for (int i = 0; i < surrounding.Length; i++)
             {
-                var toCheck = surrounding[i];
-                if (toCheck.X < 0 || toCheck.X >= Chunk.Width || toCheck.Z < 0 || toCheck.Z >= Chunk.Depth || toCheck.Y < 0 || toCheck.Y >= Chunk.Height)
+                var locationToCheck = surrounding[i];
+                if (locationToCheck.X < 0 || locationToCheck.X >= Chunk.Width || locationToCheck.Z < 0 || locationToCheck.Z >= Chunk.Depth || locationToCheck.Y < 0 || locationToCheck.Y >= Chunk.Height)
                     return false;
-                if (chunk.GetBlockID(toCheck).Equals(block))
+                if (chunk.GetBlockID(locationToCheck).Equals(block))
                 {
-                    if (meta != 0x0 && chunk.GetMetadata(toCheck) != meta)
+                    if (meta != 0x0 && chunk.GetMetadata(locationToCheck) != meta)
                         return false;
                     return true;
                 }
