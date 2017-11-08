@@ -417,6 +417,7 @@ namespace TrueCraft.Core.Test.World
             decorator.Decorate(aWorld, aChunk, aBiomeRepository);
 
             AssertChunkHasNoSugarCaneInColumnsWhereItShouldNot(aChunk);
+            AssertChunkSugarCaneGrowthIsNotUniform(aChunk);
         }
 
         private void AssertChunkHasNoSugarCaneInColumnsWhereItShouldNot(IChunk aChunk)
@@ -431,6 +432,29 @@ namespace TrueCraft.Core.Test.World
                         Assert.AreEqual(0, CountBlockInColumn(aChunk, x, z, SugarcaneBlock.BlockID), string.Format("Sugarcane in column ({0},{1})", x,z));
                     }
                 }
+            }
+        }
+
+        private void AssertChunkSugarCaneGrowthIsNotUniform(IChunk aChunk)
+        {
+            var counts = new List<double>();
+            for (int x = 0; x < 6; x++)
+            {
+                for (int z = 0; z < 6; z++)
+                {
+                    Coordinates2D coord = new Coordinates2D(x, z);
+                    var countOfSugarCane = CountBlockInColumn(aChunk, x, z, SugarcaneBlock.BlockID);
+                    if (countOfSugarCane != 0)
+                    {
+                        counts.Add(countOfSugarCane);
+                    }
+                }
+            }
+            double averageOfSugarCaneHeight = counts.Average();
+
+            for (int i = 1; i < 7; i++)
+            {
+                Assert.AreNotEqual(i, averageOfSugarCaneHeight, "Sugarcane grew with uniform height.");
             }
         }
     }
