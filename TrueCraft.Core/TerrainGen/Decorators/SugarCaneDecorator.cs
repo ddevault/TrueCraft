@@ -35,6 +35,8 @@ namespace TrueCraft.Core.TerrainGen.Decorators
             {
                 noise = suppliedNoise;
             }
+            var random = new Random(world.Seed);
+
             var chanceNoise = new ClampNoise(noise);
             chanceNoise.MaxValue = 1;
             for (int x = 0; x < 16; x++)
@@ -56,7 +58,6 @@ namespace TrueCraft.Core.TerrainGen.Decorators
                             var sugarCaneCanGrowOnCurrentBlock = (chunk.GetBlockID(blockLocation).Equals(GrassBlock.BlockID) || chunk.GetBlockID(blockLocation).Equals(SandBlock.BlockID));
                             if (neighborsWater && sugarCaneCanGrowOnCurrentBlock)
                             {
-                                var random = new Random(world.Seed);
                                 double heightChance = random.NextDouble();
                                 int caneHeight = 3;
                                 if (heightChance < 0.05)
