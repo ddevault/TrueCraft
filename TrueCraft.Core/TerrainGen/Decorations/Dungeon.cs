@@ -26,7 +26,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
             return true;
         }
 
-        public override bool GenerateAt(IWorld world, IChunk chunk, Coordinates3D location)
+        public override bool GenerateAt(IWorldSeed world, ISpatialBlockInformationProvider chunk, Coordinates3D location)
         {
             Console.WriteLine("Dungeon in chunk {0}", chunk.Coordinates);
             if (!ValidLocation(location))
@@ -52,7 +52,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
             return true;
         }
 
-        private void CreateEntraces(IChunk chunk, Coordinates3D location, Random random)
+        private void CreateEntraces(ISpatialBlockInformationProvider chunk, Coordinates3D location, Random random)
         {
             int entrances = 0;
             var above = location + Coordinates3D.Up;
@@ -80,7 +80,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
             }
         }
 
-        private void MossFloor(IChunk chunk, Coordinates3D location, Random random)
+        private void MossFloor(ISpatialBlockInformationProvider chunk, Coordinates3D location, Random random)
         {
             for (int x = location.X; x < location.X + Size.X; x++)
             {
@@ -96,7 +96,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
             }
         }
 
-        private void PlaceChests(IChunk chunk, Coordinates3D location, Random random)
+        private void PlaceChests(ISpatialBlockInformationProvider chunk, Coordinates3D location, Random random)
         {
             var above = location + Coordinates3D.Up;
             var chests = random.Next(0, 2);

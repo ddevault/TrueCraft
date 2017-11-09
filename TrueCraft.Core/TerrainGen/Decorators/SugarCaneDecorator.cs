@@ -6,6 +6,7 @@ using TrueCraft.API.World;
 using TrueCraft.Core.World;
 using TrueCraft.Core.TerrainGen.Noise;
 using TrueCraft.API;
+using TrueCraft.API.Logic;
 using TrueCraft.Core.Logic.Blocks;
 using TrueCraft.Core.TerrainGen.Decorations;
 
@@ -13,16 +14,38 @@ namespace TrueCraft.Core.TerrainGen.Decorators
 {
     public class SugarCaneDecorator : IChunkDecorator
     {
-        public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
+        private readonly NoiseGen suppliedNoise;
+
+        public SugarCaneDecorator()
         {
-            var noise = new Perlin(world.Seed);
+            suppliedNoise = null;
+        }
+
+        public SugarCaneDecorator(NoiseGen suppliedNoiseSource)
+        {
+            suppliedNoise = suppliedNoiseSource;
+        }
+        public void Decorate(IWorldSeed world, ISpatialBlockInformationProvider chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
+        {
+            NoiseGen noise;
+            if (suppliedNoise == null)
+            {
+                noise = new Perlin(world.Seed);
+            }
+            else
+            {
+                noise = suppliedNoise;
+            }
+            var random = new Random(world.Seed);
+
             var chanceNoise = new ClampNoise(noise);
             chanceNoise.MaxValue = 1;
             for (int x = 0; x < 16; x++)
             {
                 for (int z = 0; z < 16; z++)
                 {
-                    var biome = biomes.GetBiome(chunk.Biomes[x * Chunk.Width + z]);
+                    var chunkBiome = chunk.Biomes[x * Chunk.Width + z];
+                    var biome = biomes.GetBiome(chunkBiome);
                     var height = chunk.HeightMap[x * Chunk.Width + z];
                     var blockX = MathHelper.ChunkToBlockX(x, chunk.Coordinates.X);
                     var blockZ = MathHelper.ChunkToBlockZ(z, chunk.Coordinates.Z);
@@ -33,9 +56,9 @@ namespace TrueCraft.Core.TerrainGen.Decorators
                             var blockLocation = new Coordinates3D(x, height, z);
                             var sugarCaneLocation = blockLocation + Coordinates3D.Up;
                             var neighborsWater = Decoration.NeighboursBlock(chunk, blockLocation, WaterBlock.BlockID) || Decoration.NeighboursBlock(chunk, blockLocation, StationaryWaterBlock.BlockID);
-                            if (chunk.GetBlockID(blockLocation).Equals(GrassBlock.BlockID) && neighborsWater || chunk.GetBlockID(blockLocation).Equals(SandBlock.BlockID) && neighborsWater)
+                            var sugarCaneCanGrowOnCurrentBlock = (chunk.GetBlockID(blockLocation).Equals(GrassBlock.BlockID) || chunk.GetBlockID(blockLocation).Equals(SandBlock.BlockID));
+                            if (neighborsWater && sugarCaneCanGrowOnCurrentBlock)
                             {
-                                var random = new Random(world.Seed);
                                 double heightChance = random.NextDouble();
                                 int caneHeight = 3;
                                 if (heightChance < 0.05)

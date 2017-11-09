@@ -12,7 +12,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
     {
         public virtual bool ValidLocation(Coordinates3D location) { return true; }
 
-        public abstract bool GenerateAt(IWorld world, IChunk chunk, Coordinates3D location);
+        public abstract bool GenerateAt(IWorldSeed world, ISpatialBlockInformationProvider chunk, Coordinates3D location);
 
         public static bool IsCuboidWall(Coordinates2D location, Coordinates3D start, Vector3 size)
         {
@@ -30,7 +30,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
                 || location.X.Equals(start.X + (int)size.X - 1) && location.Z.Equals(start.Z + (int)size.Z - 1);
         }
 
-        public static bool NeighboursBlock(IChunk chunk, Coordinates3D location, byte block, byte meta = 0x0)
+        public static bool NeighboursBlock(ISpatialBlockInformationProvider chunk, Coordinates3D location, byte block, byte meta = 0x0)
         {
             var surrounding = new[] {
                 location + Coordinates3D.Left,
@@ -40,12 +40,12 @@ namespace TrueCraft.Core.TerrainGen.Decorations
             };
             for (int i = 0; i < surrounding.Length; i++)
             {
-                var toCheck = surrounding[i];
-                if (toCheck.X < 0 || toCheck.X >= Chunk.Width || toCheck.Z < 0 || toCheck.Z >= Chunk.Depth || toCheck.Y < 0 || toCheck.Y >= Chunk.Height)
+                var locationToCheck = surrounding[i];
+                if (locationToCheck.X < 0 || locationToCheck.X >= Chunk.Width || locationToCheck.Z < 0 || locationToCheck.Z >= Chunk.Depth || locationToCheck.Y < 0 || locationToCheck.Y >= Chunk.Height)
                     return false;
-                if (chunk.GetBlockID(toCheck).Equals(block))
+                if (chunk.GetBlockID(locationToCheck).Equals(block))
                 {
-                    if (meta != 0x0 && chunk.GetMetadata(toCheck) != meta)
+                    if (meta != 0x0 && chunk.GetMetadata(locationToCheck) != meta)
                         return false;
                     return true;
                 }
@@ -53,7 +53,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
             return false;
         }
 
-        public static void GenerateColumn(IChunk chunk, Coordinates3D location, int height, byte block, byte meta = 0x0)
+        public static void GenerateColumn(ISpatialBlockInformationProvider chunk, Coordinates3D location, int height, byte block, byte meta = 0x0)
         {
             for (int offset = 0; offset < height; offset++)
             {
@@ -71,7 +71,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
          * 0x1 - Hollow cuboid of the specified block
          * 0x2 - Outlines the area of the cuboid using the specified block
          */
-        public static void GenerateCuboid(IChunk chunk, Coordinates3D location, Vector3 size, byte block, byte meta = 0x0, byte mode = 0x0)
+        public static void GenerateCuboid(ISpatialBlockInformationProvider chunk, Coordinates3D location, Vector3 size, byte block, byte meta = 0x0, byte mode = 0x0)
         {
             //If mode is 0x2 offset the size by 2 and change mode to 0x1
             if (mode.Equals(0x2))
@@ -102,7 +102,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
             }
         }
 
-        protected void GenerateVanillaLeaves(IChunk chunk, Coordinates3D location, int radius, byte block, byte meta = 0x0)
+        protected void GenerateVanillaLeaves(ISpatialBlockInformationProvider chunk, Coordinates3D location, int radius, byte block, byte meta = 0x0)
         {
             int radiusOffset = radius;
             for (int yOffset = -radius; yOffset <= radius; yOffset = (yOffset + 1))
@@ -116,7 +116,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
             }
         }
 
-        protected void GenerateVanillaCircle(IChunk chunk, Coordinates3D location, int radius, byte block, byte meta = 0x0, double corner = 0)
+        protected void GenerateVanillaCircle(ISpatialBlockInformationProvider chunk, Coordinates3D location, int radius, byte block, byte meta = 0x0, double corner = 0)
         {
             for (int i = -radius; i <= radius; i = (i + 1))
             {
@@ -146,7 +146,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
             }
         }
 
-        protected void GenerateCircle(IChunk chunk, Coordinates3D location, int radius, byte block, byte meta = 0x0)
+        protected void GenerateCircle(ISpatialBlockInformationProvider chunk, Coordinates3D location, int radius, byte block, byte meta = 0x0)
         {
             for (int i = -radius; i <= radius; i = (i + 1))
             {
@@ -172,7 +172,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
             }
         }
 
-        protected static void GenerateSphere(IChunk chunk, Coordinates3D location, int radius, byte block, byte meta = 0x0)
+        protected static void GenerateSphere(ISpatialBlockInformationProvider chunk, Coordinates3D location, int radius, byte block, byte meta = 0x0)
         {
             for (int i = -radius; i <= radius; i = (i + 1))
             {

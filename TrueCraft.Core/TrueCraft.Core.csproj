@@ -372,11 +372,7 @@
       <Name>TrueCraft.Profiling</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Lighting\" />
-    <Folder Include="AI\" />
-    <Folder Include="Physics\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>

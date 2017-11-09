@@ -8,6 +8,7 @@ using TrueCraft.Core.World;
 using TrueCraft.API;
 using TrueCraft.Core.Logic.Blocks;
 using System.IO;
+using TrueCraft.API.Logic;
 
 namespace TrueCraft.Core.TerrainGen.Decorators
 {
@@ -53,7 +54,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
             Ores.Add(redstone);
         }
 
-        public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
+        public void Decorate(IWorldSeed world, ISpatialBlockInformationProvider chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
         {
             var perlin = new Perlin(world.Seed);
             perlin.Lacunarity = 1;

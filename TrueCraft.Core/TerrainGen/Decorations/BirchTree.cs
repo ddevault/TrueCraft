@@ -25,7 +25,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
             return true;
         }
 
-        public override bool GenerateAt(IWorld world, IChunk chunk, Coordinates3D location)
+        public override bool GenerateAt(IWorldSeed world, ISpatialBlockInformationProvider chunk, Coordinates3D location)
         {
             if (!ValidLocation(location))
                 return false;

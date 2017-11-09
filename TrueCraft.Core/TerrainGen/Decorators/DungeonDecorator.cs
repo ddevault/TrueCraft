@@ -6,6 +6,7 @@ using TrueCraft.API.World;
 using TrueCraft.Core.World;
 using TrueCraft.Core.TerrainGen.Noise;
 using TrueCraft.API;
+using TrueCraft.API.Logic;
 using TrueCraft.Core.Logic.Blocks;
 using TrueCraft.Core.TerrainGen.Decorations;
 
@@ -20,7 +21,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
             this.BaseLevel = groundLevel;
         }
 
-        public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
+        public void Decorate(IWorldSeed world, ISpatialBlockInformationProvider chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
         {
             for (int attempts = 0; attempts < 8; attempts++)
             {
