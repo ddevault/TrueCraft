@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Moq;
 using NUnit.Framework;
 using TrueCraft.API;
 using TrueCraft.API.World;
@@ -7,7 +9,9 @@ using TrueCraft.Core.Logic.Blocks;
 using TrueCraft.Core.TerrainGen;
 using TrueCraft.Core.TerrainGen.Biomes;
 using TrueCraft.Core.TerrainGen.Decorators;
+using TrueCraft.Core.Test.Logic;
 using TrueCraft.Core.Test.World.TestFakes;
+using TrueCraft.Core.World;
 
 namespace TrueCraft.Core.Test.World
 {
@@ -99,6 +103,56 @@ namespace TrueCraft.Core.Test.World
                 }
             }
             return counter;
+        }
+
+        [Test]
+        public void TestUsingAMock()
+        {
+            Mock<IWorld> aWorld = new Mock<IWorld>();
+            aWorld.Setup(foo => foo.Seed).Returns(9001);
+
+            var ourDictionary = PrimeSugarCaneGrowingSeasonChunk.createStartingBlockDictionary();
+
+            Mock<IChunk> aChunk = new Mock<IChunk>();
+
+            aChunk.Setup(foo => foo.GetBlockID(It.IsAny<Coordinates3D>())).Returns((Coordinates3D coordinates) =>
+            {
+                if (ourDictionary.ContainsKey(coordinates))
+                {
+                    return ourDictionary[coordinates];
+                }
+                return AirBlock.BlockID;
+            });
+
+            aChunk.Setup(foo => foo.SetBlockID(It.IsAny<Coordinates3D>(),
+                It.IsAny<byte>())).Callback<Coordinates3D, byte>((a, b) =>
+            {
+                ourDictionary[a] = b;
+            });
+
+            aChunk.Setup(chunk => chunk.X).Returns(6);
+            aChunk.Setup(chunk => chunk.Z).Returns(6);
+            aChunk.Setup(chunk => chunk.MaxHeight).Returns(6);
+
+            aChunk.Setup(chunk => chunk.HeightMap).Returns(() =>
+            {
+                 return Enumerable.Repeat(1, Chunk.Width * Chunk.Height).ToArray<int>();
+            });
+
+            aChunk.Setup(chunk => chunk.Biomes).Returns(() =>
+            {
+                return Enumerable.Repeat(new SwamplandBiome().ID, Chunk.Width * Chunk.Height).ToArray<byte>();
+            });
+
+            aChunk.Setup(chunk => chunk.GetHeight(It.IsAny<byte>(), It.IsAny<byte>())).Returns(1);
+
+
+            IBiomeRepository aBiomeRepository = new BiomeRepository();
+            var decorator = GetDecoratorForTestChunk(aWorld.Object, aChunk.Object, aBiomeRepository);
+
+            decorator.Decorate(aWorld.Object, aChunk.Object, aBiomeRepository);
+
+            AssertChunkSugarCaneGrowthIsNotUniform(aChunk.Object);
         }
     }
 }
