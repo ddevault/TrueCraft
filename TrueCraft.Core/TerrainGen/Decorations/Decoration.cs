@@ -12,7 +12,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
     {
         public virtual bool ValidLocation(Coordinates3D location) { return true; }
 
-        public abstract bool GenerateAt(IWorld world, IChunk chunk, Coordinates3D location);
+        public abstract bool GenerateAt(IWorldSeed world, IChunk chunk, Coordinates3D location);
 
         public static bool IsCuboidWall(Coordinates2D location, Coordinates3D start, Vector3 size)
         {

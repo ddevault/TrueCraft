@@ -91,7 +91,7 @@ public class PrimeSugarCaneGrowingSeasonChunk : IChunk
     }
 
 
-    private static Dictionary<Coordinates3D, byte> createStartingBlockDictionary()
+    public static Dictionary<Coordinates3D, byte> createStartingBlockDictionary()
     {
         int xBounds = 6;
         int yBounds = 7;

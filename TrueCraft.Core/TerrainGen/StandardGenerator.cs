@@ -189,7 +189,7 @@ namespace TrueCraft.Core.TerrainGen
                 }
             }
             foreach (var decorator in ChunkDecorators)
-                decorator.Decorate(world, chunk, Biomes);
+                decorator.Decorate(world, chunk, Biomes, world.BlockRepository);
             chunk.TerrainPopulated = true;
             chunk.UpdateHeightMap();
             return chunk;

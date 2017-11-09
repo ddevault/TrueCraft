@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using TrueCraft.API.World;
 using TrueCraft.API;
+using TrueCraft.API.Logic;
 using TrueCraft.Core.Logic.Blocks;
 using TrueCraft.Core.TerrainGen.Noise;
 using TrueCraft.Core.World;
@@ -16,7 +17,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
         public Perlin Noise { get; set; }
         public ClampNoise ChanceNoise { get; set; }
 
-        public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
+        public void Decorate(IWorldSeed world, IChunk chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
         {
             Noise = new Perlin(world.Seed);
             ChanceNoise = new ClampNoise(Noise);
@@ -38,7 +39,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
                     {
                         var location = new Coordinates3D(x, height, z);
                         var id = chunk.GetBlockID(location);
-                        var provider = world.BlockRepository.GetBlockProvider(id);
+                        var provider = blockRepository.GetBlockProvider(id);
                         if (id == DirtBlock.BlockID || id == GrassBlock.BlockID || id == SnowfallBlock.BlockID
                             || (id != StationaryWaterBlock.BlockID && id != WaterBlock.BlockID
                                 && id != LavaBlock.BlockID && id != StationaryLavaBlock.BlockID

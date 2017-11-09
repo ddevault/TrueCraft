@@ -6,13 +6,14 @@ using TrueCraft.API.World;
 using TrueCraft.Core.TerrainGen.Noise;
 using TrueCraft.Core.World;
 using TrueCraft.API;
+using TrueCraft.API.Logic;
 using TrueCraft.Core.Logic.Blocks;
 
 namespace TrueCraft.Core.TerrainGen.Decorators
 {
     public class PlantDecorator : IChunkDecorator
     {
-        public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
+        public void Decorate(IWorldSeed world, IChunk chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
         {
             var noise = new Perlin(world.Seed);
             var chanceNoise = new ClampNoise(noise);

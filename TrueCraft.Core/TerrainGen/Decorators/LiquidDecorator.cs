@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using TrueCraft.API.World;
 using TrueCraft.API;
+using TrueCraft.API.Logic;
 using TrueCraft.Core.World;
 using TrueCraft.Core.Logic.Blocks;
 using TrueCraft.Core.TerrainGen.Noise;
@@ -14,7 +15,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
     {
         public static readonly int WaterLevel = 40;
 
-        public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
+        public void Decorate(IWorldSeed world, IChunk chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
         {
             for (int x = 0; x < Chunk.Width; x++)
             {

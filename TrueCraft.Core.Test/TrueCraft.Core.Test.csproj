@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -81,9 +81,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Logic\BakingTests.cs" />
     <Compile Include="MathHelperTest.cs" />
     <Compile Include="World\ChunkTest.cs" />
     <Compile Include="World\RegionTest.cs" />
+    <Compile Include="World\SugarCaneDecoratorTests.cs" />
+    <Compile Include="World\TestFakes\NoiseAlwaysGrowsSugarCaneInTestBounds.cs" />
+    <Compile Include="World\TestFakes\PrimeSugarCaneGrowingSeasonChunk.cs" />
+    <Compile Include="World\TestFakes\WorldWithJustASeed.cs" />
     <Compile Include="World\WorldTest.cs" />
     <Compile Include="Windows\WindowAreaTest.cs" />
     <Compile Include="Windows\CraftingWindowAreaTest.cs" />
@@ -92,13 +97,5 @@
     <Compile Include="AI\PathFindingTest.cs" />
     <Compile Include="Physics\PhysicsEngineTest.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="World\" />
-    <Folder Include="Files\" />
-    <Folder Include="Windows\" />
-    <Folder Include="Logic\" />
-    <Folder Include="Lighting\" />
-    <Folder Include="AI\" />
-    <Folder Include="Physics\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

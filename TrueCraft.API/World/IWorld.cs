@@ -9,11 +9,10 @@ namespace TrueCraft.API.World
     /// <summary>
     /// An in-game world composed of chunks and blocks.
     /// </summary>
-    public interface IWorld : IEnumerable<IChunk>
+    public interface IWorld : IEnumerable<IChunk>, IWorldSeed
     {
         string Name { get; set; }
         IBlockRepository BlockRepository { get; set; }
-        int Seed { get; set; }
         IBiomeMap BiomeDiagram { get; set; }
         IChunkProvider ChunkProvider { get; set; }
         Coordinates3D SpawnPoint { get; set; }
@@ -41,5 +40,10 @@ namespace TrueCraft.API.World
         bool IsValidPosition(Coordinates3D position);
         void Save();
         void Save(string path);
+    }
+
+    public interface IWorldSeed
+    {
+        int Seed { get; set; }
     }
 }

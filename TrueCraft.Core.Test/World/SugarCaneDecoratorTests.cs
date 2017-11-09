@@ -21,12 +21,12 @@ namespace TrueCraft.Core.Test.World
         [Test]
         public void DecoratorGrowsNoInvalidSugarCane()
         {
-            IWorld aWorld = new WorldWithJustASeed(9001);
+            var aWorld = new WorldWithJustASeed(9001);
             IChunk aChunk = new PrimeSugarCaneGrowingSeasonChunk();
             IBiomeRepository aBiomeRepository = new BiomeRepository();
             var decorator = GetDecoratorForTestChunk(aWorld, aChunk, aBiomeRepository);
 
-            decorator.Decorate(aWorld, aChunk, aBiomeRepository);
+            decorator.Decorate(aWorld, aChunk, aBiomeRepository, null /* Don't need to fake it if you don't use it. */);
 
             AssertChunkHasNoSugarCaneInColumnsWhereItShouldNot(aChunk);
         }
@@ -34,12 +34,12 @@ namespace TrueCraft.Core.Test.World
         [Test]
         public void DecoratorDoesNotGrowSugarcaneUniformly()
         {
-            IWorld aWorld = new WorldWithJustASeed(9001);
+            IWorldSeed aWorld = new WorldWithJustASeed(9001);
             IChunk aChunk = new PrimeSugarCaneGrowingSeasonChunk();
             IBiomeRepository aBiomeRepository = new BiomeRepository();
             var decorator = GetDecoratorForTestChunk(aWorld, aChunk, aBiomeRepository);
 
-            decorator.Decorate(aWorld, aChunk, aBiomeRepository);
+            decorator.Decorate(aWorld, aChunk, aBiomeRepository, null);
 
             AssertChunkSugarCaneGrowthIsNotUniform(aChunk);
         }
@@ -82,7 +82,7 @@ namespace TrueCraft.Core.Test.World
             }
         }
 
-        private static SugarCaneDecorator GetDecoratorForTestChunk(IWorld aWorld, IChunk aChunk,
+        private static SugarCaneDecorator GetDecoratorForTestChunk(IWorldSeed aWorld, IChunk aChunk,
             IBiomeRepository aBiomeRepository)
         {
             var decorator = new SugarCaneDecorator(new NoiseAlwaysGrowsSugarCaneInTestBounds());
@@ -146,11 +146,12 @@ namespace TrueCraft.Core.Test.World
 
             aChunk.Setup(chunk => chunk.GetHeight(It.IsAny<byte>(), It.IsAny<byte>())).Returns(1);
 
+            
 
             IBiomeRepository aBiomeRepository = new BiomeRepository();
             var decorator = GetDecoratorForTestChunk(aWorld.Object, aChunk.Object, aBiomeRepository);
 
-            decorator.Decorate(aWorld.Object, aChunk.Object, aBiomeRepository);
+            decorator.Decorate(aWorld.Object, aChunk.Object, aBiomeRepository, null);
 
             AssertChunkSugarCaneGrowthIsNotUniform(aChunk.Object);
         }

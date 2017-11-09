@@ -26,7 +26,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
             return true;
         }
 
-        public override bool GenerateAt(IWorld world, IChunk chunk, Coordinates3D location)
+        public override bool GenerateAt(IWorldSeed world, IChunk chunk, Coordinates3D location)
         {
             Console.WriteLine("Dungeon in chunk {0}", chunk.Coordinates);
             if (!ValidLocation(location))

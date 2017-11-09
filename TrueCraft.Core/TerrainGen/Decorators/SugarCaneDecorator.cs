@@ -6,6 +6,7 @@ using TrueCraft.API.World;
 using TrueCraft.Core.World;
 using TrueCraft.Core.TerrainGen.Noise;
 using TrueCraft.API;
+using TrueCraft.API.Logic;
 using TrueCraft.Core.Logic.Blocks;
 using TrueCraft.Core.TerrainGen.Decorations;
 
@@ -24,7 +25,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
         {
             suppliedNoise = suppliedNoiseSource;
         }
-        public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
+        public void Decorate(IWorldSeed world, IChunk chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
         {
             NoiseGen noise;
             if (suppliedNoise == null)

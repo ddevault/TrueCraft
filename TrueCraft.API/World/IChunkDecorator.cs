@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TrueCraft.API.Logic;
 
 namespace TrueCraft.API.World
 {
@@ -10,6 +11,6 @@ namespace TrueCraft.API.World
     /// </summary>
     public interface IChunkDecorator
     {
-        void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes);
+        void Decorate(IWorldSeed world, IChunk chunk, IBiomeRepository biomes, IBlockRepository blockRepository);
     }
 }

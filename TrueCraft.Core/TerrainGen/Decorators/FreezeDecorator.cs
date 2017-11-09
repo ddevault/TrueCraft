@@ -6,12 +6,13 @@ using TrueCraft.API.World;
 using TrueCraft.Core.World;
 using TrueCraft.Core.Logic.Blocks;
 using TrueCraft.API;
+using TrueCraft.API.Logic;
 
 namespace TrueCraft.Core.TerrainGen.Decorators
 {
     class FreezeDecorator : IChunkDecorator
     {
-        public void Decorate(IWorld world, IChunk chunk, IBiomeRepository biomes)
+        public void Decorate(IWorldSeed world, IChunk chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
         {
             for (int x = 0; x < 16; x++)
             {
