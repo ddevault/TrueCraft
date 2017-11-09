@@ -22,7 +22,7 @@ namespace TrueCraft.Core.Test.World
         public void DecoratorGrowsNoInvalidSugarCane()
         {
             var aWorld = new WorldWithJustASeed(9001);
-            IChunk aChunk = new PrimeSugarCaneGrowingSeasonChunk();
+            ApplesauceChunk aChunk = new PrimeSugarCaneGrowingSeasonChunk();
             IBiomeRepository aBiomeRepository = new BiomeRepository();
             var decorator = GetDecoratorForTestChunk(aWorld, aChunk, aBiomeRepository);
 
@@ -35,7 +35,7 @@ namespace TrueCraft.Core.Test.World
         public void DecoratorDoesNotGrowSugarcaneUniformly()
         {
             IWorldSeed aWorld = new WorldWithJustASeed(9001);
-            IChunk aChunk = new PrimeSugarCaneGrowingSeasonChunk();
+            ApplesauceChunk aChunk = new PrimeSugarCaneGrowingSeasonChunk();
             IBiomeRepository aBiomeRepository = new BiomeRepository();
             var decorator = GetDecoratorForTestChunk(aWorld, aChunk, aBiomeRepository);
 
@@ -44,7 +44,7 @@ namespace TrueCraft.Core.Test.World
             AssertChunkSugarCaneGrowthIsNotUniform(aChunk);
         }
 
-        private void AssertChunkHasNoSugarCaneInColumnsWhereItShouldNot(IChunk aChunk)
+        private void AssertChunkHasNoSugarCaneInColumnsWhereItShouldNot(ApplesauceChunk aChunk)
         {
             for (int x = 0; x < 6; x++)
             {
@@ -59,7 +59,7 @@ namespace TrueCraft.Core.Test.World
             }
         }
 
-        private void AssertChunkSugarCaneGrowthIsNotUniform(IChunk aChunk)
+        private void AssertChunkSugarCaneGrowthIsNotUniform(ApplesauceChunk aChunk)
         {
             var counts = new List<double>();
             for (int x = 0; x < 6; x++)
@@ -82,7 +82,7 @@ namespace TrueCraft.Core.Test.World
             }
         }
 
-        private static SugarCaneDecorator GetDecoratorForTestChunk(IWorldSeed aWorld, IChunk aChunk,
+        private static SugarCaneDecorator GetDecoratorForTestChunk(IWorldSeed aWorld, ApplesauceChunk aChunk,
             IBiomeRepository aBiomeRepository)
         {
             var decorator = new SugarCaneDecorator(new NoiseAlwaysGrowsSugarCaneInTestBounds());
@@ -90,7 +90,7 @@ namespace TrueCraft.Core.Test.World
             return decorator;
         }
 
-        static int CountBlockInColumn(IChunk aChunk, int x, int z, byte blockId)
+        static int CountBlockInColumn(ApplesauceChunk aChunk, int x, int z, byte blockId)
         {
             int counter = 0;
 
@@ -113,7 +113,7 @@ namespace TrueCraft.Core.Test.World
 
             var ourDictionary = PrimeSugarCaneGrowingSeasonChunk.createStartingBlockDictionary();
 
-            Mock<IChunk> aChunk = new Mock<IChunk>();
+            Mock<ApplesauceChunk> aChunk = new Mock<ApplesauceChunk>();
 
             aChunk.Setup(foo => foo.GetBlockID(It.IsAny<Coordinates3D>())).Returns((Coordinates3D coordinates) =>
             {

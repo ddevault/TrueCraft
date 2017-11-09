@@ -8,7 +8,7 @@ using TrueCraft.Core.Logic.Blocks;
 using TrueCraft.Core.TerrainGen.Biomes;
 using TrueCraft.Core.World;
 
-public class PrimeSugarCaneGrowingSeasonChunk : IChunk
+public class PrimeSugarCaneGrowingSeasonChunk : ApplesauceChunk
 {
     public int X => 6;
     public int Z => 6;
@@ -39,6 +39,18 @@ public class PrimeSugarCaneGrowingSeasonChunk : IChunk
     {
         blockDictionary[coordinates] = value;
     }
+
+    public int GetMetadata(Coordinates3D locationToCheck)
+    {
+        return -1;
+    }
+
+    public void SetMetadata(Coordinates3D blockLocation, byte meta)
+    {
+        //
+    }
+
+    public Coordinates2D Coordinates { get; set; }
 
     public static int CountBlockInColumn(Dictionary<Coordinates3D, byte> aChunk, int x, int z, byte blockId)
     {
@@ -90,7 +102,6 @@ public class PrimeSugarCaneGrowingSeasonChunk : IChunk
         return DiamondBlock.BlockID;
     }
 
-
     public static Dictionary<Coordinates3D, byte> createStartingBlockDictionary()
     {
         int xBounds = 6;
@@ -123,9 +134,6 @@ public class PrimeSugarCaneGrowingSeasonChunk : IChunk
 
         return blockDictionary;
     }
-
-
-
 
     public static HashSet<Coordinates2D> PointsWithoutAnySugarcane()
     {
@@ -164,72 +172,8 @@ public class PrimeSugarCaneGrowingSeasonChunk : IChunk
         return result;
     }
 
-
-    // Extra IChunk interface things we don't need for block decoration tests below. 
-    public void Dispose()
+    byte ApplesauceChunk.GetMetadata(Coordinates3D locationToCheck)
     {
         throw new NotImplementedException();
     }
-
-    public event EventHandler Disposed;
-    public Coordinates2D Coordinates { get; set; }
-    public bool IsModified { get; set; }
-    public bool LightPopulated { get; set; }
-
-    public DateTime LastAccessed { get; set; }
-    public byte[] Data { get; }
-    public bool TerrainPopulated { get; set; }
-    public Dictionary<Coordinates3D, NbtCompound> TileEntities { get; set; }
-    public NibbleSlice Metadata { get; }
-    public NibbleSlice BlockLight { get; }
-    public NibbleSlice SkyLight { get; }
-    public IRegion ParentRegion { get; set; }
-
-    public void UpdateHeightMap()
-    {
-        throw new NotImplementedException();
-    }
-
-    public byte GetMetadata(Coordinates3D coordinates)
-    {
-        throw new NotImplementedException();
-    }
-
-    public byte GetSkyLight(Coordinates3D coordinates)
-    {
-        throw new NotImplementedException();
-    }
-
-    public byte GetBlockLight(Coordinates3D coordinates)
-    {
-        throw new NotImplementedException();
-    }
-
-
-    public void SetMetadata(Coordinates3D coordinates, byte value)
-    {
-        // 
-    }
-
-    public void SetSkyLight(Coordinates3D coordinates, byte value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void SetBlockLight(Coordinates3D coordinates, byte value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public NbtCompound GetTileEntity(Coordinates3D coordinates)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void SetTileEntity(Coordinates3D coordinates, NbtCompound value)
-    {
-        throw new NotImplementedException();
-    }
-
-
 }

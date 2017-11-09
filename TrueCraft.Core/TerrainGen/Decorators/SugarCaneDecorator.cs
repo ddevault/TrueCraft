@@ -25,7 +25,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
         {
             suppliedNoise = suppliedNoiseSource;
         }
-        public void Decorate(IWorldSeed world, IChunk chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
+        public void Decorate(IWorldSeed world, ApplesauceChunk chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
         {
             NoiseGen noise;
             if (suppliedNoise == null)

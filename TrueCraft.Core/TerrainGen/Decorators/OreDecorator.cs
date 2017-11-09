@@ -54,7 +54,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
             Ores.Add(redstone);
         }
 
-        public void Decorate(IWorldSeed world, IChunk chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
+        public void Decorate(IWorldSeed world, ApplesauceChunk chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
         {
             var perlin = new Perlin(world.Seed);
             perlin.Lacunarity = 1;

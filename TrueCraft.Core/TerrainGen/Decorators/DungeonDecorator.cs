@@ -21,7 +21,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
             this.BaseLevel = groundLevel;
         }
 
-        public void Decorate(IWorldSeed world, IChunk chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
+        public void Decorate(IWorldSeed world, ApplesauceChunk chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
         {
             for (int attempts = 0; attempts < 8; attempts++)
             {
