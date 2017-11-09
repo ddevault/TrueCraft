@@ -11,6 +11,6 @@ namespace TrueCraft.API.World
     /// </summary>
     public interface IChunkDecorator
     {
-        void Decorate(IWorldSeed world, ApplesauceChunk chunk, IBiomeRepository biomes, IBlockRepository blockRepository);
+        void Decorate(IWorldSeed world, ISpatialBlockInformationProvider chunk, IBiomeRepository biomes, IBlockRepository blockRepository);
     }
 }

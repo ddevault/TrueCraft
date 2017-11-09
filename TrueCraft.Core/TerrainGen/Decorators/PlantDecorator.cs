@@ -13,7 +13,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
 {
     public class PlantDecorator : IChunkDecorator
     {
-        public void Decorate(IWorldSeed world, ApplesauceChunk chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
+        public void Decorate(IWorldSeed world, ISpatialBlockInformationProvider chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
         {
             var noise = new Perlin(world.Seed);
             var chanceNoise = new ClampNoise(noise);
@@ -68,23 +68,23 @@ namespace TrueCraft.Core.TerrainGen.Decorators
             }
         }
 
-        void GenerateRose(ApplesauceChunk chunk, Coordinates3D location)
+        void GenerateRose(ISpatialBlockInformationProvider chunk, Coordinates3D location)
         {
             chunk.SetBlockID(location, RoseBlock.BlockID);
         }
 
-        void GenerateDandelion(ApplesauceChunk chunk, Coordinates3D location)
+        void GenerateDandelion(ISpatialBlockInformationProvider chunk, Coordinates3D location)
         {
             chunk.SetBlockID(location, DandelionBlock.BlockID);
         }
 
-        void GenerateTallGrass(ApplesauceChunk chunk, Coordinates3D location, byte meta)
+        void GenerateTallGrass(ISpatialBlockInformationProvider chunk, Coordinates3D location, byte meta)
         {
             chunk.SetBlockID(location, TallGrassBlock.BlockID);
             chunk.SetMetadata(location, meta);
         }
 
-        void GenerateDeadBush(ApplesauceChunk chunk, Coordinates3D location)
+        void GenerateDeadBush(ISpatialBlockInformationProvider chunk, Coordinates3D location)
         {
             chunk.SetBlockID(location, DeadBushBlock.BlockID);
         }

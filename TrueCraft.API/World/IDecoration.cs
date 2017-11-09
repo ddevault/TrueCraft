@@ -8,6 +8,6 @@ namespace TrueCraft.API.World
     public interface IDecoration
     {
         bool ValidLocation(Coordinates3D location);
-        bool GenerateAt(IWorldSeed world, ApplesauceChunk chunk, Coordinates3D location);
+        bool GenerateAt(IWorldSeed world, ISpatialBlockInformationProvider chunk, Coordinates3D location);
     }
 }

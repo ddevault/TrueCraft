@@ -23,7 +23,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
             return true;
         }
 
-        public override bool GenerateAt(IWorldSeed world, ApplesauceChunk chunk, Coordinates3D location)
+        public override bool GenerateAt(IWorldSeed world, ISpatialBlockInformationProvider chunk, Coordinates3D location)
         {
             if (!ValidLocation(location))
                 return false;
@@ -51,7 +51,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
          * 0x0 - two level topper
          * 0x1 - three level topper
          */
-        protected void GenerateTopper(ApplesauceChunk chunk, Coordinates3D location, byte type = 0x0)
+        protected void GenerateTopper(ISpatialBlockInformationProvider chunk, Coordinates3D location, byte type = 0x0)
         {
             const int sectionRadius = 1;
             GenerateCircle(chunk, location, sectionRadius, LeavesBlock.BlockID, 0x1);

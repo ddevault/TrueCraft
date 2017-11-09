@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TrueCraft.API.World
 {
-    public interface ApplesauceChunk
+    public interface ISpatialBlockInformationProvider
     {
         int X {get;}
         int Z { get; }

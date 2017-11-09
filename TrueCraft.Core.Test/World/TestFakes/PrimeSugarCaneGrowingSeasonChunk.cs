@@ -8,7 +8,7 @@ using TrueCraft.Core.Logic.Blocks;
 using TrueCraft.Core.TerrainGen.Biomes;
 using TrueCraft.Core.World;
 
-public class PrimeSugarCaneGrowingSeasonChunk : ApplesauceChunk
+public class PrimeSugarCaneGrowingSeasonChunk : ISpatialBlockInformationProvider
 {
     public int X => 6;
     public int Z => 6;
@@ -172,7 +172,7 @@ public class PrimeSugarCaneGrowingSeasonChunk : ApplesauceChunk
         return result;
     }
 
-    byte ApplesauceChunk.GetMetadata(Coordinates3D locationToCheck)
+    byte ISpatialBlockInformationProvider.GetMetadata(Coordinates3D locationToCheck)
     {
         throw new NotImplementedException();
     }

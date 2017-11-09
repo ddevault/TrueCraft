@@ -12,7 +12,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
 {
     class FreezeDecorator : IChunkDecorator
     {
-        public void Decorate(IWorldSeed world, ApplesauceChunk chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
+        public void Decorate(IWorldSeed world, ISpatialBlockInformationProvider chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
         {
             for (int x = 0; x < 16; x++)
             {
@@ -51,7 +51,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
             }
         }
 
-        bool CoverIce(ApplesauceChunk chunk, IBiomeRepository biomes, Coordinates3D location)
+        bool CoverIce(ISpatialBlockInformationProvider chunk, IBiomeRepository biomes, Coordinates3D location)
         {
             const int maxDistance = 4;
             var adjacent = new[] {

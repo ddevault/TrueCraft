@@ -13,7 +13,7 @@ namespace TrueCraft.Core.TerrainGen.Decorations
     {
         const int LeafRadius = 2;
 
-        public override bool GenerateAt(IWorldSeed world, ApplesauceChunk chunk, Coordinates3D location)
+        public override bool GenerateAt(IWorldSeed world, ISpatialBlockInformationProvider chunk, Coordinates3D location)
         {
             if (!ValidLocation(location))
                 return false;

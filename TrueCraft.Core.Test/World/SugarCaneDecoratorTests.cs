@@ -22,7 +22,7 @@ namespace TrueCraft.Core.Test.World
         public void DecoratorGrowsNoInvalidSugarCane()
         {
             var aWorld = new WorldWithJustASeed(9001);
-            ApplesauceChunk aChunk = new PrimeSugarCaneGrowingSeasonChunk();
+            ISpatialBlockInformationProvider aChunk = new PrimeSugarCaneGrowingSeasonChunk();
             IBiomeRepository aBiomeRepository = new BiomeRepository();
             var decorator = GetDecoratorForTestChunk(aWorld, aChunk, aBiomeRepository);
 
@@ -35,7 +35,7 @@ namespace TrueCraft.Core.Test.World
         public void DecoratorDoesNotGrowSugarcaneUniformly()
         {
             IWorldSeed aWorld = new WorldWithJustASeed(9001);
-            ApplesauceChunk aChunk = new PrimeSugarCaneGrowingSeasonChunk();
+            ISpatialBlockInformationProvider aChunk = new PrimeSugarCaneGrowingSeasonChunk();
             IBiomeRepository aBiomeRepository = new BiomeRepository();
             var decorator = GetDecoratorForTestChunk(aWorld, aChunk, aBiomeRepository);
 
@@ -44,7 +44,7 @@ namespace TrueCraft.Core.Test.World
             AssertChunkSugarCaneGrowthIsNotUniform(aChunk);
         }
 
-        private void AssertChunkHasNoSugarCaneInColumnsWhereItShouldNot(ApplesauceChunk aChunk)
+        private void AssertChunkHasNoSugarCaneInColumnsWhereItShouldNot(ISpatialBlockInformationProvider aChunk)
         {
             for (int x = 0; x < 6; x++)
             {
@@ -59,7 +59,7 @@ namespace TrueCraft.Core.Test.World
             }
         }
 
-        private void AssertChunkSugarCaneGrowthIsNotUniform(ApplesauceChunk aChunk)
+        private void AssertChunkSugarCaneGrowthIsNotUniform(ISpatialBlockInformationProvider aChunk)
         {
             var counts = new List<double>();
             for (int x = 0; x < 6; x++)
@@ -82,7 +82,7 @@ namespace TrueCraft.Core.Test.World
             }
         }
 
-        private static SugarCaneDecorator GetDecoratorForTestChunk(IWorldSeed aWorld, ApplesauceChunk aChunk,
+        private static SugarCaneDecorator GetDecoratorForTestChunk(IWorldSeed aWorld, ISpatialBlockInformationProvider aChunk,
             IBiomeRepository aBiomeRepository)
         {
             var decorator = new SugarCaneDecorator(new NoiseAlwaysGrowsSugarCaneInTestBounds());
@@ -90,7 +90,7 @@ namespace TrueCraft.Core.Test.World
             return decorator;
         }
 
-        static int CountBlockInColumn(ApplesauceChunk aChunk, int x, int z, byte blockId)
+        static int CountBlockInColumn(ISpatialBlockInformationProvider aChunk, int x, int z, byte blockId)
         {
             int counter = 0;
 
@@ -113,7 +113,7 @@ namespace TrueCraft.Core.Test.World
 
             var ourDictionary = PrimeSugarCaneGrowingSeasonChunk.createStartingBlockDictionary();
 
-            Mock<ApplesauceChunk> aChunk = new Mock<ApplesauceChunk>();
+            Mock<ISpatialBlockInformationProvider> aChunk = new Mock<ISpatialBlockInformationProvider>();
 
             aChunk.Setup(foo => foo.GetBlockID(It.IsAny<Coordinates3D>())).Returns((Coordinates3D coordinates) =>
             {

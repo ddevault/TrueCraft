@@ -15,7 +15,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
     {
         public static readonly int WaterLevel = 40;
 
-        public void Decorate(IWorldSeed world, ApplesauceChunk chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
+        public void Decorate(IWorldSeed world, ISpatialBlockInformationProvider chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
         {
             for (int x = 0; x < Chunk.Width; x++)
             {

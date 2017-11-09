@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace TrueCraft.API.World
 {
-    public interface IChunk : IEventSubject, IDisposable, ApplesauceChunk
+    public interface IChunk : IEventSubject, IDisposable, ISpatialBlockInformationProvider
     {
         bool IsModified { get; set; }
         bool LightPopulated { get; set; }

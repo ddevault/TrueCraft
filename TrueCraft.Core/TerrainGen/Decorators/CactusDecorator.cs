@@ -14,7 +14,7 @@ namespace TrueCraft.Core.TerrainGen.Decorators
 {
     public class CactusDecorator : IChunkDecorator
     {
-        public void Decorate(IWorldSeed world, ApplesauceChunk chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
+        public void Decorate(IWorldSeed world, ISpatialBlockInformationProvider chunk, IBiomeRepository biomes, IBlockRepository blockRepository)
         {
             var noise = new Perlin(world.Seed);
             var chanceNoise = new ClampNoise(noise);
