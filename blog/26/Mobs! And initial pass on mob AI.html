@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+<title>Mobs! And initial pass on mob AI &mdash; TrueCraft</title>
+
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/editor/0.1.0/editor.css"> 
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">    
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+        <link rel="alternate" type="application/rss+xml" title="TrueCraft Updates" href="/rss.xml">
+        <link rel="icon" type="image/vnd.microsoft.icon" href="//avatars2.githubusercontent.com/u/4286195?v=2&s=200">
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <link rel="stylesheet" href="/static/base.css">
+        
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <h1 class="title">
+                    <a href="/">
+                        True
+                        <img src="/static/truecraft_earth.svg" height="150" />
+                        Craft
+                    </a>
+                </h1>
+            </header>
+            <div class="content">
+                <p class="tagline">A free and open-source implementation of Minecraft Beta 1.7.3</p>
+                <div class="main">
+                    <nav class="navbar">
+                        <div class="inner">
+                            <ul class="nav navbar-nav">
+                                <li><a href="/download">Download</a></li>
+                                <li><a href="/updates">Updates</a></li>
+                                <li><a href="https://github.com/SirCmpwn/TrueCraft">GitHub</a></li>
+                                <li><a href="https://reddit.com/r/truecraft">Community</a></li>
+                                <li><a href="http://webchat.esper.net/?nick=&channels=truecraft">Chat</a></li>
+                            </ul>
+                            <div class="collapse navbar-collapse" id="navbar-collapse">
+                                
+                                <ul class="nav navbar-nav navbar-right">
+                                    <li><a href="/login">Log In</a></li>
+                                    <li><a href="/register">Register</a></li>
+                                </ul>
+                                
+                            </div>
+                            <span class="blc"></span>
+                            <span class="trc"></span>
+                        </div>
+                    </nav>
+                    <article class="body">
+                        
+<h3>
+    Mobs! And initial pass on mob AI
+    
+</h3>
+<h4>Published Jul 03, 2015</h4>
+
+<img src="https://sr.ht/d9fa.png" />
+
+<p>Mobs can now be spawned on TrueCraft servers, and a simple AI for wandering has been
+implemented. All beta 1.7.3 mobs are supported - try spawning one with <code>/spawn creeper</code> (or
+whatever mob you wish to try hanging out with).</p>
+<p>This is the initial pass on mobs. Still to come:</p>
+<ul>
+<li>Performance improvements to pathfinding</li>
+<li>Verticial pathfinding (moving in the Y direction while wandering)</li>
+<li>Different AI states (attack, flee) and the wiring that keeps them together</li>
+<li>AI for special mobs (ghast, slime, squid, etc)</li>
+</ul>
+<p>Thanks to <a href="http://www.redblobgames.com/pathfinding/a-star/introduction.html">Amit</a> for his
+A* tutorial. Very useful today. I also squeezed some more performance out of the event
+scheduler, but that's boring so I won't mention it.</p>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'truecraft';
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+                    </article>
+                </div>
+            </div>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script src="//cdn.jsdelivr.net/editor/0.1.0/editor.js"></script>
+        <script src="//cdn.jsdelivr.net/editor/0.1.0/marked.js"></script>
+        
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+          ga('create', 'UA-58114378-1', 'auto');
+          ga('send', 'pageview');
+        </script>
+        
+        
+    </body>
+</html>

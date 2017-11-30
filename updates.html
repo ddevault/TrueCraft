@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <title>TrueCraft</title>
+        
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/editor/0.1.0/editor.css"> 
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">    
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+        <link rel="alternate" type="application/rss+xml" title="TrueCraft Updates" href="/rss.xml">
+        <link rel="icon" type="image/vnd.microsoft.icon" href="//avatars2.githubusercontent.com/u/4286195?v=2&s=200">
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <link rel="stylesheet" href="/static/base.css">
+        
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <h1 class="title">
+                    <a href="/">
+                        True
+                        <img src="/static/truecraft_earth.svg" height="150" />
+                        Craft
+                    </a>
+                </h1>
+            </header>
+            <div class="content">
+                <p class="tagline">A free and open-source implementation of Minecraft Beta 1.7.3</p>
+                <div class="main">
+                    <nav class="navbar">
+                        <div class="inner">
+                            <ul class="nav navbar-nav">
+                                <li><a href="/download">Download</a></li>
+                                <li><a href="/updates">Updates</a></li>
+                                <li><a href="https://github.com/SirCmpwn/TrueCraft">GitHub</a></li>
+                                <li><a href="https://reddit.com/r/truecraft">Community</a></li>
+                                <li><a href="http://webchat.esper.net/?nick=&channels=truecraft">Chat</a></li>
+                            </ul>
+                            <div class="collapse navbar-collapse" id="navbar-collapse">
+                                
+                                <ul class="nav navbar-nav navbar-right">
+                                    <li><a href="/login">Log In</a></li>
+                                    <li><a href="/register">Register</a></li>
+                                </ul>
+                                
+                            </div>
+                            <span class="blc"></span>
+                            <span class="trc"></span>
+                        </div>
+                    </nav>
+                    <article class="body">
+                         
+<a class="rss" href="/rss.xml"><img src="/static/rss.png" /></a>
+<h2>TrueCraft Updates</h2>
+
+
+<h3>
+    <a href="/blog/40/Performance%20%26%20stability%20improvements">Performance &amp; stability improvements</a>
+    <small>May 24, 2017</small>
+</h3>
+
+<img src="https://sr.ht/2V_g.png" />
+
+<p><p>Spent the past couple of days working on server performance and stability improvements. In
+particular, common deadlocks have been fixed, chunk loading performance has been
+improved, and many tasks were adjusted to more intelligently use the thread pool and divide
+work between the main thread and thread pool (without breaking things).</p> <a href="/blog/40/Performance%20%26%20stability%20improvements">Read more »</a></p>
+
+<h3>
+    <a href="/blog/39/Patreon">Patreon</a>
+    <small>May 11, 2017</small>
+</h3>
+
+<img src="https://sr.ht/f4X6.png" />
+
+<p><p>I've made a Patreon page to support my free software projects, including TrueCraft.</p> <a href="/blog/39/Patreon">Read more »</a></p>
+
+<h3>
+    <a href="/blog/38/Improvements%20to%20physics%20engine">Improvements to physics engine</a>
+    <small>Jul 05, 2016</small>
+</h3>
+
+<img src="https://sr.ht/RniF.png" />
+
+<p><p>Today I hopped back into TrueCraft dev for a little while to deal with some issues concerning
+the physics engine. There were some cases where you could walk into corners and end up not
+triggering a collision, which would lead to the player being flung high up into the air once they
+were detected to be inside of a block on the next tick.</p> <a href="/blog/38/Improvements%20to%20physics%20engine">Read more »</a></p>
+
+<h3>
+    <a href="/blog/37/Rendering%20the%20day/night%20cycle%20lighting%20in%20the%20client">Rendering the day/night cycle lighting in the client</a>
+    <small>Apr 21, 2016</small>
+</h3>
+
+<img src="https://sr.ht/A7lE.png" />
+
+<p><p>I didn't plan on working on TrueCraft today, but I got on Twitch.tv to stream and one thing led to
+another. I have implemented the day/night cycle in the client, though it's still a little bit buggy. The
+sun and moon textures now included by default with TrueCraft are courtesey of the
+<a href="http://www.minecrafttexturepacks.com/isabella/">Isabella pack</a>, which is CC-BY-SA, since our
+current texture pack didn't actually override the sun/moon textures from Minecraft.</p> <a href="/blog/37/Rendering%20the%20day/night%20cycle%20lighting%20in%20the%20client">Read more »</a></p>
+
+<h3>
+    <a href="/blog/36/Improvements%20to%20client%20side%20lighting%20and%20performance">Improvements to client side lighting and performance</a>
+    <small>Apr 07, 2016</small>
+</h3>
+
+<img src="https://sr.ht/NWwz.png" />
+
+<p><p>Today I spent some time on Twitch streaming some TrueCraft work, and I finished up the lighting
+improvements started by mrpimpunicorn in the client. I fixed a few issues with things like snow,
+which you may have noticed had horribly broken lighting, and I fixed issues with the blocks that
+were lit incorrectly at chunk boundaries.</p> <a href="/blog/36/Improvements%20to%20client%20side%20lighting%20and%20performance">Read more »</a></p>
+
+
+<div class="text-center">
+    <ul class="pagination">
+        
+        
+            
+            <li class="active"><a href="/updates?page=1">1</a></li>
+            
+        
+            
+            <li><a href="/updates?page=2">2</a></li>
+            
+        
+            
+            <li><a href="/updates?page=3">3</a></li>
+            
+        
+            
+            <li><a href="/updates?page=4">4</a></li>
+            
+        
+            
+            <li><a href="/updates?page=5">5</a></li>
+            
+        
+            
+            <li><a href="/updates?page=6">6</a></li>
+            
+        
+            
+            <li><a href="/updates?page=7">7</a></li>
+            
+        
+            
+            <li><a href="/updates?page=8">8</a></li>
+            
+        
+        
+        <li>
+            <a href="/updates?page=2" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+                    </article>
+                </div>
+            </div>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script src="//cdn.jsdelivr.net/editor/0.1.0/editor.js"></script>
+        <script src="//cdn.jsdelivr.net/editor/0.1.0/marked.js"></script>
+        
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+          ga('create', 'UA-58114378-1', 'auto');
+          ga('send', 'pageview');
+        </script>
+        
+        
+    </body>
+</html>

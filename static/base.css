@@ -1,0 +1,119 @@
+html {
+  font-family: sans-serif;
+  font-size: 10px; }
+
+body {
+  background: #D1D1D1;
+  font-family: Arial,Arial,Helvetica,sans-serif;
+  font-size: 15px;
+  line-height: 1.5; }
+
+.container {
+  width: 675px;
+  margin: 0 auto;
+  padding: 0; }
+
+header {
+  display: block; }
+
+h1.title {
+  margin: 30px 20px 10px;
+  font-size: 60px;
+  font-weight: normal;
+  text-align: center;
+  font-family: sans-serif; }
+  h1.title a {
+    color: #000; }
+
+.content {
+  background: #DDD url("/static/pattern.png");
+  border: 1px solid #2A2A2A;
+  box-shadow: 0px 0px 5px #B1B1B1; }
+
+nav {
+  background: #222 none repeat scroll 0% 0%;
+  padding: 10px;
+  margin: 0px -35px 20px;
+  position: relative; }
+  nav.navbar {
+    border-radius: 0;
+    border: 5px solid #444; }
+  nav .inner {
+    overflow: hidden; }
+  nav .navbar-text {
+    color: #fff; }
+    nav .navbar-text a {
+      display: inline;
+      padding: 0; }
+  nav .nav li > a:hover, nav .nav li > a:focus {
+    background-color: #444;
+    color: #fff; }
+  nav .blc {
+    border-width: 10px;
+    border-style: solid;
+    -moz-border-top-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    border-image: none;
+    border-color: transparent transparent #000;
+    width: 0px;
+    height: 0px;
+    display: block;
+    position: absolute;
+    bottom: -15px;
+    left: 0px;
+    transform: rotate(45deg); }
+  nav .trc {
+    border-width: 10px;
+    border-style: solid;
+    -moz-border-top-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    border-image: none;
+    border-color: #000 transparent transparent;
+    width: 0px;
+    height: 0px;
+    display: block;
+    position: absolute;
+    top: -15px;
+    right: 0px;
+    transform: rotate(45deg); }
+
+.main {
+  background: #fff;
+  padding: 0px 20px 30px;
+  margin-top: 15px; }
+  .main img, .main video {
+    max-width: 100%;
+    margin-bottom: 4px; }
+
+p {
+  margin: 0 0 10px; }
+  p.tagline {
+    padding: 20px 20px 0px;
+    color: #FFF;
+    font-size: 17px; }
+
+a {
+  color: #63A52A; }
+  a:hover, a:focus {
+    color: #23527C;
+    text-decoration: underline; }
+
+input[type="text"] {
+  border-radius: 0; }
+
+.rss {
+  float: right; }
+  .rss img {
+    width: 48px; }
+
+.tab-pane.well {
+  background: transparent;
+  box-shadow: none;
+  border-top: none;
+  border-radius: 0 0 5px 5px; }
+
+/*# sourceMappingURL=base.css.map */

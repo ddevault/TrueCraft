@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>TrueCraft Blog</title>
+		<description>Updates from the TrueCraft team</description>
+        <link>http://truecraft.io/</link>
+        <atom:link href="http://truecraft.io/rss.xml" rel="self" type="application/rss+xml" />
+		
+			<item>
+				<title>Performance &amp; stability improvements</title>
+                <description>
+                    <![CDATA[
+                    <img src="https://sr.ht/2V_g.png" />
+                    <p>Spent the past couple of days working on server performance and stability improvements. In
+particular, common deadlocks have been fixed, chunk loading performance has been
+improved, and many tasks were adjusted to more intelligently use the thread pool and divide
+work between the main thread and thread pool (without breaking things).</p>
+<p>Also fixed a number of small bugs like deterministic terrain generation issues and dungeon
+generation, and added some new features for tweaking what processes are running in the
+server (allowing you to, for example, disable fire spread or grass growth). Some of the major
+issues with the physics engine and mob pathfinding were sorted out yesterday.</p>
+<p>I have some more performance issues to work through and bugs to sort out tomorrow. In the
+coming days and weeks, I hope to square away most of the important bugs in the server, and
+start on improving mob AI, combat, and more interesting stuff. A rewrite of the client rendering
+stack is also in the cards.</p>
+<p>Big thanks to Aaron on <a href="https://patreon.com/sircmpwn">Patreon</a>, who's pledged $50/month
+asking for more work on TrueCraft. No problem, Aaron! Thanks!</p>
+                    ]]>
+                </description>
+				<pubDate>Wed, 24 May 2017 01:21:24 </pubDate>
+                <link>http://truecraft.io/blog/40/Performance%20%26%20stability%20improvements</link>
+                <guid isPermaLink="true">http://truecraft.io/blog/40/Performance%20%26%20stability%20improvements</guid>
+			</item>
+		
+			<item>
+				<title>Patreon</title>
+                <description>
+                    <![CDATA[
+                    <img src="https://sr.ht/f4X6.png" />
+                    <p>I've made a Patreon page to support my free software projects, including TrueCraft.</p>
+<p>If it seems like TrueCraft development has stalled lately, it's because that's exactly what's
+happened. Unfortunately, I don't have time to support TrueCraft while trying to make a living.
+If you're disappointed by the inactivity and you want to see a change, I encourage you to
+contribute on the Patreon page and let me know that you'd like to see your contributions go
+towards TrueCraft.</p>
+<p>https://patreon.com/sircmpwn</p>
+<p>Many thanks!</p>
+                    ]]>
+                </description>
+				<pubDate>Thu, 11 May 2017 15:59:31 </pubDate>
+                <link>http://truecraft.io/blog/39/Patreon</link>
+                <guid isPermaLink="true">http://truecraft.io/blog/39/Patreon</guid>
+			</item>
+		
+			<item>
+				<title>Improvements to physics engine</title>
+                <description>
+                    <![CDATA[
+                    <img src="https://sr.ht/RniF.png" />
+                    <p>Today I hopped back into TrueCraft dev for a little while to deal with some issues concerning
+the physics engine. There were some cases where you could walk into corners and end up not
+triggering a collision, which would lead to the player being flung high up into the air once they
+were detected to be inside of a block on the next tick.</p>
+<p>Another issue I resolved was the problem of placing blocks where entities already exist. I just
+did some tweaks to the existing code that did not work to make it do the correct thing (i.e.
+prevent you from placing a block that would collide with an entity that's already there).</p>
+<p>I have some issues to figure out with entity collisions in practice on the server, where they
+still behave very strangely. The physics improvements I put in place today seem to help with
+player movement but items and other entities are still FUBAR.</p>
+                    ]]>
+                </description>
+				<pubDate>Tue, 05 Jul 2016 00:38:43 </pubDate>
+                <link>http://truecraft.io/blog/38/Improvements%20to%20physics%20engine</link>
+                <guid isPermaLink="true">http://truecraft.io/blog/38/Improvements%20to%20physics%20engine</guid>
+			</item>
+		
+			<item>
+				<title>Rendering the day/night cycle lighting in the client</title>
+                <description>
+                    <![CDATA[
+                    <img src="https://sr.ht/A7lE.png" />
+                    <p>I didn't plan on working on TrueCraft today, but I got on Twitch.tv to stream and one thing led to
+another. I have implemented the day/night cycle in the client, though it's still a little bit buggy. The
+sun and moon textures now included by default with TrueCraft are courtesey of the
+<a href="http://www.minecrafttexturepacks.com/isabella/">Isabella pack</a>, which is CC-BY-SA, since our
+current texture pack didn't actually override the sun/moon textures from Minecraft.</p>
+<p>If you're curious what the daytime looks like, the answer is probably "weird" because of an issue
+with the calculation of the sky color. But at sunset it looks quite nice:</p>
+<p><img alt="" src="https://sr.ht/915K.png" /></p>
+<p>Next time I plan on working on the physics engine and improving the stability of the server. The
+former will lead to better support (or any support, really) for mobs.</p>
+                    ]]>
+                </description>
+				<pubDate>Thu, 21 Apr 2016 00:59:31 </pubDate>
+                <link>http://truecraft.io/blog/37/Rendering%20the%20day/night%20cycle%20lighting%20in%20the%20client</link>
+                <guid isPermaLink="true">http://truecraft.io/blog/37/Rendering%20the%20day/night%20cycle%20lighting%20in%20the%20client</guid>
+			</item>
+		
+			<item>
+				<title>Improvements to client side lighting and performance</title>
+                <description>
+                    <![CDATA[
+                    <img src="https://sr.ht/NWwz.png" />
+                    <p>Today I spent some time on Twitch streaming some TrueCraft work, and I finished up the lighting
+improvements started by mrpimpunicorn in the client. I fixed a few issues with things like snow,
+which you may have noticed had horribly broken lighting, and I fixed issues with the blocks that
+were lit incorrectly at chunk boundaries.</p>
+<p>I also implemented updating the lighting when the client mines a block, as well as re-rendering
+chunks when adjacent chunks show up, which can be a big improvement for performance since
+we can eliminate a lot of verticies once we know what the adjacent chunk looks like.</p>
+<p>Up next I plan on fixing up the mobs and perhaps even implementing mob rendering in the client.</p>
+<p>As a parting thought, here's another screenshot of what the lighting for snow <em>used</em> to look like:</p>
+<p><img alt="" src="https://sr.ht/9mMf.png" /></p>
+                    ]]>
+                </description>
+				<pubDate>Thu, 07 Apr 2016 01:44:55 </pubDate>
+                <link>http://truecraft.io/blog/36/Improvements%20to%20client%20side%20lighting%20and%20performance</link>
+                <guid isPermaLink="true">http://truecraft.io/blog/36/Improvements%20to%20client%20side%20lighting%20and%20performance</guid>
+			</item>
+		
+			<item>
+				<title>Multiplatform update - call for contributors</title>
+                <description>
+                    <![CDATA[
+                    <img src="https://sr.ht/u49E.png" />
+                    <p>Thanks to some improvements from MonoGame 3.5, I was able to drop some platform-specific
+hacks from the TrueCraft client, which means it works for most Windows users now. I also
+spent some time trying to get it working on OSX - and I did, but only as a proof of concept. I
+encourage readers who are comfortable writing software for OSX to hop in and help build a more
+mature port. Join us <a href="http://webchat.esper.net/?nick=&amp;channels=truecraft">on IRC</a> if you're
+interested.</p>
+<p>I still don't use Windows, so I would also still appreciate contributors from Windowsland keeping
+that port in good shape. Hop into IRC if you can help with this, too.</p>
+<p>The Linux port has also been updated to use GTK3 if available for the Launcher, and now
+includes Wayland support.</p>
+                    ]]>
+                </description>
+				<pubDate>Sat, 19 Mar 2016 12:56:51 </pubDate>
+                <link>http://truecraft.io/blog/35/Multiplatform%20update%20-%20call%20for%20contributors</link>
+                <guid isPermaLink="true">http://truecraft.io/blog/35/Multiplatform%20update%20-%20call%20for%20contributors</guid>
+			</item>
+		
+			<item>
+				<title>Inventory windows on the client</title>
+                <description>
+                    <![CDATA[
+                    <img src="https://sr.ht/d9ua.jpg https://sr.ht/XDj1.webm" />
+                    <p>I have (mostly) implemented windows on the client! Since crafting and window management is
+already handled on the server, we automatically get crafting support on the client with this. That
+means that the TrueCraft client is actually pretty playable as a result!</p>
+<p>Windows other than your inventory window are not going to work, though. I still have to add the
+crafting bench, furnace, and chest windows (and eventually dispensers, though the server does
+not currently support that).</p>
+                    ]]>
+                </description>
+				<pubDate>Fri, 09 Oct 2015 01:50:38 </pubDate>
+                <link>http://truecraft.io/blog/34/Inventory%20windows%20on%20the%20client</link>
+                <guid isPermaLink="true">http://truecraft.io/blog/34/Inventory%20windows%20on%20the%20client</guid>
+			</item>
+		
+			<item>
+				<title>Smelting on the server, audio on the client</title>
+                <description>
+                    <![CDATA[
+                    <img src="https://sr.ht/OGQM.png" />
+                    <p>I finally put in the effort for making smelting work on TrueCraft servers. As a result, it's now
+possible to obtain a much larger variety of items in a TrueCraft game, though some of them
+remain unobtainable due to the limitations of terrain generation.</p>
+<p>Additionally, I have started to add sound effects to the TrueCraft client. Thanks to the Minetest
+project for offering up the relevant sounds under CC-BY-SA! I'm also in touch with a guy who
+wants to help compose original music for TrueCraft, also CC-BY-SA. The sound effects are
+currently limited to making noise as you walk, but is smart enough to play different effects based
+on what you're walking on. I will soon add sound effects for mining and placing blocks, among
+other things.</p>
+<p>I'll leave you with another screenshot, this time of my test runway for sound effects:</p>
+<p><img alt="" src="https://sr.ht/dliI.png" /></p>
+                    ]]>
+                </description>
+				<pubDate>Tue, 06 Oct 2015 02:13:54 </pubDate>
+                <link>http://truecraft.io/blog/33/Smelting%20on%20the%20server%2C%20audio%20on%20the%20client</link>
+                <guid isPermaLink="true">http://truecraft.io/blog/33/Smelting%20on%20the%20server%2C%20audio%20on%20the%20client</guid>
+			</item>
+		
+			<item>
+				<title>New texture pack, gamepad support</title>
+                <description>
+                    <![CDATA[
+                    <img src="https://sr.ht/aKPe.png" />
+                    <p>I spent some time this morning adding gamepad support to TrueCraft (a feature that even the
+newest versions of Minecraft still don't have!). It's currently geared towards Xbox 360 controllers,
+but will probably work with whatever you've got. I will eventually add support for rebinding your
+gamepad actions when I work on rebinding keyboard actions.</p>
+<p>I also reached out to <a href="https://twitter.com/Mruqe">Wojtek Mroczek</a>, the author of the old Pixeludi
+texture pack for Minecraft. I think this texture pack stays
+pretty close to the feel of Minecraft, while still being entirely original (and much better than my
+crappy attempts at artwork). He agreed to let me distribute his textures under CC-BY-SA, and I
+am happy to adopt them as the default texture pack for TrueCraft. Of course, you can still install
+any other texture pack you like.</p>
+<p>Next batch of changes will just be improvements to the existing stuff. After that, I'm planning on
+leaving the client behind for a bit and doing some improvements to the server like smelting and
+mob optimizations (and spawning by default, if I get the optimizations right).</p>
+                    ]]>
+                </description>
+				<pubDate>Fri, 02 Oct 2015 02:49:55 </pubDate>
+                <link>http://truecraft.io/blog/32/New%20texture%20pack%2C%20gamepad%20support</link>
+                <guid isPermaLink="true">http://truecraft.io/blog/32/New%20texture%20pack%2C%20gamepad%20support</guid>
+			</item>
+		
+			<item>
+				<title>Now you can place blocks on the client!</title>
+                <description>
+                    <![CDATA[
+                    <img src="https://sr.ht/gDH6.jpg https://sr.ht/7itO.webm" />
+                    <p>After implementing mining yesterday, I implemented the reverse today. Now you can place
+blocks! This is actually more than just placing blocks, though - it sends an "interact" message to
+the server, which is basically any action that's done with a right click. So now you can place
+blocks, plant crops, open doors, and so on.</p>
+<p>The new hotbar appearance also supports texture packs. Here's what it looks like with some
+others:</p>
+<p><img alt="" src="https://sr.ht/SavH.png" /></p>
+<p><img alt="" src="https://sr.ht/FLHt.png" /></p>
+<p><img alt="" src="https://sr.ht/KtGv.png" /></p>
+<p>mrpimpunicorn helped out with rendering the hotbar today.</p>
+<p>The TrueCraft item sprites haven't been worked on, so they don't look very good. But we'll work
+on them! Or if you're the artsy type and you'd like to help out, how about offering up some
+improvements yourself? <a href="https://github.com/SirCmpwn/TrueCraft">Visit our Github</a> or our
+<a href="http://webchat.esper.net/?nick=&amp;channels=truecraft">chat room</a> if you're interested.</p>
+                    ]]>
+                </description>
+				<pubDate>Thu, 01 Oct 2015 00:34:28 </pubDate>
+                <link>http://truecraft.io/blog/31/Now%20you%20can%20place%20blocks%20on%20the%20client%21</link>
+                <guid isPermaLink="true">http://truecraft.io/blog/31/Now%20you%20can%20place%20blocks%20on%20the%20client%21</guid>
+			</item>
+		
+	</channel>
+</rss>
