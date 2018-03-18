@@ -14,8 +14,28 @@ I miss the old days of Minecraft, when it was a simple game. It was nearly perfe
 
 The goal of this project is effectively to fork Minecraft. Your contribution is welcome, but keep in mind that I will mercilessly reject changes that aren't in line with the vision. If you like the new Minecraft, please feel free to keep playing it. If you miss the old Minecraft, join me.
 
-If you'd like to support TrueCraft development, you can contribute to [my Patreon
-page](https://patreon.com/sircmpwn).
+## Why is TrueCraft archived? Is it abandoned?
+
+TrueCraft is not, strictly speaking, abandoned. However, I have stopped working
+on it for the time being.
+
+I have to spend 40 hours a week making a living on proprietary software, and as
+a result have to work on free software in my spare time. TrueCraft is a *ton* of
+work, and if I gave it the attention it deserves I would not have time to work
+on anything else. Unfortunately, TrueCraft is not the only project I have to
+work on, and I've decided to deprioritize it.
+
+However! I am slowly raising recurring donations with the eventual goal of
+supporting my work on open source full-time. You can contribute in several ways:
+
+- [via fosspay](https://drewdevault.com/donate)
+- [via liberapay](https://liberapay.com/SirCmpwn)
+- [via patreon](https://patreon.com/SirCmpwn)
+
+If I am eventually able to work on free software full-time, I will be able to
+resume work on TrueCraft.
+
+Thank you for your understanding.
 
 ## Compiling
 
