@@ -7,7 +7,6 @@ using System.Net;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoGame.Utilities.Png;
 using TrueCraft.API;
 using TrueCraft.API.Logic;
 using TrueCraft.API.World;
@@ -82,6 +81,8 @@ namespace TrueCraft.Client
             Graphics.IsFullScreen = UserSettings.Local.IsFullscreen;
             Graphics.PreferredBackBufferWidth = UserSettings.Local.WindowResolution.Width;
             Graphics.PreferredBackBufferHeight = UserSettings.Local.WindowResolution.Height;
+            Graphics.GraphicsProfile = GraphicsProfile.HiDef;
+            Graphics.PreparingDeviceSettings += PrepareDeviceSettings;
             Graphics.ApplyChanges();
             Window.ClientSizeChanged += Window_ClientSizeChanged;
             Client = client;
@@ -100,6 +101,11 @@ namespace TrueCraft.Client
 
             GamePadComponent = new GamePadHandler(this);
             Components.Add(GamePadComponent);
+        }
+
+        void PrepareDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
+        {
+            e.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
         }
 
         void Window_ClientSizeChanged(object sender, EventArgs e)
@@ -121,6 +127,13 @@ namespace TrueCraft.Client
             GraphicalModules = new List<IGameplayModule>();
 
             base.Initialize(); // (calls LoadContent)
+
+            if (GraphicsDevice.Viewport.Width < 640 || GraphicsDevice.Viewport.Height < 480)
+                ScaleFactor = 0.5f;
+            else if (GraphicsDevice.Viewport.Width < 978 || GraphicsDevice.Viewport.Height < 720)
+                ScaleFactor = 1.0f;
+            else
+                ScaleFactor = 1.5f;
 
             Camera = new Camera(GraphicsDevice.Viewport.AspectRatio, 70.0f, 0.1f, 1000.0f);
             UpdateCamera();
@@ -192,7 +205,8 @@ namespace TrueCraft.Client
         private void CreateRenderTarget()
         {
             RenderTarget = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height,
-                false, GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
+                false, GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24,
+                0, RenderTargetUsage.PreserveContents);
         }
 
         void HandleClientPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -334,7 +348,7 @@ namespace TrueCraft.Client
             if (!Directory.Exists(Path.GetDirectoryName(path)))
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
             using (var stream = File.OpenWrite(path))
-                new PngWriter().Write(RenderTarget, stream);
+                RenderTarget.SaveAsPng(stream, RenderTarget.Width, RenderTarget.Height);
             ChatModule.AddMessage("Screenshot saved to " + Path.GetFileName(path));
         }
 
@@ -413,7 +427,7 @@ namespace TrueCraft.Client
 
             GraphicsDevice.SetRenderTarget(null);
 
-            SpriteBatch.Begin();
+            SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
             SpriteBatch.Draw(RenderTarget, Vector2.Zero, Color.White);
             SpriteBatch.End();
 

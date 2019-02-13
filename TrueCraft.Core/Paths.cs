@@ -9,32 +9,51 @@ namespace TrueCraft.Core
         {
             get
             {
-                var xdg_config_home = Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
-                string config = null;
-                if (xdg_config_home != null)
+                string result;
+                if (RuntimeInfo.IsWindows)
                 {
-                    config = Path.Combine(xdg_config_home, "truecraft");
-                    if (Directory.Exists(config))
-                        return config;
+                    result = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                 }
-                var appdata = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "truecraft");
-                if (Directory.Exists(appdata))
-                    return appdata;
-                var userprofile = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                    ".truecraft");
-                if (Directory.Exists(userprofile))
-                    return userprofile;
-                // At this point, there's no existing data to choose from, so use the best option
-                if (config != null)
+                else if (RuntimeInfo.IsMacOSX)
                 {
-                    Directory.CreateDirectory(config);
-                    return config;
+                    result = Environment.GetEnvironmentVariable("HOME");
+                    if (String.IsNullOrEmpty(result))
+                    {
+                        result = "./"; // Oh well.
+                    }
+                    else
+                    {
+                        result += "/Library/Application Support/";
+                    }
                 }
-                Directory.CreateDirectory(appdata);
-                return appdata;
+                else if (RuntimeInfo.IsLinux)
+                {
+                    // Assuming a non-OSX Unix platform will follow the XDG. Which it should.
+                    result = Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
+                    if (String.IsNullOrEmpty(result))
+                    {
+                        result = Environment.GetEnvironmentVariable("HOME");
+                        if (String.IsNullOrEmpty(result))
+                        {
+                            result = "./"; // Oh well.
+                        }
+                        else
+                        {
+                            result += "/.config/";
+                        }
+                    }
+                }
+                else
+                {
+                    System.Console.WriteLine("Unrecognized platform. Fall back to CWD.");
+                    result = Environment.CurrentDirectory;
+                }
+                result = Path.Combine(result, "truecraft");
+                if (!Directory.Exists(result))
+                {
+                    Directory.CreateDirectory(result);
+                }
+                return result;
             }
         }
 

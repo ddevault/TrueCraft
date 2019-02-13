@@ -21,6 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueCraft.Core.Test", "True
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueCraft.Profiling", "TrueCraft.Profiling\TrueCraft.Profiling.csproj", "{BCA0E139-CF47-43B3-9DC9-D4611C0A2AAD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FNA", "externals\FNA\FNA.csproj", "{35253CE1-C864-4CD3-8249-4D1319748E8F}"
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueCraft.API.Test", "TrueCraft.Core.Test\TrueCraft.API.Test\TrueCraft.API.Test.csproj", "{90712322-5904-4BCE-8606-C662706B8EAE}"
 EndProject
 Global
@@ -30,6 +31,12 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{35253CE1-C864-4CD3-8249-4D1319748E8F}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{35253CE1-C864-4CD3-8249-4D1319748E8F}.Debug|Any CPU.Build.0 = Debug|x86
+		{35253CE1-C864-4CD3-8249-4D1319748E8F}.Optimized Debug|Any CPU.ActiveCfg = Debug|x86
+		{35253CE1-C864-4CD3-8249-4D1319748E8F}.Optimized Debug|Any CPU.Build.0 = Debug|x86
+		{35253CE1-C864-4CD3-8249-4D1319748E8F}.Release|Any CPU.ActiveCfg = Release|x86
+		{35253CE1-C864-4CD3-8249-4D1319748E8F}.Release|Any CPU.Build.0 = Release|x86
 		{4488498D-976D-4DA3-BF72-109531AF0488}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4488498D-976D-4DA3-BF72-109531AF0488}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4488498D-976D-4DA3-BF72-109531AF0488}.Optimized Debug|Any CPU.ActiveCfg = Debug|Any CPU

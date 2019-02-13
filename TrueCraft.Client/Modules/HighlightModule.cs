@@ -53,7 +53,7 @@ namespace TrueCraft.Client.Modules
             };
             RasterizerState = new RasterizerState
             {
-                DepthBias = -3,
+                DepthBias = -3 / (float) ((1 << 24) - 1),
                 SlopeScaleDepthBias = -3
             };
         }
